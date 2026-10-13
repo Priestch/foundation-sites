@@ -42,10 +42,11 @@ Here the `columns` sits in the sidebar's main area. When that area is narrower t
 
 A breakpoint is a screen width chosen ahead of time, usually from a list of devices, and every component on the page changes at the same one. A threshold is a width where one component's behaviour changes, chosen from Yeti's width vocabulary, and it belongs to that component alone.
 
-The vocabulary is seven stops:
+The vocabulary is eight stops:
 
 | Name | Width | About |
 | --- | --- | --- |
+| `3xs` | 8rem | two abreast on a phone: a link column, a badge list, a small gallery |
 | `2xs` | 12rem | a badge, or a dialog's narrowest size |
 | `xs` | 16rem | a phone held sideways, or a narrow sidebar |
 | `sm` | 24rem | a phone, or a card |
@@ -117,4 +118,4 @@ There is a fourth tool, and it is fourth on purpose: `data-show` and `data-hide`
 | `data-show` | anything inside a `container` or another size container | shown from the stop up |
 | `data-hide` | anything inside a `container` or another size container | hidden from the stop up |
 
-The values are the seven stops above, `none` aside, and every one of them is a token: `--yeti-width-sm` is `24rem` until a theme says otherwise.
+The values are the eight stops above, `none` aside, and every one of them is a token: `--yeti-width-sm` is `24rem` until a theme says otherwise.
