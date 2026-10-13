@@ -2,19 +2,23 @@
    only between siblings in flow; no element sets its own outer margin.
    Every rule here is scoped to direct children of a flow container, so
    layouts and other containers are untouched. Layouts in later layers
-   replace this with their own gap. */
+   replace this with their own gap.
+   An li is a flow container only in a prose list: role="list" is the sign a
+   list is layout, and such an item is a row far more often than it is
+   prose, so the rule leaves its children alone (a site's own flex row has
+   no layout class to reset the margin for it). */
 @layer yeti.base {
-	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li, details, fieldset, dialog) > * + * {
+	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li:not([role="list"] > li), details, fieldset, dialog) > * + * {
 		margin-block-start: var(--yeti-space-md);
 	}
 
 	/* A heading hugs what follows it. */
-	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li, details, fieldset, dialog) > :is(h1, h2, h3, h4, h5, h6) + * {
+	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li:not([role="list"] > li), details, fieldset, dialog) > :is(h1, h2, h3, h4, h5, h6) + * {
 		margin-block-start: var(--yeti-heading-space-after);
 	}
 
 	/* Major headings open up from the content before them. */
-	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li, details, fieldset) > :not(h1, h2, h3, h4, h5, h6) + :is(h2, h3) {
+	:is(body, main, article, section, aside, header, footer, blockquote, figure, dd, li:not([role="list"] > li), details, fieldset) > :not(h1, h2, h3, h4, h5, h6) + :is(h2, h3) {
 		margin-block-start: var(--yeti-heading-space-before);
 	}
 

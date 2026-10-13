@@ -92,7 +92,7 @@ Three rules do it, and all three are scoped to the **direct children of a flow c
 
 The two heading tokens are the ones to reach for when a design wants more air between sections: set them on `:root` for the whole site, or on one `article` for one long read, and nothing else that uses the space scale moves. A `breakout` reads the same two.
 
-A flow container is one of `body`, `main`, `article`, `section`, `aside`, `header`, `footer`, `blockquote`, `figure`, `dd`, `li`, `details`, `fieldset` and `dialog`. The third rule leaves `dialog` out, because a dialog is short and its heading is its first child anyway.
+A flow container is one of `body`, `main`, `article`, `section`, `aside`, `header`, `footer`, `blockquote`, `figure`, `dd`, `li`, `details`, `fieldset` and `dialog`. The third rule leaves `dialog` out, because a dialog is short and its heading is its first child anyway. An `li` counts only in a prose list: an item of a list marked `role="list"` is layout, usually a row of an icon and a label, and its children get no flow spacing. A nested prose list, two paragraphs in one item, keeps its rhythm.
 
 Two omissions are deliberate. `div` is not a flow container: a `div` is the element you reach for when you want a box and no opinions, and a box with a rhythm is an opinion. `dl` is not one either, for the reason the [Definitions](#definitions) section gives. And `form` is not one, because a real form is laid out with `stack` and `field` rather than by the base — see the [components guide](components.md#forms-without-javascript).
 

@@ -83,6 +83,15 @@ test.describe('base typography and prose', () => {
 		expect(await px(page, '#li2', 'marginTop')).toBeLessThan(await token(page, '--yeti-space-xs'));
 	});
 
+	test('a list item in a layout list is a row, not a flow container', async ({ page }) => {
+		// role="list" is the sign a list is layout; the item's children sit on
+		// one row and the flow rule must not push the second one down.
+		expect(await px(page, '#row-label', 'marginTop')).toBe(0);
+		// A prose item is still a flow container: two paragraphs in one item
+		// keep the gap between them.
+		expect(await px(page, '#nested', 'marginTop')).toBeCloseTo(await token(page, '--yeti-space-md'), 1);
+	});
+
 	test('measure caps line length', async ({ page }) => {
 		const width = await page.evaluate(() => document.getElementById('second').getBoundingClientRect().width);
 		const measure = await page.evaluate(() => {
