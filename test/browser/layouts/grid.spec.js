@@ -33,6 +33,17 @@ test.describe('grid', () => {
 		expect(await columns(page, '#loose')).toBe(1);
 	});
 
+	test('data-align places the cells on the cross axis; the default is stretch', async ({ page }) => {
+		await open(page, 'grid', 1000);
+		const [short, tall] = await rects(page, '#aligned > *');
+		expect(short.bottom).toBeCloseTo(tall.bottom, 1);
+		expect(short.height).toBeLessThan(tall.height);
+		// Without the attribute a cell fills its row, as before.
+		await page.evaluate(() => document.getElementById('aligned').removeAttribute('data-align'));
+		const [s2, t2] = await rects(page, '#aligned > *');
+		expect(s2.height).toBeCloseTo(t2.height, 1);
+	});
+
 	test('role="list" keeps padding reset even inside a grid', async ({ page }) => {
 		await open(page, 'grid');
 		expect(await px(page, '#list-grid', 'padding-inline-start')).toBe(0);

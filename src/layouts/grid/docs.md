@@ -28,6 +28,8 @@ The fold is one attribute on one element; the nest is two wrappers. Use whicheve
 
 `data-rows` lines up neighbours' parts: with `data-rows="3"` each child is a subgrid of three rows, so every first part sits in row one, every second in row two, and so on, across the row. Give the number of parts the fullest child has; a child with fewer leaves its last rows empty. A card in a grid with rows keeps its picture and footer aligned with its neighbours' and does not switch to its side-by-side row. A child that spans rows cannot also be a size container, because a size container cannot be a subgrid; the card turns its own container off inside such a grid for this reason.
 
+`data-align` places the cells on the cross axis. Cells stretch to the height of their row by default, which is what a row of cards wants; `data-align="end"` sits a short cell on the row's bottom edge, so a column of links or badges under a taller neighbour lines up along the bottom, and `center` and `start` do what they say. The words are the same as on `columns` and `cluster`.
+
 ## Tracks
 
 `data-tracks` is the other mode: instead of fitting as many columns as there is room for, the grid has exactly that many equal tracks, two to twelve, and each child is placed on them by line. `data-start` on a child is the column line it begins on and `data-span` how many tracks it covers, both one to twelve. A child with neither flows into the next free track after the child before it and covers one; with only a span it flows the same way and covers that many; with only a start it begins there and covers one. A track nothing is placed on stays empty, which is the point: a wall with a work from line 2 across six tracks and a second from line 9 across four leaves track 1 and track 8 bare.

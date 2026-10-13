@@ -9,6 +9,7 @@
     { "name": "data-min", "type": "enum", "vocabulary": "width-or-none", "default": "xs", "description": "The narrowest a column may be. With none, only data-columns decides the count; none is meant to be paired with data-columns, and alone gives a single full-width column." },
     { "name": "data-columns", "type": "enum", "vocabulary": "columns", "description": "The most columns allowed. Fewer appear when the container cannot fit that many at data-min; with data-min=\"none\" the count is exact. With data-fold, the count only ever halves." },
     { "name": "data-gap", "type": "enum", "vocabulary": "gap", "default": "md", "description": "Space between columns and rows." },
+    { "name": "data-align", "type": "enum", "vocabulary": "align", "default": "stretch", "description": "Vertical alignment of the cells within their row: stretch fills the row, end sits a short cell on the row's bottom edge." },
     { "name": "data-rows", "type": "enum", "vocabulary": "rows", "description": "Line up the parts of the children across each row: the value is how many rows each child spans, one per part." },
     { "name": "data-fold", "type": "boolean", "description": "Halve the column count as the grid narrows instead of stepping down one at a time. Needs data-columns 2, 4, or 6 and uses data-min as the width per column. data-min=\"none\" has no meaning with a fold: the count needs a width per column." },
     { "name": "data-tracks", "type": "enum", "vocabulary": "tracks", "description": "A fixed number of equal tracks that children are placed on with data-start and data-span, leaving any track nothing is placed on empty. Replaces the fitted columns, so data-min and data-columns have no effect alongside it, and it does not mix with data-fold." },
@@ -26,6 +27,7 @@
     { "name": "--yeti-width-xs", "public": true, "description": "The default minimum column width." },
     { "name": "--yeti-space-md", "public": true, "description": "The default gap." },
     { "name": "--_yeti-gap", "public": false },
+    { "name": "--_yeti-align", "public": false },
     { "name": "--_yeti-min", "public": false },
     { "name": "--_yeti-column-cap", "public": false }
   ],

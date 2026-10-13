@@ -69,7 +69,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 
 | Attribute | Values | Read by |
 | --- | --- | --- |
-| `data-align` | `start`, `center`, `end`, `stretch`, `baseline` | cluster, columns, hero, icon, layer, media, sidebar, stack |
+| `data-align` | `start`, `center`, `end`, `stretch`, `baseline` | cluster, columns, grid, hero, icon, layer, media, sidebar, stack |
 | `data-align-self` | `start`, `center`, `end`, `stretch`, `baseline` | layer (> *) |
 | `data-alternate` | boolean | timeline |
 | `data-bleed` | boolean | breakout (> *) |
