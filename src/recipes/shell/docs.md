@@ -1,6 +1,6 @@
 ## When to use it
 
-Every page has a skeleton, and most of them are this one: a header, a footer that should sit at the bottom of the screen even when the page is short, and a middle that may have navigation down one side or related material down the other. Put the class on `body` and the landmarks do the rest. Three regions share a row once the container is about four times `data-width` plus the gaps; two regions need about half that.
+Every page has a skeleton, and most of them are this one: a header, a footer that should sit at the bottom of the screen even when the page is short, and a middle that may have navigation down one side or related material down the other. Put the class on `body` and the landmarks do the rest. The parts are spaced with a margin on each part after the first rather than with a gap on the column, so an element a browser extension appends to `body` earns no space of its own and the footer still ends the page. Three regions share a row once the container is about four times `data-width` plus the gaps; two regions need about half that.
 
 The body row's `nav` and `aside` can each carry `data-sticky` and stay in place while `main` scrolls past them. Each stops `--yeti-sticky-offset` from the top of the scrollport and keeps its own height instead of the row's, which is what lets it move at all.
 

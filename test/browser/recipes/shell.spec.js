@@ -67,9 +67,39 @@ test.describe('shell recipe', () => {
 		expect(shell.height).toBeCloseTo(height, 0);
 	});
 
+	test('an element an extension adds to the shell earns no space of its own', async ({ page }) => {
+		await open(page, 1000);
+		const before = await Promise.all(['#classed', '#c-header', '#c-main', '#c-footer'].map((s) => rect(page, s)));
+		// A shell on body is where extensions append their roots: a custom
+		// element after the footer and a div before the header, both empty.
+		await page.evaluate(() => {
+			const shell = document.getElementById('classed');
+			shell.append(document.createElement('grammarly-desktop-integration'));
+			shell.prepend(document.createElement('div'));
+			shell.append(document.createElement('div'));
+		});
+		const [shell, header, main, footer, body] = await Promise.all(['#classed', '#c-header', '#c-main', '#c-footer', '#classed > div:has(main)'].map((s) => rect(page, s)));
+		expect(header.top).toBeCloseTo(shell.top, 1);
+		expect(footer.bottom).toBeCloseTo(shell.bottom, 1);
+		// The parts keep their places and their spacing; the body row grows, so
+		// the footer is a gap below the row, not below main.
+		const gap = await token(page, '--yeti-space-md');
+		expect(main.top - header.bottom).toBeCloseTo(gap, 1);
+		expect(footer.top - body.bottom).toBeCloseTo(gap, 1);
+		expect(header.top).toBeCloseTo(before[1].top, 1);
+		expect(footer.bottom).toBeCloseTo(before[3].bottom, 1);
+	});
+
 	test('children have no margins', async ({ page }) => {
 		await open(page);
-		await expectNoChildMargins(page, '.shell');
+		// The shell spaces its parts with a top margin on each part after the
+		// first, by design; those are skipped here and asserted exactly below.
+		await expectNoChildMargins(page, '.shell', '[data-split], [data-center], .shell > :is(header, main, footer, div) ~ *');
+		const gap = await token(page, '--yeti-space-md');
+		const parts = await page.evaluate(() => [...document.querySelectorAll('#classed > *')].map((el) => { const cs = getComputedStyle(el); return [parseFloat(cs.marginTop), cs.marginRight, cs.marginBottom, cs.marginLeft]; }));
+		expect(parts[0][0]).toBe(0);
+		for (const p of parts.slice(1)) expect(p[0]).toBeCloseTo(gap, 1);
+		for (const p of parts) expect(p.slice(1)).toEqual(['0px', '0px', '0px']);
 		await expectNoChildMargins(page, '.shell > div:has(> :is(nav, main, aside))');
 	});
 
