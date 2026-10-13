@@ -52,19 +52,32 @@ test.describe('affix', () => {
 		expect(await px(page, '#phone', 'border-top-left-radius')).toBe(0);
 	});
 
-	test('a focused member draws its ring inside its own box, off the seam', async ({ page }) => {
+	test('a focused member draws its ring inside its own box, off the seam', async ({ page, browserName }) => {
 		await open(page);
 		// A text control matches :focus-visible however it is focused, so a
 		// click lands the ring too; the ring outside the box would cross the
 		// shared border onto the neighbour, with the neighbour showing between.
-		for (const id of ['#price', '#apply', '#code']) {
-			await page.focus(id);
-			await page.keyboard.press('Shift+Tab');
-			await page.keyboard.press('Tab');
-			expect(await page.evaluate(() => document.activeElement.id)).toBe(id.slice(1));
-			const [width, offset, color] = await Promise.all([px(page, id, 'outline-width'), px(page, id, 'outline-offset'), style(page, id, 'outline-color')]);
+		// The input is focused by script, which is enough for a text control.
+		// The button and the select are reached by Tab from the control before
+		// them, so that the engine's own keyboard heuristic draws the ring; a
+		// Shift+Tab round trip from the first control on the page leaves the
+		// document, and Firefox comes back in on a different element.
+		const focusColor = await page.evaluate(() => { const p = document.createElement('div'); p.style.color = 'var(--yeti-color-focus)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c; });
+		const reach = {
+			price: async () => page.focus('#price'),
+			// See the note in buttons.spec.js: headless WebKit does not include
+			// plain buttons in Tab order, so the button is checked in chromium
+			// and firefox.
+			apply: browserName === 'webkit' ? null : async () => { await page.focus('#price'); await page.keyboard.press('Tab'); },
+			code: async () => { await page.focus('#site'); await page.keyboard.press('Tab'); },
+		};
+		for (const [id, go] of Object.entries(reach)) {
+			if (!go) continue;
+			await go();
+			expect(await page.evaluate(() => document.activeElement.id), `${id} has focus`).toBe(id);
+			const [width, offset, color] = await Promise.all([px(page, `#${id}`, 'outline-width'), px(page, `#${id}`, 'outline-offset'), style(page, `#${id}`, 'outline-color')]);
 			expect(width, `${id} keeps a ring`).toBeGreaterThan(0);
-			expect(color, `${id} ring is the focus color`).toBe(await page.evaluate(() => { const p = document.createElement('div'); p.style.color = 'var(--yeti-color-focus)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c; }));
+			expect(color, `${id} ring is the focus color`).toBe(focusColor);
 			expect(offset + width, `${id} ring stays inside the border box`).toBeLessThanOrEqual(0);
 		}
 	});
