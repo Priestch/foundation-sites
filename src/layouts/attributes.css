@@ -160,6 +160,7 @@
 	[data-justify="evenly"] { --_yeti-justify: space-evenly; }
 
 	/* Container widths */
+	[data-threshold="3xs"] { --_yeti-threshold: var(--yeti-width-3xs); }
 	[data-threshold="2xs"] { --_yeti-threshold: var(--yeti-width-2xs); }
 	[data-threshold="xs"] { --_yeti-threshold: var(--yeti-width-xs); }
 	[data-threshold="sm"] { --_yeti-threshold: var(--yeti-width-sm); }
@@ -168,6 +169,7 @@
 	[data-threshold="xl"] { --_yeti-threshold: var(--yeti-width-xl); }
 	[data-threshold="2xl"] { --_yeti-threshold: var(--yeti-width-2xl); }
 
+	[data-width="3xs"] { --_yeti-width: var(--yeti-width-3xs); }
 	[data-width="2xs"] { --_yeti-width: var(--yeti-width-2xs); }
 	[data-width="xs"] { --_yeti-width: var(--yeti-width-xs); }
 	[data-width="sm"] { --_yeti-width: var(--yeti-width-sm); }
@@ -190,6 +192,7 @@
 	[data-height="full"] { --_yeti-height: var(--yeti-cover-height); }
 
 	[data-min="none"] { --_yeti-min: 0px; }
+	[data-min="3xs"] { --_yeti-min: var(--yeti-width-3xs); }
 	[data-min="2xs"] { --_yeti-min: var(--yeti-width-2xs); }
 	[data-min="xs"] { --_yeti-min: var(--yeti-width-xs); }
 	[data-min="sm"] { --_yeti-min: var(--yeti-width-sm); }
@@ -198,6 +201,7 @@
 	[data-min="xl"] { --_yeti-min: var(--yeti-width-xl); }
 	[data-min="2xl"] { --_yeti-min: var(--yeti-width-2xl); }
 
+	[data-max="3xs"] { --_yeti-max: var(--yeti-width-3xs); }
 	[data-max="2xs"] { --_yeti-max: var(--yeti-width-2xs); }
 	[data-max="xs"] { --_yeti-max: var(--yeti-width-xs); }
 	[data-max="sm"] { --_yeti-max: var(--yeti-width-sm); }
@@ -364,6 +368,9 @@
    why these are declared on container: the page that explains the marker is
    the page that explains the box it needs. */
 @layer yeti.utilities {
+	/* --yeti-width-3xs (8rem) */
+	@container (inline-size < 8rem) { [data-show="3xs"] { display: none; } }
+	@container (inline-size >= 8rem) { [data-hide="3xs"] { display: none; } }
 	/* --yeti-width-2xs (12rem) */
 	@container (inline-size < 12rem) { [data-show="2xs"] { display: none; } }
 	@container (inline-size >= 12rem) { [data-hide="2xs"] { display: none; } }

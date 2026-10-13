@@ -334,7 +334,7 @@ export const DEMO_WIDTHS = VOCABULARY.width;
 /**
  * The tokens after `demo` on an info string, as options for renderDemo.
  * sm, md, lg and xl are in both vocabularies, so an ambiguous one fills the
- * height while the height is empty and the width afterwards; 2xs, xs and 2xl
+ * height while the height is empty and the width afterwards; 3xs, 2xs, xs and 2xl
  * can only be widths. Every error names the file and the line, because that is
  * what an author needs to find the fence again.
  */

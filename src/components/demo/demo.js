@@ -76,7 +76,7 @@ function fill(figure) {
 
 // The width stops, in rem: the width tokens' defaults, the same thresholds
 // the bar's label flips at.
-const stopsRem = [['2xs', 12], ['xs', 16], ['sm', 24], ['md', 32], ['lg', 48], ['xl', 64], ['2xl', 80]];
+const stopsRem = [['3xs', 8], ['2xs', 12], ['xs', 16], ['sm', 24], ['md', 32], ['lg', 48], ['xl', 64], ['2xl', 80]];
 const stops = () => {
 	const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 	return stopsRem.map(([name, size]) => ({ name, px: size * rem }));

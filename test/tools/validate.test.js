@@ -944,10 +944,10 @@ test('container thresholds must be a width token default, a whole multiple of on
 		assert.deepEqual(run(componentTree({ 'src/components/tag/tag.css': css(ok) })).lines, [], ok);
 	}
 	assert.deepEqual(run(componentTree({ 'src/components/tag/tag.css': css('< 22rem') })).lines, [
-		'src/components/tag/tag.css:3: @container threshold "22rem" is not a width token\'s default (12, 16, 24, 32, 48, 64, 80rem), a whole multiple of one, or a calc( of one',
+		'src/components/tag/tag.css:3: @container threshold "22rem" is not a width token\'s default (8, 12, 16, 24, 32, 48, 64, 80rem), a whole multiple of one, or a calc( of one',
 	]);
 	assert.deepEqual(run(componentTree({ 'src/components/tag/tag.css': css('> 400px') })).lines, [
-		'src/components/tag/tag.css:3: @container threshold "400px" is not a width token\'s default (12, 16, 24, 32, 48, 64, 80rem), a whole multiple of one, or a calc( of one',
+		'src/components/tag/tag.css:3: @container threshold "400px" is not a width token\'s default (8, 12, 16, 24, 32, 48, 64, 80rem), a whole multiple of one, or a calc( of one',
 	]);
 });
 

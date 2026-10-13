@@ -23,6 +23,9 @@
 	   with align-items: stretch would. Thresholds are the width tokens'
 	   defaults, literal because a container condition cannot read a token. */
 	.cluster[data-threshold] { container-type: inline-size; }
+	@container (inline-size < 8rem) {
+		.cluster[data-threshold="3xs"] > * { flex-basis: 100%; }
+	}
 	@container (inline-size < 12rem) {
 		.cluster[data-threshold="2xs"] > * { flex-basis: 100%; }
 	}

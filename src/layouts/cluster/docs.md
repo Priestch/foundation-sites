@@ -26,7 +26,7 @@ A term and its value on one line, parted to the two ends, is a cluster with `dat
 
 ## A column when it is narrow
 
-`data-threshold` takes a width, `2xs` to `2xl`, and turns the cluster into a column of full-width items whenever its own width is below that size; at or above it, the cluster is the wrapping row again. It is for a row of actions or filters that sits in a sidebar or a stacked region, where a ragged wrap reads worse than a clean column.
+`data-threshold` takes a width, `3xs` to `2xl`, and turns the cluster into a column of full-width items whenever its own width is below that size; at or above it, the cluster is the wrapping row again. It is for a row of actions or filters that sits in a sidebar or a stacked region, where a ragged wrap reads worse than a clean column.
 
 ```html
 <div class="cluster" data-threshold="sm" data-gap="xs">

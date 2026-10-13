@@ -33,6 +33,14 @@ test.describe('grid', () => {
 		expect(await columns(page, '#loose')).toBe(1);
 	});
 
+	test('data-min="3xs" puts two abreast in a phone-wide container, where the default gives one', async ({ page }) => {
+		await open(page, 'grid', 320);
+		const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+		expect(await token(page, '--yeti-width-3xs')).toBeCloseTo(8 * rem, 1);
+		expect(await columns(page, '#tight')).toBe(2);
+		expect(await columns(page, '#grid')).toBe(1);
+	});
+
 	test('data-align places the cells on the cross axis; the default is stretch', async ({ page }) => {
 		await open(page, 'grid', 1000);
 		const [short, tall] = await rects(page, '#aligned > *');

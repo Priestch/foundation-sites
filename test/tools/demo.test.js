@@ -18,7 +18,7 @@ vm.runInContext(source, context);
 const { widthFromDrag, stepWidth, stopName } = context;
 
 const rem = 16;
-const stops = [['2xs', 12], ['xs', 16], ['sm', 24], ['md', 32], ['lg', 48], ['xl', 64], ['2xl', 80]].map(([name, r]) => ({ name, px: r * rem }));
+const stops = [['3xs', 8], ['2xs', 12], ['xs', 16], ['sm', 24], ['md', 32], ['lg', 48], ['xl', 64], ['2xl', 80]].map(([name, r]) => ({ name, px: r * rem }));
 const stopsPx = stops.map((s) => s.px);
 
 test('a drag adds the travel, or takes it away in a right-to-left page', () => {

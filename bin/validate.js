@@ -538,8 +538,9 @@ export function validateMotion(srcDir) {
 // The width tokens' defaults, in rem. Every container threshold in the
 // framework is one of these or a whole multiple of one, so every breakpoint is
 // a documented size rather than a number somebody liked. 12 is --yeti-width-2xs
-// and arrived with data-show and data-hide, which map all seven stops.
-const WIDTH_DEFAULTS = [12, 16, 24, 32, 48, 64, 80];
+// and arrived with data-show and data-hide, which map every stop; 8 is 3xs,
+// two of which fit a phone.
+const WIDTH_DEFAULTS = [8, 12, 16, 24, 32, 48, 64, 80];
 
 /**
  * Anchors are scoped so nested components never bind to an outer one's name, and
