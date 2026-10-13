@@ -86,8 +86,8 @@ Attributes that descendants carry, not the root.
 
 | Attribute | Type | Values | On | Description |
 | --- | --- | --- | --- | --- |
-| `data-show` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `*` | Show this element only while the nearest size container is this wide or wider. Below that width it is not rendered at all, and it is not in the accessibility tree either. |
-| `data-hide` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `*` | Hide this element once the nearest size container is this wide or wider. Below that width it is rendered as usual. |
+| `data-show` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `*` | Show this element only while the nearest size container is this wide or wider. Below that width it is not rendered at all, and it is not in the accessibility tree either. |
+| `data-hide` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `*` | Hide this element once the nearest size container is this wide or wider. Below that width it is rendered as usual. |
 
 </div>
 

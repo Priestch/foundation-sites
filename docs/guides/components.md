@@ -50,7 +50,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-inline` | boolean | field |
 | `data-justify` | `start`, `center`, `end`, `between`, `around`, `evenly` | pagination |
 | `data-lift` | `rise`, `scale` | lift |
-| `data-max` | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog |
+| `data-max` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog |
 | `data-nowrap` | boolean | table, table (th, td) |
 | `data-numbered` | boolean | toc |
 | `data-numeric` | boolean | table (*) |
@@ -74,12 +74,12 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-stretch` | boolean | card (a) |
 | `data-striped` | boolean | table |
 | `data-stylesheet` | string | demo |
-| `data-threshold` | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | card, nav, pagination |
+| `data-threshold` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | card, nav, pagination |
 | `data-track` | boolean | carousel (> *) |
 | `data-trigger` | `click`, `hover` | dropdown |
 | `data-variant` | `primary`, `secondary`, `success`, `warning`, `alert`, `danger`, `neutral`, `black`, `white` | alert, badge, button, card, field, nav, pagination, progress, spinner, tabs, toc |
 | `data-view` | boolean | enter |
-| `data-width` | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | demo |
+| `data-width` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | demo |
 
 </div>
 

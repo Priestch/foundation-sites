@@ -71,6 +71,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 | Token | Default | Description |
 | --- | --- | --- |
+| `--yeti-width-3xs` | `8rem` | The narrowest named width: two of them fit a phone, so a grid of links, badges or small pictures at data-min="3xs" is two abreast where 2xs gives one. |
 | `--yeti-width-2xs` | `12rem` | The narrowest named width: three of them fit a reading column, which sixteen rem does not. |
 | `--yeti-width-xs` | `16rem` | Smallest container measure; the grid's default minimum column width. |
 | `--yeti-width-sm` | `24rem` | The sidebar's default width. |

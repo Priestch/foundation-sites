@@ -69,7 +69,7 @@ Without the module the dialog still opens and Escape still closes it. What is lo
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-max` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. |
+| `data-max` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. |
 
 </div>
 

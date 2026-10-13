@@ -83,7 +83,7 @@ The one-class form does the same in one element: a wrapping row whose lines are 
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-threshold` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `lg` | The container width below which copy and figure become rows. |
+| `data-threshold` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `lg` | The container width below which copy and figure become rows. |
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `lg` | Space between copy and figure. |
 | `data-ratio` | enum | `1/1`, `4/3`, `3/2`, `16/9`, `21/9` | `4/3` | The figure's aspect ratio. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `center` | Vertical alignment of copy and figure when side by side. |
@@ -100,7 +100,7 @@ Attributes that descendants carry, not the root.
 
 | Attribute | Type | Values | On | Description |
 | --- | --- | --- | --- | --- |
-| `data-min` | enum | `none`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `> *` | The narrowest this child may get while the two share a row; the other gives way. Stacked, it has no effect. |
+| `data-min` | enum | `none`, `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `> *` | The narrowest this child may get while the two share a row; the other gives way. Stacked, it has no effect. |
 | `data-span` | enum | `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12` | `> *` | How many shares of the row this child takes; the other child's default is 1. |
 
 </div>

@@ -62,6 +62,8 @@ The fold is one attribute on one element; the nest is two wrappers. Use whicheve
 
 `data-rows` lines up neighbours' parts: with `data-rows="3"` each child is a subgrid of three rows, so every first part sits in row one, every second in row two, and so on, across the row. Give the number of parts the fullest child has; a child with fewer leaves its last rows empty. A card in a grid with rows keeps its picture and footer aligned with its neighbours' and does not switch to its side-by-side row. A child that spans rows cannot also be a size container, because a size container cannot be a subgrid; the card turns its own container off inside such a grid for this reason.
 
+`data-min="3xs"`, 8rem, is the stop for things that want two abreast on a phone: a column of links, a list of badges, a gallery of small pictures. The default `xs` gives a phone one column of them.
+
 `data-align` places the cells on the cross axis. Cells stretch to the height of their row by default, which is what a row of cards wants; `data-align="end"` sits a short cell on the row's bottom edge, so a column of links or badges under a taller neighbour lines up along the bottom, and `center` and `start` do what they say. The words are the same as on `columns` and `cluster`.
 
 ## Tracks
@@ -87,14 +89,14 @@ It is a grid and nothing else is. Foundation 6 readers: this replaces the Block 
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-min` | enum | `none`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `xs` | The narrowest a column may be. With none, only data-columns decides the count; none is meant to be paired with data-columns, and alone gives a single full-width column. |
+| `data-min` | enum | `none`, `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `xs` | The narrowest a column may be. With none, only data-columns decides the count; none is meant to be paired with data-columns, and alone gives a single full-width column. |
 | `data-columns` | enum | `1`, `2`, `3`, `4`, `5`, `6` |  | The most columns allowed. Fewer appear when the container cannot fit that many at data-min; with data-min="none" the count is exact. With data-fold, the count only ever halves. |
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `md` | Space between columns and rows. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `stretch` | Vertical alignment of the cells within their row: stretch fills the row, end sits a short cell on the row's bottom edge. |
 | `data-rows` | enum | `2`, `3`, `4`, `5`, `6` |  | Line up the parts of the children across each row: the value is how many rows each child spans, one per part. |
 | `data-fold` | boolean |  |  | Halve the column count as the grid narrows instead of stepping down one at a time. Needs data-columns 2, 4, or 6 and uses data-min as the width per column. data-min="none" has no meaning with a fold: the count needs a width per column. |
 | `data-tracks` | enum | `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12` |  | A fixed number of equal tracks that children are placed on with data-start and data-span, leaving any track nothing is placed on empty. Replaces the fitted columns, so data-min and data-columns have no effect alongside it, and it does not mix with data-fold. |
-| `data-threshold` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | With data-tracks: the grid's own width below which every child takes the whole row, in source order; at or above it, the placement applies. |
+| `data-threshold` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | With data-tracks: the grid's own width below which every child takes the whole row, in source order; at or above it, the placement applies. |
 
 </div>
 

@@ -55,6 +55,15 @@ A child with `data-span` takes that many shares of the row: `data-span="2"` besi
 </div>
 ```
 
+A child with `data-shrink` is only as wide as its content and its siblings share the rest: Foundation 6's `shrink` cell beside an `auto` one, except that nothing need say `auto`, because a plain child already fills what is left. Use it for an icon, a date or a button beside text. Below the threshold it stacks with the rest.
+
+```html
+<div class="columns">
+	<div data-shrink><button type="button">Add</button></div>
+	<p>What the button adds to.</p>
+</div>
+```
+
 ## Why this name
 
 Yeti names layouts for what they do to their children, and what this one gives them is columns; the switching is the mechanism, not the point. Foundation 6 readers will recognise the job of `.grid-x` with `medium-4` cells; the difference is that the threshold is a container width, so the same markup works in a sidebar and a full-width band.
@@ -65,7 +74,7 @@ Yeti names layouts for what they do to their children, and what this one gives t
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-threshold` | enum | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The container width below which the columns become rows. |
+| `data-threshold` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The container width below which the columns become rows. |
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `md` | Space between columns, and between rows once they stack. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `stretch` | Vertical alignment of the columns. |
 | `data-justify` | enum | `start`, `center`, `end`, `between`, `around`, `evenly` | `start` | Distribution of the columns along the row when they do not fill it. |
@@ -82,6 +91,7 @@ Attributes that descendants carry, not the root.
 | Attribute | Type | Values | On | Description |
 | --- | --- | --- | --- | --- |
 | `data-span` | enum | `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12` | `> *` | How many shares of the row the child takes: 2 is twice a plain sibling. Below the threshold it stacks like the rest. |
+| `data-shrink` | boolean |  | `> *` | The child is only as wide as its content and its siblings share the rest: an icon or a button beside text. Below the threshold it stacks like the rest. |
 
 </div>
 
@@ -89,6 +99,7 @@ Attributes that descendants carry, not the root.
 
 - `> *`: at least 2. The columns. Each gets an equal share of the row.
 - `> [data-span]`: any number. A child that takes several shares of the row: data-span="2" is twice a plain sibling. Below the threshold it stacks like the rest.
+- `> [data-shrink]`: any number. A child that is only as wide as its content, an icon or a button beside text; its siblings share the rest. Below the threshold it stacks like the rest.
 
 ## Tokens
 
