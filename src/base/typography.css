@@ -23,7 +23,8 @@
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		font-weight: var(--yeti-weight-bold);
+		font-family: var(--yeti-font-heading);
+		font-weight: var(--yeti-weight-heading);
 		line-height: var(--yeti-leading-tight);
 		font-stretch: var(--yeti-stretch-heading);
 		letter-spacing: var(--yeti-tracking-heading);

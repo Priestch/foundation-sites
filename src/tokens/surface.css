@@ -9,6 +9,9 @@
 		/* Headings and strong text. Kept apart from strong so a theme can set
 		   labels and buttons at 600 and leave display text at 700, or the reverse. */
 		--yeti-weight-bold: 700;
+		/* The headings' own weight, bold until a theme says otherwise: a display
+		   face often wants 500 or 800 where strong text stays at 700. */
+		--yeti-weight-heading: var(--yeti-weight-bold);
 
 		/* Shadows are one color and two offsets, so a theme can retune either. */
 		--yeti-shadow-color: light-dark(oklch(0 0 0 / 0.14), oklch(0 0 0 / 0.55));

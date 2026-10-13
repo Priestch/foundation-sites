@@ -41,12 +41,16 @@
 	/* --yeti-font-sans: system-ui, sans-serif; */
 	/* The code face. */
 	/* --yeti-font-mono: ui-monospace, monospace; */
+	/* The heading face, if the site has a second family. */
+	/* --yeti-font-heading: var(--yeti-font-sans); */
 	/* Body text. */
 	/* --yeti-weight-normal: 400; */
 	/* Labels, table headers and buttons. */
 	/* --yeti-weight-strong: 600; */
 	/* Headings and strong text. */
 	/* --yeti-weight-bold: 700; */
+	/* The headings on their own, if the display face wants another weight. */
+	/* --yeti-weight-heading: var(--yeti-weight-bold); */
 	/* The width of the body text, for a variable font: a keyword or a percentage. */
 	/* --yeti-stretch-text: normal; */
 	/* The width of the headings. */

@@ -61,5 +61,9 @@
 
 		--yeti-font-sans: system-ui, sans-serif;
 		--yeti-font-mono: ui-monospace, monospace;
+		/* The heading face. The text face until a theme with a second family
+		   says otherwise; a site with a display face sets this one token instead
+		   of overriding the six heading selectors. */
+		--yeti-font-heading: var(--yeti-font-sans);
 	}
 }

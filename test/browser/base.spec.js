@@ -21,6 +21,17 @@ test.describe('base typography and prose', () => {
 		expect(await style(page, '#h1', 'fontWeight')).toBe(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--yeti-weight-bold').trim()));
 	});
 
+	test('headings read their own face and weight tokens, which default to the text', async ({ page }) => {
+		expect(await style(page, '#h1', 'fontFamily')).toBe(await style(page, 'p', 'fontFamily'));
+		await page.addStyleTag({ content: ':root { --yeti-font-heading: serif; --yeti-weight-heading: 500; }' });
+		expect(await style(page, '#h1', 'fontFamily')).toBe('serif');
+		expect(await style(page, '#h2', 'fontFamily')).toBe('serif');
+		expect(await style(page, '#h1', 'fontWeight')).toBe('500');
+		// The text and strong text keep theirs.
+		expect(await style(page, 'p', 'fontFamily')).not.toBe('serif');
+		expect(await style(page, '#strong', 'fontWeight')).toBe('700');
+	});
+
 	test('small lettering reads its own width axis', async ({ page }) => {
 		expect(await style(page, '#caption', 'font-stretch')).toBe('100%');
 		await page.addStyleTag({ content: ':root { --yeti-stretch-small: 75%; }' });

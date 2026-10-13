@@ -50,7 +50,7 @@ The font family, the text color and the page background are set on `html`; the s
 
 Prose is also held to a measure. `p`, `li`, `dd`, `dt`, `blockquote`, `figcaption` and every heading get `max-inline-size: var(--yeti-measure)`, 70ch by default. `pre` and `table` are not in that list, because code and data are read by scanning across rather than by returning to a left margin.
 
-**Tokens:** `--yeti-font-sans`, `--yeti-color-text`, `--yeti-color-surface`, `--yeti-text-md`, `--yeti-leading-md`, `--yeti-text-sm`, `--yeti-text-lg`, `--yeti-text-xl`, `--yeti-text-2xl`, `--yeti-text-3xl`, `--yeti-weight-bold`, `--yeti-leading-tight`, `--yeti-measure`, `--yeti-color-primary`, `--yeti-color-primary-strong`, `--yeti-color-primary-subtle` (the selection highlight).
+**Tokens:** `--yeti-font-sans`, `--yeti-font-heading`, `--yeti-color-text`, `--yeti-color-surface`, `--yeti-text-md`, `--yeti-leading-md`, `--yeti-text-sm`, `--yeti-text-lg`, `--yeti-text-xl`, `--yeti-text-2xl`, `--yeti-text-3xl`, `--yeti-weight-heading`, `--yeti-weight-bold`, `--yeti-leading-tight`, `--yeti-measure`, `--yeti-color-primary`, `--yeti-color-primary-strong`, `--yeti-color-primary-subtle` (the selection highlight).
 
 ## Flow
 
