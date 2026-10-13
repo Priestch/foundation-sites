@@ -5,28 +5,40 @@ description: "Seventeen intrinsic layouts that respond to their container, one a
 nav_group: "Guides"
 nav_order: 3
 ---
+| `data-shrink` | boolean | columns (> *) |
 
 # Layouts
+| `data-shrink` | boolean | columns (> *) |
 
 <p class="lede">Layouts are Yeti's grammar. A layout is a class that arranges its own children and owns the space between them. Children never carry their own margins; the layout that holds them decides the gap.</p>
+| `data-shrink` | boolean | columns (> *) |
 
 ## Three tools, in this order
+| `data-shrink` | boolean | columns (> *) |
 
 Yeti has three ways to make a page respond to its context, and they apply in a fixed order.
+| `data-shrink` | boolean | columns (> *) |
 
 Intrinsic layouts come first. The seventeen on this page arrange their children by reading their own width, not the viewport's. A `sidebar` drops to a stack when it runs low on room, wherever on the page it sits and whatever else is happening at the edge of the browser window. Reach for one of these before reaching for anything else.
+| `data-shrink` | boolean | columns (> *) |
 
 Container queries come second. They let a single component change shape based on the width of the box that holds it rather than the window: a card that goes from one column to two once its own container is wide enough, in a sidebar or in a full-width section alike. These arrive in phase 3. A Yeti layout may query itself and change its children, never itself; the thresholds are the width tokens' defaults, written as numbers because a container condition cannot read a token. When something must change its own shape, put it in a `container` and query that.
+| `data-shrink` | boolean | columns (> *) |
 
 Media queries come last, if at all. They read the viewport itself, or a visitor's stated preferences: color scheme, reduced motion, print. Those are the right job for a media query. Layout is not, because a rule that switches at a viewport width breaks the moment its element moves into a narrower or wider container than the one it was tuned for.
+| `data-shrink` | boolean | columns (> *) |
 
 Nothing under `src/layouts/` contains a media query, and the validator refuses one there.
+| `data-shrink` | boolean | columns (> *) |
 
 ## Why columns has a threshold, not a breakpoint
+| `data-shrink` | boolean | columns (> *) |
 
 `columns` takes a `data-threshold`, not a breakpoint, and the difference shows as soon as the same markup moves.
+| `data-shrink` | boolean | columns (> *) |
 
 Put a `columns` inside a `sidebar`'s content side, and it never sees the full viewport: the sidebar has already taken some of the width for itself. The columns still switch to rows at their own threshold, measured against their own container, so they can be stacked as rows while the page around them is wide open. Put the identical `columns` markup in a full-width section instead, and it switches at a much wider viewport, because its container is wider. Same markup, same threshold, two different viewport widths, because a threshold reads the box the element is in, not the window.
+| `data-shrink` | boolean | columns (> *) |
 
 ```html demo md lg
 <div class="sidebar" data-side="start" data-width="xs">
@@ -45,8 +57,10 @@ Put a `columns` inside a `sidebar`'s content side, and it never sees the full vi
 	</div>
 </div>
 ```
+| `data-shrink` | boolean | columns (> *) |
 
 Four across, two by two, one is the same question with an extra step, and the answer is `grid` with `data-fold`, not a longer chain of thresholds: `data-min="xs" data-columns="4" data-fold` halves the column count as its own content box narrows — four, then two, then one — and never passes through three. The no-query alternative is two `columns` nested inside a third:
+| `data-shrink` | boolean | columns (> *) |
 
 ```html demo sm md
 <div class="columns" data-threshold="md">
@@ -54,18 +68,25 @@ Four across, two by two, one is the same question with an extra step, and the an
 	<div class="columns" data-threshold="sm"><div>Three</div><div>Four</div></div>
 </div>
 ```
+| `data-shrink` | boolean | columns (> *) |
 
 When the cells are not alike and their places are chosen, as on an exhibition wall with a deliberate empty bay, `grid` with `data-tracks` gives a fixed number of tracks and each child a `data-start` line and a `data-span`, and still falls to one column in source order below its `data-threshold`.
+| `data-shrink` | boolean | columns (> *) |
 
 The [responsive guide](responsive.md) takes this idea through the whole framework.
+| `data-shrink` | boolean | columns (> *) |
 
 ## The vocabulary
+| `data-shrink` | boolean | columns (> *) |
 
 Every layout is configured with a small set of `data-*` attributes, drawn from a shared list of values.
+| `data-shrink` | boolean | columns (> *) |
 
 <!-- yeti:attributes:start -->
+| `data-shrink` | boolean | columns (> *) |
 
 <div class="scroller" role="region" aria-label="Layout attributes" tabindex="0" markdown="1">
+| `data-shrink` | boolean | columns (> *) |
 
 | Attribute | Values | Read by |
 | --- | --- | --- |
@@ -99,26 +120,37 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 | `data-surface` | `base`, `raised`, `sunken` | box |
 | `data-threshold` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | columns, hero |
 | `data-width` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | media, scroller, shell, sidebar |
+| `data-shrink` | boolean | columns (> *) |
 
 </div>
+| `data-shrink` | boolean | columns (> *) |
 
 <!-- yeti:attributes:end -->
+| `data-shrink` | boolean | columns (> *) |
 
 A name in parentheses is the descendant that carries the attribute, not the layout itself: `layer (> *)` means a child of a `layer`. This table is generated from the manifests by `npm run docs`; the paragraphs around it are not.
+| `data-shrink` | boolean | columns (> *) |
 
 Three names in the table are not layout at all and work on any element: `data-paint` and `data-text`, which the [color guide](color.md) covers, and `data-border`, which draws the border width in the border color. They are listed under the layout that introduced them, with `(*)` for where they apply; a fourth, `data-numeric`, which lines up digits with tabular figures, is in the [components guide](components.md)'s table. On a control the plain border color outranks the variant's, so `data-border` belongs on surfaces.
+| `data-shrink` | boolean | columns (> *) |
 
 For the sizing attributes the mapping rule is always the same: a value is a token suffix. `data-gap="lg"` reads `--yeti-space-lg`; `data-width="sm"` reads `--yeti-width-sm`. The attribute names the property to set; the value names the step on Yeti's scale to set it to. The rest — `data-align`, `data-justify`, `data-ratio`, `data-columns`, `data-side` — name a behaviour rather than a token; `attributes.css` maps each value to the CSS keyword it means.
+| `data-shrink` | boolean | columns (> *) |
 
 Gap alone also takes a fluid pair. `data-gap="sm-lg"` does not jump between the two: it runs from the `sm` stop at the narrow end of the viewport to the `lg` stop at the wide end, the same way the type scale itself is fluid. `none` never anchors a pair, so any smaller of the remaining seven sized stops can pair with any larger one, which is what makes twenty-one pairs out of seven.
+| `data-shrink` | boolean | columns (> *) |
 
 `data-sticky` is the odd one in the table. Every other name there sets a private property for a layout to read; this one sets two properties on the child itself, `position: sticky` and the offset. A third is needed in a row and only in a row: an item stretched to the full height of its row has nowhere left to move and never sticks, so `sidebar` and the `shell`'s body row take their sticky children out of that stretch in their own stylesheets. A `stack` stretches sideways instead, which costs a sticky child nothing, so a sticky child of a stack keeps the full width of the column. A sticky child also takes a stacking level above the page's own and above a card's controls, so it paints over the content that scrolls under it. A second token, `--yeti-scroll-padding`, sets the root's `scroll-padding-block-start` so a fragment jump or a focused control stops below the bar rather than behind it; it defaults to the sticky offset, so a page with a bar sets one number, and can be set alone for more room.
+| `data-shrink` | boolean | columns (> *) |
 
 Type can answer a container too. The [billboard](../billboard.md) utility's `data-fit` names a pair of type steps and clamps a font size between them, reading `cqi` in between, so a headline is sized by the column it is in rather than by the window. It needs a size container above it, which is what `container` is for.
+| `data-shrink` | boolean | columns (> *) |
 
 Two more names in the table belong to a container rather than to a layout. `data-show` and `data-hide` take a width from the same scale and mean the same direction as `data-threshold`: `data-show="md"` shows the element from `md` up, `data-hide="md"` removes it from `md` up. They measure the nearest size container, so the same markup decides differently in a sidebar and across a page, and outside a size container they do nothing at all. They are the last tool to reach for, not the first — a component that can change shape should — and the [visibility guide](visibility.md) says when the trade is worth it.
+| `data-shrink` | boolean | columns (> *) |
 
 ## The seventeen
+| `data-shrink` | boolean | columns (> *) |
 
 - [stack](../stack.md): stacks its children vertically with one consistent gap between them.
 - [cluster](../cluster.md): lays its children out in a row that wraps, keeping one gap between them on both axes.
@@ -137,10 +169,13 @@ Two more names in the table belong to a container rather than to a layout. `data
 - [layer](../layer.md): stacks its children in one box, later ones on top, with the box as tall as the tallest of them.
 - [container](../container.md): makes its box the thing a container query measures, so what is inside can respond to its width instead of the viewport's.
 - [timeline](../timeline.md): lays its entries along a rail with a marker each, on one side, or on alternate sides of a centred rail when it is wide.
+| `data-shrink` | boolean | columns (> *) |
 
 ## Fine-tuning spacing
+| `data-shrink` | boolean | columns (> *) |
 
 Most of what version 6's margin and padding classes did was adjust a layout that already worked, and Yeti keeps those adjustments on the layout. Padding is a `box`: any element takes the class, `data-gap` pads all four sides, and `data-gap-inline` or `data-gap-block` pads one axis over that. Space between siblings is a `stack`'s gap, and the one child that needs more or less carries `data-space` with the gap it wants before it. There is no margin class, because a margin on an element is a decision the layout can no longer see; the same words, on the layout or its child, keep the rule and the exception in one place. And room bigger than the scale is not padding at all: a band that claims height is a `cover` with `data-height`, from a stop of the height scale to half or all of the viewport, with its content marked `data-center`. The height is a minimum, so the band grows if the content is taller.
+| `data-shrink` | boolean | columns (> *) |
 
 ```html demo md
 <div class="stack" data-gap="sm">
@@ -151,12 +186,16 @@ Most of what version 6's margin and padding classes did was adjust a layout that
 	<div class="box" data-gap="sm" data-gap-inline="xl" data-surface="raised" data-border>A box padded a little top and bottom and a lot at the sides.</div>
 </div>
 ```
+| `data-shrink` | boolean | columns (> *) |
 
 ## Composing
+| `data-shrink` | boolean | columns (> *) |
 
 None of these layouts do much alone. Nest a few and they add up to a page.
+| `data-shrink` | boolean | columns (> *) |
 
 A card: a bordered `box` holds a `stack`, which separates a cropped photo, a heading, and a paragraph at its own gap. The last child is a `cluster` of links carrying `data-split`, so it settles at the bottom of the card once the stack has more height than its content needs.
+| `data-shrink` | boolean | columns (> *) |
 
 ```html demo lg sm both
 <div class="box" data-border>
@@ -173,10 +212,13 @@ A card: a bordered `box` holds a `stack`, which separates a cropped photo, a hea
 	</div>
 </div>
 ```
+| `data-shrink` | boolean | columns (> *) |
 
 **The most common compositions ship as recipes, one class each, and every recipe page shows the same result built from primitives so nothing is hidden:** [shell](../shell.md) (page skeleton with a sticky footer), [media](../media.md) (a figure beside text), [hero](../hero.md) (a split opening band). `dist/yeti.css` includes the recipes; a project that composes its own can import the `dist/css/` files it wants and leave `dist/css/recipes/` out.
+| `data-shrink` | boolean | columns (> *) |
 
 A recipe still nests inside a primitive like anything else: a `grid` of three `media` items, each a figure and a caption.
+| `data-shrink` | boolean | columns (> *) |
 
 ```html demo lg xl
 <ul class="grid" data-min="sm" data-columns="3" role="list">
@@ -203,7 +245,9 @@ A recipe still nests inside a primitive like anything else: a `grid` of three `m
 	</li>
 </ul>
 ```
+| `data-shrink` | boolean | columns (> *) |
 
 ## Coming from version 6
+| `data-shrink` | boolean | columns (> *) |
 
 The biggest habit to unlearn is thinking in breakpoints at all: Foundation 6's grid classes each encoded a viewport width chosen ahead of time, while Yeti's layouts read the width of the box they are placed in. The full map from every version 6 class to its Yeti equivalent is in the [migration guide](migrating.md).

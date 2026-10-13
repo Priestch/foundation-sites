@@ -23,6 +23,15 @@ A child with `data-span` takes that many shares of the row: `data-span="2"` besi
 </div>
 ```
 
+A child with `data-shrink` is only as wide as its content and its siblings share the rest: Foundation 6's `shrink` cell beside an `auto` one, except that nothing need say `auto`, because a plain child already fills what is left. Use it for an icon, a date or a button beside text. Below the threshold it stacks with the rest.
+
+```html
+<div class="columns">
+	<div data-shrink><button type="button">Add</button></div>
+	<p>What the button adds to.</p>
+</div>
+```
+
 ## Why this name
 
 Yeti names layouts for what they do to their children, and what this one gives them is columns; the switching is the mechanism, not the point. Foundation 6 readers will recognise the job of `.grid-x` with `medium-4` cells; the difference is that the threshold is a container width, so the same markup works in a sidebar and a full-width band.

@@ -41,6 +41,21 @@ test.describe('columns', () => {
 		expect((await rect(page, '#s-main')).width).toBeCloseTo(400, 1);
 	});
 
+	test('data-shrink sits a child at its content width and the rest fill the row; below the threshold it stacks', async ({ page }) => {
+		await open(page, 'columns', 1000);
+		const [icon, text] = await Promise.all([rect(page, '#k-icon'), rect(page, '#k-text')]);
+		const gap = await token(page, '--yeti-space-md');
+		expect(icon.top).toBeCloseTo(text.top, 1);
+		// Content width: the word plus padding, nowhere near a half share.
+		expect(icon.width).toBeLessThan(120);
+		expect(text.left).toBeCloseTo(icon.right + gap, 1);
+		expect(text.right).toBeCloseTo(1000, 1);
+		await stage(page, 400);
+		const [i2, t2] = await Promise.all([rect(page, '#k-icon'), rect(page, '#k-text')]);
+		expect(i2.width).toBeCloseTo(400, 1);
+		expect(t2.top).toBeGreaterThanOrEqual(i2.bottom);
+	});
+
 	test('children have no margins', async ({ page }) => {
 		await open(page, 'columns');
 		await expectNoChildMargins(page, '.columns');

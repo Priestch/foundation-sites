@@ -21,6 +21,17 @@
 	/* data-span: a child's share of the row, as a multiple of its siblings'. */
 	.columns > [data-span] { flex-grow: var(--_yeti-span); }
 
+	/* data-shrink: a child at its content width, the rest sharing what is
+	   left. The basis is the shared one, zero above the threshold, and the
+	   minimum is the content, so above the threshold the child is exactly as
+	   wide as what it holds; below it the basis is the row again and it
+	   stacks with its siblings. fit-content, not max-content, so a long label
+	   stops at the row instead of overflowing it. */
+	.columns > [data-shrink] {
+		flex-grow: 0;
+		min-inline-size: fit-content;
+	}
+
 	/* data-columns: the most on one row; every later child takes a full one.
 	   1 and 6 are legal and dull: 1 is a stack, 6 leaves the seventh alone. */
 	.columns[data-columns="1"] > :nth-child(n + 2),

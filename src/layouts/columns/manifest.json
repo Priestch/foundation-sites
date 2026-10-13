@@ -15,10 +15,12 @@
   "classes": [],
   "children": [
     { "selector": "> *", "min": 2, "max": null, "description": "The columns. Each gets an equal share of the row." },
-    { "selector": "> [data-span]", "min": 0, "max": null, "description": "A child that takes several shares of the row: data-span=\"2\" is twice a plain sibling. Below the threshold it stacks like the rest." }
+    { "selector": "> [data-span]", "min": 0, "max": null, "description": "A child that takes several shares of the row: data-span=\"2\" is twice a plain sibling. Below the threshold it stacks like the rest." },
+    { "selector": "> [data-shrink]", "min": 0, "max": null, "description": "A child that is only as wide as its content, an icon or a button beside text; its siblings share the rest. Below the threshold it stacks like the rest." }
   ],
   "markers": [
-    { "name": "data-span", "type": "enum", "vocabulary": "span", "on": "> *", "description": "How many shares of the row the child takes: 2 is twice a plain sibling. Below the threshold it stacks like the rest." }
+    { "name": "data-span", "type": "enum", "vocabulary": "span", "on": "> *", "description": "How many shares of the row the child takes: 2 is twice a plain sibling. Below the threshold it stacks like the rest." },
+    { "name": "data-shrink", "type": "boolean", "on": "> *", "description": "The child is only as wide as its content and its siblings share the rest: an icon or a button beside text. Below the threshold it stacks like the rest." }
   ],
   "tokens": [
     { "name": "--yeti-width-md", "public": true, "description": "The default threshold." },
