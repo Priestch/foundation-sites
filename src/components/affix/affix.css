@@ -32,8 +32,14 @@
 		border-start-end-radius: 0;
 		border-end-end-radius: 0;
 	}
-	.affix > :focus-visible {
+	/* A focused member rises above its neighbours and draws its ring inside
+	   its own box. The base ring sits outside the box, which here would
+	   cross the shared border onto the neighbour with a sliver of the
+	   neighbour showing between; and a text control matches :focus-visible
+	   on a click as well as on a Tab, so every click on the field showed it. */
+	.affix > :is(:focus-visible, :has(> input:focus-visible)) {
 		position: relative;
 		z-index: 1;
+		outline-offset: -2px;
 	}
 }

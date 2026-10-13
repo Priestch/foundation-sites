@@ -24,9 +24,12 @@
 		border-start-end-radius: 0;
 		border-end-end-radius: 0;
 	}
-	/* A focused member rises above its neighbours so its ring is whole. */
+	/* A focused member rises above its neighbours so its ring is whole, and
+	   draws the ring inside its own box, where it cannot cross the shared
+	   border onto the members either side. */
 	.buttons[data-affix] > .button:is(:focus-visible, :has(> input:focus-visible)) {
 		position: relative;
 		z-index: 1;
+		outline-offset: -2px;
 	}
 }

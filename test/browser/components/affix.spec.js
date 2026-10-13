@@ -52,6 +52,23 @@ test.describe('affix', () => {
 		expect(await px(page, '#phone', 'border-top-left-radius')).toBe(0);
 	});
 
+	test('a focused member draws its ring inside its own box, off the seam', async ({ page }) => {
+		await open(page);
+		// A text control matches :focus-visible however it is focused, so a
+		// click lands the ring too; the ring outside the box would cross the
+		// shared border onto the neighbour, with the neighbour showing between.
+		for (const id of ['#price', '#apply', '#code']) {
+			await page.focus(id);
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => document.activeElement.id)).toBe(id.slice(1));
+			const [width, offset, color] = await Promise.all([px(page, id, 'outline-width'), px(page, id, 'outline-offset'), style(page, id, 'outline-color')]);
+			expect(width, `${id} keeps a ring`).toBeGreaterThan(0);
+			expect(color, `${id} ring is the focus color`).toBe(await page.evaluate(() => { const p = document.createElement('div'); p.style.color = 'var(--yeti-color-focus)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c; }));
+			expect(offset + width, `${id} ring stays inside the border box`).toBeLessThanOrEqual(0);
+		}
+	});
+
 	test('has no accessibility violations', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);

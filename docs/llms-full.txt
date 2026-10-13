@@ -1083,7 +1083,7 @@ A price with its currency, a distance with its unit, a search box with its butto
 
 ### How it works
 
-A flex row. Every control grows; a `span` becomes a labelled box on the sunken surface; a `button` keeps its own colors. Inner corners are squared and each border overlaps the next by one width, so the seam is a single line. The group sets no size of its own: it reads the field around it, so `data-size` on the field scales the whole row.
+A flex row. Every control grows; a `span` becomes a labelled box on the sunken surface; a `button` keeps its own colors. Inner corners are squared and each border overlaps the next by one width, so the seam is a single line. The group sets no size of its own: it reads the field around it, so `data-size` on the field scales the whole row. A focused member rises above its neighbours and draws its focus ring inside its own border rather than outside it, where the ring would cross the seam onto the next member; a text control shows that ring on a click as well as on a Tab, by the browser's own rule for `:focus-visible`.
 
 ```html
 <div class="field" data-size="lg">
@@ -1381,7 +1381,7 @@ Two or more buttons that belong together: a form's submit and cancel, a set of v
 
 ### How it works
 
-Loose is a wrapping flex row at `data-gap`. `data-affix` removes the gap, squares the inner corners, and overlaps each border with the next so the seam is one line wide. A focused member is lifted above its neighbours so its focus ring is not covered. An affixed group is one control, so it never wraps onto a second row: short of room, its members narrow and their labels wrap inside them.
+Loose is a wrapping flex row at `data-gap`. `data-affix` removes the gap, squares the inner corners, and overlaps each border with the next so the seam is one line wide. A focused member is lifted above its neighbours and draws its focus ring inside its own border, where it cannot cross the seam onto the members either side. An affixed group is one control, so it never wraps onto a second row: short of room, its members narrow and their labels wrap inside them.
 
 ```html
 <div class="buttons" role="group" aria-label="Form actions">

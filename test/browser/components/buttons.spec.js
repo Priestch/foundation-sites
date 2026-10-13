@@ -37,6 +37,10 @@ test.describe('buttons', () => {
 		await page.keyboard.press('Tab');
 		expect(await page.evaluate(() => document.activeElement.id)).toBe('a2');
 		expect(await style(page, '#a2', 'z-index')).toBe('1');
+		// Its ring is drawn inside its own box: outside, it would cross the
+		// shared border onto both neighbours.
+		expect(await px(page, '#a2', 'outline-width')).toBeGreaterThan(0);
+		expect(await px(page, '#a2', 'outline-offset') + await px(page, '#a2', 'outline-width')).toBeLessThanOrEqual(0);
 	});
 
 	test('a label.button over a radio is pressed while checked, as a pressed button is', async ({ page }) => {
