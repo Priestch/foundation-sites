@@ -77,7 +77,7 @@ Sizes are named `xs sm md lg xl 2xl 3xl`, with `md` as the base step, and the sa
 
 ## Fonts
 
-Yeti ships no web fonts. `--yeti-font-sans` and `--yeti-font-mono` default to the system stacks; set them to yours and load the font files however you prefer.
+Yeti ships no web fonts. `--yeti-font-sans` and `--yeti-font-mono` default to the system stacks; set them to yours and load the font files however you prefer. A site with a second family for its headings sets `--yeti-font-heading`, which every heading level reads and which is the text face until then; `--yeti-weight-heading` is the headings' weight on their own, `--yeti-weight-bold` until a display face asks for 500 or 800.
 
 A variable font with a width axis has three more knobs: `--yeti-stretch-text`, `--yeti-stretch-heading`, and `--yeti-stretch-small` (captions, small print, a nav's links, a badge), `normal` by default, each a keyword or a percentage. Narrow text and a wide title in one family is one line each.
 

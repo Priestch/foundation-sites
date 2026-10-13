@@ -130,6 +130,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | --- | --- | --- |
 | `--yeti-font-sans` | `system-ui, sans-serif` | Default text face. Yeti ships no web fonts; override this to use yours. |
 | `--yeti-font-mono` | `ui-monospace, monospace` | Code face. |
+| `--yeti-font-heading` | `var(--yeti-font-sans)` | Heading face, every level. The text face until a theme sets a second family; one token instead of six selector overrides. |
 | `--yeti-stretch-text` | `normal` | font-stretch of the body: the width axis of a variable font, as a keyword or a percentage. |
 | `--yeti-stretch-heading` | `normal` | font-stretch of the headings, set apart from the text so a theme can pair narrow text with a wide title in one family. |
 | `--yeti-stretch-small` | `var(--yeti-stretch-text)` | font-stretch of small lettering: captions, small print, a nav's links, a badge. The text width unless a theme narrows it. |
@@ -332,7 +333,8 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | Token | Default | Description |
 | --- | --- | --- |
 | `--yeti-weight-normal` | `400` | Body weight. |
-| `--yeti-weight-bold` | `700` | Headings, th, strong and b. Separate from --yeti-weight-strong so display text and control labels can be tuned apart. |
+| `--yeti-weight-bold` | `700` | th, strong, b and, through --yeti-weight-heading, the headings. Separate from --yeti-weight-strong so display text and control labels can be tuned apart. |
+| `--yeti-weight-heading` | `var(--yeti-weight-bold)` | The headings' own weight, bold unless a theme sets it: a display face often wants 500 or 800 where strong text stays at 700. |
 | `--yeti-weight-strong` | `600` | Labels, headers, buttons. |
 
 </div>
