@@ -68,7 +68,7 @@ Nicole Sullivan named the media object in 2010 and the name stuck across a decad
 | --- | --- | --- | --- | --- |
 | `data-width` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `xs` | The figure's preferred width. |
 | `data-ratio` | enum | `1/1`, `4/3`, `3/2`, `16/9`, `21/9` | `1/1` | The figure's aspect ratio. |
-| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `md` | Space between the figure and the text. |
+| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `md` | Space between the figure and the text. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `stretch` | Vertical alignment of figure and text when side by side. |
 | `data-max` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` |  | The widest the text may run side by side; the figure takes the rest of a wide row. data-width still sets where the two stack. |
 | `data-side` | enum | `start`, `end` |  | Put the figure at the start or the end while side by side, regardless of source order. Stacked, the source order holds. |

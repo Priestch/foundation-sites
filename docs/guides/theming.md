@@ -73,7 +73,7 @@ Type and space share one geometric scale. Two knobs cover most needs:
 
 Left alone, both are fluid: the base grows from `--yeti-base-min` at `--yeti-viewport-min` to `--yeti-base-max` at `--yeti-viewport-max`, and the ratio from `--yeti-ratio-min` to `--yeti-ratio-max`, so headings open up more than body text on wide screens. Set the six `-min`, `-max`, and `-viewport-` tokens to shape that, or the two knobs above to switch it off.
 
-Sizes are named `xs sm md lg xl 2xl 3xl`, with `md` as the base step, and the same names mean the same step for space (`--yeti-space-lg`), text (`--yeti-text-lg`), and radius (`--yeti-radius-lg`). Each space token also has a `-static` twin for the rare gap that must not scale.
+Sizes are named `xs sm md lg xl 2xl 3xl`, with `md` as the base step, and up to `lg` the same names mean the same step for space (`--yeti-space-lg`), text (`--yeti-text-lg`), and radius (`--yeti-radius-lg`). Above `lg` space leaves the type ratio behind: a ratio tuned for headings reaches a big heading in four steps and no further, and the room between sections wants to be many times the body size. So each space stop from `xl` up is `--yeti-space-ratio` times the one before, twice by default, which makes `xl` two bodies, `2xl` four, `3xl` eight and `4xl` sixteen, about 36, 72, 144 and 288 pixels on a wide screen. Set the ratio to tighten or loosen every section of a site at once, keeping it above `--yeti-ratio-max` so `xl` stays larger than `lg`; set one stop outright, `--yeti-space-3xl: 10rem`, to move one word alone. Each space token also has a `-static` twin for the rare gap that must not scale.
 
 ## Fonts
 

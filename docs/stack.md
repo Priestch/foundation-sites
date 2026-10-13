@@ -81,7 +81,7 @@ No other word says it as plainly: things stacked, one on another. Foundation 6 h
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `md` | Space between children. A pair such as sm-lg grows fluidly from the first stop to the second. |
+| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `md` | Space between children. A pair such as sm-lg grows fluidly from the first stop to the second. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `stretch` | Horizontal alignment of the children. |
 | `data-fill` | boolean |  |  | Make the stack at least as tall as the viewport, so a child carrying data-split reaches the bottom. |
 | `data-rule` | boolean |  |  | A line between children, of the border width in the border color, in the middle of each gap. The gap is unchanged. |
@@ -97,7 +97,7 @@ Attributes that descendants carry, not the root.
 | Attribute | Type | Values | On | Description |
 | --- | --- | --- | --- | --- |
 | `data-split` | boolean |  | `> *` | Pushes the child and everything after it to the end of the stack when the stack is taller than its content. |
-| `data-space` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `> *` | The gap before this one child, larger or smaller than the stack's own: more room above a heading, less between a label and its field. Does nothing on the first child; data-split wins on a child carrying both. |
+| `data-space` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `> *` | The gap before this one child, larger or smaller than the stack's own: more room above a heading, less between a label and its field. Does nothing on the first child; data-split wins on a child carrying both. |
 | `data-sticky` | boolean |  | `> *` | Pins this child at --yeti-sticky-offset from the top of the scrollport while the rest of the stack scrolls past it. It keeps the full width of the column, a stack stretching its children on the inline axis. |
 
 </div>

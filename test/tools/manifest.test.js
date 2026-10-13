@@ -126,7 +126,8 @@ test('an attribute may reference a vocabulary, which is resolved into values', (
 	const r = loadAndMerge(path.join(dir, 'src'), schema(), vocabulary);
 	assert.deepEqual(r.errors, []);
 	assert.deepEqual(r.merged.rail.attributes[0].values.slice(0, 3), ['none', 'xs', 'sm']);
-	assert.equal(r.merged.rail.attributes[0].values.length, 29);
+	// nine stops, none and xs through 4xl, and every ascending pair of the eight sized ones.
+	assert.equal(r.merged.rail.attributes[0].values.length, 9 + 28);
 });
 
 test('vocabulary and values together, or an unknown vocabulary, are errors', () => {

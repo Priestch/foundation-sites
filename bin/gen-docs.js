@@ -228,7 +228,7 @@ export function renderTokensPage(entries, internalCount, groups = TOKEN_GROUPS) 
 	const out = [];
 	out.push(frontMatter({ raw: true, title: 'Tokens', description: 'Every public Yeti custom property, grouped, with its default and what it is for.', nav_group: 'Reference', nav_order: 1 }).trimEnd());
 	out.push(`${GENERATED_MARK} from src/tokens/tokens.json. Do not edit. -->`, '', '# Tokens', '');
-	out.push('Public tokens are the theming API: set them in your own stylesheet and everything that reads them follows. Names are `--yeti-<group>-<name>`. Sizes use `xs sm md lg xl 2xl 3xl`, where `md` is the base step.', '');
+	out.push('Public tokens are the theming API: set them in your own stylesheet and everything that reads them follows. Names are `--yeti-<group>-<name>`. Sizes use `xs sm md lg xl 2xl 3xl`, where `md` is the base step; space alone goes on to `4xl`, and above `lg` its stops grow by `--yeti-space-ratio` rather than the type ratio.', '');
 	for (const group of groups) {
 		const rows = entries.filter((e) => e.group === group);
 		if (!rows.length) continue;

@@ -1,32 +1,44 @@
-/* Space and radius read off the scale, so gaps are proportional to type.
+/* Space and radius read off the scale, so gaps are proportional to type:
+   the stops up to lg are the type scale's own steps, the rhythm inside a
+   block of text. Above lg the type ratio is the wrong tool: it reaches a big
+   heading in four steps and no further, and the room between sections wants
+   to be many times the body size. So from xl up each stop is --yeti-space-ratio
+   times the one before, twice by default, which puts 4xl at sixteen bodies.
    Widths are container measures in rem: they follow the visitor's root size,
    not the scale, because a threshold is about content, not type. */
 @layer yeti.base {
 	:root {
+		/* Public. How much each space stop above lg grows on the one before.
+		   Keep it above --yeti-ratio-max so xl stays larger than lg. */
+		--yeti-space-ratio: 2;
+
 		--yeti-space-none: 0;
 		--yeti-space-xs: var(--_yeti-step--2);
 		--yeti-space-sm: var(--_yeti-step--1);
 		--yeti-space-md: var(--_yeti-step-0);
 		--yeti-space-lg: var(--_yeti-step-1);
-		--yeti-space-xl: var(--_yeti-step-2);
-		--yeti-space-2xl: var(--_yeti-step-3);
-		--yeti-space-3xl: var(--_yeti-step-4);
+		--yeti-space-xl: calc(var(--_yeti-base) * var(--yeti-space-ratio));
+		--yeti-space-2xl: calc(var(--_yeti-base) * pow(var(--yeti-space-ratio), 2));
+		--yeti-space-3xl: calc(var(--_yeti-base) * pow(var(--yeti-space-ratio), 3));
+		--yeti-space-4xl: calc(var(--_yeti-base) * pow(var(--yeti-space-ratio), 4));
 
 		--yeti-space-xs-static: var(--_yeti-step--2-static);
 		--yeti-space-sm-static: var(--_yeti-step--1-static);
 		--yeti-space-md-static: var(--_yeti-step-0-static);
 		--yeti-space-lg-static: var(--_yeti-step-1-static);
-		--yeti-space-xl-static: var(--_yeti-step-2-static);
-		--yeti-space-2xl-static: var(--_yeti-step-3-static);
-		--yeti-space-3xl-static: var(--_yeti-step-4-static);
+		--yeti-space-xl-static: calc(var(--yeti-base-min) * var(--yeti-space-ratio));
+		--yeti-space-2xl-static: calc(var(--yeti-base-min) * pow(var(--yeti-space-ratio), 2));
+		--yeti-space-3xl-static: calc(var(--yeti-base-min) * pow(var(--yeti-space-ratio), 3));
+		--yeti-space-4xl-static: calc(var(--yeti-base-min) * pow(var(--yeti-space-ratio), 4));
 
 		/* Internal: the wide-viewport value of each stop, for fluid pairs. */
 		--_yeti-space-sm-max: var(--_yeti-step--1-max);
 		--_yeti-space-md-max: var(--_yeti-step-0-max);
 		--_yeti-space-lg-max: var(--_yeti-step-1-max);
-		--_yeti-space-xl-max: var(--_yeti-step-2-max);
-		--_yeti-space-2xl-max: var(--_yeti-step-3-max);
-		--_yeti-space-3xl-max: var(--_yeti-step-4-max);
+		--_yeti-space-xl-max: calc(var(--yeti-base-max) * var(--yeti-space-ratio));
+		--_yeti-space-2xl-max: calc(var(--yeti-base-max) * pow(var(--yeti-space-ratio), 2));
+		--_yeti-space-3xl-max: calc(var(--yeti-base-max) * pow(var(--yeti-space-ratio), 3));
+		--_yeti-space-4xl-max: calc(var(--yeti-base-max) * pow(var(--yeti-space-ratio), 4));
 
 		--yeti-radius-sm: calc(0.25 * var(--_yeti-base));
 		--yeti-radius-md: calc(0.5 * var(--_yeti-base));

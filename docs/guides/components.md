@@ -43,7 +43,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-fit` | `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-display`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-display`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-display`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-display`, `xl-2xl`, `xl-3xl`, `xl-display`, `2xl-3xl`, `2xl-display`, `3xl-display` | billboard |
 | `data-fixed` | boolean | table |
 | `data-flip` | boolean | seam |
-| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | buttons, carousel, nav, tabs |
+| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | buttons, carousel, nav, tabs |
 | `data-height` | `sm`, `md`, `lg`, `xl`, `half`, `full` | demo |
 | `data-hint` | boolean | field (> *) |
 | `data-hover` | boolean | table |

@@ -84,7 +84,7 @@ The one-class form does the same in one element: a wrapping row whose lines are 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
 | `data-threshold` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `lg` | The container width below which copy and figure become rows. |
-| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | `lg` | Space between copy and figure. |
+| `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `lg` | Space between copy and figure. |
 | `data-ratio` | enum | `1/1`, `4/3`, `3/2`, `16/9`, `21/9` | `4/3` | The figure's aspect ratio. |
 | `data-align` | enum | `start`, `center`, `end`, `stretch`, `baseline` | `center` | Vertical alignment of copy and figure when side by side. |
 | `data-side` | enum | `start`, `end` |  | Put the figure at the start or the end of the row regardless of source order. Once stacked, source order rules: write the copy first to meet the headline first on a phone. Moves it visually only; reading order stays as written. |

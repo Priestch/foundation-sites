@@ -13,6 +13,11 @@
 		#space-md-static { width: var(--yeti-space-md-static); }
 		#radius-md { width: var(--yeti-radius-md); }
 		#step-4 { width: var(--_yeti-step-4); }
+		#space-xl { width: var(--yeti-space-xl); }
+		#space-2xl { width: var(--yeti-space-2xl); }
+		#space-3xl { width: var(--yeti-space-3xl); }
+		#space-4xl { width: var(--yeti-space-4xl); }
+		#space-4xl-static { width: var(--yeti-space-4xl-static); }
 		#leading { line-height: var(--yeti-leading-md); font-size: var(--yeti-text-md); }
 
 		.bar { block-size: 1lh; background: var(--yeti-color-primary); border-radius: var(--yeti-radius-sm); }
@@ -26,6 +31,7 @@
 		.xl { width: var(--yeti-space-xl); }
 		.x2 { width: var(--yeti-space-2xl); }
 		.x3 { width: var(--yeti-space-3xl); }
+		.x4 { width: var(--yeti-space-4xl); }
 		.t-xs { font-size: var(--yeti-text-xs); }
 		.t-sm { font-size: var(--yeti-text-sm); }
 		.t-md { font-size: var(--yeti-text-md); }
@@ -40,13 +46,18 @@
 <body>
 	<main>
 		<h1>Scale fixture</h1>
-		<p>Resize the window to watch the scale interpolate. In devtools, set <code>--yeti-ratio: 1.5</code> or <code>--yeti-base: 1.25rem</code> on <code>html</code> and everything recomputes.</p>
+		<p>Resize the window to watch the scale interpolate. In devtools, set <code>--yeti-ratio: 1.5</code>, <code>--yeti-space-ratio: 1.5</code> or <code>--yeti-base: 1.25rem</code> on <code>html</code> and everything recomputes.</p>
 
 		<h2>Probes the tests measure</h2>
 		<div class="row"><code>--yeti-space-md</code><div id="space-md" class="bar"></div></div>
 		<div class="row"><code>…-md-static</code><div id="space-md-static" class="bar"></div></div>
 		<div class="row"><code>--yeti-radius-md</code><div id="radius-md" class="bar"></div></div>
 		<div class="row"><code>--_yeti-step-4</code><div id="step-4" class="bar"></div></div>
+		<div class="row"><code>--yeti-space-xl</code><div id="space-xl" class="bar"></div></div>
+		<div class="row"><code>…-2xl</code><div id="space-2xl" class="bar"></div></div>
+		<div class="row"><code>…-3xl</code><div id="space-3xl" class="bar"></div></div>
+		<div class="row"><code>…-4xl</code><div id="space-4xl" class="bar"></div></div>
+		<div class="row"><code>…-4xl-static</code><div id="space-4xl-static" class="bar"></div></div>
 		<div class="row"><code>--yeti-leading-md</code><div id="leading">x</div></div>
 
 		<section id="sheet">
@@ -58,6 +69,7 @@
 			<div class="row"><code>xl</code><div class="bar xl"></div></div>
 			<div class="row"><code>2xl</code><div class="bar x2"></div></div>
 			<div class="row"><code>3xl</code><div class="bar x3"></div></div>
+			<div class="row"><code>4xl</code><div class="bar x4"></div></div>
 
 			<h2>Text</h2>
 			<p class="t-xs">xs: The quick brown fox jumps over the lazy dog</p>

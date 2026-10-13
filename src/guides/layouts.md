@@ -79,7 +79,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 | `data-fill` | boolean | overlay (> [data-over]), stack |
 | `data-fixed` | boolean | overlay |
 | `data-fold` | boolean | grid |
-| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `xl-2xl`, `xl-3xl`, `2xl-3xl` | box, breakout, center, cluster, columns, cover, grid, hero, icon, masonry, media, overlay, scroller, shell, sidebar, stack, timeline |
+| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | box, breakout, center, cluster, columns, cover, grid, hero, icon, masonry, media, overlay, scroller, shell, sidebar, stack, timeline |
 | `data-hide` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | container (*) |
 | `data-intrinsic` | boolean | center |
 | `data-justify` | `start`, `center`, `end`, `between`, `around`, `evenly` | cluster, columns |

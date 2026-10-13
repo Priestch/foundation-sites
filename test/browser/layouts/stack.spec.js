@@ -10,6 +10,22 @@ test.describe('stack', () => {
 		expect(sb.top - sa.bottom).toBeCloseTo(await token(page, '--yeti-space-sm'), 1);
 	});
 
+	test('4xl is a gap of its own and the top of a fluid pair', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await open(page, 'stack');
+		const [wa, wb] = await Promise.all([rect(page, '#wa'), rect(page, '#wb')]);
+		const fourXl = await token(page, '--yeti-space-4xl');
+		expect(fourXl).toBeGreaterThan(await token(page, '--yeti-space-3xl'));
+		expect(wb.top - wa.bottom).toBeCloseTo(fourXl, 1);
+		// The pair ends at 4xl's wide value on a wide screen...
+		const [pa, pb] = await Promise.all([rect(page, '#pa'), rect(page, '#pb')]);
+		expect(pb.top - pa.bottom).toBeCloseTo(fourXl, 1);
+		// ...and starts at md's narrow value on a narrow one.
+		await page.setViewportSize({ width: 320, height: 800 });
+		const [na, nb] = await Promise.all([rect(page, '#pa'), rect(page, '#pb')]);
+		expect(nb.top - na.bottom).toBeCloseTo(await token(page, '--yeti-space-md-static'), 1);
+	});
+
 	test('data-space changes the gap before one child only', async ({ page }) => {
 		await open(page, 'stack');
 		const [xs, md, xl] = await Promise.all(['xs', 'md', 'xl'].map((s) => token(page, `--yeti-space-${s}`)));

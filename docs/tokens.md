@@ -9,7 +9,7 @@ nav_order: 1
 
 # Tokens
 
-Public tokens are the theming API: set them in your own stylesheet and everything that reads them follows. Names are `--yeti-<group>-<name>`. Sizes use `xs sm md lg xl 2xl 3xl`, where `md` is the base step.
+Public tokens are the theming API: set them in your own stylesheet and everything that reads them follows. Names are `--yeti-<group>-<name>`. Sizes use `xs sm md lg xl 2xl 3xl`, where `md` is the base step; space alone goes on to `4xl`, and above `lg` its stops grow by `--yeti-space-ratio` rather than the type ratio.
 
 ## Scale
 
@@ -39,16 +39,19 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-space-sm` | `step -1` | Tight gap. |
 | `--yeti-space-md` | `step 0` | Default gap; equals the body text size. |
 | `--yeti-space-lg` | `step 1` | Comfortable gap. |
-| `--yeti-space-xl` | `step 2` | Section gap. |
-| `--yeti-space-2xl` | `step 3` | Page-level gap. |
-| `--yeti-space-3xl` | `step 4` | Hero-level gap. |
+| `--yeti-space-ratio` | `2` | How much each space stop above lg grows on the one before; xl is base × ratio, 4xl is base × ratio⁴. Keep it above --yeti-ratio-max so xl stays larger than lg. |
+| `--yeti-space-xl` | `base × space-ratio` | Section gap; twice the body size. |
+| `--yeti-space-2xl` | `base × space-ratio²` | Page-level gap; four bodies. |
+| `--yeti-space-3xl` | `base × space-ratio³` | Hero-level gap; eight bodies. |
+| `--yeti-space-4xl` | `base × space-ratio⁴` | The biggest room: sixteen bodies, the gap between a page's great sections. |
 | `--yeti-space-xs-static` | `step -2, narrow viewport value` | Non-fluid xs, for a gap that must not scale. |
 | `--yeti-space-sm-static` | `step -1, narrow viewport value` | Non-fluid sm. |
 | `--yeti-space-md-static` | `step 0, narrow viewport value` | Non-fluid md. |
 | `--yeti-space-lg-static` | `step 1, narrow viewport value` | Non-fluid lg. |
-| `--yeti-space-xl-static` | `step 2, narrow viewport value` | Non-fluid xl. |
-| `--yeti-space-2xl-static` | `step 3, narrow viewport value` | Non-fluid 2xl. |
-| `--yeti-space-3xl-static` | `step 4, narrow viewport value` | Non-fluid 3xl. |
+| `--yeti-space-xl-static` | `narrow base × space-ratio` | Non-fluid xl. |
+| `--yeti-space-2xl-static` | `narrow base × space-ratio²` | Non-fluid 2xl. |
+| `--yeti-space-3xl-static` | `narrow base × space-ratio³` | Non-fluid 3xl. |
+| `--yeti-space-4xl-static` | `narrow base × space-ratio⁴` | Non-fluid 4xl. |
 
 </div>
 
@@ -662,4 +665,4 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 </div>
 
-Yeti also defines 47 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.
+Yeti also defines 48 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.

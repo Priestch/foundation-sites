@@ -34,6 +34,9 @@
 	/* --yeti-ratio-min: 1.2; */
 	/* How much each step of the scale grows on a wide screen. */
 	/* --yeti-ratio-max: 1.333; */
+	/* How much each space stop above lg grows on the one before: xl is twice
+	   the body size, 2xl four times, 3xl eight, 4xl sixteen. */
+	/* --yeti-space-ratio: 2; */
 
 	/* Fonts. Yeti ships no web fonts; load yours and name it here. */
 
