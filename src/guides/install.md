@@ -198,6 +198,16 @@ import type { YetiGap, YetiManifest } from 'yeti-css';
 
 Both resolve with no configuration beyond the default in a modern project. They exist for tools built on those files; a page needs nothing from them.
 
+## Check your pages
+
+The same manifest validates rendered HTML. `bin/validate-html.js` in the Yeti repository reads a folder of built pages and checks every element carrying a Yeti class the way the examples and guides are checked: an attribute a component does not take, a value outside its list, a bare attribute that needs one, a set with one member (an `accordion` with one panel, a `timeline` with one entry), a required accessibility attribute missing. Point it at the manifest the package ships:
+
+```sh
+node path/to/yeti/bin/validate-html.js ./build --manifest node_modules/yeti-css/dist/yeti.manifest.json
+```
+
+It exits non-zero on any problem and names the file and line of each, so it belongs in the site's build after the pages are rendered. A card grid whose `data-rows` has no value collapses its rows silently in the browser and is one line of output here; run it before looking for the fault by hand.
+
 ## For a language model
 
 `llms.txt` and `llms-full.txt` sit at the root of the docs site and in the package. The first lists every component with its class, attributes, legal values and defaults in a few hundred lines; the second adds each component's guidance, accessibility notes and the token catalogue. They are generated from the manifest, so they describe exactly the surface the validator enforces, and nothing else. Point an assistant at the first and it can write valid Yeti; give it the second and it can explain why.
