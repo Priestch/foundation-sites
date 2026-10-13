@@ -24,7 +24,8 @@
 	/* How saturated the accents are: 0 is grey, 0.15 clear, above 0.2 may clip. */
 	/* --yeti-chroma: 0.15; */
 
-	/* Scale. Text and space share one scale, from a narrow screen to a wide one. */
+	/* Scale. Text and space share one scale up to lg, from a narrow screen to a
+	   wide one; above lg, space grows on a ratio of its own. */
 
 	/* Body text size on a narrow screen. */
 	/* --yeti-base-min: 1rem; */

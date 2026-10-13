@@ -62,12 +62,13 @@ A page pinned to one scheme sets `color-scheme` on the root, and every color in 
 
 ## The scale
 
-Type and space share one geometric scale. Two knobs cover most needs:
+Type and space share one geometric scale up to `lg`, and space carries on above it on a ratio of its own. Three knobs cover most needs:
 
 ```css
 :root {
 	--yeti-base: 1.0625rem;  /* body size, every viewport */
 	--yeti-ratio: 1.25;      /* each step is 1.25 times the last */
+	--yeti-space-ratio: 2;   /* each space stop above lg is twice the last */
 }
 ```
 
