@@ -107,7 +107,7 @@ Attributes that descendants carry, not the root.
 
 ## Children
 
-- `> *`: exactly 2. Exactly two: the copy and the figure (an img, video, or picture, or an element wrapping one); the copy (the body) must not have an img, video, or picture as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
+- `> *`: exactly 2. Exactly two: the copy and the figure (an img, video, picture, canvas or svg, or an element wrapping one); the copy (the body) must not have any of those as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
 - `> [data-span]`: 0 to 2. A child that takes several shares of the row: data-span="3" beside a "2" is three fifths. Below the threshold both stack full width.
 
 ## Tokens

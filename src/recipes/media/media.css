@@ -1,7 +1,8 @@
 /* Media: a figure beside text. The one-class form of a sidebar holding a
    frame and a stack. The figure is whichever child is, or wraps, the
-   picture, so source order decides the side; data-side overrides it while
-   side by side. data-width is the figure's width and so where the two
+   picture, in the reset's sense of one: img, video, picture, canvas or an
+   inline svg, so a site's mark drawn in the page counts. Source order
+   decides the side; data-side overrides it while side by side. data-width is the figure's width and so where the two
    stack; data-max caps the text. */
 @layer yeti.layouts {
 	.media {
@@ -18,8 +19,8 @@
 	.media > * { margin: 0; }
 
 	/* The figure */
-	.media > :is(img, video, picture),
-	.media > :has(> :is(img, video, picture)) {
+	.media > :is(img, video, picture, canvas, svg),
+	.media > :has(> :is(img, video, picture, canvas, svg)) {
 		flex-basis: var(--_yeti-width);
 		flex-grow: 1;
 		aspect-ratio: var(--_yeti-aspect);
@@ -30,7 +31,7 @@
 	   picture between the figure and its img (the wrapped-figure case) needs
 	   its own 100% size, or the img's percentage height has nothing to resolve
 	   against and falls back to the picture's own auto, content-based height. */
-	.media > :is(picture, :has(> :is(img, video, picture))) :is(img, video, picture) {
+	.media > :is(picture, :has(> :is(img, video, picture, canvas, svg))) :is(img, video, picture, canvas, svg) {
 		inline-size: 100%;
 		block-size: 100%;
 		object-fit: cover;
@@ -43,7 +44,7 @@
 		aspect-ratio: auto;
 		overflow: visible;
 	}
-	.media > figure:has(> figcaption) > :is(img, video, picture) {
+	.media > figure:has(> figcaption) > :is(img, video, picture, canvas, svg) {
 		aspect-ratio: var(--_yeti-aspect);
 		block-size: auto;
 	}
@@ -53,7 +54,7 @@
 	}
 
 	/* The body: everything that is not the figure */
-	.media > :not(:is(img, video, picture), :has(> :is(img, video, picture))) {
+	.media > :not(:is(img, video, picture, canvas, svg), :has(> :is(img, video, picture, canvas, svg))) {
 		display: flex;
 		flex-direction: column;
 		gap: var(--yeti-space-sm);
@@ -65,13 +66,13 @@
 		   two stack. The body's half of the row still wins over the cap. */
 		max-inline-size: var(--_yeti-max);
 	}
-	.media > :not(:is(img, video, picture), :has(> :is(img, video, picture))) > * { margin: 0; }
+	.media > :not(:is(img, video, picture, canvas, svg), :has(> :is(img, video, picture, canvas, svg))) > * { margin: 0; }
 
 	/* data-side: which side the figure takes while side by side. The row is
 	   reversed when the figure is not already on the asked side; stacked, the
 	   source order holds. See hero.css. */
-	.media[data-side="start"]:not(:has(> :first-child:is(img, video, picture), > :first-child > :is(img, video, picture))),
-	.media[data-side="end"]:has(> :first-child:is(img, video, picture), > :first-child > :is(img, video, picture)) {
+	.media[data-side="start"]:not(:has(> :first-child:is(img, video, picture, canvas, svg), > :first-child > :is(img, video, picture, canvas, svg))),
+	.media[data-side="end"]:has(> :first-child:is(img, video, picture, canvas, svg), > :first-child > :is(img, video, picture, canvas, svg)) {
 		flex-direction: row-reverse;
 		/* Reversed, flex-end is the start edge, so a stacked child narrower
 		   than the row sits at the start. See hero.css. */

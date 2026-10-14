@@ -8,7 +8,7 @@ const open = async (page, width = 1000) => {
 };
 
 // The figure selector, shared by media and hero:
-// > :is(img, video, picture), > :has(> :is(img, video, picture))
+// > :is(img, video, picture, canvas, svg), > :has(> :is(img, video, picture, canvas, svg))
 
 test.describe('media recipe', () => {
 	test('matches the composed form side by side', async ({ page }) => {
@@ -80,6 +80,21 @@ test.describe('media recipe', () => {
 		await open(page, 300);
 		const [row, body] = await Promise.all([rect(page, '#narrow-start'), rect(page, '#ns-body')]);
 		expect(Math.round(body.left)).toBe(Math.round(row.left));
+	});
+
+	test('an inline svg in a span, and a canvas, are figures too', async ({ page }) => {
+		// The reset counts img, picture, video, canvas and svg as media; a site
+		// that puts its mark beside a heading as an inline SVG found the span
+		// taken for a second body and given the body's half of the row.
+		await open(page, 1000);
+		const xs = await token(page, '--yeti-width-xs');
+		for (const [figure, body] of [['#in-figure', '#in-body'], ['#cv-figure', '#cv-body']]) {
+			const [f, b] = await Promise.all([rect(page, figure), rect(page, body)]);
+			expect(Math.abs(f.width - xs), `${figure} has the figure's width`).toBeLessThan(2);
+			expect(f.width / f.height, `${figure} has the figure's ratio`).toBeCloseTo(1, 1);
+			expect(b.left, `${body} sits beside it`).toBeGreaterThanOrEqual(f.right);
+			expect(b.width, `${body} keeps the rest of the row`).toBeGreaterThan(xs);
+		}
 	});
 
 	test('children have no margins', async ({ page }) => {

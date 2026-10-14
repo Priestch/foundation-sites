@@ -28,8 +28,8 @@
 	.hero > [data-min] { min-inline-size: min(var(--_yeti-min), 100%); }
 
 	/* The figure */
-	.hero > :is(img, video, picture),
-	.hero > :has(> :is(img, video, picture)) {
+	.hero > :is(img, video, picture, canvas, svg),
+	.hero > :has(> :is(img, video, picture, canvas, svg)) {
 		aspect-ratio: var(--_yeti-aspect);
 		overflow: hidden;
 	}
@@ -38,7 +38,7 @@
 	   picture between the figure and its img (the wrapped-figure case) needs
 	   its own 100% size, or the img's percentage height has nothing to resolve
 	   against and falls back to the picture's own auto, content-based height. */
-	.hero > :is(picture, :has(> :is(img, video, picture))) :is(img, video, picture) {
+	.hero > :is(picture, :has(> :is(img, video, picture, canvas, svg))) :is(img, video, picture, canvas, svg) {
 		inline-size: 100%;
 		block-size: 100%;
 		object-fit: cover;
@@ -51,7 +51,7 @@
 		aspect-ratio: auto;
 		overflow: visible;
 	}
-	.hero > figure:has(> figcaption) > :is(img, video, picture) {
+	.hero > figure:has(> figcaption) > :is(img, video, picture, canvas, svg) {
 		aspect-ratio: var(--_yeti-aspect);
 		block-size: auto;
 	}
@@ -61,12 +61,12 @@
 	}
 
 	/* The copy */
-	.hero > :not(:is(img, video, picture), :has(> :is(img, video, picture))) {
+	.hero > :not(:is(img, video, picture, canvas, svg), :has(> :is(img, video, picture, canvas, svg))) {
 		display: flex;
 		flex-direction: column;
 		gap: var(--yeti-space-sm);
 	}
-	.hero > :not(:is(img, video, picture), :has(> :is(img, video, picture))) > * { margin: 0; }
+	.hero > :not(:is(img, video, picture, canvas, svg), :has(> :is(img, video, picture, canvas, svg))) > * { margin: 0; }
 
 	/* data-side: which side the figure takes while the two share a row. Done
 	   by reversing the row's direction when the figure is not already on the
@@ -76,8 +76,8 @@
 	   meets the headline first if the copy is written first. :has() cannot
 	   nest inside :has(), so the wrapped figure is matched as the first
 	   child having a media child, a second relative selector in the list. */
-	.hero[data-side="start"]:not(:has(> :first-child:is(img, video, picture), > :first-child > :is(img, video, picture))),
-	.hero[data-side="end"]:has(> :first-child:is(img, video, picture), > :first-child > :is(img, video, picture)) {
+	.hero[data-side="start"]:not(:has(> :first-child:is(img, video, picture, canvas, svg), > :first-child > :is(img, video, picture, canvas, svg))),
+	.hero[data-side="end"]:has(> :first-child:is(img, video, picture, canvas, svg), > :first-child > :is(img, video, picture, canvas, svg)) {
 		flex-direction: row-reverse;
 		/* Reversed, flex-end is the start edge: side by side the children fill
 		   the row and nothing moves, but stacked, a child narrower than the

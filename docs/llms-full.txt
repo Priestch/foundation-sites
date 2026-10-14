@@ -891,7 +891,7 @@ The one-class form does the same in one element: a wrapping row whose lines are 
 "Hero" is what designers have called the big opening image since the print era, and every framework since Bootstrap 2 has shipped one under that name. The split is the common form; a hero with no picture is a `cover`.
 
 Children:
-- > *: at least 2, at most 2. Exactly two: the copy and the figure (an img, video, or picture, or an element wrapping one); the copy (the body) must not have an img, video, or picture as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
+- > *: at least 2, at most 2. Exactly two: the copy and the figure (an img, video, picture, canvas or svg, or an element wrapping one); the copy (the body) must not have any of those as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
 - > [data-span]: at least 0, at most 2. A child that takes several shares of the row: data-span="3" beside a "2" is three fifths. Below the threshold both stack full width.
 
 Tokens:
@@ -919,7 +919,7 @@ Attributes:
 
 ### When to use it
 
-A comment with an avatar, a product with its thumbnail, a speaker with a headshot: whenever a picture sits beside a few lines of text, this is the shape. It stays side by side while the text keeps at least half the width and stacks when it cannot. Put the picture first for picture-left, last for picture-right; the reading order follows. The body must not have an img, video, or picture as a direct child (it would be taken for a second figure).
+A comment with an avatar, a product with its thumbnail, a speaker with a headshot: whenever a picture sits beside a few lines of text, this is the shape. It stays side by side while the text keeps at least half the width and stacks when it cannot. Put the picture first for picture-left, last for picture-right; the reading order follows. The figure is whatever the reset counts as a picture: an `img`, `video`, `picture`, `canvas` or inline `svg`, bare or inside one wrapper, so a mark drawn in the page sits beside its text like a photograph. The body must not have any of those as a direct child (it would be taken for a second figure); an inline `svg` icon in the body goes beside its heading in a paragraph, or in a wrapper of its own.
 
 `data-width` is the figure's width, and so where the two stack: a smaller figure holds the row down to a narrower window. On a wide row that leaves the text running long, so `data-max` caps the text from the width scale and the figure takes the rest. `<article class="media" data-width="sm" data-max="md">` stays side by side down to a phone and still keeps a reading measure at full width. The text's half of the row wins over the cap.
 
@@ -946,7 +946,7 @@ The one-class form renders the same geometry, and its test proves it. Its attrib
 Nicole Sullivan named the media object in 2010 and the name stuck across a decade of frameworks, Foundation 6's `.media-object` included. One word of it is enough.
 
 Children:
-- > *: at least 2, at most 2. Exactly two: the figure (an img, video, or picture, or an element wrapping one) and the body; the body must not have an img, video, or picture as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
+- > *: at least 2, at most 2. Exactly two: the figure (an img, video, picture, canvas or svg, or an element wrapping one) and the body; the body must not have any of those as a direct child (it would be taken for a second figure), so an inline svg icon inside the body goes in a wrapper or beside its heading in a paragraph. A figure with a figcaption keeps its caption below the picture.
 
 Tokens:
 - --yeti-width-xs — The default figure width.

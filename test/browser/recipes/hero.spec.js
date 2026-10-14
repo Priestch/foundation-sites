@@ -61,6 +61,16 @@ test.describe('hero recipe', () => {
 		}
 	});
 
+	test('a span holding an inline svg is the figure, so data-side can move it', async ({ page }) => {
+		// Same figure test as media: the reset's five media elements, bare or
+		// wrapped. Only a recognised figure is sent to the end; a span taken
+		// for copy would stay at the start.
+		await open(page, 1000);
+		const [copy, figure] = await Promise.all([rect(page, '#mk-copy'), rect(page, '#mk-figure')]);
+		expect(figure.left).toBeGreaterThanOrEqual(copy.right);
+		expect(figure.width / figure.height).toBeCloseTo(4 / 3, 1);
+	});
+
 	test('data-span on the children divides the row unequally, and stacks like the rest', async ({ page }) => {
 		await open(page, 1000);
 		const [copy, figure] = await Promise.all([rect(page, '#sp-copy'), rect(page, '#sp-figure')]);
