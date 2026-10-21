@@ -253,7 +253,8 @@ class Sticky extends Plugin {
                   * @event Sticky#stuckto
                   */
                  .trigger(`sticky.zf.stuckto:${stickTo}`);
-    this.$element.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd", function() {
+    this.$element.off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky')
+                 .on('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function() {
       _this._setSizes();
     });
   }
@@ -305,6 +306,7 @@ class Sticky extends Plugin {
     this.canStick = MediaQuery.is(this.options.stickyOn);
     if (!this.canStick) {
       if (cb && typeof cb === 'function') { cb(); }
+      return;
     }
 
     var newElemWidth = this.$container[0].getBoundingClientRect().width,
@@ -353,7 +355,7 @@ class Sticky extends Plugin {
   _setBreakPoints(elemHeight, cb) {
     if (!this.canStick) {
       if (cb && typeof cb === 'function') { cb(); }
-      else { return false; }
+      return false;
     }
     var mTop = emCalc(this.options.marginTop),
         mBtm = emCalc(this.options.marginBottom),
@@ -396,7 +398,8 @@ class Sticky extends Plugin {
                    'max-width': ''
                  })
                  .off('resizeme.zf.trigger')
-                 .off('mutateme.zf.trigger');
+                 .off('mutateme.zf.trigger')
+                 .off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
     if (this.$anchor && this.$anchor.length) {
       this.$anchor.off('change.zf.sticky');
     }

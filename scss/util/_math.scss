@@ -100,8 +100,8 @@
   @else if type-of($fraction) == 'list' {
     // "50 of 100", "50/100"...
     @if length($fraction) == 3
-    and type-of(nth($fraction, 1) == 'number')
-    and type-of(nth($fraction, 3) == 'number') {
+    and type-of(nth($fraction, 1)) == 'number'
+    and type-of(nth($fraction, 3)) == 'number' {
       @return (nth($fraction, 1), nth($fraction, 3));
     }
   }

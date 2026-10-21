@@ -81,7 +81,7 @@ class Magellan extends Plugin {
   _events() {
     var _this = this;
 
-    $(window).one('load', function(){
+    _this.onLoadListener = onLoad($(window), function () {
       if(_this.options.deepLinking){
         if(location.hash){
           _this.scrollToLoc(location.hash);
@@ -89,9 +89,6 @@ class Magellan extends Plugin {
       }
       _this.calcPoints();
       _this._updateActive();
-    });
-
-    _this.onLoadListener = onLoad($(window), function () {
       _this.$element
         .on({
           'resizeme.zf.trigger': _this.reflow.bind(_this),
@@ -218,11 +215,6 @@ class Magellan extends Plugin {
   _destroy() {
     this.$element.off('.zf.trigger .zf.magellan')
         .find(`.${this.options.activeClass}`).removeClass(this.options.activeClass);
-
-    if(this.options.deepLinking){
-      var hash = this.$active[0].getAttribute('href');
-      window.location.hash.replace(hash, '');
-    }
 
     $(window).off('hashchange', this._deepLinkScroll)
     if (this.onLoadListener) $(window).off(this.onLoadListener);

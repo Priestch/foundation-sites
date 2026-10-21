@@ -161,7 +161,7 @@ class Reveal extends Plugin {
     });
 
     if (this.options.closeOnClick && this.options.overlay) {
-      this.$overlay.off('.zf.reveal').on('click.zf.dropdown tap.zf.dropdown', function(e) {
+      this.$overlay.off('.zf.reveal').on('click.zf.reveal tap.zf.reveal', function(e) {
         if (e.target === _this.$element[0] ||
           $.contains(_this.$element[0], e.target) ||
             !$.contains(document, e.target)) {
@@ -368,7 +368,7 @@ class Reveal extends Plugin {
     this.focusableElements = Keyboard.findFocusable(this.$element);
 
     if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
-      $('body').on('click.zf.dropdown tap.zf.dropdown', function(e) {
+      $('body').on('click.zf.reveal tap.zf.reveal', function(e) {
         if (e.target === _this.$element[0] ||
           $.contains(_this.$element[0], e.target) ||
             !$.contains(document, e.target)) { return; }
@@ -377,7 +377,7 @@ class Reveal extends Plugin {
     }
 
     if (this.options.closeOnEsc) {
-      $(window).on('keydown.zf.reveal', function(e) {
+      $(window).on(`keydown.zf.reveal:${this.id}`, function(e) {
         Keyboard.handleKey(e, 'Reveal', {
           close: function() {
             if (_this.options.closeOnEsc) {
@@ -421,12 +421,10 @@ class Reveal extends Plugin {
     }
 
     // Conditionals to remove extra event listeners added on open
-    if (this.options.closeOnEsc) {
-      $(window).off('keydown.zf.reveal');
-    }
+    $(window).off(`keydown.zf.reveal:${this.id}`);
 
     if (!this.options.overlay && this.options.closeOnClick) {
-      $('body').off('click.zf.dropdown tap.zf.dropdown');
+      $('body').off('click.zf.reveal tap.zf.reveal');
     }
 
     this.$element.off('keydown.zf.reveal');

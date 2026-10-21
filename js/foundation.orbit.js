@@ -418,6 +418,7 @@ class Orbit extends Plugin {
   */
   _destroy() {
     this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
+    this.timer.pause();
   }
 }
 

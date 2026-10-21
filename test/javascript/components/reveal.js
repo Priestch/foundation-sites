@@ -9,7 +9,10 @@ describe('Reveal', function() {
 	</div>`;
 
   afterEach(function() {
-    plugin.destroy();
+    // destroy() nulls instance properties, so skip if the test destroyed it already
+    if (plugin && plugin.$element) {
+      plugin.destroy();
+    }
     document.activeElement.blur();
     $html.remove();
   });
@@ -409,6 +412,44 @@ describe('Reveal', function() {
 
       $html.find('[data-close]').focus()
         .trigger('click');
+    });
+  });
+
+  describe('destroy()', function() {
+    it('removes its namespaced keydown handler from window', function() {
+      $html = $(template).appendTo('body');
+      plugin = new Foundation.Reveal($html, {});
+      plugin.open();
+
+      plugin.destroy();
+
+      var events = $._data(window, 'events') || {};
+      var revealKeydowns = (events.keydown || []).filter(function(ev) {
+        return ev.namespace === 'zf.reveal:' + plugin.id;
+      });
+      revealKeydowns.should.be.empty;
+    });
+  });
+
+  describe('multipleOpened', function() {
+    it('keeps ESC working for other open modals when one closes', function() {
+      $html = $(template).appendTo('body');
+      plugin = new Foundation.Reveal($html, { multipleOpened: true });
+      var $html2 = $(template.replace('exampleModal1', 'exampleModal2')).appendTo('body');
+      var plugin2 = new Foundation.Reveal($html2, { multipleOpened: true });
+
+      plugin.open();
+      plugin2.open();
+      plugin.close();
+
+      $(window).trigger(mockKeyboardEvent('ESCAPE'));
+
+      try {
+        plugin2.isActive.should.be.false;
+      } finally {
+        plugin2.destroy();
+        $html2.remove();
+      }
     });
   });
 });

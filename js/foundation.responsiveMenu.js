@@ -95,14 +95,8 @@ class ResponsiveMenu extends Plugin {
    * @private
    */
   _events() {
-    var _this = this;
-
-    $(window).on('changed.zf.mediaquery', function() {
-      _this._checkMediaQueries();
-    });
-    // $(window).on('resize.zf.ResponsiveMenu', function() {
-    //   _this._checkMediaQueries();
-    // });
+    this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+    $(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 
   /**
@@ -143,8 +137,8 @@ class ResponsiveMenu extends Plugin {
    * @function
    */
   _destroy() {
-    this.currentPlugin.destroy();
-    $(window).off('.zf.ResponsiveMenu');
+    if (this.currentPlugin) this.currentPlugin.destroy();
+    $(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 }
 

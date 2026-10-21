@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { Foundation } from './foundation.core';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Plugin } from './foundation.core.plugin';
 import { GetYoDigits } from './foundation.core.utils';
@@ -178,7 +179,7 @@ class Interchange extends Plugin {
     // Replacing images
     if (type === 'src') {
       this.$element.attr('src', path)
-        .on('load', () => { this.currentPath = path; })
+        .one('load', () => { this.currentPath = path; })
         .trigger(trigger);
     }
     // Replacing background images
@@ -194,7 +195,9 @@ class Interchange extends Plugin {
         this.$element
           .html(response)
           .trigger(trigger);
-        $(response).foundation();
+        // Initialize plugins in the inserted content (it is a re-parsed copy
+        // of `response`, so initializing `$(response)` would hit detached nodes)
+        Foundation.reflow(this.$element);
         this.currentPath = path;
       });
     }

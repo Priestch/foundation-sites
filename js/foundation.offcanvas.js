@@ -180,9 +180,11 @@ class OffCanvas extends Plugin {
     }
 
     if (this.options.inCanvasOn) {
-      $(window).on('changed.zf.mediaquery', () => {
+      if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+      this._inCanvasMqHandler = () => {
         this._checkInCanvas();
-      });
+      };
+      $(window).on('changed.zf.mediaquery', this._inCanvasMqHandler);
     }
 
   }
@@ -200,13 +202,15 @@ class OffCanvas extends Plugin {
       }
     });
 
-    $(window).on('changed.zf.mediaquery', function () {
+    if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
+    this._revealMqHandler = function () {
       if (MediaQuery.atLeast(_this.options.revealOn)) {
         _this.reveal(true);
       } else {
         _this.reveal(false);
       }
-    });
+    };
+    $(window).on('changed.zf.mediaquery', this._revealMqHandler);
   }
 
   /**
@@ -586,6 +590,8 @@ class OffCanvas extends Plugin {
     this.close();
     this.$element.off('.zf.trigger .zf.offCanvas');
     this.$overlay.off('.zf.offCanvas');
+    if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+    if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
     if (this.onLoadListener) $(window).off(this.onLoadListener);
   }
 }

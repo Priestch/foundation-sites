@@ -296,6 +296,7 @@ class AccordionMenu extends Plugin {
   _destroy() {
     this.$element.find('[data-submenu]').slideDown(0).css('display', '');
     this.$element.find('a').off('click.zf.accordionMenu');
+    this.$element.find('li').off('keydown.zf.accordionMenu');
     this.$element.find('[data-is-parent-link]').detach();
 
     if (this.options.submenuToggle) {
