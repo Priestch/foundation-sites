@@ -1,6 +1,6 @@
 ---
 title: Flexbox Mode
-description: For browsers with cutting-edge support, some of Foundation's key components can be converted to flexbox.
+description: Some of Foundation's key components can be converted to flexbox, supported across the entire browser baseline.
 video: 'KxafSdyTCIg'
 sass:
   - scss/components/_flex.scss
@@ -9,17 +9,11 @@ sass:
 
 ## Flexbox Mode
 
-Foundation components use a combination of floats, vertical alignment, table cells, and various other CSS hacks to get layouts looking right. These days though, there's a better way... if you are happy with the below browser support!
+Foundation components use a combination of floats, vertical alignment, table cells, and various other CSS hacks to get layouts looking right. These days though, there's a better way.
 
 Enabling **flexbox mode** replaces those hacks with flexbox properties, streamlining how layouts are made, and making sizing and alignment of elements much easier.
 
-Flexbox mode is only supported in these browsers:
-
-- The latest Chrome and Firefox
-- Safari 6+
-- IE/Edge 10+
-- iOS 7+
-- Android 4.4+
+Flexbox mode uses standard, unprefixed flexbox properties and works in every browser of the framework's [support baseline](compatibility.html) &mdash; Chrome/Edge 110+, Firefox 115+, Safari/iOS 15.4+, Samsung Internet 17+. The legacy prefixed flexbox output for IE 10 and old WebKit engines was removed in version 6.10.
 
 ---
 

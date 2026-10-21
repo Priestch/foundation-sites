@@ -17,21 +17,22 @@ video: mYiyunVQdMY
 
 <img src="assets/img/logos/sass-logo.svg" alt="Sass logo" class="float-right" style="width: 150px; height: 150px; margin-left: 1rem;">
 
-**Foundation for Sites can be compiled with Ruby Sass and libsass.** We tend to stick to the latest versions of both compilers when possible. Our documentation and starter project are compiled with [node-sass](https://github.com/sass/node-sass), a Node port of libsass. We recommend these versions of either compiler:
-
-- Ruby Sass **3.4+**
-- node-sass **3.4.2+** (libsass **3.3.2**)
+**Foundation for Sites is compiled with [Dart Sass](https://sass-lang.com/dart-sass)**, the reference Sass implementation. Ruby Sass was discontinued in 2019, and node-sass/LibSass is deprecated — both should not be used for new projects. Foundation itself builds with [`sass-embedded`](https://www.npmjs.com/package/sass-embedded), and we recommend staying on the latest **1.x** release of `sass` or `sass-embedded`.
 
 ### Autoprefixer Required
 
-We don't include vendor prefixes in our Sass files&mdash;instead, we let [Autoprefixer](https://github.com/postcss/autoprefixer) handle it for us. Our build process uses [gulp-autoprefixer](https://github.com/sindresorhus/gulp-autoprefixer), but there are [other versions](https://github.com/postcss/autoprefixer#usage) that work with Grunt, Rails, Brunch, and more.
+We don't include vendor prefixes in our Sass files&mdash;instead, we let [Autoprefixer](https://github.com/postcss/autoprefixer) handle it for us. Our build process uses [gulp-postcss](https://github.com/postcss/gulp-postcss) with the PostCSS plugin, but there are [other versions](https://github.com/postcss/autoprefixer#usage) that work with Grunt, Rails, Brunch, and more.
 
-To get the proper browser support, use these Autoprefixer settings:
+To get the same browser support as Foundation itself, configure your browser targets through a `.browserslistrc` file &mdash; Autoprefixer, Babel and many other build tools read it automatically:
 
-```js
-autoprefixer({
-  browsers: ['last 2 versions', 'ie >= 9', 'android >= 4.4', 'ios >= 7']
-});
+```
+chrome >= 110
+edge >= 110
+firefox >= 115
+safari >= 15.4
+ios_saf >= 15.4
+samsung >= 17
+not dead
 ```
 
 ---
