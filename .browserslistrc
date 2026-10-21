@@ -1,3 +1,10 @@
-# Browsers that we support
-last 2 versions
-> 1%
+# Explicit support baseline for the 6.x CSS output (JS dist stays ES5).
+# Chrome/Edge 110 (2022), Firefox 115 (the 2023 ESR line, covers newer ESRs too),
+# Safari/iOS 15.4 (2022-03), Samsung Internet 17.
+chrome >= 110
+edge >= 110
+firefox >= 115
+safari >= 15.4
+ios_saf >= 15.4
+samsung >= 17
+not dead

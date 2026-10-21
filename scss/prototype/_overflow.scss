@@ -23,7 +23,6 @@ $prototype-overflow: (
 @mixin overflow($overflow) {
   overflow: $overflow !important;
   @if $overflow == 'scroll' {
-    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -32,7 +31,6 @@ $prototype-overflow: (
 @mixin overflow-x($overflow) {
   overflow-x: $overflow !important;
   @if $overflow == 'scroll' {
-    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -41,7 +39,6 @@ $prototype-overflow: (
 @mixin overflow-y($overflow) {
   overflow-y: $overflow !important;
   @if $overflow == 'scroll' {
-    -webkit-overflow-scrolling: touch;
   }
 }
 
