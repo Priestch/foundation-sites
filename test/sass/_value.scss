@@ -3,9 +3,9 @@
 @import '../../scss/util/unit';
 @import '../../scss/util/value';
 
-@include test-module('Value') {
+@include describe('Value') {
 
-  @include test('Value (Not Falsey) [function]') {
+  @include it('Value (Not Falsey) [function]') {
     $boolean: has-value(true);
     $number:  has-value(1px);
     $color:   has-value(#000);
@@ -18,7 +18,7 @@
     @include assert-equal($list, true, $description);
   }
 
-  @include test('Value (Falsey) [function]') {
+  @include it('Value (Falsey) [function]') {
     $zero:   has-value(0px);
     $null:   has-value(null);
     $none:   has-value(none);
@@ -31,7 +31,7 @@
     @include assert-equal($empty, false, $description);
   }
 
-  @include test('Get Side [function]') {
+  @include it('Get Side [function]') {
     $valueOne: 1rem;
     $testOne: (
       get-side($valueOne, top),
@@ -81,7 +81,7 @@
       'Returns correct sides when given four side values');
   }
 
-  @include test('Get Border Value [function]') {
+  @include it('Get Border Value [function]') {
     $value: 10px dashed green;
     $width: get-border-value($value, width);
     $style: get-border-value($value, style);
@@ -102,7 +102,7 @@
     @include assert-equal($defaultColor, black, $defaultDescription);
   }
 
-  @include test('Map Deep Get [function]') {
+  @include it('Map Deep Get [function]') {
     $map: (
       one: (
         two: 'three',
@@ -114,7 +114,7 @@
       'Gets a value from a nested map');
   }
 
-  @include test('Map Safe Get [function]') {
+  @include it('Map Safe Get [function]') {
     $map: (
       one: 'two'
     );

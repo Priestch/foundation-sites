@@ -3,9 +3,9 @@
 @import '../../scss/global';
 @import '../../scss/util/color';
 
-@include test-module('Color') {
+@include describe('Color') {
 
-  @include test('Foreground (Black) [function]') {
+  @include it('Foreground (Black) [function]') {
     $test: color-pick-contrast($white);
     $expect: $black;
 
@@ -13,7 +13,7 @@
       'Returns black if the input color is light');
   }
 
-  @include test('Foreground (White) [function]') {
+  @include it('Foreground (White) [function]') {
     $test: color-pick-contrast($black);
     $expect: $white;
 
@@ -21,7 +21,7 @@
       'Returns white if the input color is dark');
   }
 
-  @include test('Smart Scale (Darken) [function]') {
+  @include it('Smart Scale (Darken) [function]') {
     $color: $white;
     $scale: 5%;
     $threshold: 60%;
@@ -33,7 +33,7 @@
       'Darkens a light color');
   }
 
-  @include test('Smart Scale (Lighten) [function]') {
+  @include it('Smart Scale (Lighten) [function]') {
     $color: $black;
     $scale: 5%;
     $threshold: 60%;

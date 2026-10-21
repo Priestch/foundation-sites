@@ -4,11 +4,11 @@
 @import '../../scss/util/value';
 @import '../../scss/util/breakpoint';
 
-@include test-module('Breakpoint') {
+@include describe('Breakpoint') {
 
   // --- Breakpoint: Named ---
 
-  @include test('Breakpoint (Named Default/Up Range) [function]') {
+  @include it('Breakpoint (Named Default/Up Range) [function]') {
     $test: breakpoint(medium);
     $expect: '(min-width: 40em)';
 
@@ -16,7 +16,7 @@
       'Converts a named breakpoint to an em value');
   }
 
-  @include test('Breakpoint (Named Only Range) [function]') {
+  @include it('Breakpoint (Named Only Range) [function]') {
     $test: breakpoint(medium only);
     $expect: '(min-width: 40em) and (max-width: 63.99875em)';
 
@@ -36,7 +36,7 @@
       'Creates a min-width range if the breakpoint is the highest');
   }
 
-  @include test('Breakpoint (Named Down Range) [function]') {
+  @include it('Breakpoint (Named Down Range) [function]') {
     $test: breakpoint(medium down);
     $expect: '(max-width: 63.99875em)';
 
@@ -79,14 +79,14 @@
   // etc...
   //
 
-  @include test('Breakpoint (Retina) [function]') {
+  @include it('Breakpoint (Retina) [function]') {
     $expect-2: '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)';
 
     @include assert-equal(breakpoint(retina), $expect-2,
       'Creates a x2 HiDPI range out of the retina alias breakpoint');
   }
 
-  @include test('Breakpoint (HIDPI Default/Up Range) [function]') {
+  @include it('Breakpoint (HIDPI Default/Up Range) [function]') {
     $expect-1-5: '(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)';
     $expect-2: '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)';
 
@@ -103,7 +103,7 @@
       'Creates a x2 HiDPI up range out of a x2 HiDPI breakpoint');
   }
 
-  @include test('Breakpoint (HIDPI Only Range) [function]') {
+  @include it('Breakpoint (HIDPI Only Range) [function]') {
     $expect-1-5: '(-webkit-min-device-pixel-ratio: 1.5) and (-webkit-max-device-pixel-ratio: 1.9895833333), (min-resolution: 144dpi) and (max-resolution: 191dpi)';
     $expect-2: '(-webkit-min-device-pixel-ratio: 2) and (-webkit-max-device-pixel-ratio: 2.9895833333), (min-resolution: 192dpi) and (max-resolution: 287dpi)';
     $expect-highest: '(-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi)';
@@ -118,7 +118,7 @@
       'Creates an up range if the HiDPI breakpoint is the highest');
   }
 
-  @include test('Breakpoint (HIDPI Down Range) [function]') {
+  @include it('Breakpoint (HIDPI Down Range) [function]') {
     $expect-1-5: '(-webkit-max-device-pixel-ratio: 1.9895833333), (max-resolution: 191dpi)';
     $expect-2: '(-webkit-max-device-pixel-ratio: 2.9895833333), (max-resolution: 287dpi)';
     $expect-highest: '';
@@ -136,7 +136,7 @@
 
   // --- Breakpoint: Value ---
 
-  @include test('Breakpoint (Value Default/Up Range) [function]') {
+  @include it('Breakpoint (Value Default/Up Range) [function]') {
     $expect: '(min-width: 1em)';
 
     @include assert-equal(breakpoint(16px), $expect,
@@ -145,7 +145,7 @@
       'Converts a rem breakpoint to em');
   }
 
-  @include test('Breakpoint (Value Down Range) [function]') {
+  @include it('Breakpoint (Value Down Range) [function]') {
     $expect: '(max-width: 1em)';
 
     @include assert-equal(breakpoint(16px down), $expect,
@@ -159,7 +159,7 @@
 
   // --- Breakpoint: Orientation ---
 
-  @include test('Breakpoint (Orientation) [function]') {
+  @include it('Breakpoint (Orientation) [function]') {
     @include assert-equal(breakpoint(landscape), '(orientation: landscape)',
       'Creates special media query for landscape');
     @include assert-equal(breakpoint(portrait), '(orientation: portrait)',
@@ -169,7 +169,7 @@
 
   // --- Breakpoint: Miscellaneous ---
 
-  @include test('Breakpoint (Empty String) [function]') {
+  @include it('Breakpoint (Empty String) [function]') {
     $expect: '';
 
     @include assert-equal(breakpoint(small up), $expect,
@@ -180,14 +180,14 @@
       'Returns an empty string for the value 0 up');
   }
 
-  @include test('Breakpoint (Unknown Value) [function]') {
+  @include it('Breakpoint (Unknown Value) [function]') {
     @include assert-equal(breakpoint(xxxxlarge), '', 'Returns an empty string for non-existant media queries');
   }
 
 
   // --- Utilities ---
 
-  @include test('Map Serialize [function]') {
+  @include it('Map Serialize [function]') {
     $input: (
       small: 1em,
       medium: 2em,
@@ -200,7 +200,7 @@
       'Converts a Sass map into a string');
   }
 
-  @include test('Map Next [function]') {
+  @include it('Map Next [function]') {
     $input: (
       one: 'One',
       two: 'Two',
@@ -225,7 +225,7 @@
       'Returns null if the key is not in the map');
   }
 
-  @include test('Get Breakpoint Value [function]') {
+  @include it('Get Breakpoint Value [function]') {
     $config: (
       small: 0,
       large: 1,

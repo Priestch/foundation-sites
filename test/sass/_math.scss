@@ -3,9 +3,9 @@
 @import '../../scss/util/unit';
 @import '../../scss/util/math';
 
-@include test-module('Math') {
+@include describe('Math') {
 
-  @include test('Parse Fraction [function]') {
+  @include it('Parse Fraction [function]') {
     @include assert-equal(zf-parse-fraction(50%), (50, 100),
       'Parses a percentage into numerator and denominator');
     @include assert-equal(zf-parse-fraction(0.5), (50, 100),
@@ -18,14 +18,14 @@
       'Parses a "n of n" fraction with absolute numbers');
   }
 
-  @include test('Parse Fraction (Non-Numeric List) [function]') {
+  @include it('Parse Fraction (Non-Numeric List) [function]') {
     @include assert-equal(zf-parse-fraction(a of b), (null, null),
       'Returns nulls when the list items are not numbers');
     @include assert-equal(zf-parse-fraction(1 of b), (null, null),
       'Returns nulls when the denominator is not a number');
   }
 
-  @include test('Is Fraction [function]') {
+  @include it('Is Fraction [function]') {
     @include assert-equal(zf-is-fraction(50%), true,
       'Detects a percentage as a fraction');
     @include assert-equal(zf-is-fraction(1 of 2), true,
@@ -38,7 +38,7 @@
       'Accepts a plain number when $allow-no-denominator is true');
   }
 
-  @include test('Fraction To Percentage [function]') {
+  @include it('Fraction To Percentage [function]') {
     @include assert-equal(fraction-to-percentage(50%), 50%,
       'Converts a percentage to a percentage');
     @include assert-equal(fraction-to-percentage(1 of 2), 50%,

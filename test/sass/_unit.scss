@@ -2,10 +2,10 @@
 
 @import '../../scss/util/unit';
 
-@include test-module('Units') {
+@include describe('Units') {
 
   // Strip Units
-  @include test('Strip Units [function]') {
+  @include it('Strip Units [function]') {
     $expect: 20;
 
     @include assert-equal(strip-unit(20px), $expect,
@@ -15,7 +15,7 @@
   }
 
   // Convert To Rem
-  @include test('Convert To Rem [function]') {
+  @include it('Convert To Rem [function]') {
     $expect: 2rem;
 
     @include assert-equal(-zf-to-rem(32, 16), $expect,
@@ -25,7 +25,7 @@
   }
 
   // Rem Calculator
-  @include test('Rem Calculator [function]') {
+  @include it('Rem Calculator [function]') {
     $test: rem-calc((8 16 32 64), 16);
     $expect: 0.5rem 1rem 2rem 4rem;
 
@@ -34,7 +34,7 @@
   }
   
   // Breakpoint to Em
-  @include test('Breakpoint To Em [function]') {
+  @include it('Breakpoint To Em [function]') {
     $expect: 1em;
 
     @include assert-equal(-zf-bp-to-em(16), $expect,
