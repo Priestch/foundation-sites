@@ -2,16 +2,6 @@ import $ from 'jquery';
 import { onLoad } from './foundation.core.utils';
 import { Motion } from './foundation.util.motion';
 
-const MutationObserver = (function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i=0; i < prefixes.length; i++) {
-    if (`${prefixes[i]}MutationObserver` in window) {
-      return window[`${prefixes[i]}MutationObserver`];
-    }
-  }
-  return false;
-})();
-
 const triggers = (el, type) => {
   el.data(type).split(' ').forEach(id => {
     $(`#${id}`)[ type === 'close' ? 'trigger' : 'triggerHandler'](`${type}.zf.trigger`, [el]);
@@ -103,20 +93,10 @@ Triggers.Initializers.addToggleFocusListener = ($elem) => {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global  = {
   resizeListener: function($nodes) {
-    if(!MutationObserver){//fallback for IE 9
-      $nodes.each(function(){
-        $(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function($nodes) {
-    if(!MutationObserver){//fallback for IE 9
-      $nodes.each(function(){
-        $(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },
