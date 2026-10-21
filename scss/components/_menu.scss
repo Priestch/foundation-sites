@@ -94,7 +94,7 @@ $menu-icons-back-compat: true !default;
 @mixin menu-expand {
   @if $global-flexbox {
     li {
-      flex: 1 1 0px; // sass-lint:disable-line zero-unit
+      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
     }
   }
   @else {

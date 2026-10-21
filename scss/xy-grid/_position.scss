@@ -28,7 +28,7 @@
     // Make sure that 0 is translated in 0rem for calc()
     $gutter: rem-calc(xy-cell-gutters($gutters, $breakpoint));
     @if $gutter == 0 {
-      // sass-lint:disable zero-unit
+      // stylelint-disable length-zero-no-unit
       $gutter: 0rem;
     }
     $offset: if($gutter == 0, $size, calc(#{$size} + #{$gutter} / 2));

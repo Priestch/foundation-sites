@@ -104,7 +104,7 @@ $button-responsive-expanded: false !default;
   font-family: $button-font-family;
   font-size: map-get($button-sizes, default);
   font-weight: $button-font-weight;
-  -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+  -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
   line-height: 1;
   text-align: center;
   cursor: pointer;
@@ -419,7 +419,7 @@ $button-responsive-expanded: false !default;
     }
   }
 
-  a.button { // sass-lint:disable-line no-qualifying-elements
+  a.button { // stylelint-disable-line selector-no-qualifying-type
     &:hover,
     &:focus {
       text-decoration: none;

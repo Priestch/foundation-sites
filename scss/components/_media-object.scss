@@ -71,7 +71,7 @@ $mediaobject-image-width-stacked: 100% !default;
 
   @if $global-flexbox {
     &.main-section {
-      flex: 1 1 0px; // sass-lint:disable-line zero-unit
+      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
     }
   }
   @else {

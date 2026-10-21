@@ -83,7 +83,7 @@ $progress-radius: $global-radius !default;
     }
 
     // For IE and Edge
-    &::-ms-fill { // sass-lint:disable-line no-vendor-prefixes
+    &::-ms-fill { // stylelint-disable-line property-no-vendor-prefix
       @if has-value($progress-radius) {
         border-radius: $progress-radius;
       }

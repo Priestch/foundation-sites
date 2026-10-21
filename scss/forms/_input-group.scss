@@ -92,7 +92,7 @@ $input-prefix-padding: 1rem !default;
     border-radius: 0;
 
     @if $global-flexbox {
-      flex: 1 1 0px; // sass-lint:disable-line zero-unit
+      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
       min-width: 0;
     }
   }

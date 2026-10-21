@@ -96,7 +96,7 @@ $global-font-size: 100% !default;
   }
 
   // Turn 0rem into 0
-  @if $value == 0rem {
+  @if $value == 0rem { // stylelint-disable-line length-zero-no-unit -- comparison must stay unit-ful
     $value: 0;
   }
 

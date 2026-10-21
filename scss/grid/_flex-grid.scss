@@ -58,7 +58,7 @@
 ///
 /// @param {Mixed} $columns [expand] - Width of the column.
 @function flex-grid-column($columns: expand) {
-  $flex: 1 1 0px; // sass-lint:disable-line zero-unit
+  $flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
 
   @if $columns == shrink {
     $flex: 0 0 auto;
@@ -255,7 +255,7 @@
   }
 
   .columns {
-    @extend .column; // sass-lint:disable-line placeholder-in-extend
+    @extend .column; // stylelint-disable-line scss/at-extend-no-missing-placeholder
 
   }
 }

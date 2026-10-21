@@ -2,7 +2,7 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
-// sass-lint:disable no-color-literals, no-qualifying-elements
+// stylelint-disable color-named, selector-no-qualifying-type
 
 ////
 /// @group global
@@ -178,8 +178,8 @@ $global-color-pick-contrast-tolerance: 0 !default;
     color: $body-font-color;
 
     @if ($body-antialiased) {
-      -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
-      -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+      -webkit-font-smoothing: antialiased; // stylelint-disable-line property-no-vendor-prefix
+      -moz-osx-font-smoothing: grayscale; // stylelint-disable-line property-no-vendor-prefix
     }
   }
 
@@ -208,7 +208,7 @@ $global-color-pick-contrast-tolerance: 0 !default;
   }
 
   // Styles Google Maps and MapQuest embeds properly
-  // sass-lint:disable-line no-ids
+  // stylelint-disable-line selector-max-id
   .map_canvas,
   .mqa-display {
     img,

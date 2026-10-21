@@ -81,7 +81,7 @@ $dropdown-menu-item-background-active: transparent !default;
 
 @mixin dropdown-menu-direction($dir: horizontal) {
   @if $dir == horizontal {
-    > li.opens-left { // sass-lint:disable-line no-qualifying-elements
+    > li.opens-left { // stylelint-disable-line selector-no-qualifying-type
       > .is-dropdown-submenu {
         top: 100%;
         right: 0;
@@ -89,7 +89,7 @@ $dropdown-menu-item-background-active: transparent !default;
       }
     }
 
-    > li.opens-right { // sass-lint:disable-line no-qualifying-elements
+    > li.opens-right { // stylelint-disable-line selector-no-qualifying-type
       > .is-dropdown-submenu {
         top: 100%;
         right: auto;
@@ -98,12 +98,12 @@ $dropdown-menu-item-background-active: transparent !default;
     }
 
     @if $dropdownmenu-arrows {
-      > li.is-dropdown-submenu-parent > a { // sass-lint:disable-line no-qualifying-elements
+      > li.is-dropdown-submenu-parent > a { // stylelint-disable-line selector-no-qualifying-type
         position: relative;
         padding-#{$global-right}: $dropdownmenu-arrow-padding;
       }
 
-      > li.is-dropdown-submenu-parent > a::after { // sass-lint:disable-line no-qualifying-elements
+      > li.is-dropdown-submenu-parent > a::after { // stylelint-disable-line selector-no-qualifying-type
         @include css-triangle($dropdownmenu-arrow-size, $dropdownmenu-arrow-color, down);
         #{$global-right}: 5px;
         #{$global-left}: auto;

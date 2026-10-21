@@ -68,7 +68,7 @@ $topbar-unstack-breakpoint: medium !default;
     margin-#{$global-right}: 0;
   }
 
-  input.button { // sass-lint:disable-line no-qualifying-elements
+  input.button { // stylelint-disable-line selector-no-qualifying-type
     width: auto;
   }
 }

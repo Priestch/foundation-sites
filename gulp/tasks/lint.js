@@ -1,6 +1,6 @@
 var gulp = require('gulp');
-var sassLint = require('gulp-sass-lint');
 var eslint = require('gulp-eslint');
+var stylelint = require('stylelint');
 var CONFIG = require('../config.js');
 
 // Lints Sass and JavaScript files for formatting issues
@@ -9,12 +9,27 @@ gulp.task('lint', gulp.series('lint:sass', 'lint:javascript'));
 // Lints Sass and Javascript without throwing error
 gulp.task('lint:graceful', gulp.series('lint:graceful:sass', 'lint:graceful:javascript'));
 
-function lintSass() {
-  return gulp.src(CONFIG.SASS_LINT_FILES)
-    .pipe(sassLint({
-      config: './.sass-lint.yml'
-    }))
-    .pipe(sassLint.format());
+function lintSass(failOnError) {
+  return function () {
+    var result = stylelint.lint({
+      files: CONFIG.SASS_LINT_FILES,
+      formatter: 'string',
+      customSyntax: 'postcss-scss'
+    });
+
+    if (failOnError) {
+      return result.then(function (res) {
+        if (res.errored) {
+          console.log(res.output);
+          throw new Error('Sass lint failures');
+        }
+      });
+    }
+
+    return result.then(function (res) {
+      if (res.output) { console.log(res.output); }
+    });
+  };
 }
 
 function lintJavascript() {
@@ -26,14 +41,11 @@ function lintJavascript() {
     .pipe(eslint.format());
 }
 
-gulp.task('lint:sass', function () {
-  return lintSass()
-    .pipe(sassLint.failOnError());
-});
+gulp.task('lint:sass', lintSass(true));
 gulp.task('lint:javascript', function () {
   return lintJavascript()
   .pipe(eslint.failAfterError());
 });
 
-gulp.task('lint:graceful:sass', lintSass);
+gulp.task('lint:graceful:sass', lintSass(false));
 gulp.task('lint:graceful:javascript', lintJavascript);

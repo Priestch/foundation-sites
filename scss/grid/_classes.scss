@@ -182,7 +182,7 @@
 
   @if $column == 'column' and has-value($grid-column-alias) {
     .#{$grid-column-alias} {
-      // sass-lint:disable-block placeholder-in-extend
+      // stylelint-disable scss/at-extend-no-missing-placeholder
       @extend .column;
     }
   }

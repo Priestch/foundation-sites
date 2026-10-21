@@ -12,7 +12,7 @@ $print-transparent-backgrounds: true !default;
 /// @group global
 $print-hrefs: true !default;
 
-// sass-lint:disable-all
+/* stylelint-disable-all -- print stylesheet intentionally deviates (h5bp legacy) */
 
 @mixin foundation-print-styles {
   .show-for-print { display: none !important; }
@@ -23,7 +23,7 @@ $print-hrefs: true !default;
       // using black text everywhere and forcing the browser to economize ink.
       @if $print-transparent-backgrounds {
         background: transparent !important;
-        color: black !important; // Black prints faster: h5bp.com/s
+        color: #000 !important; // Black prints faster: h5bp.com/s
         print-color-adjust: economy;
       }
       // Otherwise, prevent any economy by the browser.
