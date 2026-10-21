@@ -29,7 +29,8 @@ For versions up to and including 6.9.0, see the [GitHub releases page](https://g
 
 - **Explicit browser baseline** (`.browserslistrc`): Chrome/Edge >= 110 (2023-02), Firefox >= 115 (2023-07, covers all newer ESRs), Safari/iOS >= 15.4 (2022-03), Samsung Internet >= 17, `not dead`. The previous implicit line went down to IE 10 (2012). CSS output changes (dropped IE/legacy prefixes) land with the next dist rebuild; the JS dist stays ES5.
 - `gulp check:browserSupport` (doiuse) now **fails** when the compiled CSS uses a feature not supported by the baseline, with a documented allow-list for gracefully-degrading/print-only features; the check runs in CI after the test suite.
-- Removed inert `-webkit-overflow-scrolling: touch` declarations (a no-op on every browser within the new baseline).
+- Removed inert `-webkit-overflow-scrolling: touch` declarations and the IE7-only `-ms-interpolation-mode` declaration from the CSS.
+- Removed dead JavaScript polyfills for pre-2013 engines: `Date.now`, `requestAnimationFrame` vendor prefixes + iOS 6 fallback, `performance.now`, `Function.prototype.bind`, the 2012 `matchMedia` shim, `MutationObserver` vendor prefixes + IE9 listener fallbacks, and the legacy `document.createEvent` mouse-event path. Supported browsers have all of these natively; the JS dist stays ES5 and just gets smaller.
 - `jquery` peer dependency tightened to `>=3.6.0 <4` — jQuery 4 is not supported in the 6.x line (7.0 removes jQuery entirely).
 - `motion-ui` peer dependency changed from the invalid `latest` to `^2.0.5`.
 - Node.js minimum raised to 20 (package `engines`, CI matrix tests Node 22 and 24).
