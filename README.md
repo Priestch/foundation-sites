@@ -19,7 +19,6 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/da72b0f9-3d51-4d50-951e-6bbf5fe88601/deploy-status)](https://app.netlify.com/sites/foundation-sites/deploys)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=foundation_foundation-sites&metric=alert_status)](https://sonarcloud.io/dashboard?id=foundation_foundation-sites)
 [![Known Vulnerabilities](https://snyk.io/test/github/foundation/foundation-sites/badge.svg)](https://snyk.io/test/github/foundation/foundation-sites)
-<!-- [![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=ZlJCVGIxaEgvaFc4TWhBZ0hFWGtIMjBRZEw0UnFrUys3ZGdrbmZ6TW5lZz0tLU9wZUdFV2lmNVd1dU9XbWxuQ05BOGc9PQ==--915d78e23eeed2ae37ce7a670bc370011a9e4fd9)](https://automate.browserstack.com/public-build/ZlJCVGIxaEgvaFc4TWhBZ0hFWGtIMjBRZEw0UnFrUys3ZGdrbmZ6TW5lZz0tLU9wZUdFV2lmNVd1dU9XbWxuQ05BOGc9PQ==--915d78e23eeed2ae37ce7a670bc370011a9e4fd9) -->
 
 
 Foundation is the most advanced responsive front-end framework in the world. Quickly go from prototype to production, building sites or apps that work on any kind of device with Foundation. Includes a fully customizable, responsive grid, a large library of Sass mixins, commonly used JavaScript plugins, and full accessibility support.
@@ -30,7 +29,7 @@ Foundation is the most advanced responsive front-end framework in the world. Qui
 
 ### Documentation
 
-To run the documentation locally on your machine, you need [Node.js](https://nodejs.org/en/) installed on your computer. (Your Node.js version must be a **minimum of 18**). Run these commands to set up the documentation:
+To run the documentation locally on your machine, you need [Node.js](https://nodejs.org/en/) installed on your computer. (Your Node.js version must be a **minimum of 20**). Run these commands to set up the documentation:
 
 ```bash
 # Install
@@ -59,10 +58,6 @@ yarn test:visual
 ## Contributing
 
 Check out [CONTRIBUTING.md](CONTRIBUTING.md) to see how to report an issue or submit a bug fix or a new feature, and our [contributing guide](https://get.foundation/get-involved/contribute.html) to learn how you can contribute more globally to Foundation. You can also browse the [Help Wanted](https://github.com/foundation/foundation-sites/labels/help%20wanted) tag in our issue tracker to find things to do.
-
-## Testing powered by
-<a target="_blank" href="https://www.browserstack.com/"><img width="200" src="https://www.browserstack.com/images/layout/browserstack-logo-600x315.png"></a><br>
-[BrowserStack Open-Source Program](https://www.browserstack.com/open-source)
 
 <!-- ## Training
 
