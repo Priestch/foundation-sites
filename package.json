@@ -107,7 +107,8 @@
     "merge": ">=2.1.1",
     "shelljs": ">=0.8.5",
     "nth-check": ">=2.0.1",
-    "lodash.template": ">=4.5.0"
+    "lodash.template": ">=4.5.0",
+    "jsdoc": "^4.0.5"
   },
   "engines": {
     "node": ">=20"
