@@ -74,7 +74,7 @@
     "husky": "^8.0.3",
     "is-empty-object": "^1.1.1",
     "jquery": "^3.6.0",
-    "js-yaml": "^3.12.1",
+    "js-yaml": "^4.1.0",
     "kleur": "^3.0.2",
     "mocha": "^10.7.3",
     "mocha-headless-chrome": "^4.0.0",
