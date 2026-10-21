@@ -91,7 +91,7 @@ gulp.task('customizer:sass', gulp.series('customizer:loadConfig', 'customizer:pr
     }))
     .pipe(postcss([autoprefixer()])) // uses ".browserslistrc"
     .pipe(gulp.dest(path.join(OUTPUT_DIR, 'css')))
-    .pipe(cleancss({ compatibility: 'ie9' }))
+    .pipe(cleancss())
     .pipe(rename('foundation.min.css'))
     .pipe(gulp.dest(path.join(OUTPUT_DIR, 'css')))
 }));
