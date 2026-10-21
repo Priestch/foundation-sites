@@ -68,6 +68,10 @@ var webpackOutputAsExternal = {
 
 var webpackConfig = {
   mode: 'development',
+  // JS dist stays ES5 (decision D3). Pinned explicitly so webpack (which reads
+  // ".browserslistrc" by default) does not emit modern runtime syntax now that
+  // the browserslist file carries the CSS-only baseline.
+  target: ['web', 'es5'],
   externals: utils.umdExternals({
     // Use the global jQuery object "jQuery" in module-less environments.
     'jquery': { root: 'jQuery' },

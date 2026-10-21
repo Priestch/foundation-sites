@@ -24,10 +24,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./foundation.util.mediaQuery");
-/* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.core.utils */ "./foundation.core");
-/* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./foundation.core");
+/* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_foundation_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./foundation.util.mediaQuery");
+/* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
@@ -42,6 +42,7 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+
 
 
 
@@ -91,8 +92,8 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_init",
     value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery._init();
-      var id = this.$element[0].id || (0,_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'interchange');
+      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__.MediaQuery._init();
+      var id = this.$element[0].id || (0,_foundation_core__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'interchange');
       this.$element.attr({
         'data-resize': id,
         'id': id
@@ -165,9 +166,9 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_addBreakpoints",
     value: function _addBreakpoints() {
-      for (var i in _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries) {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries.hasOwnProperty(i)) {
-          var query = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries[i];
+      for (var i in _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__.MediaQuery.queries) {
+        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__.MediaQuery.queries.hasOwnProperty(i)) {
+          var query = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_2__.MediaQuery.queries[i];
           Interchange.SPECIAL_QUERIES[query.name] = query.value;
         }
       }
@@ -226,7 +227,7 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
 
       // Replacing images
       if (type === 'src') {
-        this.$element.attr('src', path).on('load', function () {
+        this.$element.attr('src', path).one('load', function () {
           _this2.currentPath = path;
         }).trigger(trigger);
       }
@@ -241,7 +242,9 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
       else if (type === 'html') {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().get(path, function (response) {
           _this2.$element.html(response).trigger(trigger);
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()(response).foundation();
+          // Initialize plugins in the inserted content (it is a re-parsed copy
+          // of `response`, so initializing `$(response)` would hit detached nodes)
+          _foundation_core__WEBPACK_IMPORTED_MODULE_1__.Foundation.reflow(_this2.$element);
           _this2.currentPath = path;
         });
       }
@@ -263,7 +266,7 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
       this.$element.off('resizeme.zf.trigger');
     }
   }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.Plugin);
+}(_foundation_core__WEBPACK_IMPORTED_MODULE_1__.Plugin);
 /**
  * Default settings for plugin
  */
@@ -316,15 +319,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -410,22 +404,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },

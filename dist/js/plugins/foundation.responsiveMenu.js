@@ -147,13 +147,8 @@ var ResponsiveMenu = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_events",
     value: function _events() {
-      var _this = this;
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', function () {
-        _this._checkMediaQueries();
-      });
-      // $(window).on('resize.zf.ResponsiveMenu', function() {
-      //   _this._checkMediaQueries();
-      // });
+      this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
     }
 
     /**
@@ -199,8 +194,8 @@ var ResponsiveMenu = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_destroy",
     value: function _destroy() {
-      this.currentPlugin.destroy();
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('.zf.ResponsiveMenu');
+      if (this.currentPlugin) this.currentPlugin.destroy();
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
     }
   }]);
 }(_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.Plugin);

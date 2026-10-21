@@ -98,13 +98,14 @@ var Equalizer = /*#__PURE__*/function (_Plugin) {
       this.isOn = false;
       this._bindHandler = {
         onResizeMeBound: this._onResizeMe.bind(this),
-        onPostEqualizedBound: this._onPostEqualized.bind(this)
+        onPostEqualizedBound: this._onPostEqualized.bind(this),
+        onCheckMQBound: this._checkMQ.bind(this)
       };
       var imgs = this.$element.find('img');
       var tooSmall;
       if (this.options.equalizeOn) {
         tooSmall = this._checkMQ();
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', this._checkMQ.bind(this));
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
       } else {
         this._events();
       }
@@ -125,6 +126,7 @@ var Equalizer = /*#__PURE__*/function (_Plugin) {
     key: "_pauseEvents",
     value: function _pauseEvents() {
       this.isOn = false;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
       this.$element.off({
         '.zf.equalizer': this._bindHandler.onPostEqualizedBound,
         'resizeme.zf.trigger': this._bindHandler.onResizeMeBound,

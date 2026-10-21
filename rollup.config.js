@@ -5,7 +5,9 @@ var baseConfig = {
   plugins: [
     rollupBabel({
       presets: [
-        ["@babel/preset-env", { modules: false }]
+        // JS dist stays ES5 (decision D3); targets are pinned explicitly so the
+        // CSS-side ".browserslistrc" baseline does not loosen JS transpilation.
+        ["@babel/preset-env", { modules: false, targets: { ie: '11' } }]
       ],
     }),
   ],

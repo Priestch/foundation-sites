@@ -170,7 +170,8 @@ var Drilldown = /*#__PURE__*/function (_Plugin) {
       }
 
       // create a wrapper on element if it doesn't exist.
-      if (!this.$element.parent().hasClass('is-drilldown')) {
+      this.wasWrapped = this.$element.parent().hasClass('is-drilldown');
+      if (!this.wasWrapped) {
         this.$wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this.options.wrapper).addClass('is-drilldown');
         if (this.options.animateHeight) this.$wrapper.addClass('animate-height');
         this.$element.wrap(this.$wrapper);
@@ -606,7 +607,8 @@ var Drilldown = /*#__PURE__*/function (_Plugin) {
       this._hideAll();
       this.$element.off('mutateme.zf.trigger');
       _foundation_util_nest__WEBPACK_IMPORTED_MODULE_2__.Nest.Burn(this.$element, 'drilldown');
-      this.$element.unwrap().find('.js-drilldown-back, .is-submenu-parent-item').remove().end().find('.is-active, .is-closing, .is-drilldown-submenu').removeClass('is-active is-closing is-drilldown-submenu').off('transitionend otransitionend webkitTransitionEnd').end().find('[data-submenu]').removeAttr('aria-hidden tabindex role');
+      if (!this.wasWrapped) this.$element.unwrap();
+      this.$element.find('.js-drilldown-back, .is-submenu-parent-item').remove().end().find('.is-active, .is-closing, .is-drilldown-submenu').removeClass('is-active is-closing is-drilldown-submenu').off('transitionend otransitionend webkitTransitionEnd').end().find('[data-submenu]').removeAttr('aria-hidden tabindex role');
       this.$submenuAnchors.each(function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).off('.zf.drilldown');
       });

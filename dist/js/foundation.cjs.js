@@ -324,54 +324,6 @@ var foundation_core_utils = /*#__PURE__*/Object.freeze({
 //     'only screen and (min-resolution: 2dppx)'
 //   };
 
-// matchMedia() polyfill - Test a CSS media type/query in JS.
-// Authors & copyright © 2012: Scott Jehl, Paul Irish, Nicholas Zakas, David Knight. MIT license
-/* eslint-disable */
-window.matchMedia || (window.matchMedia = function () {
-
-  // For browsers that support matchMedium api such as IE 9 and webkit
-  var styleMedia = window.styleMedia || window.media;
-
-  // For those that don't support matchMedium
-  if (!styleMedia) {
-    var style = document.createElement('style'),
-      script = document.getElementsByTagName('script')[0],
-      info = null;
-    style.type = 'text/css';
-    style.id = 'matchmediajs-test';
-    if (!script) {
-      document.head.appendChild(style);
-    } else {
-      script.parentNode.insertBefore(style, script);
-    }
-
-    // 'style.currentStyle' is used by IE <= 8 and 'window.getComputedStyle' for all other browsers
-    info = 'getComputedStyle' in window && window.getComputedStyle(style, null) || style.currentStyle;
-    styleMedia = {
-      matchMedium: function matchMedium(media) {
-        var text = '@media ' + media + '{ #matchmediajs-test { width: 1px; } }';
-
-        // 'style.styleSheet' is used by IE <= 8 and 'style.textContent' for all other browsers
-        if (style.styleSheet) {
-          style.styleSheet.cssText = text;
-        } else {
-          style.textContent = text;
-        }
-
-        // Test if media query is true or false
-        return info.width === '1px';
-      }
-    };
-  }
-  return function (media) {
-    return {
-      matches: styleMedia.matchMedium(media || 'all'),
-      media: media || 'all'
-    };
-  };
-}());
-/* eslint-enable */
-
 var MediaQuery = {
   queries: [],
   current: '',
@@ -841,62 +793,6 @@ Foundation.util = {
 };
 window.Foundation = Foundation;
 
-// Polyfill for requestAnimationFrame
-(function () {
-  if (!Date.now || !window.Date.now) window.Date.now = Date.now = function () {
-    return new Date().getTime();
-  };
-  var vendors = ['webkit', 'moz'];
-  for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
-    var vp = vendors[i];
-    window.requestAnimationFrame = window[vp + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vp + 'CancelAnimationFrame'] || window[vp + 'CancelRequestAnimationFrame'];
-  }
-  if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
-    var lastTime = 0;
-    window.requestAnimationFrame = function (callback) {
-      var now = Date.now();
-      var nextTime = Math.max(lastTime + 16, now);
-      return setTimeout(function () {
-        callback(lastTime = nextTime);
-      }, nextTime - now);
-    };
-    window.cancelAnimationFrame = clearTimeout;
-  }
-  /**
-   * Polyfill for performance.now, required by rAF
-   */
-  if (!window.performance || !window.performance.now) {
-    window.performance = {
-      start: Date.now(),
-      now: function now() {
-        return Date.now() - this.start;
-      }
-    };
-  }
-})();
-if (!Function.prototype.bind) {
-  /* eslint-disable no-extend-native */
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-    }
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-      fToBind = this,
-      fNOP = function fNOP() {},
-      fBound = function fBound() {
-        return fToBind.apply(this instanceof fNOP ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
-      };
-    if (this.prototype) {
-      // native functions don't have a prototype
-      fNOP.prototype = this.prototype;
-    }
-    fBound.prototype = new fNOP();
-    return fBound;
-  };
-}
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
   if (typeof Function.prototype.name === 'undefined') {
@@ -1630,9 +1526,6 @@ Touch.setupTouchHandler = function () {
           'clientX': first.clientX,
           'clientY': first.clientY
         });
-      } else {
-        simulatedEvent = document.createEvent('MouseEvent');
-        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY, false, false, false, false, 0 /*left*/, null);
       }
       first.target.dispatchEvent(simulatedEvent);
     };
@@ -1645,15 +1538,6 @@ Touch.init = function () {
   }
 };
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     $__default["default"]("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -1739,22 +1623,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        $__default["default"](this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        $__default["default"](this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },
@@ -3521,6 +3393,7 @@ var AccordionMenu = /*#__PURE__*/function (_Plugin) {
     value: function _destroy() {
       this.$element.find('[data-submenu]').slideDown(0).css('display', '');
       this.$element.find('a').off('click.zf.accordionMenu');
+      this.$element.find('li').off('keydown.zf.accordionMenu');
       this.$element.find('[data-is-parent-link]').detach();
       if (this.options.submenuToggle) {
         this.$element.find('.has-submenu-toggle').removeClass('has-submenu-toggle');
@@ -3684,7 +3557,8 @@ var Drilldown = /*#__PURE__*/function (_Plugin) {
       }
 
       // create a wrapper on element if it doesn't exist.
-      if (!this.$element.parent().hasClass('is-drilldown')) {
+      this.wasWrapped = this.$element.parent().hasClass('is-drilldown');
+      if (!this.wasWrapped) {
         this.$wrapper = $__default["default"](this.options.wrapper).addClass('is-drilldown');
         if (this.options.animateHeight) this.$wrapper.addClass('animate-height');
         this.$element.wrap(this.$wrapper);
@@ -4120,7 +3994,8 @@ var Drilldown = /*#__PURE__*/function (_Plugin) {
       this._hideAll();
       this.$element.off('mutateme.zf.trigger');
       Nest.Burn(this.$element, 'drilldown');
-      this.$element.unwrap().find('.js-drilldown-back, .is-submenu-parent-item').remove().end().find('.is-active, .is-closing, .is-drilldown-submenu').removeClass('is-active is-closing is-drilldown-submenu').off('transitionend otransitionend webkitTransitionEnd').end().find('[data-submenu]').removeAttr('aria-hidden tabindex role');
+      if (!this.wasWrapped) this.$element.unwrap();
+      this.$element.find('.js-drilldown-back, .is-submenu-parent-item').remove().end().find('.is-active, .is-closing, .is-drilldown-submenu').removeClass('is-active is-closing is-drilldown-submenu').off('transitionend otransitionend webkitTransitionEnd').end().find('[data-submenu]').removeAttr('aria-hidden tabindex role');
       this.$submenuAnchors.each(function () {
         $__default["default"](this).off('.zf.drilldown');
       });
@@ -5419,13 +5294,14 @@ var Equalizer = /*#__PURE__*/function (_Plugin) {
       this.isOn = false;
       this._bindHandler = {
         onResizeMeBound: this._onResizeMe.bind(this),
-        onPostEqualizedBound: this._onPostEqualized.bind(this)
+        onPostEqualizedBound: this._onPostEqualized.bind(this),
+        onCheckMQBound: this._checkMQ.bind(this)
       };
       var imgs = this.$element.find('img');
       var tooSmall;
       if (this.options.equalizeOn) {
         tooSmall = this._checkMQ();
-        $__default["default"](window).on('changed.zf.mediaquery', this._checkMQ.bind(this));
+        $__default["default"](window).on('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
       } else {
         this._events();
       }
@@ -5446,6 +5322,7 @@ var Equalizer = /*#__PURE__*/function (_Plugin) {
     key: "_pauseEvents",
     value: function _pauseEvents() {
       this.isOn = false;
+      $__default["default"](window).off('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
       this.$element.off({
         '.zf.equalizer': this._bindHandler.onPostEqualizedBound,
         'resizeme.zf.trigger': this._bindHandler.onResizeMeBound,
@@ -5893,7 +5770,7 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
 
       // Replacing images
       if (type === 'src') {
-        this.$element.attr('src', path).on('load', function () {
+        this.$element.attr('src', path).one('load', function () {
           _this2.currentPath = path;
         }).trigger(trigger);
       }
@@ -5908,7 +5785,9 @@ var Interchange = /*#__PURE__*/function (_Plugin) {
       else if (type === 'html') {
         $__default["default"].get(path, function (response) {
           _this2.$element.html(response).trigger(trigger);
-          $__default["default"](response).foundation();
+          // Initialize plugins in the inserted content (it is a re-parsed copy
+          // of `response`, so initializing `$(response)` would hit detached nodes)
+          Foundation.reflow(_this2.$element);
           _this2.currentPath = path;
         });
       }
@@ -6193,7 +6072,7 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
     key: "_events",
     value: function _events() {
       var _this = this;
-      $__default["default"](window).one('load', function () {
+      _this.onLoadListener = onLoad($__default["default"](window), function () {
         if (_this.options.deepLinking) {
           if (location.hash) {
             _this.scrollToLoc(location.hash);
@@ -6201,8 +6080,6 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
         }
         _this.calcPoints();
         _this._updateActive();
-      });
-      _this.onLoadListener = onLoad($__default["default"](window), function () {
         _this.$element.on({
           'resizeme.zf.trigger': _this.reflow.bind(_this),
           'scrollme.zf.trigger': _this._updateActive.bind(_this)
@@ -6331,10 +6208,6 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
     key: "_destroy",
     value: function _destroy() {
       this.$element.off('.zf.trigger .zf.magellan').find(".".concat(this.options.activeClass)).removeClass(this.options.activeClass);
-      if (this.options.deepLinking) {
-        var hash = this.$active[0].getAttribute('href');
-        window.location.hash.replace(hash, '');
-      }
       $__default["default"](window).off('hashchange', this._deepLinkScroll);
       if (this.onLoadListener) $__default["default"](window).off(this.onLoadListener);
     }
@@ -6572,9 +6445,11 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
         });
       }
       if (this.options.inCanvasOn) {
-        $__default["default"](window).on('changed.zf.mediaquery', function () {
+        if (this._inCanvasMqHandler) $__default["default"](window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+        this._inCanvasMqHandler = function () {
           _this3._checkInCanvas();
-        });
+        };
+        $__default["default"](window).on('changed.zf.mediaquery', this._inCanvasMqHandler);
       }
     }
 
@@ -6591,13 +6466,15 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
           _this.reveal(true);
         }
       });
-      $__default["default"](window).on('changed.zf.mediaquery', function () {
+      if (this._revealMqHandler) $__default["default"](window).off('changed.zf.mediaquery', this._revealMqHandler);
+      this._revealMqHandler = function () {
         if (MediaQuery.atLeast(_this.options.revealOn)) {
           _this.reveal(true);
         } else {
           _this.reveal(false);
         }
-      });
+      };
+      $__default["default"](window).on('changed.zf.mediaquery', this._revealMqHandler);
     }
 
     /**
@@ -6998,6 +6875,8 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
       this.close();
       this.$element.off('.zf.trigger .zf.offCanvas');
       this.$overlay.off('.zf.offCanvas');
+      if (this._inCanvasMqHandler) $__default["default"](window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+      if (this._revealMqHandler) $__default["default"](window).off('changed.zf.mediaquery', this._revealMqHandler);
       if (this.onLoadListener) $__default["default"](window).off(this.onLoadListener);
     }
   }]);
@@ -7529,6 +7408,7 @@ var Orbit = /*#__PURE__*/function (_Plugin) {
     key: "_destroy",
     value: function _destroy() {
       this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
+      this.timer.pause();
     }
   }]);
 }(Plugin);
@@ -7755,13 +7635,8 @@ var ResponsiveMenu = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_events",
     value: function _events() {
-      var _this = this;
-      $__default["default"](window).on('changed.zf.mediaquery', function () {
-        _this._checkMediaQueries();
-      });
-      // $(window).on('resize.zf.ResponsiveMenu', function() {
-      //   _this._checkMediaQueries();
-      // });
+      this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+      $__default["default"](window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
     }
 
     /**
@@ -7807,8 +7682,8 @@ var ResponsiveMenu = /*#__PURE__*/function (_Plugin) {
   }, {
     key: "_destroy",
     value: function _destroy() {
-      this.currentPlugin.destroy();
-      $__default["default"](window).off('.zf.ResponsiveMenu');
+      if (this.currentPlugin) this.currentPlugin.destroy();
+      $__default["default"](window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
     }
   }]);
 }(Plugin);
@@ -8136,7 +8011,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
         }
       });
       if (this.options.closeOnClick && this.options.overlay) {
-        this.$overlay.off('.zf.reveal').on('click.zf.dropdown tap.zf.dropdown', function (e) {
+        this.$overlay.off('.zf.reveal').on('click.zf.reveal tap.zf.reveal', function (e) {
           if (e.target === _this.$element[0] || $__default["default"].contains(_this.$element[0], e.target) || !$__default["default"].contains(document, e.target)) {
             return;
           }
@@ -8255,14 +8130,14 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
 
       // Motion UI method of reveal
       if (this.options.animationIn) {
-        var afterAnimation = function afterAnimation() {
+        function afterAnimation() {
           _this.$element.attr({
             'aria-hidden': false,
             'tabindex': -1
           }).focus();
           _this._addGlobalClasses();
           Keyboard.trapFocus(_this.$element);
-        };
+        }
         if (this.options.overlay) {
           Motion.animateIn(this.$overlay, 'fade-in');
         }
@@ -8347,7 +8222,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
       } // If we're in the middle of cleanup, don't freak out
       this.focusableElements = Keyboard.findFocusable(this.$element);
       if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
-        $__default["default"]('body').on('click.zf.dropdown tap.zf.dropdown', function (e) {
+        $__default["default"]('body').on('click.zf.reveal tap.zf.reveal', function (e) {
           if (e.target === _this.$element[0] || $__default["default"].contains(_this.$element[0], e.target) || !$__default["default"].contains(document, e.target)) {
             return;
           }
@@ -8355,7 +8230,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
         });
       }
       if (this.options.closeOnEsc) {
-        $__default["default"](window).on('keydown.zf.reveal', function (e) {
+        $__default["default"](window).on("keydown.zf.reveal:".concat(this.id), function (e) {
           Keyboard.handleKey(e, 'Reveal', {
             close: function close() {
               if (_this.options.closeOnEsc) {
@@ -8398,11 +8273,9 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
       }
 
       // Conditionals to remove extra event listeners added on open
-      if (this.options.closeOnEsc) {
-        $__default["default"](window).off('keydown.zf.reveal');
-      }
+      $__default["default"](window).off("keydown.zf.reveal:".concat(this.id));
       if (!this.options.overlay && this.options.closeOnClick) {
-        $__default["default"]('body').off('click.zf.dropdown tap.zf.dropdown');
+        $__default["default"]('body').off('click.zf.reveal tap.zf.reveal');
       }
       this.$element.off('keydown.zf.reveal');
       function finishUp() {
@@ -9578,7 +9451,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
        * Namespaced to `top` or `bottom`, e.g. `sticky.zf.stuckto:top`
        * @event Sticky#stuckto
        */.trigger("sticky.zf.stuckto:".concat(stickTo));
-      this.$element.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd", function () {
+      this.$element.off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky').on('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function () {
         _this._setSizes();
       });
     }
@@ -9630,6 +9503,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
         if (cb && typeof cb === 'function') {
           cb();
         }
+        return;
       }
       var newElemWidth = this.$container[0].getBoundingClientRect().width,
         comp = window.getComputedStyle(this.$container[0]),
@@ -9678,9 +9552,8 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
       if (!this.canStick) {
         if (cb && typeof cb === 'function') {
           cb();
-        } else {
-          return false;
         }
+        return false;
       }
       var mTop = emCalc(this.options.marginTop),
         mBtm = emCalc(this.options.marginBottom),
@@ -9718,7 +9591,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
         top: '',
         bottom: '',
         'max-width': ''
-      }).off('resizeme.zf.trigger').off('mutateme.zf.trigger');
+      }).off('resizeme.zf.trigger').off('mutateme.zf.trigger').off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
       if (this.$anchor && this.$anchor.length) {
         this.$anchor.off('change.zf.sticky');
       }

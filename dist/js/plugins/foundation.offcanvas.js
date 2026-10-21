@@ -227,9 +227,11 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
         });
       }
       if (this.options.inCanvasOn) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', function () {
+        if (this._inCanvasMqHandler) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+        this._inCanvasMqHandler = function () {
           _this3._checkInCanvas();
-        });
+        };
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', this._inCanvasMqHandler);
       }
     }
 
@@ -246,13 +248,15 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
           _this.reveal(true);
         }
       });
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', function () {
+      if (this._revealMqHandler) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._revealMqHandler);
+      this._revealMqHandler = function () {
         if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__.MediaQuery.atLeast(_this.options.revealOn)) {
           _this.reveal(true);
         } else {
           _this.reveal(false);
         }
-      });
+      };
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('changed.zf.mediaquery', this._revealMqHandler);
     }
 
     /**
@@ -653,6 +657,8 @@ var OffCanvas = /*#__PURE__*/function (_Plugin) {
       this.close();
       this.$element.off('.zf.trigger .zf.offCanvas');
       this.$overlay.off('.zf.offCanvas');
+      if (this._inCanvasMqHandler) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+      if (this._revealMqHandler) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('changed.zf.mediaquery', this._revealMqHandler);
       if (this.onLoadListener) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off(this.onLoadListener);
     }
   }]);
@@ -782,15 +788,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -876,22 +873,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },

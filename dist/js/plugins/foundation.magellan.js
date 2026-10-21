@@ -132,7 +132,7 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
     key: "_events",
     value: function _events() {
       var _this = this;
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).one('load', function () {
+      _this.onLoadListener = (0,_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.onLoad)(jquery__WEBPACK_IMPORTED_MODULE_0___default()(window), function () {
         if (_this.options.deepLinking) {
           if (location.hash) {
             _this.scrollToLoc(location.hash);
@@ -140,8 +140,6 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
         }
         _this.calcPoints();
         _this._updateActive();
-      });
-      _this.onLoadListener = (0,_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.onLoad)(jquery__WEBPACK_IMPORTED_MODULE_0___default()(window), function () {
         _this.$element.on({
           'resizeme.zf.trigger': _this.reflow.bind(_this),
           'scrollme.zf.trigger': _this._updateActive.bind(_this)
@@ -270,10 +268,6 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
     key: "_destroy",
     value: function _destroy() {
       this.$element.off('.zf.trigger .zf.magellan').find(".".concat(this.options.activeClass)).removeClass(this.options.activeClass);
-      if (this.options.deepLinking) {
-        var hash = this.$active[0].getAttribute('href');
-        window.location.hash.replace(hash, '');
-      }
       jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('hashchange', this._deepLinkScroll);
       if (this.onLoadListener) jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off(this.onLoadListener);
     }
@@ -358,15 +352,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -452,22 +437,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },

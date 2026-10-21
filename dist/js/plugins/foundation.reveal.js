@@ -226,7 +226,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
         }
       });
       if (this.options.closeOnClick && this.options.overlay) {
-        this.$overlay.off('.zf.reveal').on('click.zf.dropdown tap.zf.dropdown', function (e) {
+        this.$overlay.off('.zf.reveal').on('click.zf.reveal tap.zf.reveal', function (e) {
           if (e.target === _this.$element[0] || jquery__WEBPACK_IMPORTED_MODULE_0___default().contains(_this.$element[0], e.target) || !jquery__WEBPACK_IMPORTED_MODULE_0___default().contains(document, e.target)) {
             return;
           }
@@ -345,14 +345,14 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
 
       // Motion UI method of reveal
       if (this.options.animationIn) {
-        var afterAnimation = function afterAnimation() {
+        function afterAnimation() {
           _this.$element.attr({
             'aria-hidden': false,
             'tabindex': -1
           }).focus();
           _this._addGlobalClasses();
           _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_2__.Keyboard.trapFocus(_this.$element);
-        };
+        }
         if (this.options.overlay) {
           _foundation_util_motion__WEBPACK_IMPORTED_MODULE_4__.Motion.animateIn(this.$overlay, 'fade-in');
         }
@@ -437,7 +437,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
       } // If we're in the middle of cleanup, don't freak out
       this.focusableElements = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_2__.Keyboard.findFocusable(this.$element);
       if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').on('click.zf.dropdown tap.zf.dropdown', function (e) {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').on('click.zf.reveal tap.zf.reveal', function (e) {
           if (e.target === _this.$element[0] || jquery__WEBPACK_IMPORTED_MODULE_0___default().contains(_this.$element[0], e.target) || !jquery__WEBPACK_IMPORTED_MODULE_0___default().contains(document, e.target)) {
             return;
           }
@@ -445,7 +445,7 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
         });
       }
       if (this.options.closeOnEsc) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on('keydown.zf.reveal', function (e) {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).on("keydown.zf.reveal:".concat(this.id), function (e) {
           _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_2__.Keyboard.handleKey(e, 'Reveal', {
             close: function close() {
               if (_this.options.closeOnEsc) {
@@ -488,11 +488,9 @@ var Reveal = /*#__PURE__*/function (_Plugin) {
       }
 
       // Conditionals to remove extra event listeners added on open
-      if (this.options.closeOnEsc) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off('keydown.zf.reveal');
-      }
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()(window).off("keydown.zf.reveal:".concat(this.id));
       if (!this.options.overlay && this.options.closeOnClick) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').off('click.zf.dropdown tap.zf.dropdown');
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').off('click.zf.reveal tap.zf.reveal');
       }
       this.$element.off('keydown.zf.reveal');
       function finishUp() {
@@ -714,15 +712,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -808,22 +797,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },

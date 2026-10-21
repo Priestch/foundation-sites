@@ -269,62 +269,6 @@ Foundation.util = {
 };
 window.Foundation = Foundation;
 
-// Polyfill for requestAnimationFrame
-(function () {
-  if (!Date.now || !window.Date.now) window.Date.now = Date.now = function () {
-    return new Date().getTime();
-  };
-  var vendors = ['webkit', 'moz'];
-  for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
-    var vp = vendors[i];
-    window.requestAnimationFrame = window[vp + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vp + 'CancelAnimationFrame'] || window[vp + 'CancelRequestAnimationFrame'];
-  }
-  if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
-    var lastTime = 0;
-    window.requestAnimationFrame = function (callback) {
-      var now = Date.now();
-      var nextTime = Math.max(lastTime + 16, now);
-      return setTimeout(function () {
-        callback(lastTime = nextTime);
-      }, nextTime - now);
-    };
-    window.cancelAnimationFrame = clearTimeout;
-  }
-  /**
-   * Polyfill for performance.now, required by rAF
-   */
-  if (!window.performance || !window.performance.now) {
-    window.performance = {
-      start: Date.now(),
-      now: function now() {
-        return Date.now() - this.start;
-      }
-    };
-  }
-})();
-if (!Function.prototype.bind) {
-  /* eslint-disable no-extend-native */
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-    }
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-      fToBind = this,
-      fNOP = function fNOP() {},
-      fBound = function fBound() {
-        return fToBind.apply(this instanceof fNOP ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
-      };
-    if (this.prototype) {
-      // native functions don't have a prototype
-      fNOP.prototype = this.prototype;
-    }
-    fBound.prototype = new fNOP();
-    return fBound;
-  };
-}
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
   if (typeof Function.prototype.name === 'undefined') {
@@ -620,55 +564,6 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 //     'only screen and (min-resolution: 192dpi),' +
 //     'only screen and (min-resolution: 2dppx)'
 //   };
-
-// matchMedia() polyfill - Test a CSS media type/query in JS.
-// Authors & copyright © 2012: Scott Jehl, Paul Irish, Nicholas Zakas, David Knight. MIT license
-/* eslint-disable */
-window.matchMedia || (window.matchMedia = function () {
-  "use strict";
-
-  // For browsers that support matchMedium api such as IE 9 and webkit
-  var styleMedia = window.styleMedia || window.media;
-
-  // For those that don't support matchMedium
-  if (!styleMedia) {
-    var style = document.createElement('style'),
-      script = document.getElementsByTagName('script')[0],
-      info = null;
-    style.type = 'text/css';
-    style.id = 'matchmediajs-test';
-    if (!script) {
-      document.head.appendChild(style);
-    } else {
-      script.parentNode.insertBefore(style, script);
-    }
-
-    // 'style.currentStyle' is used by IE <= 8 and 'window.getComputedStyle' for all other browsers
-    info = 'getComputedStyle' in window && window.getComputedStyle(style, null) || style.currentStyle;
-    styleMedia = {
-      matchMedium: function matchMedium(media) {
-        var text = '@media ' + media + '{ #matchmediajs-test { width: 1px; } }';
-
-        // 'style.styleSheet' is used by IE <= 8 and 'style.textContent' for all other browsers
-        if (style.styleSheet) {
-          style.styleSheet.cssText = text;
-        } else {
-          style.textContent = text;
-        }
-
-        // Test if media query is true or false
-        return info.width === '1px';
-      }
-    };
-  }
-  return function (media) {
-    return {
-      matches: styleMedia.matchMedium(media || 'all'),
-      media: media || 'all'
-    };
-  };
-}());
-/* eslint-enable */
 
 var MediaQuery = {
   queries: [],

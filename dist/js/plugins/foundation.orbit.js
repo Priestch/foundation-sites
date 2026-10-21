@@ -483,6 +483,7 @@ var Orbit = /*#__PURE__*/function (_Plugin) {
     key: "_destroy",
     value: function _destroy() {
       this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
+      this.timer.pause();
     }
   }]);
 }(_foundation_core_utils__WEBPACK_IMPORTED_MODULE_5__.Plugin);

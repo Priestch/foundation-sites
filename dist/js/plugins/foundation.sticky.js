@@ -307,7 +307,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
        * Namespaced to `top` or `bottom`, e.g. `sticky.zf.stuckto:top`
        * @event Sticky#stuckto
        */.trigger("sticky.zf.stuckto:".concat(stickTo));
-      this.$element.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd", function () {
+      this.$element.off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky').on('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function () {
         _this._setSizes();
       });
     }
@@ -359,6 +359,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
         if (cb && typeof cb === 'function') {
           cb();
         }
+        return;
       }
       var newElemWidth = this.$container[0].getBoundingClientRect().width,
         comp = window.getComputedStyle(this.$container[0]),
@@ -407,9 +408,8 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
       if (!this.canStick) {
         if (cb && typeof cb === 'function') {
           cb();
-        } else {
-          return false;
         }
+        return false;
       }
       var mTop = emCalc(this.options.marginTop),
         mBtm = emCalc(this.options.marginBottom),
@@ -449,7 +449,7 @@ var Sticky = /*#__PURE__*/function (_Plugin) {
         top: '',
         bottom: '',
         'max-width': ''
-      }).off('resizeme.zf.trigger').off('mutateme.zf.trigger');
+      }).off('resizeme.zf.trigger').off('mutateme.zf.trigger').off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
       if (this.$anchor && this.$anchor.length) {
         this.$anchor.off('change.zf.sticky');
       }
@@ -583,15 +583,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 
 
-var MutationObserver = function () {
-  var prefixes = ['WebKit', 'Moz', 'O', 'Ms', ''];
-  for (var i = 0; i < prefixes.length; i++) {
-    if ("".concat(prefixes[i], "MutationObserver") in window) {
-      return window["".concat(prefixes[i], "MutationObserver")];
-    }
-  }
-  return false;
-}();
 var triggers = function triggers(el, type) {
   el.data(type).split(' ').forEach(function (id) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(id))[type === 'close' ? 'trigger' : 'triggerHandler']("".concat(type, ".zf.trigger"), [el]);
@@ -677,22 +668,10 @@ Triggers.Initializers.addToggleFocusListener = function ($elem) {
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
   resizeListener: function resizeListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('resizeme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a resize event
     $nodes.attr('data-events', "resize");
   },
   scrollListener: function scrollListener($nodes) {
-    if (!MutationObserver) {
-      //fallback for IE 9
-      $nodes.each(function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).triggerHandler('scrollme.zf.trigger');
-      });
-    }
     //trigger all listening elements and signal a scroll event
     $nodes.attr('data-events', "scroll");
   },
