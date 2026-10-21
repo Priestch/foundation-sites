@@ -1,7 +1,7 @@
 // sass-lint:disable no-vendor-prefixes
 
 @mixin foundation-normalize() {
-  /*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */
+  /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
   // Document
   // ==========================================================================
@@ -12,6 +12,12 @@
   html {
     line-height: 1.15; // 1
     -webkit-text-size-adjust: 100%; // 2
+  }
+
+  // Render the `main` element consistently in IE.
+
+  main {
+    display: block;
   }
 
   // Sections
