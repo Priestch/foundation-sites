@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Foundation for Sites (v6) — a responsive front-end framework published as the `foundation-sites` npm package. It is a library of SCSS components and jQuery-based JS plugins, plus a documentation site built from `docs/`. Node >= 18; use **yarn** (there is a `yarn.lock`).
+Foundation for Sites (v6) — a responsive front-end framework published as the `foundation-sites` npm package. It is a library of SCSS components and jQuery-based JS plugins, plus a documentation site built from `docs/`. Node >= 20; use **yarn** (there is a `yarn.lock`).
 
 ## Maintenance strategy (since 2026-10)
 
@@ -22,7 +22,6 @@ The `develop` branch rewrite ("Yeti") has been **abandoned**. Current plan: ship
 
 ```bash
 yarn                     # install
-yarn patch-package       # apply patches/ — also needed after install (CI does this)
 
 yarn start               # build docs + framework, serve on localhost:3000 (SERVER_PORT), watch
 yarn build               # gulp build → _build/
@@ -84,5 +83,4 @@ Notes on the JS test setup:
 
 ### Other
 
-- `patches/` — patch-package patches (applied post-install; e.g. browserstack-runner).
 - `customizer/` — build config for the online customizer.

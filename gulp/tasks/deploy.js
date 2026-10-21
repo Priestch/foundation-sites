@@ -170,7 +170,7 @@ gulp.task('deploy:settings', function(done) {
 gulp.task('deploy:commit', function() {
   exec('git commit -am "Bump to version "' + NEXT_VERSION);
   exec('git tag v' + NEXT_VERSION);
-  exec('git push origin develop --follow-tags');
+  exec('git push origin master --follow-tags');
 });
 
 // This part of the deploy process hasn't been tested! It should be done manually for now

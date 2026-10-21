@@ -54,12 +54,9 @@ module.exports = {
 
   // Dist
   VERSIONED_FILES: [
-    'bower.json',
     'composer.json',
     'docs/pages/installation.md',
     'js/foundation.core.js',
-    'meteor-README.md',
-    'package.js',
     'package.json',
     'scss/foundation.scss',
     'scss/settings/_settings.scss'

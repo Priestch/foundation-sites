@@ -7,6 +7,10 @@ var autoprefixer = require('autoprefixer');
 
 var CONFIG = require('../config.js');
 
+// Deprecation silence for the legacy @import / global built-in usage that is
+// still the public API in 6.x (modularization happens in 7.0).
+var SASS_OPTIONS = { silenceDeprecations: ['import', 'global-builtin'] };
+
 // Compiles Sass files into CSS
 gulp.task('sass', gulp.series('sass:foundation', 'sass:docs'));
 
@@ -21,7 +25,7 @@ gulp.task('sass:foundation', gulp.series('sass:deps', function() {
   return gulp.src(['assets/*'])
     .pipe(sourcemaps.init())
     .pipe(plumber())
-    .pipe(sass().on('error', sass.logError))  // sass-embedded handles this part
+    .pipe(sass({ ...SASS_OPTIONS }).on('error', sass.logError))  // sass-embedded handles this part
     .pipe(postcss([autoprefixer()])) // uses ".browserslistrc"
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('_build/assets/css'));
@@ -32,7 +36,8 @@ gulp.task('sass:docs', gulp.series('sass:deps', function() {
   return gulp.src('docs/assets/scss/docs.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({
-      includePaths: CONFIG.SASS_DOC_PATHS
+      includePaths: CONFIG.SASS_DOC_PATHS,
+      ...SASS_OPTIONS
     }).on('error', sass.logError)) // sass-embedded handles this part
     .pipe(postcss([autoprefixer()])) // uses ".browserslistrc"
     .pipe(sourcemaps.write('.'))
