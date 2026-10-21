@@ -139,22 +139,6 @@
     "needs": ">=0.8.0",
     "exports": false
   },
-  "jspm": {
-    "main": "dist/js/foundation.esm.js",
-    "format": "esm"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
