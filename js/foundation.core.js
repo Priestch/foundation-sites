@@ -245,67 +245,6 @@ Foundation.util = {
 
 window.Foundation = Foundation;
 
-// Polyfill for requestAnimationFrame
-(function() {
-  if (!Date.now || !window.Date.now)
-    window.Date.now = Date.now = function() { return new Date().getTime(); };
-
-  var vendors = ['webkit', 'moz'];
-  for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
-      var vp = vendors[i];
-      window.requestAnimationFrame = window[vp+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = (window[vp+'CancelAnimationFrame']
-                                 || window[vp+'CancelRequestAnimationFrame']);
-  }
-  if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent)
-    || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
-    var lastTime = 0;
-    window.requestAnimationFrame = function(callback) {
-        var now = Date.now();
-        var nextTime = Math.max(lastTime + 16, now);
-        return setTimeout(function() { callback(lastTime = nextTime); },
-                          nextTime - now);
-    };
-    window.cancelAnimationFrame = clearTimeout;
-  }
-  /**
-   * Polyfill for performance.now, required by rAF
-   */
-  if(!window.performance || !window.performance.now){
-    window.performance = {
-      start: Date.now(),
-      now: function(){ return Date.now() - this.start; }
-    };
-  }
-})();
-if (!Function.prototype.bind) {
-  /* eslint-disable no-extend-native */
-  Function.prototype.bind = function(oThis) {
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-    }
-
-    var aArgs   = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP    = function() {},
-        fBound  = function() {
-          return fToBind.apply(this instanceof fNOP
-                 ? this
-                 : oThis,
-                 aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
-
-    if (this.prototype) {
-      // native functions don't have a prototype
-      fNOP.prototype = this.prototype;
-    }
-    fBound.prototype = new fNOP();
-
-    return fBound;
-  };
-}
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
   if (typeof Function.prototype.name === 'undefined') {
