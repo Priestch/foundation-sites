@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { Nest } from './foundation.util.nest';
 import { GetYoDigits } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Plugin } from './foundation.core.plugin';
 
 /**
@@ -22,7 +24,7 @@ class AccordionMenu extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, AccordionMenu.defaults, this.$element.data(), options);
+    this.options = $.extend({}, AccordionMenu.defaults, datasetOptions(element[0]), options);
     this.className = 'AccordionMenu'; // ie9 back compat
 
     this._init();
@@ -104,17 +106,29 @@ class AccordionMenu extends Plugin {
       var $submenu = $(this).children('[data-submenu]');
 
       if ($submenu.length) {
+        // S9: the submenu click consumers flip to the native event layer -
+        // real clicks reach them directly, jQuery-synthesized clicks ride
+        // the `.click()` shortcut bridge (reveal-native precedent; jQuery
+        // suppresses that shortcut for link anchors).
         if (_this.options.submenuToggle) {
-          $(this).children('.submenu-toggle').off('click.zf.accordionMenu').on('click.zf.accordionMenu', function() {
+          Events.off(this.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu');
+          Events.on(this.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu', function() {
             _this.toggle($submenu);
           });
         } else {
-            $(this).children('a').off('click.zf.accordionMenu').on('click.zf.accordionMenu', function(e) {
+          this.querySelectorAll(':scope > a').forEach(anchor => {
+            Events.off(anchor, 'click.zf.accordionMenu');
+            Events.on(anchor, 'click.zf.accordionMenu', function(e) {
               e.preventDefault();
               _this.toggle($submenu);
             });
+          });
         }
       }
+    // Seam (S9): the keydown binding stays on jQuery - the coarse suite
+    // feeds jQuery-synthesized mock keydowns, which only jQuery listeners
+    // can hear (Keyboard util takes the jQuery collection; real keyboards
+    // reach this listener either way through white absorption).
     }).on('keydown.zf.accordionMenu', function(e) {
       var $element = $(this),
           $elements = $element.parent('ul').children('li'),
@@ -239,23 +253,39 @@ class AccordionMenu extends Plugin {
       this.up($othersActiveSubmenus);
     }
 
-    $target
-      .addClass('is-active')
-      .attr({ 'aria-hidden': false });
+    // S9: class/ARIA state flips natively.
+    $target.toArray().forEach(el => {
+      el.classList.add('is-active');
+      el.setAttribute('aria-hidden', 'false');
+    });
 
     if (this.options.submenuToggle) {
-      $target.prev('.submenu-toggle').attr({'aria-expanded': true});
+      $target.toArray().forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
     }
     else {
-      $target.parent('.is-accordion-submenu-parent').attr({'aria-expanded': true});
+      $target.toArray().forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'true');
+        }
+      });
     }
 
+    // Seam (S9): the slide tween stays on jQuery fx - the down event keeps
+    // its after-the-tween timing (Accordion precedent).
     $target.slideDown(this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done opening.
        * @event AccordionMenu#down
        */
-      this.$element.trigger('down.zf.accordionMenu', [$target]);
+      // S9: state production through the native event layer; still-on-jQuery
+      // listeners receive the real bubbling event (white absorption).
+      Events.trigger(this.$element[0], 'down.zf.accordionMenu', [$target]);
     });
   }
 
@@ -269,23 +299,37 @@ class AccordionMenu extends Plugin {
     const $allmenus = $target.add($submenus);
 
     $submenus.slideUp(0);
-    $allmenus
-      .removeClass('is-active')
-      .attr('aria-hidden', true);
+    // S9: class/ARIA state flips natively.
+    $allmenus.toArray().forEach(el => {
+      el.classList.remove('is-active');
+      el.setAttribute('aria-hidden', 'true');
+    });
 
     if (this.options.submenuToggle) {
-      $allmenus.prev('.submenu-toggle').attr('aria-expanded', false);
+      $allmenus.toArray().forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
     else {
-      $allmenus.parent('.is-accordion-submenu-parent').attr('aria-expanded', false);
+      $allmenus.toArray().forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
 
+    // Seam (S9): the slide tween stays on jQuery fx - the up event keeps
+    // its after-the-tween timing (Accordion precedent).
     $target.slideUp(this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done collapsing up.
        * @event AccordionMenu#up
        */
-      this.$element.trigger('up.zf.accordionMenu', [$target]);
+      Events.trigger(this.$element[0], 'up.zf.accordionMenu', [$target]);
     });
   }
 
@@ -295,7 +339,11 @@ class AccordionMenu extends Plugin {
    */
   _destroy() {
     this.$element.find('[data-submenu]').slideDown(0).css('display', '');
+    // S9 double-off discipline: each layer wipes only its own listeners.
     this.$element.find('a').off('click.zf.accordionMenu');
+    this.$element.find('a, .submenu-toggle').toArray().forEach(el => {
+      Events.off(el, 'click.zf.accordionMenu');
+    });
     this.$element.find('li').off('keydown.zf.accordionMenu');
     this.$element.find('[data-is-parent-link]').detach();
 
