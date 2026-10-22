@@ -1,5 +1,7 @@
 import $ from 'jquery';
 import { GetYoDigits, ignoreMousedisappear } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Triggers } from './foundation.util.triggers';
 import { Positionable } from './foundation.positionable';
@@ -23,7 +25,7 @@ class Tooltip extends Positionable {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, Tooltip.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Tooltip.defaults, datasetOptions(element[0]), options);
     this.className = 'Tooltip'; // ie9 back compat
 
     this.isActive = false;
@@ -100,18 +102,21 @@ class Tooltip extends Positionable {
 
   /**
    * builds the tooltip element, adds attributes, and returns the template.
+   * The element is created natively (7.0 line A, S8) and returned as a jQuery
+   * collection because the public `plugin.template` surface stays jQuery in
+   * the mixed state.
    * @private
    */
   _buildTemplate(id) {
     var templateClasses = (`${this.options.tooltipClass} ${this.options.templateClasses}`).trim();
-    var $template =  $('<div></div>').addClass(templateClasses).attr({
-      'role': 'tooltip',
-      'aria-hidden': true,
-      'data-is-active': false,
-      'data-is-focus': false,
-      'id': id
-    });
-    return $template;
+    var template = document.createElement('div');
+    template.className = templateClasses;
+    template.setAttribute('role', 'tooltip');
+    template.setAttribute('aria-hidden', 'true');
+    template.setAttribute('data-is-active', 'false');
+    template.setAttribute('data-is-focus', 'false');
+    template.setAttribute('id', id);
+    return $(template);
   }
 
   /**
@@ -120,6 +125,10 @@ class Tooltip extends Positionable {
    * @private
    */
   _setPosition() {
+    // Seam (S8): the whole positioning block (Positionable + the Box util)
+    // still runs on jQuery objects - Box consumes and produces jQuery
+    // collections and is self-consistent, so the anchor/template pair is
+    // handed in as such and nothing here changes until the Box slice.
     super._setPosition(this.$element, this.template);
   }
 
@@ -145,14 +154,21 @@ class Tooltip extends Positionable {
      * Fires to close all other open tooltips on the page
      * @event Closeme#tooltip
      */
+    // Seam (S8): the closeme production stays on jQuery. The Triggers
+    // closeMeListener is still registered through jQuery and reads the
+    // plugin name from the jQuery event namespace - a real CustomEvent
+    // carries no namespace, so this producer flips together with that
+    // listener in the Triggers-owned slice (S6 Reveal precedent).
     this.$element.trigger('closeme.zf.tooltip', this.template.attr('id'));
 
 
-    this.template.attr({
-      'data-is-active': true,
-      'aria-hidden': false
-    });
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    this.template[0].setAttribute('data-is-active', 'true');
+    this.template[0].setAttribute('aria-hidden', 'false');
     _this.isActive = true;
+    // Seam (S8): the fade-in tween stays on jQuery fx - same wrap-up design
+    // decision as the Accordion height tween (native opacity transition vs.
+    // dropping the tween).
     this.template.stop().hide().css('visibility', '').fadeIn(this.options.fadeInDuration, function() {
       //maybe do stuff?
     });
@@ -160,7 +176,7 @@ class Tooltip extends Positionable {
      * Fires when the tooltip is shown
      * @event Tooltip#show
      */
-    this.$element.trigger('show.zf.tooltip');
+    Events.trigger(this.$element[0], 'show.zf.tooltip');
   }
 
   /**
@@ -170,10 +186,10 @@ class Tooltip extends Positionable {
    */
   hide() {
     var _this = this;
-    this.template.stop().attr({
-      'aria-hidden': true,
-      'data-is-active': false
-    }).fadeOut(this.options.fadeOutDuration, function() {
+    // State/ARIA native + fx seam, see show().
+    this.template[0].setAttribute('aria-hidden', 'true');
+    this.template[0].setAttribute('data-is-active', 'false');
+    this.template.stop().fadeOut(this.options.fadeOutDuration, function() {
       _this.isActive = false;
       _this.isClick = false;
     });
@@ -181,7 +197,7 @@ class Tooltip extends Positionable {
      * fires when the tooltip is hidden
      * @event Tooltip#hide
      */
-    this.$element.trigger('hide.zf.tooltip');
+    Events.trigger(this.$element[0], 'hide.zf.tooltip');
   }
 
   /**
@@ -191,6 +207,7 @@ class Tooltip extends Positionable {
    */
   _events() {
     const _this = this;
+    const element = this.$element[0];
     const hasTouch = 'ontouchstart' in window || (typeof window.ontouchstart !== 'undefined');
     var isFocus = false;
 
@@ -198,15 +215,18 @@ class Tooltip extends Positionable {
     if (hasTouch && this.options.disableForTouch) return;
 
     if (!this.options.disableHover) {
-      this.$element
-      .on('mouseenter.zf.tooltip', function() {
+      // S8: hover/focus/click consumers flip to the native event layer -
+      // mouseenter/mouseleave/mousedown/focus/focusout are real DOM events
+      // and reach these listeners directly (still-on-jQuery synthetic
+      // producers like `$(el).trigger('mouseenter')` do not, by design).
+      Events.on(element, 'mouseenter.zf.tooltip', function() {
         if (!_this.isActive) {
           _this.timeout = setTimeout(function() {
             _this.show();
           }, _this.options.hoverDelay);
         }
-      })
-      .on('mouseleave.zf.tooltip', ignoreMousedisappear(function() {
+      });
+      Events.on(element, 'mouseleave.zf.tooltip', ignoreMousedisappear(function() {
         clearTimeout(_this.timeout);
         if (!isFocus || (_this.isClick && !_this.options.clickOpen)) {
           _this.hide();
@@ -215,14 +235,17 @@ class Tooltip extends Positionable {
     }
 
     if (hasTouch) {
-      this.$element
-      .on('tap.zf.tooltip touchend.zf.tooltip', function () {
+      // Seam (S8): the tap half stays on jQuery - the Touch util synthesizes
+      // 'tap' through a jQuery trigger in the mixed state, and a jQuery
+      // synthetic event cannot reach native listeners. 'touchend' rides along
+      // on the same binding; it flips with the Touch slice.
+      $(element).on('tap.zf.tooltip touchend.zf.tooltip', function () {
         _this.isActive ? _this.hide() : _this.show();
       });
     }
 
     if (this.options.clickOpen) {
-      this.$element.on('mousedown.zf.tooltip', function() {
+      Events.on(element, 'mousedown.zf.tooltip', function() {
         if (_this.isClick) {
           //_this.hide();
           // _this.isClick = false;
@@ -234,41 +257,41 @@ class Tooltip extends Positionable {
         }
       });
     } else {
-      this.$element.on('mousedown.zf.tooltip', function() {
+      Events.on(element, 'mousedown.zf.tooltip', function() {
         _this.isClick = true;
       });
     }
 
-    this.$element.on({
-      // 'toggle.zf.trigger': this.toggle.bind(this),
-      // 'close.zf.trigger': this.hide.bind(this)
-      'close.zf.trigger': this.hide.bind(this)
+    // S8: the close consumer flips to the native event layer - both
+    // producers there (the [data-close] delegation and the closeme
+    // broadcast) have dispatched real bubbling events since S4.
+    Events.on(element, 'close.zf.trigger', this.hide.bind(this));
+
+    Events.on(element, 'focus.zf.tooltip', function() {
+      isFocus = true;
+      if (_this.isClick) {
+        // If we're not showing open on clicks, we need to pretend a click-launched focus isn't
+        // a real focus, otherwise on hover and come back we get bad behavior
+        if(!_this.options.clickOpen) { isFocus = false; }
+        return false;
+      } else {
+        _this.show();
+      }
     });
 
-    this.$element
-      .on('focus.zf.tooltip', function() {
-        isFocus = true;
-        if (_this.isClick) {
-          // If we're not showing open on clicks, we need to pretend a click-launched focus isn't
-          // a real focus, otherwise on hover and come back we get bad behavior
-          if(!_this.options.clickOpen) { isFocus = false; }
-          return false;
-        } else {
-          _this.show();
-        }
-      })
+    Events.on(element, 'focusout.zf.tooltip', function() {
+      isFocus = false;
+      _this.isClick = false;
+      _this.hide();
+    });
 
-      .on('focusout.zf.tooltip', function() {
-        isFocus = false;
-        _this.isClick = false;
-        _this.hide();
-      })
-
-      .on('resizeme.zf.trigger', function() {
-        if (_this.isActive) {
-          _this._setPosition();
-        }
-      });
+    // S8: the resizeme consumer flips to the native event layer (S4
+    // producer).
+    Events.on(element, 'resizeme.zf.trigger', function() {
+      if (_this.isActive) {
+        _this._setPosition();
+      }
+    });
   }
 
   /**
@@ -293,6 +316,9 @@ class Tooltip extends Positionable {
                  .removeClass(this.options.triggerClass)
                  .removeClass('top right left bottom')
                  .removeAttr('aria-describedby data-disable-hover data-resize data-toggle data-tooltip data-yeti-box');
+
+    // Native side: the flipped hover/focus/click/close/resizeme listeners.
+    Events.off(this.$element[0], '.zf.trigger .zf.tooltip');
 
     this.template.remove();
   }
