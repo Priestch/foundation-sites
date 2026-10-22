@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { Nest } from './foundation.util.nest';
 import { GetYoDigits, transitionend } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Box } from './foundation.util.box';
 import { Plugin } from './foundation.core.plugin';
 
@@ -23,7 +25,7 @@ class Drilldown extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, Drilldown.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Drilldown.defaults, datasetOptions(element[0]), options);
     this.className = 'Drilldown'; // ie9 back compat
 
     this._init();
@@ -146,8 +148,12 @@ class Drilldown extends Plugin {
   _events($elem) {
     var _this = this;
 
-    $elem.off('click.zf.drilldown')
-    .on('click.zf.drilldown', function(e) {
+    // S9: the submenu-anchor click consumer flips to the native event layer
+    // - real clicks arrive directly and jQuery-synthesized clicks on
+    // non-link elements ride the `.click()` shortcut bridge (reveal-native
+    // precedent; jQuery suppresses that shortcut for link anchors).
+    Events.off($elem[0], 'click.zf.drilldown');
+    Events.on($elem[0], 'click.zf.drilldown', function(e) {
       if($(e.target).parentsUntil('ul', 'li').hasClass('is-drilldown-submenu-parent')){
         e.preventDefault();
       }
@@ -158,12 +164,13 @@ class Drilldown extends Plugin {
       _this._show($elem.parent('li'));
 
       if(_this.options.closeOnClick){
-        var $body = $('body');
-        $body.off('.zf.drilldown').on('click.zf.drilldown', function(ev) {
-          if (ev.target === _this.$element[0] || $.contains(_this.$element[0], ev.target)) { return; }
+        var body = document.body;
+        Events.off(body, '.zf.drilldown');
+        Events.on(body, 'click.zf.drilldown', function(ev) {
+          if (ev.target === _this.$element[0] || _this.$element[0].contains(ev.target)) { return; }
           ev.preventDefault();
           _this._hideAll();
-          $body.off('.zf.drilldown');
+          Events.off(body, '.zf.drilldown');
         });
       }
     });
@@ -176,9 +183,16 @@ class Drilldown extends Plugin {
    */
   _registerEvents() {
     if(this.options.scrollTop){
+      // S9: the self-consumer flips together with its producers - the four
+      // state events arrive as real events on the native layer.
       this._bindHandler = this._scrollTop.bind(this);
-      this.$element.on('open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown',this._bindHandler);
+      Events.on(this.$element[0], 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
     }
+    // Seam (S9): the mutateme consumer stays on jQuery - ResponsiveToggle's
+    // animated half and Tabs still produce mutateme through jQuery
+    // triggerHandler, and a jQuery-synthesized event cannot reach a native
+    // listener (S8 Equalizer precedent; the whole mutateme ecosystem flips
+    // together in the complex-group slice).
     this.$element.on('mutateme.zf.trigger', this._resize.bind(this));
   }
 
@@ -191,12 +205,14 @@ class Drilldown extends Plugin {
     var _this = this;
     var $scrollTopElement = _this.options.scrollTopElement !== ''?$(_this.options.scrollTopElement):_this.$element,
         scrollPos = parseInt($scrollTopElement.offset().top+_this.options.scrollTopOffset, 10);
+    // Seam (S9): the scroll tween stays on jQuery fx - the stop(true)
+    // debounce semantics ride along (Accordion deepLinkSmudge precedent).
     $('html, body').stop(true).animate({ scrollTop: scrollPos }, _this.options.animationDuration, _this.options.animationEasing,function(){
       /**
         * Fires after the menu has scrolled
         * @event Drilldown#scrollme
         */
-      if(this===$('html')[0])_this.$element.trigger('scrollme.zf.drilldown');
+      if(this===$('html')[0])Events.trigger(_this.$element[0], 'scrollme.zf.drilldown');
     });
   }
 
@@ -207,6 +223,12 @@ class Drilldown extends Plugin {
   _keyboardEvents() {
     var _this = this;
 
+    // Seam (S9): the keydown binding stays on jQuery - the coarse suite
+    // feeds jQuery-synthesized mock keydowns, which only jQuery listeners
+    // can hear (Keyboard util takes the jQuery collection; real keyboards
+    // reach this listener either way through white absorption). The
+    // transitionend `.one()` follow-ups keep their jQuery form too - they
+    // are driven by the coarse suite through jQuery triggerHandler.
     this.$menuItems.add(this.$element.find('.js-drilldown-back > a, .is-submenu-parent-item > a')).on('keydown.zf.drilldown', function(e){
       var $element = $(this),
           $elements = $element.parent('li').parent('ul').children('li').children('a'),
@@ -293,7 +315,8 @@ class Drilldown extends Plugin {
    */
   _hideAll() {
     var $elem = this.$element.find('.is-drilldown-submenu.is-active')
-    $elem.addClass('is-closing');
+    // S9: class state flips natively.
+    $elem.toArray().forEach(el => el.classList.add('is-closing'));
     $elem.parent().closest('ul').removeClass('invisible');
 
     if (this.options.autoHeight) {
@@ -305,16 +328,20 @@ class Drilldown extends Plugin {
      * Fires when the menu is closing.
      * @event Drilldown#close
      */
-    this.$element.trigger('close.zf.drilldown');
+    // S9: state production through the native event layer; still-on-jQuery
+    // listeners receive the real bubbling event (white absorption).
+    Events.trigger(this.$element[0], 'close.zf.drilldown');
 
+    // Seam (S9): the transitionend wait stays on jQuery - the coarse suite
+    // drives it through jQuery triggerHandler (fx seam).
     $elem.one(transitionend($elem), () => {
-      $elem.removeClass('is-active is-closing');
+      $elem.toArray().forEach(el => el.classList.remove('is-active', 'is-closing'));
 
       /**
        * Fires when the menu is fully closed.
        * @event Drilldown#closed
        */
-      this.$element.trigger('closed.zf.drilldown');
+      Events.trigger(this.$element[0], 'closed.zf.drilldown');
     });
   }
 
@@ -326,20 +353,22 @@ class Drilldown extends Plugin {
    */
   _back($elem) {
     var _this = this;
-    $elem.off('click.zf.drilldown');
-    $elem.children('.js-drilldown-back')
-      .on('click.zf.drilldown', function() {
-        _this._hide($elem);
+    const back = $elem[0].querySelector(':scope > .js-drilldown-back');
+    if (!back) { return; }
+    // S9: the back-button click consumer flips to the native event layer.
+    Events.off(back, 'click.zf.drilldown');
+    Events.on(back, 'click.zf.drilldown', function() {
+      _this._hide($elem);
 
-        // If there is a parent submenu, call show
-        let parentSubMenu = $elem.parent('li').parent('ul').parent('li');
-        if (parentSubMenu.length) {
-          _this._show(parentSubMenu);
-        }
-        else {
-          _this.$currentMenu = _this.$element;
-        }
-      });
+      // If there is a parent submenu, call show
+      let parentSubMenu = $elem.parent('li').parent('ul').parent('li');
+      if (parentSubMenu.length) {
+        _this._show(parentSubMenu);
+      }
+      else {
+        _this.$currentMenu = _this.$element;
+      }
+    });
   }
 
   /**
@@ -366,10 +395,15 @@ class Drilldown extends Plugin {
    * @param {boolean} trigger - trigger drilldown event
    */
   _setShowSubMenuClasses($elem, trigger) {
-    $elem.addClass('is-active').removeClass('invisible').attr('aria-hidden', false);
+    // S9: class/ARIA state flips natively.
+    $elem.toArray().forEach(el => {
+      el.classList.add('is-active');
+      el.classList.remove('invisible');
+      el.setAttribute('aria-hidden', 'false');
+    });
     $elem.parent('li').attr('aria-expanded', true);
     if (trigger === true) {
-      this.$element.trigger('open.zf.drilldown', [$elem]);
+      Events.trigger(this.$element[0], 'open.zf.drilldown', [$elem]);
     }
   }
 
@@ -381,10 +415,15 @@ class Drilldown extends Plugin {
    * @param {boolean} trigger - trigger drilldown event
    */
   _setHideSubMenuClasses($elem, trigger) {
-    $elem.removeClass('is-active').addClass('invisible').attr('aria-hidden', true);
+    // S9: class/ARIA state flips natively.
+    $elem.toArray().forEach(el => {
+      el.classList.remove('is-active');
+      el.classList.add('invisible');
+      el.setAttribute('aria-hidden', 'true');
+    });
     $elem.parent('li').attr('aria-expanded', false);
     if (trigger === true) {
-      $elem.trigger('hide.zf.drilldown', [$elem]);
+      Events.trigger($elem[0], 'hide.zf.drilldown', [$elem]);
     }
   }
 
@@ -452,7 +491,8 @@ class Drilldown extends Plugin {
   _show($elem) {
     const $submenu = $elem.children('[data-submenu]');
 
-    $elem.attr('aria-expanded', true);
+    // S9: class/ARIA state flips natively.
+    $elem[0].setAttribute('aria-expanded', 'true');
 
     this.$currentMenu = $submenu;
 
@@ -461,7 +501,11 @@ class Drilldown extends Plugin {
     $elem.parent().closest('ul').addClass('invisible');
 
     // add visible class to submenu to override invisible class above
-    $submenu.addClass('is-active visible').removeClass('invisible').attr('aria-hidden', false);
+    $submenu.toArray().forEach(el => {
+      el.classList.add('is-active', 'visible');
+      el.classList.remove('invisible');
+      el.setAttribute('aria-hidden', 'false');
+    });
 
     if (this.options.autoHeight) {
       this.$wrapper.css({ height: $submenu.data('calcHeight') });
@@ -471,7 +515,8 @@ class Drilldown extends Plugin {
      * Fires when the submenu has opened.
      * @event Drilldown#open
      */
-    this.$element.trigger('open.zf.drilldown', [$elem]);
+    // S9: state production through the native event layer.
+    Events.trigger(this.$element[0], 'open.zf.drilldown', [$elem]);
   }
 
   /**
@@ -484,17 +529,20 @@ class Drilldown extends Plugin {
     if(this.options.autoHeight) this.$wrapper.css({height:$elem.parent().closest('ul').data('calcHeight')});
     $elem.parent().closest('ul').removeClass('invisible');
     $elem.parent('li').attr('aria-expanded', false);
-    $elem.attr('aria-hidden', true);
-    $elem.addClass('is-closing')
-         .one(transitionend($elem), function(){
-           $elem.removeClass('is-active is-closing visible');
-           $elem.blur().addClass('invisible');
-         });
+    // S9: class/ARIA state flips natively.
+    $elem.toArray().forEach(el => el.setAttribute('aria-hidden', 'true'));
+    $elem.toArray().forEach(el => el.classList.add('is-closing'));
+    // Seam (S9): the transitionend wait stays on jQuery - the coarse suite
+    // drives it through jQuery triggerHandler (fx seam).
+    $elem.one(transitionend($elem), function(){
+      $elem.toArray().forEach(el => el.classList.remove('is-active', 'is-closing', 'visible'));
+      $elem.toArray().forEach(el => { el.blur(); el.classList.add('invisible'); });
+    });
     /**
      * Fires when the submenu has closed.
      * @event Drilldown#hide
      */
-    $elem.trigger('hide.zf.drilldown', [$elem]);
+    Events.trigger($elem[0], 'hide.zf.drilldown', [$elem]);
   }
 
   /**
@@ -532,10 +580,16 @@ class Drilldown extends Plugin {
    * @function
    */
   _destroy() {
+    // S9 double-off discipline: each layer wipes only its own listeners.
+    Events.off(document.body, '.zf.drilldown');
     $('body').off('.zf.drilldown');
-    if(this.options.scrollTop) this.$element.off('.zf.drilldown',this._bindHandler);
+    if(this.options.scrollTop) {
+      Events.off(this.$element[0], 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
+      this.$element.off('.zf.drilldown', this._bindHandler);
+    }
     this._hideAll();
-	  this.$element.off('mutateme.zf.trigger');
+    // Seam (S9): the mutateme consumer stays on jQuery (see _registerEvents).
+    this.$element.off('mutateme.zf.trigger');
     Nest.Burn(this.$element, 'drilldown');
     if (!this.wasWrapped) this.$element.unwrap();
     this.$element
@@ -544,6 +598,9 @@ class Drilldown extends Plugin {
                  .end().find('[data-submenu]').removeAttr('aria-hidden tabindex role');
     this.$submenuAnchors.each(function() {
       $(this).off('.zf.drilldown');
+    });
+    this.$submenuAnchors.toArray().forEach(anchor => {
+      Events.off(anchor, '.zf.drilldown');
     });
 
     this.$element.find('[data-is-parent-link]').detach();
