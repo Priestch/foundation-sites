@@ -36,7 +36,7 @@ $prototype-text-decoration: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $decoration in $prototype-text-decoration {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-text-#{$decoration} {
               @include text-decoration($decoration);
             }

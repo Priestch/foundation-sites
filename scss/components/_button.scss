@@ -349,7 +349,7 @@ $button-responsive-expanded: false !default;
             @include button-expand;
           }
         }
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           @include breakpoint(#{$size} down) {
             &.#{$size}-down-expanded {
               @include button-expand;

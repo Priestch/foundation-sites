@@ -40,13 +40,13 @@
   }
 
   // Use the contextual breakpoint by default.
-  $breakpoint: -zf-current-breakpoint($breakpoint);
+  $breakpoint: zf-current-breakpoint($breakpoint);
 
   @if ($breakpoint) {
-    @return -zf-get-bp-val($gutters, $breakpoint);
+    @return zf-get-bp-val($gutters, $breakpoint);
   }
   @else {
-    @return -zf-get-bp-val($gutters, $-zf-zero-breakpoint) or 0;
+    @return zf-get-bp-val($gutters, $zf-zero-breakpoint) or 0;
   }
 }
 
@@ -167,8 +167,8 @@
   $direction: if($vertical == true, height, width);
 
   @if (type-of($sizes) == 'map') {
-    @include -zf-breakpoint-value(auto, $sizes) {
-      #{$direction}: $-zf-bp-value;
+    @include zf-breakpoint-value(auto, $sizes) using ($bp-value) {
+      #{$direction}: $bp-value;
     }
   }
   @else {
@@ -264,12 +264,12 @@
   $gutter-output: true,
   $gutters: $grid-margin-gutters,
   $gutter-type: margin,
-  $breakpoint: $-zf-zero-breakpoint,
+  $breakpoint: $zf-zero-breakpoint,
   $vertical: false
 ) {
   @warn 'xy-cell-static() mixin is deprecated and will be removed. Use "xy-cell()" instead. See migration notes at https://git.io/foundation-6-6-0';
 
-  $gutter: -zf-get-bp-val($gutters, $breakpoint);
+  $gutter: zf-get-bp-val($gutters, $breakpoint);
   $gutter-position: if($vertical == true, top bottom, left right);
 
   $-gutter-output: if($gutter-type == 'margin', true, $gutter-output);

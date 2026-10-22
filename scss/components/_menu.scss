@@ -411,20 +411,20 @@ $menu-icons-back-compat: true !default;
     }
 
     // Breakpoint specific versions
-    @include -zf-each-breakpoint($small: false) {
-      &.#{$-zf-size}-horizontal {
+    @include zf-each-breakpoint($small: false) using ($size) {
+      &.#{$size}-horizontal {
         @include menu-direction(horizontal);
       }
 
-      &.#{$-zf-size}-vertical {
+      &.#{$size}-vertical {
         @include menu-direction(vertical);
       }
 
-      &.#{$-zf-size}-expanded {
+      &.#{$size}-expanded {
         @include menu-expand;
       }
 
-      &.#{$-zf-size}-simple {
+      &.#{$size}-simple {
         @include menu-expand;
       }
     }

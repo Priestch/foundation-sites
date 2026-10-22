@@ -2,11 +2,22 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
+@use 'math' as *;
+@use 'unit' as *;
+@use 'value' as *;
+
 ////
 /// @group breakpoints
 ////
 
 /// Patch to fix issue #12080
+///
+/// Since the `@use` modularization this is the *module-private* breakpoint
+/// context read by `zf-current-breakpoint()`: `breakpoint()` and
+/// `zf-breakpoint-context()` keep it updated while their content runs. The
+/// import-world global of the same name (still declared by settings files) is
+/// neither read nor written anymore; content blocks receive the breakpoint via
+/// the explicit `zf-each-breakpoint-in()` `@content` argument instead.
 $-zf-size: null;
 
 /// A list of named breakpoints. You can use these with the `breakpoint()` mixin to quickly create media queries.
@@ -34,7 +45,7 @@ $breakpoints-hidpi: (
 /// @type Keyword
 $print-breakpoint: large !default;
 
-$-zf-zero-breakpoint: small !default;
+$zf-zero-breakpoint: small !default;
 
 $-zf-breakpoints-keys: map-to-list($breakpoints, 'keys');
 
@@ -42,7 +53,7 @@ $-zf-breakpoints-keys: map-to-list($breakpoints, 'keys');
   @error 'The first key in the $breakpoints map must have a value of "0".';
 }
 @else {
-  $-zf-zero-breakpoint: nth(map-keys($breakpoints), 1);
+  $zf-zero-breakpoint: nth(map-keys($breakpoints), 1);
 }
 
 /// All of the names in this list will be output as classes in your CSS, like `.small-12`, `.medium-6`, and so on. Each value in this list must also be in the `$breakpoints` map.
@@ -52,7 +63,7 @@ $breakpoint-classes: (small medium large) !default;
 /// Generates a media query string matching the input value. Refer to the documentation for the `breakpoint()` mixin to see what the possible inputs are.
 ///
 /// @param {Keyword|Number} $val [small] - Breakpoint name, or px, rem, or em value to process.
-@function breakpoint($val: $-zf-zero-breakpoint) {
+@function breakpoint($val: $zf-zero-breakpoint) {
   // Web standard Pixels per inch. (1ddpx / $std-web-dpi) = 1dpi
   // See https://www.w3.org/TR/css-values-3/#absolute-lengths
   $std-web-dpi: 96;
@@ -82,12 +93,12 @@ $breakpoint-classes: (small medium large) !default;
     @if map-has-key($breakpoints, $bp) {
       $name: $bp;
       $bp: map-get($breakpoints, $name);
-      $bp-next: -zf-map-next($breakpoints, $name);
+      $bp-next: zf-map-next($breakpoints, $name);
     }
     @else if map-has-key($breakpoints-hidpi, $bp) {
       $name: $bp;
       $bp: map-get($breakpoints-hidpi, $name);
-      $bp-next: -zf-map-next-number($breakpoints-hidpi, $bp);
+      $bp-next: zf-map-next-number($breakpoints-hidpi, $bp);
       $hidpi: true;
     }
     @else {
@@ -103,20 +114,20 @@ $breakpoint-classes: (small medium large) !default;
 
   // Only 'only' and 'up' have a min limit.
   @if $dir == 'only' or $dir == 'up' {
-    $bp-min: if($hidpi, strip-unit($bp), -zf-bp-to-em($bp));
+    $bp-min: if($hidpi, strip-unit($bp), zf-bp-to-em($bp));
   }
   // Only 'only' and 'down' have a max limit.
   @if $dir == 'only' or $dir == 'down' {
     // If the breakpoint is a value, use it as max limit.
     @if not $name {
-      $bp-max: if($hidpi, strip-unit($bp), -zf-bp-to-em($bp));
+      $bp-max: if($hidpi, strip-unit($bp), zf-bp-to-em($bp));
     }
     // If the breakpoint is named, the max limit is the following breakpoint - 1px.
     @else if $bp-next {
       // Max value is 0.2px under the next breakpoint (0.02 / 16 = 0.00125).
       // Use a precision under 1px to support browser zoom, but not to low to avoid rounding.
       // See https://github.com/foundation/foundation-sites/issues/11313
-      $bp-max: if($hidpi, $bp-next - divide(1, $std-web-dpi), -zf-bp-to-em($bp-next) - 0.00125);
+      $bp-max: if($hidpi, $bp-next - divide(1, $std-web-dpi), zf-bp-to-em($bp-next) - 0.00125);
     }
   }
 
@@ -158,12 +169,10 @@ $breakpoint-classes: (small medium large) !default;
     // Direction of media query (up, down, or only)
     $dir: if(length($value) > 1, nth($value, 2), up);
 
-    $old-zf-size: null;
-
-    // Make breakpoint size available as a variable
-    @if global-variable-exists(-zf-size) {
-      $old-zf-size: $-zf-size;
-    }
+    // Make the breakpoint size available as the module-private context read by
+    // `zf-current-breakpoint()`. The `!global` targets this module's own
+    // scope; the import-world global of the same name stays untouched.
+    $old-zf-size: $-zf-size;
     $-zf-size: nth($value, 1) !global; // get the first value to account for `only` and `down` keywords
 
     // If $str is still an empty string, no media query is needed
@@ -192,16 +201,33 @@ $breakpoint-classes: (small medium large) !default;
   }
 }
 
+/// Runs `@content` with the module-private breakpoint context (`$-zf-size`,
+/// read by `zf-current-breakpoint()`) set to `$name`, without generating a
+/// media query. Used by `zf-each-breakpoint-in()` for iterations that
+/// intentionally skip media queries.
+///
+/// @access private
+///
+/// @param {Keyword} $name - Breakpoint name to set as the context.
+@mixin zf-breakpoint-context($name) {
+  $old-zf-size: $-zf-size;
+  $-zf-size: $name !global;
+
+  @content;
+
+  $-zf-size: $old-zf-size !global;
+}
+
 /// Converts the breakpoints map to a URL-encoded string, like this: `key1=value1&key2=value2`. The value is then dropped into the CSS for a special `<meta>` tag, which is read by the Foundation JavaScript. This is how we transfer values from Sass to JavaScript, so they can be defined in one place.
 /// @access private
 ///
 /// @param {Map} $map - Map to convert.
 ///
 /// @returns {String} A string containing the map's contents.
-@function -zf-bp-serialize($map) {
+@function zf-bp-serialize($map) {
   $str: '';
   @each $key, $value in $map {
-    $str: $str + $key + '=' + -zf-bp-to-em($value) + '&';
+    $str: $str + $key + '=' + zf-bp-to-em($value) + '&';
   }
   $str: str-slice($str, 1, -2);
 
@@ -215,7 +241,7 @@ $breakpoint-classes: (small medium large) !default;
 /// @param {Mixed} $key - Key to use as a starting point.
 ///
 /// @returns {Mixed} The value for the key after `$key`, if `$key` was found. If `$key` was not found, or `$key` was the last value in the map, returns `null`.
-@function -zf-map-next($map, $key) {
+@function zf-map-next($map, $key) {
 
   // Store the keys of the map as a list
   $values: map-keys($map);
@@ -245,7 +271,7 @@ $breakpoint-classes: (small medium large) !default;
 /// @param {Mixed} $number - Number to use as a starting point.
 ///
 /// @returns {Mixed} The number following `$number`, if `$number` was found. If `$number` was not found, or `$number` was the biggest number in the map, returns `null`.
-@function -zf-map-next-number($map, $number) {
+@function zf-map-next-number($map, $number) {
 
   $next-number: null;
 
@@ -265,7 +291,7 @@ $breakpoint-classes: (small medium large) !default;
 /// @param {String} $key - Key to use as last breakpoint.
 ///
 /// @returns {Array} The list of breakpoints up to and. If $key is auto, returns breakpoints above the zero
-@function -zf-breakpoints-less-than($key) {
+@function zf-breakpoints-less-than($key) {
   $list: ();
   $found-key: false;
 
@@ -288,7 +314,7 @@ $breakpoint-classes: (small medium large) !default;
 ///
 /// @returns {Array} The list of breakpoints up to and. If $key is auto, returns breakpoints above the zero
 @function -zf-closest-named-breakpoint($breakpoint) {
-  $last: $-zf-zero-breakpoint;
+  $last: $zf-zero-breakpoint;
   $found: false;
 
   $value: unitless-calc($breakpoint, 1px);
@@ -315,7 +341,7 @@ $breakpoint-classes: (small medium large) !default;
 /// @param {Keyword} $value - Breakpoint name to use.
 ///
 /// @return {Mixed} The corresponding breakpoint value.
-@function -zf-get-bp-val($map, $value) {
+@function zf-get-bp-val($map, $value) {
   // If the given map is a single value, return it
   @if type-of($map) == 'number' {
     @return $map;
@@ -365,7 +391,7 @@ $breakpoint-classes: (small medium large) !default;
 /// @param {Keyword} $default [null] - Breakpoint to use by default if no other value can be used.
 ///
 /// @return {Keyword} The resolved breakpoint.
-@function -zf-current-breakpoint($value: null, $default: null) {
+@function zf-current-breakpoint($value: null, $default: null) {
   @if ($value != null) {
     @return $value;
   }

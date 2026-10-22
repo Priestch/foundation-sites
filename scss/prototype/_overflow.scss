@@ -54,7 +54,7 @@ $prototype-overflow: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $overflow in $prototype-overflow {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-overflow-#{$overflow} {
               @include overflow($overflow);
             }

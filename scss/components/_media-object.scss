@@ -32,8 +32,8 @@ $mediaobject-image-width-stacked: 100% !default;
   }
 
   @if $global-flexbox {
-    &.stack-for-#{$-zf-zero-breakpoint} {
-      @include breakpoint($-zf-zero-breakpoint only) {
+    &.stack-for-#{$zf-zero-breakpoint} {
+      @include breakpoint($zf-zero-breakpoint only) {
         flex-wrap: wrap;
       }
     }
@@ -63,8 +63,8 @@ $mediaobject-image-width-stacked: 100% !default;
     margin-bottom: 0;
   }
 
-  .stack-for-#{$-zf-zero-breakpoint} & {
-    @include breakpoint($-zf-zero-breakpoint only) {
+  .stack-for-#{$zf-zero-breakpoint} & {
+    @include breakpoint($zf-zero-breakpoint only) {
       @include media-object-stack;
     }
   }

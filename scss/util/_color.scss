@@ -3,16 +3,22 @@
 // Licensed under MIT Open Source
 
 @use "sass:color";
-@import 'math';
+@use 'math' as *;
 
 $contrast-warnings: true !default;
 
-/// Patch to fix issue #12080
-$primary-color: null !default;
-$secondary-color: null !default;
-$warning-color: null !default;
-$alert-color: null !default;
-$success-color: null !default;
+// Settings variables consumed below and by _mixins.scss (which reaches them
+// through `@use 'color' as *`), since a forwarded variable can only be
+// declared by one module. The `!default` values mirror the library defaults in
+// scss/_global.scss; through the `util/util` @forward facade they stay
+// live-linked with the import-world globals, so user settings overrides keep
+// winning. The `$foundation-palette` / `*-color` globals are deliberately NOT
+// declared here: `get-color()` and `add-foundation-colors()` live in the
+// `util/util` facade's import-world scope instead (see scss/util/_util.scss).
+$white: #fefefe !default;
+$black: #0a0a0a !default;
+$dark-gray: #8a8a8a !default;
+$global-color-pick-contrast-tolerance: 0 !default;
 
 ////
 /// @group functions
@@ -105,47 +111,4 @@ $success-color: null !default;
     $scale: -$scale;
   }
   @return scale-color($color, $lightness: $scale);
-}
-
-/// Get color from foundation-palette
-///
-/// @param {key} color key from foundation-palette
-///
-/// @returns {Color} color from foundation-palette
-@function get-color($key) {
-  @if map-has-key($foundation-palette, $key) {
-    @return map-get($foundation-palette, $key);
-  }
-  @else {
-    @error 'given $key is not available in $foundation-palette';
-  }
-}
-
-/// Transfers the colors in the `$foundation-palette` map into variables, such as `$primary-color` and `$secondary-color`. Call this mixin below the Global section of your settings file to properly migrate your codebase.
-@mixin add-foundation-colors() {
-  @if map-has-key($foundation-palette, primary) {
-    $primary-color: map-get($foundation-palette, primary) !global;
-  } @else {
-    $primary-color: #1779ba !global;
-  }
-  @if map-has-key($foundation-palette, secondary) {
-    $secondary-color: map-get($foundation-palette, secondary) !global;
-  } @else {
-    $secondary-color: #767676 !global;
-  }
-  @if map-has-key($foundation-palette, success) {
-    $success-color: map-get($foundation-palette, success) !global;
-  } @else {
-    $success-color: #3adb76 !global;
-  }
-  @if map-has-key($foundation-palette, warning) {
-    $warning-color: map-get($foundation-palette, warning) !global;
-  } @else {
-    $warning-color: #ffae00 !global;
-  }
-  @if map-has-key($foundation-palette, alert) {
-    $alert-color: map-get($foundation-palette, alert) !global;
-  } @else {
-    $alert-color: #cc4b37 !global;
-  }
 }

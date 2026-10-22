@@ -23,12 +23,12 @@
   }
 
   @if $breakpoint == null and type-of($gutters) == 'map' {
-    @include -zf-each-breakpoint() {
-      @include xy-grid-frame($vertical, $nested, $gutters, $-zf-size, false);
+    @include zf-each-breakpoint() using ($size) {
+      @include xy-grid-frame($vertical, $nested, $gutters, $size, false);
     }
   } @else {
     // Get our gutters if applicable
-    $gutter: -zf-get-bp-val($gutters, $breakpoint);
+    $gutter: zf-get-bp-val($gutters, $breakpoint);
 
     // If we have a gutter, add it to the width/height
     @if $gutter {

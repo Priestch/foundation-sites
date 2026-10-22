@@ -65,7 +65,7 @@ $prototype-text-overflow: ellipsis !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-text-hide {
             @include text-hide;
           }

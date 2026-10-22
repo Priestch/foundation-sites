@@ -2,13 +2,88 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
-@import 'math';
-@import 'unit';
-@import 'value';
-@import 'direction';
-@import 'color';
-@import 'selector';
-@import 'flex';
-@import 'breakpoint';
-@import 'mixins';
-@import 'typography';
+////
+/// @group util
+////
+
+// 7.0 Sass modularization (M2 line B): the util partials are real `@use`
+// modules now. This aggregator is a pure `@forward` facade: members exposed
+// through it are also defined in the global scope of every `@import` consumer
+// (foundation.scss, settings, grid, xy-grid, forms, typography, components),
+// so the legacy `@import 'util/util'` pipeline keeps compiling unchanged.
+// Overrides of settings variables stay live-linked between the module scope
+// and the import-world globals, in both directions.
+//
+// A few members deliberately stay *outside* the modules and are defined right
+// below the @forward rules, in this file's import-world scope:
+//
+// - `get-color()` and `add-foundation-colors()` read and write the
+//   import-world `$foundation-palette` / `*-color` globals. As module members
+//   they would need live-linked module declarations for those names, and that
+//   shared storage would splice every settings world together (a user module
+//   assigning `$foundation-palette` would write through into the library
+//   settings module's reflection), breaking the settings-module pipeline.
+// - The `*-color: null !default` patch (issue #12080) rides along with them
+//   for the same reason: it must exist in the import world that consumes it,
+//   not in a module.
+
+/// Patch to fix issue #12080
+$primary-color: null !default;
+$secondary-color: null !default;
+$warning-color: null !default;
+$alert-color: null !default;
+$success-color: null !default;
+
+@forward 'math';
+@forward 'unit';
+@forward 'value';
+@forward 'direction';
+@forward 'color';
+@forward 'selector';
+@forward 'flex';
+@forward 'breakpoint';
+@forward 'mixins';
+@forward 'typography';
+
+/// Get color from foundation-palette
+///
+/// @param {key} color key from foundation-palette
+///
+/// @returns {Color} color from foundation-palette
+@function get-color($key) {
+  @if map-has-key($foundation-palette, $key) {
+    @return map-get($foundation-palette, $key);
+  }
+  @else {
+    @error 'given $key is not available in $foundation-palette';
+  }
+}
+
+/// Transfers the colors in the `$foundation-palette` map into variables, such as `$primary-color` and `$secondary-color`. Call this mixin below the Global section of your settings file to properly migrate your codebase.
+@mixin add-foundation-colors() {
+  @if map-has-key($foundation-palette, primary) {
+    $primary-color: map-get($foundation-palette, primary) !global;
+  } @else {
+    $primary-color: #1779ba !global;
+  }
+  @if map-has-key($foundation-palette, secondary) {
+    $secondary-color: map-get($foundation-palette, secondary) !global;
+  } @else {
+    $secondary-color: #767676 !global;
+  }
+  @if map-has-key($foundation-palette, success) {
+    $success-color: map-get($foundation-palette, success) !global;
+  } @else {
+    $success-color: #3adb76 !global;
+  }
+  @if map-has-key($foundation-palette, warning) {
+    $warning-color: map-get($foundation-palette, warning) !global;
+  } @else {
+    $warning-color: #ffae00 !global;
+  }
+  @if map-has-key($foundation-palette, alert) {
+    $alert-color: map-get($foundation-palette, alert) !global;
+  } @else {
+    $alert-color: #cc4b37 !global;
+  }
+}

@@ -91,7 +91,7 @@ $prototype-position-z-index: 975 !default;
       @include breakpoint($size) {
         // Position: Static, Relative, Fixed, Absolute
         @each $position in $prototype-position {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-position-#{$position} {
               @include position($position);
             }
@@ -99,7 +99,7 @@ $prototype-position-z-index: 975 !default;
         }
 
         // Position: Fixed Top, Fixed Bottom
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-position-fixed-top {
             @include position-fixed-top;
           }

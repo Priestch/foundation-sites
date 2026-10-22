@@ -97,23 +97,23 @@
     padding-left: 0;
   }
 
-  @include -zf-each-breakpoint {
+  @include zf-each-breakpoint using ($size) {
     @for $i from 1 through $grid-column-count {
       // Column width
-      .#{$-zf-size}-#{$i} {
+      .#{$size}-#{$i} {
         @include grid-column-size($i);
       }
 
       // Source ordering
       @if $i < $grid-column-count {
         @if $push {
-          .#{$-zf-size}-#{$push}-#{$i} {
+          .#{$size}-#{$push}-#{$i} {
             @include grid-col-pos($i);
           }
         }
 
         @if $pull {
-          .#{$-zf-size}-#{$pull}-#{$i} {
+          .#{$size}-#{$pull}-#{$i} {
             @include grid-col-pos(-$i);
           }
         }
@@ -123,7 +123,7 @@
       $o: $i - 1;
 
       @if $offset {
-        .#{$-zf-size}-#{$offset}-#{$o} {
+        .#{$size}-#{$offset}-#{$o} {
           @include grid-col-off($o);
         }
       }
@@ -131,13 +131,13 @@
 
     // Block grid
     @for $i from 1 through $block-grid-max {
-      .#{$-zf-size}-up-#{$i} {
+      .#{$size}-up-#{$i} {
         @include grid-layout($i, '.#{$column}');
       }
     }
 
     // Responsive collapsing
-    .#{$-zf-size}-#{$collapse} {
+    .#{$size}-#{$collapse} {
       > .#{$column} { @include grid-col-collapse; }
 
       .#{$row} {
@@ -146,27 +146,27 @@
       }
     }
 
-    .#{$expanded}.#{$row} .#{$-zf-size}-#{$collapse}.#{$row} {
+    .#{$expanded}.#{$row} .#{$size}-#{$collapse}.#{$row} {
       margin-right: 0;
       margin-left: 0;
     }
 
-    .#{$-zf-size}-#{$uncollapse} {
-      > .#{$column} { @include grid-col-gutter($-zf-size); }
+    .#{$size}-#{$uncollapse} {
+      > .#{$column} { @include grid-col-gutter($size); }
     }
 
     // Positioning
     @if $center {
-      .#{$-zf-size}-#{$center} {
+      .#{$size}-#{$center} {
         @include grid-col-pos(center);
       }
     }
 
     // Gutter adjustment
     $-gutter-unpos-selector: (
-      if($uncenter, '.#{$-zf-size}-#{$uncenter}', null),
-      if($push, '.#{$-zf-size}-#{$push}-0', null),
-      if($pull, '.#{$-zf-size}-#{$pull}-0', null),
+      if($uncenter, '.#{$size}-#{$uncenter}', null),
+      if($push, '.#{$size}-#{$push}-0', null),
+      if($pull, '.#{$size}-#{$pull}-0', null),
     );
     @if ($uncenter or $push or $pull) {
       #{$-gutter-unpos-selector} {

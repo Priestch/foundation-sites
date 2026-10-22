@@ -145,7 +145,7 @@ $prototype-spacers-count: 3 !default;
       // Loop through Responsive Breakpoints
       @each $size in $breakpoint-classes {
         @include breakpoint($size) {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size} {
               @each $prop in (margin, padding) {
                 // All Sides

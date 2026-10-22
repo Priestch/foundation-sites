@@ -36,7 +36,7 @@ $prototype-text-transformation: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $transformation in $prototype-text-transformation {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-text-#{$transformation} {
               @include text-transform($transformation);
             }

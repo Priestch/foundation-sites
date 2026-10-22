@@ -175,7 +175,7 @@ $dropdown-menu-item-background-active: transparent !default;
     }
 
     @each $size in $breakpoint-classes {
-      @if $size != $-zf-zero-breakpoint {
+      @if $size != $zf-zero-breakpoint {
         @include breakpoint($size) {
           &.#{$size}-horizontal {
             @include dropdown-menu-direction(horizontal);

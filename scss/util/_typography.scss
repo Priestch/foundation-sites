@@ -6,6 +6,8 @@
 /// @group functions
 ////
 
+@use 'value' as *;
+
 $-zf-font-stack: (
   'georgia': (Georgia, 'URW Bookman L', serif),
   'helvetica': (Helvetica, Arial, 'Nimbus Sans L', sans-serif),

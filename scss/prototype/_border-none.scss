@@ -24,7 +24,7 @@ $prototype-border-none-breakpoints: $global-prototype-breakpoints !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-border-none {
             @include border-none;
           }

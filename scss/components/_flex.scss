@@ -31,7 +31,7 @@ $flexbox-responsive-breakpoints: true !default;
     flex: 0 1 auto;
   }
 
-  @each $dir, $prop in $-zf-flex-direction {
+  @each $dir, $prop in $zf-flex-direction {
     .flex-dir-#{$dir} {
       @include flex-direction($prop);
     }
@@ -41,7 +41,7 @@ $flexbox-responsive-breakpoints: true !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-flex-container {
             @include flex;
           }
@@ -58,7 +58,7 @@ $flexbox-responsive-breakpoints: true !default;
             flex: 0 1 auto;
           }
 
-          @each $dir, $prop in $-zf-flex-direction {
+          @each $dir, $prop in $zf-flex-direction {
             .#{$size}-flex-dir-#{$dir} {
               @include flex-direction($prop);
             }
@@ -71,14 +71,14 @@ $flexbox-responsive-breakpoints: true !default;
 
 @mixin foundation-flex-classes {
   // Horizontal alignment using justify-content
-  @each $hdir, $prop in $-zf-flex-justify {
+  @each $hdir, $prop in $zf-flex-justify {
     .align-#{$hdir} {
       @include flex-align($x: $hdir);
     }
   }
   
   // Horizontal alignment Specifically for Vertical Menu
-  @each $hdir, $prop in map-remove($-zf-flex-justify, 'justify', 'spaced') {
+  @each $hdir, $prop in map-remove($zf-flex-justify, 'justify', 'spaced') {
     .align-#{$hdir} {
       &.vertical {
         &.menu > li > a {
@@ -89,7 +89,7 @@ $flexbox-responsive-breakpoints: true !default;
   }
 
   // Vertical alignment using align-items and align-self
-  @each $vdir, $prop in $-zf-flex-align {
+  @each $vdir, $prop in $zf-flex-align {
     .align-#{$vdir} {
       @include flex-align($y: $vdir);
     }
@@ -106,9 +106,9 @@ $flexbox-responsive-breakpoints: true !default;
   }
 
   // Source ordering
-  @include -zf-each-breakpoint {
+  @include zf-each-breakpoint using ($size) {
     @for $i from 1 through $flex-source-ordering-count {
-      .#{$-zf-size}-order-#{$i} {
+      .#{$size}-order-#{$i} {
         @include flex-order($i);
       }
     }

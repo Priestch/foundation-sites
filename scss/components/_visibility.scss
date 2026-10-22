@@ -12,7 +12,7 @@
   // Max value is 0.2px under the next breakpoint (0.02 / 16 = 0.00125).
   // Use a precision under 1px to support browser zoom, but not to low to avoid rounding.
   // See https://github.com/foundation/foundation-sites/issues/11313
-  $size: -zf-bp-to-em($size) - 0.00125;
+  $size: zf-bp-to-em($size) - 0.00125;
 
   @include breakpoint($size down) {
     display: none !important;
@@ -23,13 +23,13 @@
 /// @param {Keyword} $size - Breakpoint to use. **Must be a breakpoint defined in `$breakpoints`.**
 @mixin show-for-only($size) {
   $lower-bound-size: map-get($breakpoints, $size);
-  $upper-bound-size: -zf-map-next($breakpoints, $size);
+  $upper-bound-size: zf-map-next($breakpoints, $size);
 
   // more often than not this will be correct, just one time round the loop it won't so set in scope here
-  $lower-bound: -zf-bp-to-em($lower-bound-size) - 0.00125;
+  $lower-bound: zf-bp-to-em($lower-bound-size) - 0.00125;
   // test actual lower-bound-size, if 0 set it to 0em
   @if strip-unit($lower-bound-size) == 0 {
-    $lower-bound: -zf-bp-to-em($lower-bound-size);
+    $lower-bound: zf-bp-to-em($lower-bound-size);
   }
 
   @if $upper-bound-size == null {
@@ -38,7 +38,7 @@
     }
   }
   @else {
-    $upper-bound: -zf-bp-to-em($upper-bound-size);
+    $upper-bound: zf-bp-to-em($upper-bound-size);
 
     @media screen and (max-width: $lower-bound), screen and (min-width: $upper-bound) {
       display: none !important;
@@ -78,7 +78,7 @@
 
   // Responsive visibility classes
   @each $size in $breakpoint-classes {
-    @if $size != $-zf-zero-breakpoint {
+    @if $size != $zf-zero-breakpoint {
       .hide-for-#{$size} {
         @include hide-for($size);
       }

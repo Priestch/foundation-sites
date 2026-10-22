@@ -72,7 +72,7 @@ $prototype-font-bold: $global-weight-bold !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-font-wide {
             @include font-wide;
           }

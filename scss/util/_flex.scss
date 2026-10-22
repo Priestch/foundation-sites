@@ -1,5 +1,5 @@
-@function -zf-flex-justify($text-direction) {
-  $-zf-flex-justify: (
+@function zf-flex-justify($text-direction) {
+  $zf-flex-justify: (
     'left': if($text-direction == rtl, flex-end, flex-start),
     'right': if($text-direction == rtl, flex-start, flex-end),
     'center': center,
@@ -7,18 +7,24 @@
     'spaced': space-around,
   );
 
-  @return $-zf-flex-justify;
+  @return $zf-flex-justify;
 }
 
 
-$-zf-flex-align: (
+// Assigned by scss/_global.scss (`$zf-flex-justify:
+// zf-flex-justify($global-text-direction)`); through the `util/util` @forward
+// facade this `!default` declaration stays live-linked with that import-world
+// global, so the assignment keeps reaching the mixins below.
+$zf-flex-justify: () !default;
+
+$zf-flex-align: (
   'top': flex-start,
   'bottom': flex-end,
   'middle': center,
   'stretch': stretch,
 );
 
-$-zf-flex-direction: (
+$zf-flex-direction: (
   'row': row,
   'row-reverse': row-reverse,
   'column': column,
@@ -36,8 +42,8 @@ $-zf-flex-direction: (
 /// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
 @mixin flex-align($x: null, $y: null) {
   @if $x {
-    @if map-has-key($-zf-flex-justify, $x) {
-      $x: map-get($-zf-flex-justify, $x);
+    @if map-has-key($zf-flex-justify, $x) {
+      $x: map-get($zf-flex-justify, $x);
     }
     @else {
       @warn 'flex-grid-row-align(): #{$x} is not a valid value for horizontal alignment. Use left, right, center, justify, or spaced.';
@@ -45,8 +51,8 @@ $-zf-flex-direction: (
   }
 
   @if $y {
-    @if map-has-key($-zf-flex-align, $y) {
-      $y: map-get($-zf-flex-align, $y);
+    @if map-has-key($zf-flex-align, $y) {
+      $y: map-get($zf-flex-align, $y);
     }
     @else {
       @warn 'flex-grid-row-align(): #{$y} is not a valid value for vertical alignment. Use top, bottom, middle, or stretch.';
@@ -62,8 +68,8 @@ $-zf-flex-direction: (
 /// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
 @mixin flex-align-self($y: null) {
   @if $y {
-    @if map-has-key($-zf-flex-align, $y) {
-      $y: map-get($-zf-flex-align, $y);
+    @if map-has-key($zf-flex-align, $y) {
+      $y: map-get($zf-flex-align, $y);
     }
     @else {
       @warn 'flex-grid-column-align(): #{$y} is not a valid value for alignment. Use top, bottom, middle, or stretch.';

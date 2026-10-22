@@ -7,9 +7,24 @@
 ////
 
 @use "sass:color";
+@use 'math' as *;
+@use 'unit' as *;
+@use 'value' as *;
+@use 'breakpoint' as *;
+@use 'color' as *;
+@use '../vendor/sassy-lists' as *;
 
-// Patch to fix issue #12080
+// Patch to fix issue #12080. Like `$-zf-size` in _breakpoint.scss this is a
+// module-private variable now; its value is passed to `@content` explicitly.
 $-zf-bp-value: null;
+
+// Settings variable referenced by the mixins below. Declared here because
+// _mixins.scss is its only consumer; the `!default` mirrors the library
+// default in scss/_global.scss, and through the `util/util` @forward facade it
+// stays live-linked with the import-world global, so user settings overrides
+// keep winning. The color settings ($black, $dark-gray, ...) are declared by
+// _color.scss and reached through `@use 'color' as *`.
+$global-flexbox: true !default;
 
 /// Creates an inner box-shadow for only one side
 ///
@@ -271,25 +286,31 @@ $-zf-bp-value: null;
 
 /// Iterates through breakpoints defined in `$breakpoint-classes` and prints the CSS inside the mixin at each breakpoint's media query. Use this with the grid, or any other component that has responsive classes.
 ///
+/// The name of the current breakpoint is passed to `@content`; receive it with
+/// `@include zf-each-breakpoint using ($size) { ... }`.
+///
 /// @param {Boolean} $small [true] - If `false`, the mixin will skip the `small` breakpoint. Use this with components that don't prefix classes with `small-`, only `medium-` and up.
 /// @param {Boolean} $auto-insert-breakpoints [true] - If `false`, the mixin will iterate over breakpoints without doing the media query itself. Useful for more complex media query generation as in the margin grid.
-@mixin -zf-each-breakpoint(
+@mixin zf-each-breakpoint(
   $small: true,
   $auto-insert-breakpoints: true
 ) {
-  @include -zf-each-breakpoint-in(auto, -zf-bool($small), -zf-bool($auto-insert-breakpoints)) {
-    @content
+  @include zf-each-breakpoint-in(auto, zf-bool($small), zf-bool($auto-insert-breakpoints)) using ($bp) {
+    @content($bp);
   };
 }
 
 /// Iterates with `@content` through the given list of breakpoints `$breakpoints`.
+///
+/// The name of the current breakpoint is passed to `@content`; receive it with
+/// `@include zf-each-breakpoint-in(...) using ($size) { ... }`.
 ///
 /// @access private
 ///
 /// @param {Keyword|List} $breakpoints [auto] - Breakpoints to iterates on. It can be a breakpoint name, list of breakpoints or `auto` for all breakpoints.
 /// @param {Boolean|Null} $zero-breakpoint [null] - Whether the zero-breakpoint (often `small`) must be included. If `true`, it will always be added to the list if not already there. If `false`, it will always be removed. Does nothing by default.
 /// @param {Boolean|Keyword} $media-queries [true] - Whether media-queries must be generated. If `for-lists`, only generate media-queries when `$breakpoints` is a list.
-@mixin -zf-each-breakpoint-in(
+@mixin zf-each-breakpoint-in(
   $breakpoints: auto,
   $zero-breakpoint: null,
   $media-queries: true
@@ -309,45 +330,47 @@ $-zf-bp-value: null;
     $-breakpoints-is-a-list: false;
   }
   @else {
-    @error 'Wrong syntax for "$breakpoints" in "-zf-each-breakpoint-in()". Got "#{$breakpoints}" (#{type-of($breakpoints)}). Expected a breakpoint name, a list of breakpoints or "auto"';
+    @error 'Wrong syntax for "$breakpoints" in "zf-each-breakpoint-in()". Got "#{$breakpoints}" (#{type-of($breakpoints)}). Expected a breakpoint name, a list of breakpoints or "auto"';
   }
 
   // Add or remove the zero breakpoint according to `$zero-breakpoint`
   @if $zero-breakpoint == true {
-    $-list: join(($-zf-zero-breakpoint), sl-remove($-list, $-zf-zero-breakpoint));
+    $-list: join(($zf-zero-breakpoint), sl-remove($-list, $zf-zero-breakpoint));
   }
   @else if $zero-breakpoint == false {
-    $-list: sl-remove($-list, $-zf-zero-breakpoint);
+    $-list: sl-remove($-list, $zf-zero-breakpoint);
   }
 
-  // Iterate on breakpoint(s)
+  // Iterate on breakpoint(s). The breakpoint name is passed to `@content`
+  // explicitly; the module-private `$-zf-size` context read by
+  // `zf-current-breakpoint()` is maintained around the content by
+  // `breakpoint()` and, for media-query-less iterations,
+  // `zf-breakpoint-context()` (both in _breakpoint.scss).
   @each $bp in $-list {
-    $old-zf-size: null;
-    @if global-variable-exists(-zf-size) {
-      $old-zf-size: $-zf-size;
-    }
-    $-zf-size: $bp !global;
-
     @if ($media-queries == true or ($media-queries == 'for-lists' and $-breakpoints-is-a-list)) {
       @include breakpoint($bp) {
-        @content;
+        @content($bp);
       }
     }
     @else {
-      @content;
+      @include zf-breakpoint-context($bp) {
+        @content($bp);
+      }
     }
-
-    $-zf-size: $old-zf-size !global;
   }
 }
 
-/// Generate the `@content` passed to the mixin with a value `$-zf-bp-value` related to a breakpoint, depending on the `$name` parameter:
-/// - For a single value, `$-zf-bp-value` is this value.
-/// - For a breakpoint name, `$-zf-bp-value` is the corresponding breakpoint value in `$map`.
-/// - For "auto", `$-zf-bp-value` is the corresponding breakpoint value in `$map` and is passed to `@content`, which is made responsive for each breakpoint of `$map`.
+/// Generate the `@content` passed to the mixin with a value related to a breakpoint, depending on the `$name` parameter:
+/// - For a single value, this value is passed to `@content`.
+/// - For a breakpoint name, the corresponding breakpoint value in `$map` is passed to `@content`.
+/// - For "auto", the corresponding breakpoint value in `$map` is passed to `@content`, which is made responsive for each breakpoint of `$map`.
+///
+/// The resolved value is passed to `@content`; receive it with
+/// `@include zf-breakpoint-value(...) using ($bp-value) { ... }`.
+///
 /// @param {Number|Array|Keyword} $name [auto] - Single value, breakpoint name, or list of breakpoint names to use. "auto" by default.
 /// @param {Number|Map} $map - Map of breakpoints and values or single value to use.
-@mixin -zf-breakpoint-value(
+@mixin zf-breakpoint-value(
   $name: auto,
   $map: null
 ) {
@@ -355,8 +378,8 @@ $-zf-bp-value: null;
     // "auto"
     @each $k, $v in $map {
       @include breakpoint($k) {
-        @include -zf-breakpoint-value($v, $map) {
-          @content;
+        @include zf-breakpoint-value($v, $map) using ($bp-value) {
+          @content($bp-value);
         }
       }
     }
@@ -364,7 +387,7 @@ $-zf-bp-value: null;
   @else {
     // breakpoint name
     @if type-of($name) == 'string' {
-      $bp-value: -zf-get-bp-val($map, $name);
+      $bp-value: zf-get-bp-val($map, $name);
       @if $bp-value != null {
         $name: $bp-value;
       }
@@ -372,6 +395,6 @@ $-zf-bp-value: null;
 
     // breakpoint value
     $-zf-bp-value: $name !global;
-    @content;
+    @content($name);
   }
 }
