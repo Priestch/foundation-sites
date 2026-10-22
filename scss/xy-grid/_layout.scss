@@ -6,6 +6,12 @@
 /// @group xy-grid
 ////
 
+// Util helpers; `xy-cell()` lives in _cell.scss and `$grid-margin-gutters` in
+// _gutters.scss, the first xy-grid module.
+@use '../util/util' as *;
+@use 'gutters' as *;
+@use 'cell' as *;
+
 /// Sizes child elements so that `$n` number of items appear on each row.
 ///
 /// @param {Number} $n - Number of elements to display per row.

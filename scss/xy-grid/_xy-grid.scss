@@ -6,46 +6,29 @@
 /// @group xy-grid
 ////
 
-/// Enables the XY grid.
-/// @type Boolean
-$xy-grid: true !default;
+// 7.0 Sass modularization (M2 line B, slice B5): the xy-grid partials are real
+// `@use` modules now. This aggregator is a pure `@forward` facade: members
+// exposed through it are also defined in the global scope of every `@import`
+// consumer (foundation.scss, docs), so the legacy
+// `@import 'xy-grid/xy-grid'` pipeline keeps compiling unchanged. Overrides of
+// the settings variables stay live-linked between the module scopes and the
+// import-world globals, in both directions.
+//
+// Where the members live:
+//
+// - The `$xy-grid`/`$grid-*` settings (previously declared in this file) and
+//   the `$global-width` mirror they are derived from are declared by
+//   _gutters.scss, the first forwarded module; the other partials reach them
+//   with `@use 'gutters' as *`.
+// - _cell.scss and _collapse.scss reach the vendored sassy-lists helpers
+//   through `scss/vendor/_sassy-lists.scss`, the same tracked facade
+//   scss/util/_mixins.scss uses.
 
-/// The maximum width of a grid container.
-/// @type Number
-$grid-container: $global-width !default;
-
-/// The number of columns used in the grid.
-/// @type Number
-$grid-columns: 12 !default;
-
-/// The amount of margin between cells at different screen sizes when using the margin grid. To use just one size, set the variable to a number instead of a map.
-/// @type Map | Length
-$grid-margin-gutters: (
-  "small": 20px,
-  "medium": 30px
-) !default;
-
-/// The amount of padding in cells at different screen sizes when using the padding grid. To use just one size, set the variable to a number instead of a map.
-/// @type Map | Length
-$grid-padding-gutters: $grid-margin-gutters !default;
-
-/// The amount of padding to use when padding the grid-container.
-/// @type Map | Length
-$grid-container-padding: $grid-padding-gutters !default;
-
-/// The maximum width to apply to a grid container
-/// @type Number
-$grid-container-max: $global-width !default;
-
-/// The maximum number of cells in an XY block grid.
-/// @type Number
-$xy-block-grid-max: 8 !default;
-
-@import 'gutters';
-@import 'grid';
-@import 'cell';
-@import 'frame';
-@import 'position';
-@import 'layout';
-@import 'collapse';
-@import 'classes';
+@forward 'gutters';
+@forward 'grid';
+@forward 'cell';
+@forward 'frame';
+@forward 'position';
+@forward 'layout';
+@forward 'collapse';
+@forward 'classes';

@@ -6,6 +6,14 @@
 /// @group xy-grid
 ////
 
+// Util helpers; `sl-contain()` comes from the vendored sassy-lists facade,
+// `xy-cell-size()` from _cell.scss and `$grid-columns` from _gutters.scss, the
+// first xy-grid module.
+@use '../util/util' as *;
+@use '../vendor/sassy-lists' as *;
+@use 'gutters' as *;
+@use 'cell' as *;
+
 /// Collapses the grid a cells within it.
 ///
 /// @param {String} $selector [.cell] - The child element to remove the gutter from.

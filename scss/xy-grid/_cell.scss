@@ -6,6 +6,14 @@
 /// @group xy-grid
 ////
 
+// Util helpers; `sl-remove()` comes from the vendored sassy-lists facade (the
+// same tracked entry point scss/util/_mixins.scss uses). `$grid-margin-gutters`,
+// `$grid-columns` and `xy-gutters()` live in _gutters.scss, the first xy-grid
+// module.
+@use '../util/util' as *;
+@use '../vendor/sassy-lists' as *;
+@use 'gutters' as *;
+
 /// Returns the appropriate CSS flex value for a cell base.
 ///
 /// @param {Keyword} $size [full] - The size of your cell. Accepts `full`, `auto`, `shrink`, `grow`, or any other value representing a cell size (it will be treated as `shrink`).

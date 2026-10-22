@@ -15,6 +15,7 @@ var settingsModuleFile = path.join(__dirname, '_settings_module.scss');
 var utilFacadeFile = path.join(__dirname, '_util_facade.scss');
 var formsFacadeFile = path.join(__dirname, '_forms_facade.scss');
 var typographyFacadeFile = path.join(__dirname, '_typography_facade.scss');
+var xyGridFacadeFile = path.join(__dirname, '_xy_grid_facade.scss');
 
 // Load path for suites that reach the settings module through the 7.0 pipeline
 // (scss/settings/_settings.scss resolves its own `@import 'util/util'` against
@@ -34,3 +35,4 @@ sassTrue.runSass({describe, it, sass }, settingsModuleFile, { loadPaths: [scssDi
 sassTrue.runSass({describe, it, sass }, utilFacadeFile);
 sassTrue.runSass({describe, it, sass }, formsFacadeFile);
 sassTrue.runSass({describe, it, sass }, typographyFacadeFile);
+sassTrue.runSass({describe, it, sass }, xyGridFacadeFile);

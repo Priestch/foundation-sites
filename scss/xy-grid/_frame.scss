@@ -1,5 +1,8 @@
 // stylelint-disable property-no-vendor-prefix
 
+// Breakpoint iterators and gutter helpers come from the util modules.
+@use '../util/util' as *;
+
 /// Modifies a grid to give it "frame" behavior (no overflow, no wrap, stretch behavior)
 ///
 /// @param {Boolean} $vertical [false] - Is grid vertical or horizontal. Should match grid.
