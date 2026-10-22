@@ -6,6 +6,10 @@
 /// @group forms
 ////
 
+// `$form-spacing`, $medium-gray and $global-left live in _text.scss.
+@use '../util/util' as *;
+@use 'text' as *;
+
 /// Default border around custom fieldsets.
 /// @type Border
 $fieldset-border: 1px solid $medium-gray !default;

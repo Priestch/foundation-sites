@@ -6,6 +6,12 @@
 /// @group forms
 ////
 
+// Util helpers and the util-owned settings ($global-flexbox, $black); the
+// `$input-*` cluster, `$form-spacing`, the grays and the text directions live
+// in _text.scss.
+@use '../util/util' as *;
+@use 'text' as *;
+
 /// Color of labels prefixed to an input.
 /// @type Color
 $input-prefix-color: $black !default;

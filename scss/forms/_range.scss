@@ -6,6 +6,15 @@
 /// @group slider
 ////
 
+// Util helpers; the grays, $global-radius and the palette-derived
+// $primary-color live in _text.scss. $body-background is this module's only
+// ambient consumer, so its mirror is declared here (same `!default` as
+// scss/_global.scss, live-linked through the `forms/forms` facade).
+@use '../util/util' as *;
+@use 'text' as *;
+
+$body-background: $white !default;
+
 /// Default height of the slider.
 /// @type Number
 $slider-height: 0.5rem !default;

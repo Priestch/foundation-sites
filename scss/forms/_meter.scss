@@ -6,6 +6,20 @@
 /// @group meter
 ////
 
+// Util helpers; $medium-gray, $global-radius and the palette-derived
+// $primary-color live in _text.scss. The other palette-derived colors are this
+// module's only ambient consumers, so their mirrors are declared here: each
+// `!default` mirrors the value add-foundation-colors() derives from the library
+// palette, and through the `forms/forms` facade the cells stay live-linked with
+// the import-world globals (including the second-override-point contract that
+// lets users set a `*-color` after scss/_global.scss was imported).
+@use '../util/util' as *;
+@use 'text' as *;
+
+$success-color: #3adb76 !default;
+$warning-color: #ffae00 !default;
+$alert-color: #cc4b37 !default;
+
 /// Height of a `<meter>` element.
 /// @type Length
 $meter-height: 1rem !default;

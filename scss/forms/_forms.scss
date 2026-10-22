@@ -6,21 +6,41 @@
 /// @group forms
 ////
 
-/// Global spacing for form elements.
-/// @type Number
-$form-spacing: rem-calc(16) !default;
+// 7.0 Sass modularization (M2 line B, slice B4): the forms partials are real
+// `@use` modules now. This aggregator is a pure `@forward` facade: members
+// exposed through it are also defined in the global scope of every `@import`
+// consumer (foundation.scss, docs, customizer), so the legacy
+// `@import 'forms/forms'` pipeline keeps compiling unchanged. Overrides of the
+// settings variables stay live-linked between the module scopes and the
+// import-world globals, in both directions.
+//
+// Where the members live:
+//
+// - `$form-spacing` (previously declared in this file) and the ambient
+//   settings mirrors shared by several partials ($light-gray, $medium-gray,
+//   $global-radius, $global-lineheight, $global-weight-normal,
+//   $global-text-direction, $global-left, $global-right, $foundation-palette,
+//   $primary-color) are declared by _text.scss, the first forwarded module;
+//   the other partials reach them with `@use 'text' as *`. Ambient settings
+//   with a single consumer ($body-background, $global-margin, the `*-color`
+//   mirrors in _meter.scss, $global-weight-bold) are declared where they are
+//   consumed.
+// - `get-color()` stays an import-world helper of scss/util/_util.scss: as a
+//   module member it would read the util facade module's (empty) palette, so
+//   _error.scss resolves its alert color against the mirrored palette through
+//   a private `-forms-palette-color()` replica instead.
 
-@import 'text';
-@import 'checkbox';
-@import 'label';
-@import 'help-text';
-@import 'input-group';
-@import 'fieldset';
-@import 'select';
-@import 'range';
-@import 'progress';
-@import 'meter';
-@import 'error';
+@forward 'text';
+@forward 'checkbox';
+@forward 'label';
+@forward 'help-text';
+@forward 'input-group';
+@forward 'fieldset';
+@forward 'select';
+@forward 'range';
+@forward 'progress';
+@forward 'meter';
+@forward 'error';
 
 @mixin foundation-forms {
   @include foundation-form-text;

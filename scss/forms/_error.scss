@@ -6,6 +6,36 @@
 /// @group abide
 ////
 
+// Util helpers; `$form-spacing` and the `$foundation-palette` mirror live in
+// _text.scss. $global-weight-bold is this module's only ambient consumer, so
+// its mirror is declared here (same `!default` as scss/_global.scss,
+// live-linked through the `forms/forms` facade).
+@use 'sass:map';
+@use '../util/util' as *;
+@use 'text' as *;
+
+$global-weight-bold: bold !default;
+
+/// Resolves a key of the effective `$foundation-palette`, mirroring the
+/// import-world `get-color()` helper (scss/util/_util.scss), which a `@use`
+/// module cannot reach: that helper reads the import-world palette global,
+/// while this module sees its own live-linked `$foundation-palette` mirror
+/// (declared in _text.scss). Same lookup, same error.
+///
+/// @access private
+///
+/// @param {Key} $key - Color key from the `$foundation-palette`.
+///
+/// @returns {Color} The palette color for `$key`.
+@function -forms-palette-color($key) {
+  @if map.has-key($foundation-palette, $key) {
+    @return map.get($foundation-palette, $key);
+  }
+  @else {
+    @error 'given $key is not available in $foundation-palette';
+  }
+}
+
 /// Sets if error styles should be added to inputs.
 /// @type Boolean
 $abide-inputs: true !default;
@@ -16,15 +46,15 @@ $abide-labels: true !default;
 
 /// Background color to use for invalid text inputs.
 /// @type Color
-$input-background-invalid: get-color(alert) !default;
+$input-background-invalid: -forms-palette-color(alert) !default;
 
 /// Color to use for labels of invalid inputs.
 /// @type Color
-$form-label-color-invalid: get-color(alert) !default;
+$form-label-color-invalid: -forms-palette-color(alert) !default;
 
 /// Default font color for form error text.
 /// @type Color
-$input-error-color: get-color(alert) !default;
+$input-error-color: -forms-palette-color(alert) !default;
 
 /// Default font size for form error text.
 /// @type Number
