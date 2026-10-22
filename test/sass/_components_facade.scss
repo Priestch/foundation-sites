@@ -1,0 +1,215 @@
+// `scss/components` module-transition suite (M2 line B, slice B6).
+//
+// Pins the contracts introduced by turning the generic components and the
+// first basic components partials into `@use` modules behind per-partial
+// `@forward` facades at the legacy import paths (scss/components/_button.scss
+// and friends), aggregated for `@use` consumers by
+// `scss/components/_components.scss`:
+// - @import consumers still see every components member, with the module
+//   cells live-linked to the import-world globals in both directions;
+// - settings overrides reach the modules both before the facade import (the
+//   settings-file flow, re-derived `!default`s included) and after it;
+// - the palette-driven settings resolve against the effective palette,
+//   including the second-override-point contract for a direct `$primary-color`
+//   assignment after scss/_global.scss (pinned by _settings_override.scss);
+// - the legacy `$breadcrumbs-item-slash[-color]` cells stay null-defaulted
+//   module cells (the pre-import override flow itself is pinned by the
+//   double-compile probes of this slice, not repeatably assertable here).
+
+@use "sass:map";
+
+@import "true";
+
+@import "../../scss/util/util";
+
+// Pre-import overrides (the settings-file flow).
+$global-radius: 8px;
+$global-margin: 2rem;
+$foundation-palette: (
+  "primary": #1240ab,
+  "secondary": #767676,
+  "success": #2e7d32,
+  "warning": #f9a825,
+  "alert": #c62828,
+);
+$button-radius: 4px;
+
+@import "../../scss/global";
+
+// Second override point (see _settings_override.scss): wins only because it
+// is assigned after add-foundation-colors() ran inside scss/_global.scss.
+$primary-color: #123456;
+
+@import "../../scss/components/components";
+
+@include describe('components module facade') {
+
+  @include it('exposes the forwarded components members to @import consumers [function]') {
+    @include assert-equal($button-radius, 4px,
+      'Keeps the pre-import override instead of the module default 0');
+
+    @include assert-equal($button-background, #123456,
+      'Derives $button-background from the second-override-point $primary-color');
+
+    @include assert-equal($badge-background, #123456,
+      'Derives $badge-background from the second-override-point $primary-color');
+
+    @include assert-equal($callout-radius, 8px,
+      'Derives $callout-radius from the overridden $global-radius mirror');
+
+    @include assert-equal($card-margin-bottom, 2rem,
+      'Derives $card-margin-bottom from the overridden $global-margin mirror');
+
+    @include assert-equal($switch-background, #cacaca,
+      'Resolves the module default through the $medium-gray mirror');
+
+    @include assert-equal($table-head-font-color, #0a0a0a,
+      'Derives the table head color through the table-owned $body-font-color mirror');
+  }
+
+  @include it('compiles the forwarded badge with the effective palette [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-badge;
+      }
+      @include expect($selector: false) {
+        .badge {
+          display: inline-block;
+          min-width: 2.1em;
+          padding: 0.3em;
+          border-radius: 50%;
+          font-size: 0.6rem;
+          text-align: center;
+          background: #123456;
+          color: #fefefe;
+        }
+        .badge.primary {
+          background: #1240ab;
+          color: #fefefe;
+        }
+        .badge.secondary {
+          background: #767676;
+          color: #fefefe;
+        }
+        .badge.success {
+          background: #2e7d32;
+          color: #fefefe;
+        }
+        .badge.warning {
+          background: #f9a825;
+          color: #0a0a0a;
+        }
+        .badge.alert {
+          background: #c62828;
+          color: #fefefe;
+        }
+      }
+    }
+  }
+
+  @include it('compiles the forwarded callout with the effective palette [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-callout;
+      }
+      @include expect($selector: false) {
+        .callout {
+          background-color: rgb(254.85, 254.85, 254.85);
+          color: #0a0a0a;
+          position: relative;
+          margin: 0 0 1rem 0;
+          padding: 1rem;
+          border: 1px solid rgba(10, 10, 10, 0.25);
+          border-radius: 8px;
+        }
+        .callout > :first-child {
+          margin-top: 0;
+        }
+        .callout > :last-child {
+          margin-bottom: 0;
+        }
+        .callout.primary {
+          background-color: rgb(211.4357142857, 223.1547619048, 250.4142857143);
+          color: #0a0a0a;
+        }
+        .callout.secondary {
+          background-color: rgb(234.45, 234.45, 234.45);
+          color: #0a0a0a;
+        }
+        .callout.success {
+          background-color: rgb(217.8289473684, 241.3210526316, 219.0184210526);
+          color: #0a0a0a;
+        }
+        .callout.warning {
+          background-color: rgb(254.1, 241.95, 222.3);
+          color: #0a0a0a;
+        }
+        .callout.alert {
+          background-color: rgb(248.1428571429, 221.0571428571, 221.0571428571);
+          color: #0a0a0a;
+        }
+        .callout.small {
+          padding-top: 0.5rem;
+          padding-right: 0.5rem;
+          padding-bottom: 0.5rem;
+          padding-left: 0.5rem;
+        }
+        .callout.large {
+          padding-top: 3rem;
+          padding-right: 3rem;
+          padding-bottom: 3rem;
+          padding-left: 3rem;
+        }
+      }
+    }
+  }
+
+  @include it('settings overrides assigned after the import reach the modules [component]') {
+    $old-radius: $button-radius;
+    $button-radius: 12px !global;
+
+    @include assert {
+      @include output($selector: false) {
+        .probe { @include button-base; }
+      }
+      @include expect($selector: false) {
+        .probe {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 0 2rem 0;
+          border: 1px solid transparent;
+          border-radius: 12px;
+          transition: background-color 0.25s ease-out, color 0.25s ease-out;
+          font-family: inherit;
+          font-size: 0.9rem;
+          -webkit-appearance: none;
+          line-height: 1;
+          text-align: center;
+          cursor: pointer;
+          padding: 0.85em 1em;
+        }
+        [data-whatinput=mouse] .probe {
+          outline: 0;
+        }
+      }
+    }
+
+    $button-radius: $old-radius !global;
+  }
+
+  @include it('keeps the legacy breadcrumbs slash cells null-defaulted [function]') {
+    @include assert-equal($breadcrumbs-item-slash, null,
+      'Declares the legacy slash cell without triggering the override');
+
+    @include assert-equal($breadcrumbs-item-slash-color, null,
+      'Declares the legacy slash-color cell without triggering the override');
+
+    @include assert-equal($breadcrumbs-item-separator, true,
+      'Keeps the separator default while the legacy cells are null');
+  }
+
+  @include it('surfaces the util-owned global-flexbox through the facade [function]') {
+    @include assert-equal($global-flexbox, true,
+      'Surfaces the util mixins module cell through the components facade');
+  }
+}
