@@ -6,6 +6,8 @@
 /// @group prototype
 ////
 
+@use '../global-module' as *;
+
 // Slice B9: shared ambient mirrors for the prototype modules. _relation is
 // the first module the scss/prototype/_prototype.scss facade forwards, so it
 // owns the mirrors every other prototype module reads (a forwarded variable
@@ -13,53 +15,6 @@
 // `@use 'relation' as *`). Same `!default`s as scss/_global-module.scss;
 // through the facade they stay live-linked with the import-world globals, so
 // settings overrides keep winning in both directions.
-
-/// Enables responsive breakpoints for prototypes if applicable
-/// @type Boolean
-$global-prototype-breakpoints: false !default;
-
-/// Global value used for margin on components.
-/// @type Number
-$global-margin: 1rem !default;
-
-/// Global value used for padding on components (read by the spacing helpers).
-/// @type Number
-$global-padding: 1rem !default;
-
-/// Global value used for positioning on components (read by the spacing
-/// helpers).
-/// @type Number
-$global-position: 1rem !default;
-
-/// Global font weight used for normal type.
-/// @type Keyword | Number
-$global-weight-normal: normal !default;
-
-/// Global font weight used for bold type.
-/// @type Keyword | Number
-$global-weight-bold: bold !default;
-
-/// Colors used for buttons, callouts, links, etc. (mirror of
-/// scss/_global-module.scss; read by the separator's background default).
-/// @type Map
-$foundation-palette: (
-  "primary": #1779ba,
-  "secondary": #767676,
-  "success": #3adb76,
-  "warning": #ffae00,
-  "alert": #cc4b37,
-) !default;
-
-/// Color used for primary UI items (mirror of the add-foundation-colors()
-/// derivation in scss/_global-module.scss; read by the separator's background
-/// default).
-/// @type Color
-$primary-color: #1779ba !default;
-
-/// Color used for medium gray UI items (read by the bordered utility's border
-/// color default).
-/// @type Color
-$medium-gray: #cacaca !default;
 
 // Relational helpers
 // ------------------

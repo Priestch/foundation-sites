@@ -25,6 +25,8 @@
 @use "../util/math" as *;
 @use "../forms/error" as *;
 @use "button-module" as *;
+@use '../util/flex' as *;
+@use '../global-module' as *; // slice B9: \$body-font-color's single owner
 
 // Mirror of the scss/_global.scss $body-font-color (same `!default`), owned
 // HERE and not in _button-module.scss on purpose: the button load unit does
@@ -32,8 +34,6 @@
 // wrong consumer — a mirror must live in the module whose load-unit consumer
 // pre-assigns it (see scss/next/_load-table.scss) and whose facade flattens
 // it before the $table-head/-foot-font-color derivations below run.
-$body-font-color: $black !default;
-
 
 /// Default color for table background.
 /// @type Color

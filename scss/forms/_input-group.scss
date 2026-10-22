@@ -9,8 +9,13 @@
 // Util helpers and the util-owned settings ($global-flexbox, $black); the
 // `$input-*` cluster, `$form-spacing`, the grays and the text directions live
 // in _text.scss.
-@use '../util/util' as *;
+@use '../util/color' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
 @use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Color of labels prefixed to an input.
 /// @type Color

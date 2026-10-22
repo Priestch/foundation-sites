@@ -13,33 +13,17 @@
 @use "../util/breakpoint" as *;
 @use "../util/mixins" as *;
 @use "../util/value" as *;
-
-// Batch-shared ambient mirrors (same `!default`s as scss/_global.scss and the
-// scss/settings palette), live-linked through the `components/button` facade
-// like the settings mirrors: at the legacy import path they are flattened next
-// to the module members, so settings overrides keep winning in both
-// directions. The later components modules reach them with
-// `@use "button-module" as *` instead of redeclaring them (a forwarded
-// variable can only be declared by one module). $body-font-color is
-// deliberately NOT here: only some partials read it, and a mirror must be
-// owned by the module whose facade flattens it before that module derives
-// from it (each reader owns its own cell — see _table/_callout/_card).
-$foundation-palette: (
-  "primary": #1779ba,
-  "secondary": #767676,
-  "success": #3adb76,
-  "warning": #ffae00,
-  "alert": #cc4b37,
-) !default;
-$primary-color: #1779ba !default;
-$global-radius: 0 !default;
-$light-gray: #e6e6e6 !default;
-$medium-gray: #cacaca !default;
-$body-background: $white !default;
-$global-margin: 1rem !default;
-$global-text-direction: ltr !default;
-$global-left: if($global-text-direction == rtl, right, left) !default;
-$global-right: if($global-text-direction == rtl, left, right) !default;
+// Slice B9: the batch-shared ambient mirrors this module used to own (the
+// palette, $primary-color, $global-radius/-margin, the grays,
+// $body-background and the text-direction trio) moved back to their single
+// owners — the palette/primary cells live in scss/_global-module.scss, the
+// direction trio in scss/util/_flex.scss — because foundation.scss became a
+// @forward module: a file that forwards two modules defining the same
+// variable is a hard error, and hiding the duplicates would stop the import
+// world from seeding every mirror cell. The ambients are reached through
+// scss/_global-module.scss now, exactly like the later components modules.
+@use "../global-module" as *;
+@use "../util/flex" as *;
 
 /// Font family for button elements.
 /// @type Font

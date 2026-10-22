@@ -46,21 +46,21 @@
 @forward "progress-bar-module";
 @forward "slider-module";
 @forward "switch-module";
-@forward "table-module" hide $body-font-color;
+@forward "table-module";
 // Basic components (B7 adds dropdown, pagination, tooltip)
 @forward "badge-module";
 @forward "breadcrumbs-module";
-@forward "callout-module" hide $body-font-color;
-@forward "card-module" hide $body-font-color;
+@forward "callout-module";
+@forward "card-module";
 @forward "dropdown-module";
 @forward "pagination-module";
 @forward "tooltip-module";
 // Containers
-@forward "accordion-module" hide $body-font-color;
+@forward "accordion-module";
 @forward "media-object-module";
 @forward "orbit-module";
 @forward "responsive-embed-module";
-@forward "tabs-module" hide $body-font-color;
+@forward "tabs-module";
 @forward "thumbnail-module";
 // Menu-based containers
 @forward "menu-module";
@@ -68,11 +68,11 @@
 @forward "accordion-menu-module";
 @forward "drilldown-module";
 // Layout components (B8)
-@forward "dropdown-menu-module" hide $anchor-color, $dropdownmenu-arrow-size, $dropdownmenu-arrow-color;
+@forward "dropdown-menu-module";
 @forward "off-canvas-module";
 @forward "reveal-module";
 @forward "sticky-module";
-@forward "title-bar-module" hide $titlebar-icon-color, $titlebar-icon-color-hover;
+@forward "title-bar-module";
 @forward "top-bar-module";
 // Helpers (B8, documentation-level deprecations in 6.10)
 @forward "float-module";

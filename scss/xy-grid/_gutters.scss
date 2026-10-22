@@ -6,7 +6,9 @@
 /// @group xy-grid
 ////
 
-@use '../util/util' as *;
+@use '../util/unit' as *;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
 
 // The `$xy-grid`/`$grid-*` settings (previously declared by the aggregator,
 // scss/xy-grid/_xy-grid.scss) and the `$global-width` ambient mirror they are
@@ -21,11 +23,6 @@
 /// Enables the XY grid.
 /// @type Boolean
 $xy-grid: true !default;
-
-/// Global width of your site, mirrored from scss/_global.scss. Only the
-/// `$grid-container`/`$grid-container-max` derivations below consume it.
-/// @type Number
-$global-width: rem-calc(1200) !default;
 
 /// The maximum width of a grid container.
 /// @type Number

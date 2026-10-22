@@ -41,6 +41,21 @@
 @use "sass:list";
 @use "settings/settings" as foundation-defaults;
 
+// Slice B9: `$fs-user` is this file's configuration key. The entry stylesheet
+// configures it with the reflected user map (meta.module-variables of its own
+// settings module); empty by default for a pure-defaults compilation.
+$fs-user: () !default;
+@use "next/configure" as configure with (
+  $user: $fs-user,
+);
+
+// Slice B9: the shared ambient modules behind the load units (the palette,
+// the derived `*-color` values, the global radius/margin/body-font-color) are
+// configured ONCE, here, through the next/_configure unit — a module can be
+// configured only once per compilation, so the mixins below must NOT load it
+// again; the entry stylesheet configures THIS file with the user map
+// (`$fs-user`), which flows into the configure unit.
+
 // Internal: the five palette-derived colors ($primary-color, $secondary-color,
 // $success-color, $warning-color, $alert-color). The legacy pipeline produces
 // them at evaluation time through the add-foundation-colors() mixin, which
@@ -150,6 +165,8 @@
 ///   settings module with `meta.module-variables()`. Empty for a
 ///   pure-defaults compilation.
 @mixin foundation-button($user-settings: ()) {
+  // The shared ambient cells were configured at this file's @use of
+  // next/configure; only the component module is configured here.
   @include meta.load-css("next/load-button", $with: ("user": -fs-non-null($user-settings)));
 }
 
@@ -160,5 +177,7 @@
 ///   settings module with `meta.module-variables()`. Empty for a
 ///   pure-defaults compilation.
 @mixin foundation-table($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
   @include meta.load-css("next/load-table", $with: ("user": -fs-non-null($user-settings)));
 }

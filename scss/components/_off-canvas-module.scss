@@ -16,6 +16,8 @@
 @use '../util/breakpoint' as *;
 @use '../util/mixins' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 // Legacy `$offcanvas-size`/`$offcanvas-vertical-size` values, still honored
 // to rebuild the size maps when set (with a deprecation warning). Declared as

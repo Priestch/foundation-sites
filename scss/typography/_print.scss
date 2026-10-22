@@ -5,6 +5,7 @@
 // $dark-gray is declared by scss/util/_color.scss and reached through the util
 // facade. The print settings below are this module's own defaults.
 @use '../util/util' as *;
+@use '../util/color' as *;
 
 /// If `true`, all elements will have transparent backgrounds when printed, to save on ink.
 /// @type Boolean

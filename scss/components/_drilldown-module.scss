@@ -9,13 +9,18 @@
 // Util helpers (css-triangle() from scss/util/_mixins.scss, $white from
 // _color.scss — NOT the util facade: its own-scope issue-#12080 `*-color:
 // null !default` patch cells would shadow the mirrors under a starred use);
-// the batch-shared ambient mirrors ($primary-color, $global-text-direction,
-// $global-left, $global-right) live in _button-module.scss;
+// the batch-shared ambient mirrors ($primary-color) live in
+// scss/_global-module.scss and the direction trio in scss/util/_flex.scss
+// (slice B9 single ownership);
 // $global-menu-padding and the menu-nested() mixin live in _menu-module.scss
 // (the first menu-based module).
 @use '../util/color' as *;
 @use '../util/mixins' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+@use 'dropdown-menu-module' as *;  // slice B9: the arrow knobs' single owner
+@use '../typography/base' as *;
 @use 'menu-module' as *;
 
 // Mirrors of scss/components/_dropdown-menu.scss (same `!default`s), owned
@@ -27,9 +32,7 @@
 // module's own mirror of the scss/typography/_base.scss cell (same
 // `!default`). When slice B8 modularizes _dropdown-menu.scss, its module owns
 // its own mirrors and this aggregator hides these.
-$anchor-color: $primary-color !default;
-$dropdownmenu-arrow-size: 6px !default;
-$dropdownmenu-arrow-color: $anchor-color !default;
+
 /// Transition property to use for animating menus.
 /// @type Transition
 $drilldown-transition: transform 0.15s linear !default;

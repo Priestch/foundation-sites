@@ -12,6 +12,8 @@
 // cannot reach the import-world `get-color()` helper either; this module
 // needs no palette lookup, so no private replica is needed here.
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Padding for dropdown panes.
 /// @type List

@@ -19,13 +19,14 @@
 @use '../util/breakpoint' as *;
 @use '../util/mixins' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 @use 'card-module' as *;
 
 // Mirror of the scss/typography/_base.scss cell (same `!default`): the reveal
 // is the name's only components reader, like the tooltip module's
 // $small-font-size mirror. Through the facade live link it stays synced with
 // the import-world global scss/typography/_base.scss declares.
-$global-width: rem-calc(1200) !default;
 
 /// Default background color of a modal.
 /// @type Color
@@ -59,7 +60,6 @@ $reveal-zindex: 1005 !default;
 /// @type Color
 $reveal-overlay-background: rgba($black, 0.45) !default;
 
-
 // Placeholder selector for medium-and-up modals
 // Prevents duplicate CSS when defining multiple Reveal sizes
 // This should be in the same breakpoint then `@mixin reveal-modal-width`
@@ -70,7 +70,6 @@ $reveal-overlay-background: rgba($black, 0.45) !default;
     margin: 0 auto;
   }
 }
-
 
 /// Adds styles for a modal overlay.
 /// @param {Color} $background [$reveal-overlay-background] - Background color of the overlay.

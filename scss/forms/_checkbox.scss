@@ -9,6 +9,8 @@
 // `$form-spacing` and the `$global-left`/`$global-right` directions live in
 // _text.scss (the first forms module), shared through the module system.
 @use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 @mixin foundation-form-checkbox {
   [type='file'],

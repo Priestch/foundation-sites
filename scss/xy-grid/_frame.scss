@@ -2,6 +2,9 @@
 
 // Breakpoint iterators and gutter helpers come from the util modules.
 @use '../util/util' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
 
 /// Modifies a grid to give it "frame" behavior (no overflow, no wrap, stretch behavior)
 ///

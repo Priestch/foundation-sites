@@ -13,12 +13,10 @@
 // palette, and through the `forms/forms` facade the cells stay live-linked with
 // the import-world globals (including the second-override-point contract that
 // lets users set a `*-color` after scss/_global.scss was imported).
-@use '../util/util' as *;
+@use '../util/value' as *;
 @use 'text' as *;
-
-$success-color: #3adb76 !default;
-$warning-color: #ffae00 !default;
-$alert-color: #cc4b37 !default;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Height of a `<meter>` element.
 /// @type Length

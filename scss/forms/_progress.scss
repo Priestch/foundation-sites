@@ -10,10 +10,10 @@
 // $primary-color live in _text.scss. $global-margin is this module's only
 // ambient consumer, so its mirror is declared here (same `!default` as
 // scss/_global.scss, live-linked through the `forms/forms` facade).
-@use '../util/util' as *;
+@use '../util/value' as *;
 @use 'text' as *;
-
-$global-margin: 1rem !default;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Height of a progress bar.
 /// @type Number

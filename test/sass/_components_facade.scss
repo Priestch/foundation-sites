@@ -44,6 +44,10 @@ $primary-color: #123456;
 // corrections in off-canvas-basics() fire when the B8 suite includes it.
 $offcanvas-push-zindex: 11;
 
+// Slice B9: $anchor-color's single owner moved to typography/_base.scss, so
+// the typography facade joins the import list ahead of the components
+// aggregator (drilldown/dropdown-menu derive their arrow knobs from it).
+@import "../../scss/typography/typography";
 @import "../../scss/components/components";
 
 @include describe('components module facade') {

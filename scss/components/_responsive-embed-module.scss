@@ -14,6 +14,8 @@
 @use '../util/math' as *;
 @use '../util/unit' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 /// Margin below a responsive embed container.
 /// @type Number
 $responsive-embed-margin-bottom: rem-calc(16) !default;

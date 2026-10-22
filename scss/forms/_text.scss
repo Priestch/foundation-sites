@@ -6,7 +6,12 @@
 /// @group forms
 ////
 
-@use '../util/util' as *;
+@use '../util/color' as *;
+@use '../util/flex' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use '../util/selector' as *; // text-inputs()
+@use '../global-module' as *; // slice B9: the ambient mirrors moved to the single owners
 
 // Ambient settings consumed here and by the later forms partials, declared as
 // module variables so the partials work as `@use` modules (a module cannot see
@@ -26,27 +31,13 @@
 // declaration) it cannot splice the settings-module worlds of the 7.0
 // pipeline, which never import `forms/forms`.
 $form-spacing: rem-calc(16) !default;
-$light-gray: #e6e6e6 !default;
-$medium-gray: #cacaca !default;
-$global-radius: 0 !default;
-$global-lineheight: 1.5 !default;
-$global-weight-normal: normal !default;
+
 // Slice B9: $global-text-direction is owned by scss/util/_flex.scss now (its
 // cell seeds the $zf-flex-justify derivation there). This module starred-uses
 // the util facade, so a local mirror of the same name would be silently
 // dropped by Dart Sass in favor of the forwarded member; the derived
 // $global-left/$global-right cells below read that member and keep the exact
 // same values.
-$global-left: if($global-text-direction == rtl, right, left) !default;
-$global-right: if($global-text-direction == rtl, left, right) !default;
-$foundation-palette: (
-  "primary": #1779ba,
-  "secondary": #767676,
-  "success": #3adb76,
-  "warning": #ffae00,
-  "alert": #cc4b37,
-) !default;
-$primary-color: #1779ba !default;
 
 /// Font color of text inputs.
 /// @type Color

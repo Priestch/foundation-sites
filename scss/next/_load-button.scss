@@ -8,95 +8,59 @@
 // 1. Receive the settings the user actually set, through configuration. This
 //    is the reflected user module only — deliberately NOT the merged
 //    effective map: pre-assigning library defaults from a merged map would
-//    defeat the `!default` derivation chain below (for example
+//    defeat the `!default` derivation chain (for example
 //    `$button-radius: $global-radius !default` would freeze at the library
 //    `$global-radius` value instead of picking up the user's override).
-// 2. Pre-assign every ambient and component setting this unit's partial
-//    reads, straight from that map. Keys absent from the map yield `null`,
-//    and a `null` value does not satisfy `!default` — so unset settings fall
-//    through to the library defaults inside the partials, exactly like the
-//    legacy pipeline. `$-zf-*` variables are private and cannot be reflected;
-//    they always keep their library defaults.
-// 3. @import the legacy partials. Partial evaluation happens inside this
-//    unit's scope: modules cannot read compilation globals, so until the
-//    partials are migrated to @use (later line B slices), this legacy import
-//    is the only way to evaluate them with settings applied.
-// 4. Re-apply a direct user override of the five palette-derived colors after
-//    scss/global: the add-foundation-colors() mixin runs during that import
-//    and would otherwise clobber the override with the palette value (the
-//    contract pinned by test/sass/_settings_override.scss). When the user did
-//    not set a color, the conditional keeps the palette-derived value from
-//    step 3 instead of clobbering it with null.
+// 2. Configure the component module with exactly the keys the user set.
+//    `map.get()` yields `null` for keys absent from the map, and a `null`
+//    configuration does not satisfy `!default` — so unset settings fall
+//    through to the library defaults, exactly like the legacy pipeline. The
+//    shared ambient settings (the palette, the derived `*-color` values, the
+//    global radius/margin/direction trio, ...) are configured ONCE by the
+//    entry stylesheet via its own `@use ... with` of scss/_global-module.scss
+//    and scss/util/_flex.scss: a module can be configured only once per
+//    compilation, so two load units in one compilation must not both
+//    configure them, and a module-scope re-assignment of a flattened name
+//    cannot reach the owning cell (slice B9).
+// 3. Include the component mixin.
+//
 
 @use "sass:map";
+// The shared ambient modules are configured ONCE per compilation, by the
+// next/_configure unit through the meta.load-css() call in
+// scss/foundation-next.scss (it runs before this unit's component module is
+// loaded). This unit only forwards the user map to its component module.
 
 $user: () !default;
 
-// Shared ambient names read by scss/components/_button.scss
-$global-margin: map.get($user, "global-margin");
-$global-radius: map.get($user, "global-radius");
-$global-text-direction: map.get($user, "global-text-direction");
-$global-color-pick-contrast-tolerance: map.get($user, "global-color-pick-contrast-tolerance");
-$foundation-palette: map.get($user, "foundation-palette");
-$white: map.get($user, "white");
-$black: map.get($user, "black");
-$breakpoints: map.get($user, "breakpoints");
-$print-breakpoint: map.get($user, "print-breakpoint");
-$breakpoint-classes: map.get($user, "breakpoint-classes");
-
-// Button component names (settings section "11. Button")
-$button-font-family: map.get($user, "button-font-family");
-$button-font-weight: map.get($user, "button-font-weight");
-$button-padding: map.get($user, "button-padding");
-$button-margin: map.get($user, "button-margin");
-$button-fill: map.get($user, "button-fill");
-$button-background: map.get($user, "button-background");
-$button-background-hover: map.get($user, "button-background-hover");
-$button-color: map.get($user, "button-color");
-$button-color-alt: map.get($user, "button-color-alt");
-$button-radius: map.get($user, "button-radius");
-$button-border: map.get($user, "button-border");
-$button-hollow-border-width: map.get($user, "button-hollow-border-width");
-$button-sizes: map.get($user, "button-sizes");
-$button-palette: map.get($user, "button-palette");
-$button-opacity-disabled: map.get($user, "button-opacity-disabled");
-$button-background-hover-lightness: map.get($user, "button-background-hover-lightness");
-$button-hollow-hover-lightness: map.get($user, "button-hollow-hover-lightness");
-$button-transition: map.get($user, "button-transition");
-$button-responsive-expanded: map.get($user, "button-responsive-expanded");
-
-// Legacy imports (shared scope inside this unit). Slice B9: scss/global is a
-// @forward facade now — importing it would splice module-flattened settings
-// names whose assignments cannot reach the cells this unit's import-splice
-// flow seeds — so the palette-derived colors are derived right here instead,
-// exactly as the add-foundation-colors() call inside scss/_global-module.scss
-// does (same palette lookups, same fallbacks). The direct user overrides are
-// re-applied below, after this derivation, as before.
-@import '../util/util';
-
-$primary-color: if(map.has-key($foundation-palette, primary), map.get($foundation-palette, primary), #1779ba);
-$secondary-color: if(map.has-key($foundation-palette, secondary), map.get($foundation-palette, secondary), #767676);
-$success-color: if(map.has-key($foundation-palette, success), map.get($foundation-palette, success), #3adb76);
-$warning-color: if(map.has-key($foundation-palette, warning), map.get($foundation-palette, warning), #ffae00);
-$alert-color: if(map.has-key($foundation-palette, alert), map.get($foundation-palette, alert), #cc4b37);
-
-// Direct palette-derived color overrides, re-applied after add-foundation-colors()
-@if map.has-key($user, "primary-color") {
-  $primary-color: map.get($user, "primary-color");
-}
-@if map.has-key($user, "secondary-color") {
-  $secondary-color: map.get($user, "secondary-color");
-}
-@if map.has-key($user, "success-color") {
-  $success-color: map.get($user, "success-color");
-}
-@if map.has-key($user, "warning-color") {
-  $warning-color: map.get($user, "warning-color");
-}
-@if map.has-key($user, "alert-color") {
-  $alert-color: map.get($user, "alert-color");
-}
+// scss/_global-module.scss owns the palette, the derived *-color settings and
+// the global ambients this component reads (slice B9 single ownership).
+// Button component names (settings section "11. Button"). The ambient
+// settings the component reads through scss/_global-module.scss and
+// scss/util/_flex.scss are configured ONCE by the entry stylesheet (they are
+// shared modules: a module can be configured only once per compilation, so
+// two load units in one compilation must not both configure them).
+@use '../components/button-module' as button-module with (
+  $button-font-family: map.get($user, "button-font-family"),
+  $button-font-weight: map.get($user, "button-font-weight"),
+  $button-padding: map.get($user, "button-padding"),
+  $button-margin: map.get($user, "button-margin"),
+  $button-fill: map.get($user, "button-fill"),
+  $button-background: map.get($user, "button-background"),
+  $button-background-hover: map.get($user, "button-background-hover"),
+  $button-color: map.get($user, "button-color"),
+  $button-color-alt: map.get($user, "button-color-alt"),
+  $button-radius: map.get($user, "button-radius"),
+  $button-border: map.get($user, "button-border"),
+  $button-hollow-border-width: map.get($user, "button-hollow-border-width"),
+  $button-sizes: map.get($user, "button-sizes"),
+  $button-palette: map.get($user, "button-palette"),
+  $button-opacity-disabled: map.get($user, "button-opacity-disabled"),
+  $button-background-hover-lightness: map.get($user, "button-background-hover-lightness"),
+  $button-hollow-hover-lightness: map.get($user, "button-hollow-hover-lightness"),
+  $button-transition: map.get($user, "button-transition"),
+  $button-responsive-expanded: map.get($user, "button-responsive-expanded"),
+);
 
 // Load + emit
-@import '../components/button';
-@include foundation-button;
+@include button-module.foundation-button;

@@ -18,6 +18,8 @@
 @use '../util/mixins' as *;
 @use '../util/unit' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 /// Font size of pagination items.
 /// @type Number
 $pagination-font-size: rem-calc(14) !default;

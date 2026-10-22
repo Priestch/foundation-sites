@@ -7,8 +7,10 @@
 ////
 
 // `$form-spacing`, $medium-gray and $global-left live in _text.scss.
-@use '../util/util' as *;
+@use '../util/unit' as *;
 @use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Default border around custom fieldsets.
 /// @type Border

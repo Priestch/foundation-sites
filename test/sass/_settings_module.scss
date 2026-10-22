@@ -19,7 +19,31 @@
 @use "sass:map";
 @use "sass:meta";
 
-@use "../scss/foundation-next" as fs;
+// The shared ambient modules (scss/next/_configure's single-ownership cells)
+// are configured with the user map: the load units forward the same map to
+// their component module only, so the entry must seed the ambients itself.
+$fs-user: ();
+// Slice B9: the shared ambient cells (palette, derived `*-color` values, the
+// global radius/margin/body-font-color) are configured ONCE, here, through
+// foundation-next's `$fs-user` configuration key — the values MUST mirror
+// settings_module_user.scss (a `@use ... with` configuration is compile-time
+// static, so the reflected user module cannot drive it). The component-level
+// keys travel through `$user` below.
+@use "../scss/foundation-next" as fs with (
+  $fs-user: (
+    "foundation-palette": (
+      "primary": #1240ab,
+      "secondary": #767676,
+      "success": #3adb76,
+      "warning": #ffae00,
+      "alert": #cc4b37,
+    ),
+    "global-radius": 8px,
+    "global-margin": 2rem,
+    "primary-color": #123456,
+    "body-font-color": #343434,
+  ),
+);
 @use "settings_module_user" as user-settings;
 @use "settings_module_user_palette" as palette-settings;
 

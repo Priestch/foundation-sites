@@ -29,17 +29,12 @@
 // mirror of it: Dart Sass would drop the shadowed local declaration in favor
 // of the forwarded member).
 
-@use '../util/util' as *;
-
-/// Global width of your site, mirrored from scss/_global-module.scss. Only
-/// the `$grid-row-width` derivation below consumes it.
-/// @type Number
-$global-width: rem-calc(1200) !default;
-
-/// Internal variables used for text direction, mirrored from
-/// scss/_global-module.scss (same derivations).
-$global-left: if($global-text-direction == rtl, right, left) !default;
-$global-right: if($global-text-direction == rtl, left, right) !default;
+@use '../util/mixins' as *;
+@use '../util/flex' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+@use '../util/math' as *;
+@use '../global-module' as *;
 
 /// The maximum width of a row.
 /// @type Number

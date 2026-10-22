@@ -15,6 +15,7 @@
 @use '../util/math' as *;
 @use '../forms/progress' as *;
 @use '../forms/text' as *;
+@use '../global-module' as *; // slice B9: the palette's single owner
 
 /// Adds styles for a progress bar container.
 @mixin progress-container {

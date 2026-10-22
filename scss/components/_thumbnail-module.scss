@@ -13,6 +13,8 @@
 // _button-module.scss.
 @use '../util/color' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 /// Border around thumbnail images.
 /// @type Border
 $thumbnail-border: 4px solid $white !default;

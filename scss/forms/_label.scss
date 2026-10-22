@@ -8,8 +8,12 @@
 
 // Util helpers and the util-owned color settings; `$form-spacing`, the
 // `$global-*` mirrors and `$input-border` live in _text.scss.
-@use '../util/util' as *;
+@use '../util/color' as *;
+@use '../util/unit' as *;
 @use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+@use '../util/value' as *;
 
 /// Color for form labels.
 /// @type Color

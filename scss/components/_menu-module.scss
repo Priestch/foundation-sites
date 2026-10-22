@@ -21,6 +21,8 @@
 @use '../util/color' as *;
 @use '../util/mixins' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 // Mirrors of scss/_global.scss (same `!default`s), owned HERE (this module
 // is their first components consumer; _accordion-menu/_drilldown reach them

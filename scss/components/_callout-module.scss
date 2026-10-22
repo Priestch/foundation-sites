@@ -20,10 +20,11 @@
 @use '../util/value' as *;
 @use '../util/math' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 // Mirror of scss/_global.scss (same `!default`), owned HERE (not in
 // _button-module.scss) so this module's facade flattens it before the
 // $callout-font-color derivation below runs.
-$body-font-color: $black !default;
 
 /// Default background color.
 /// @type Color
@@ -99,7 +100,6 @@ $callout-link-tint: 30% !default;
   padding-bottom: $padding;
   padding-left: $padding;
 }
-
 
 /// Adds styles for a callout.
 /// @param {Color} $color [$callout-background] - Color to use.

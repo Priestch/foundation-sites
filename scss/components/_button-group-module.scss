@@ -20,6 +20,8 @@
 @use '../util/value' as *;
 @use '../util/math' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Margin for button groups.
 /// @type Number

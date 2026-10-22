@@ -18,6 +18,8 @@
 @use '../util/value' as *;
 @use '../util/math' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 // Mirror of scss/_global.scss (same `!default`), owned HERE (not in
 // _button-module.scss) so this module's facade flattens it before the
 // $card-font-color derivation below runs.
@@ -25,7 +27,7 @@ $body-font-color: $black !default;
 
 // Mirror of scss/_global.scss (same `!default`); this module is its only
 // ambient consumer in the components batch.
-$global-padding: 1rem !default;
+
 /// Default background color.
 /// @type Color
 $card-background: $white !default;

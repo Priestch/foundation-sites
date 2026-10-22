@@ -11,10 +11,11 @@
 // its mirror is declared here (same `!default` as scss/_global.scss,
 // live-linked through the `forms/forms` facade).
 @use 'sass:map';
-@use '../util/util' as *;
+@use '../util/color' as *;
+@use '../util/unit' as *;
 @use 'text' as *;
-
-$global-weight-bold: bold !default;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 /// Resolves a key of the effective `$foundation-palette`, mirroring the
 /// import-world `get-color()` helper (scss/util/_util.scss), which a `@use`

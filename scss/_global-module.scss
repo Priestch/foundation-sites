@@ -26,16 +26,21 @@
 // called here. The helper itself lives in the util facade's import-world scope
 // (see scss/util/_util.scss), so a module cannot call it: as a module member
 // its `!global` writes would land in the util facade module instead of this
-// one. The plain (non-`!default`) assignments mirror the helper's
-// unconditional writes, so a direct `$primary-color` override in user
-// settings keeps being superseded by the palette derivation, exactly as
-// before.
+// one. The cells are `!default` with the derivation as the default value: at
+// the legacy import path the binding seeds them with whatever the user
+// assigned before `@import 'foundation'` (a direct `*-color` override now
+// wins over the palette — the one deliberate slice B9 semantic adjustment,
+// aligned with the migration's "the user value wins" contract), an override
+// assigned after the import writes the bound cell and wins as before, and a
+// settings-module configuration (the scss/next load units) passes the user
+// value or `null` straight through `@use ... with`.
 
 @use "sass:map";
 @use "util/color" as *;
 @use "util/unit" as *;
 @use "util/mixins" as *;
 @use "util/breakpoint" as *;
+@use "util/flex" as *;
 @use "vendor/normalize" as *;
 
 /// Global width of your site. Used by the grid to determine row width.
@@ -115,10 +120,6 @@ $global-menu-padding: 0.7rem 1rem !default;
 /// Global value used for all menu styles. Nested margin for submenu.
 $global-menu-nested-margin: 1rem !default;
 
-/// Sets the text direction of the CSS. Can be either `ltr` or `rtl`.
-/// @type Keyword
-$global-text-direction: ltr !default;
-
 /// Enabled responsive breakpoints for prototypes if applicable
 /// @type Boolean
 $global-prototype-breakpoints: false !default;
@@ -131,17 +132,13 @@ $global-button-cursor: auto !default;
   @error 'In $foundation-palette, you must have a color named "primary".';
 }
 
-// Internal variables used for text direction
-$global-left: if($global-text-direction == rtl, right, left);
-$global-right: if($global-text-direction == rtl, left, right);
-
 // Internal variables used for colors: the module replica of
 // add-foundation-colors() (see the note at the top of this file).
-$primary-color: if(map.has-key($foundation-palette, primary), map.get($foundation-palette, primary), #1779ba);
-$secondary-color: if(map.has-key($foundation-palette, secondary), map.get($foundation-palette, secondary), #767676);
-$success-color: if(map.has-key($foundation-palette, success), map.get($foundation-palette, success), #3adb76);
-$warning-color: if(map.has-key($foundation-palette, warning), map.get($foundation-palette, warning), #ffae00);
-$alert-color: if(map.has-key($foundation-palette, alert), map.get($foundation-palette, alert), #cc4b37);
+$primary-color: if(map.has-key($foundation-palette, primary), map.get($foundation-palette, primary), #1779ba) !default;
+$secondary-color: if(map.has-key($foundation-palette, secondary), map.get($foundation-palette, secondary), #767676) !default;
+$success-color: if(map.has-key($foundation-palette, success), map.get($foundation-palette, success), #3adb76) !default;
+$warning-color: if(map.has-key($foundation-palette, warning), map.get($foundation-palette, warning), #ffae00) !default;
+$alert-color: if(map.has-key($foundation-palette, alert), map.get($foundation-palette, alert), #cc4b37) !default;
 
 @mixin foundation-global-styles {
   @include foundation-normalize;

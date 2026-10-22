@@ -23,16 +23,14 @@
 //   shared storage would splice every settings world together (a user module
 //   assigning `$foundation-palette` would write through into the library
 //   settings module's reflection), breaking the settings-module pipeline.
-// - The `*-color: null !default` patch (issue #12080) rides along with them
-//   for the same reason: it must exist in the import world that consumes it,
-//   not in a module.
-
-/// Patch to fix issue #12080
-$primary-color: null !default;
-$secondary-color: null !default;
-$warning-color: null !default;
-$alert-color: null !default;
-$success-color: null !default;
+// - The `*-color: null !default` patch (issue #12080) used to ride along with
+//   them. Slice B9 removed it: the five palette-derived colors have exactly
+//   one owner now (the derived cells in scss/_global-module.scss), so the
+//   null placeholders would both shadow that owner for every module that
+//   starred-uses this facade and collide with it inside scss/foundation.scss.
+//   The override semantics are unchanged: the derivation is unconditional,
+//   so a direct `*-color` assignment is superseded by the palette, exactly
+//   as add-foundation-colors() always behaved.
 
 @forward 'math';
 @forward 'unit';

@@ -10,6 +10,9 @@
 @use '../util/color' as *;
 @use '../util/mixins' as *;
 @use 'button-module' as *;
+@use 'title-bar-module' as *;  // slice B9: the knobs' single owner
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 // Mirrors of scss/components/_title-bar.scss (same `!default`s), owned HERE:
 // the menu-icon partial sits before the title-bar partial in
@@ -19,8 +22,6 @@
 // so both spellings keep resolving identically. When slice B8 modularizes
 // _title-bar.scss, its module owns its own mirrors and this aggregator hides
 // these.
-$titlebar-icon-color: $white !default;
-$titlebar-icon-color-hover: $medium-gray !default;
 
 @mixin foundation-menu-icon {
   .menu-icon {

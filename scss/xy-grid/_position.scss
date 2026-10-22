@@ -13,11 +13,13 @@
 // local mirror of the same name would be silently dropped by Dart Sass in
 // favor of the forwarded member; the derived `$global-left` below reads that
 // member and keeps the exact same value.
-@use '../util/util' as *;
+@use '../util/breakpoint' as *;
+@use '../util/unit' as *;
 @use 'cell' as *;
 @use 'gutters' as *;
-
-$global-left: if($global-text-direction == rtl, right, left) !default;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
+@use '../util/flex' as *;
 
 /// Returns the appropriate CSS value to offset a cell.
 ///

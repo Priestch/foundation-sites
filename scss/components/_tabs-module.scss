@@ -16,11 +16,13 @@
 @use '../util/mixins' as *;
 @use '../util/unit' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
 
 // Mirror of scss/_global.scss (same `!default`), owned HERE (like in
 // _table/_callout/_card) so this module's facade flattens it before the
 // $tab-content-color derivation below runs.
-$body-font-color: $black !default;
+
 /// Default margin of the tab bar.
 /// @type Number
 $tab-margin: 0 !default;

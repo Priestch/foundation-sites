@@ -20,12 +20,15 @@
 @use '../util/mixins' as *;
 @use '../forms/error' as *;
 @use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+@use '../typography/base' as *;
 
 // Mirror of scss/typography/_base.scss (same `!default`), owned HERE: the
 // tooltip is this name's only consumer in the components batch and the
 // typography module is outside this aggregator, so a starred use of both
 // trees would make the two $global-weight-bold exports ambiguous.
-$small-font-size: 80% !default;
+
 /// Default cursor of the defined term.
 /// @type Keyword
 $has-tip-cursor: help !default;

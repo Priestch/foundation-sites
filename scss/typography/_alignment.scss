@@ -4,6 +4,7 @@
 
 // Breakpoint iterators and the breakpoint list come from the util modules.
 @use '../util/util' as *;
+@use '../util/breakpoint' as *;
 
 @mixin foundation-text-alignment {
   @each $size in $breakpoint-classes {

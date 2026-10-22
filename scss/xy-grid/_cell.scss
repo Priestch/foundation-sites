@@ -10,9 +10,13 @@
 // same tracked entry point scss/util/_mixins.scss uses). `$grid-margin-gutters`,
 // `$grid-columns` and `xy-gutters()` live in _gutters.scss, the first xy-grid
 // module.
-@use '../util/util' as *;
+@use '../util/breakpoint' as *;
+@use '../util/unit' as *;
 @use '../vendor/sassy-lists' as *;
 @use 'gutters' as *;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
+@use '../util/math' as *;
 
 /// Returns the appropriate CSS flex value for a cell base.
 ///

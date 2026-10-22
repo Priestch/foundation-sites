@@ -9,14 +9,16 @@
 // Util helpers; the xy-grid mixins live in their sibling modules and the
 // `$grid-*`/`$xy-block-grid-max` settings in _gutters.scss, the first xy-grid
 // module.
-@use '../util/util' as *;
+@use '../util/breakpoint' as *;
 @use 'gutters' as *;
+@use '../global-module' as *;
 @use 'grid' as *;
 @use 'cell' as *;
 @use 'frame' as *;
 @use 'position' as *;
 @use 'layout' as *;
 @use 'collapse' as *;
+@use '../util/mixins' as *;
 
 // Margin Grid classes
 @mixin xy-base-grid-classes {
