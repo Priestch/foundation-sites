@@ -1,0 +1,33 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Util helpers (hamburger() from scss/util/_mixins.scss, $white from
+// _color.scss — NOT the util facade: its own-scope issue-#12080 `*-color:
+// null !default` patch cells would shadow the mirrors below under a starred
+// use); $medium-gray comes from _button-module.scss (the first components
+// module).
+@use '../util/color' as *;
+@use '../util/mixins' as *;
+@use 'button-module' as *;
+
+// Mirrors of scss/components/_title-bar.scss (same `!default`s), owned HERE:
+// the menu-icon partial sits before the title-bar partial in
+// scss/foundation.scss and reads the title-bar knobs at include time; these
+// cells sync with the same import-world globals the title-bar partial
+// declares later with `!default` (a no-op once this facade flattened them),
+// so both spellings keep resolving identically. When slice B8 modularizes
+// _title-bar.scss, its module owns its own mirrors and this aggregator hides
+// these.
+$titlebar-icon-color: $white !default;
+$titlebar-icon-color-hover: $medium-gray !default;
+
+@mixin foundation-menu-icon {
+  .menu-icon {
+    @include hamburger($color: $titlebar-icon-color, $color-hover: $titlebar-icon-color-hover);
+  }
+
+  .menu-icon.dark {
+    @include hamburger;
+  }
+}

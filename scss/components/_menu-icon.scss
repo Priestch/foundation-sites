@@ -1,9 +1,20 @@
-@mixin foundation-menu-icon {
-  .menu-icon {
-    @include hamburger($color: $titlebar-icon-color, $color-hover: $titlebar-icon-color-hover);
-  }
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
 
-  .menu-icon.dark {
-    @include hamburger;
-  }
-}
+// 7.0 Sass modularization (M2 line B, slice B7): the menu-icon partial is a
+// real `@use` module now (scss/components/_menu-icon-module.scss). This file
+// stays at the legacy import path (foundation.scss, docs, customizer and the
+// scss/next load units all `@import` it) as a pure `@forward` facade: the
+// forwarded members land in every @import consumer as globals live-linked
+// with the module cells, so settings overrides keep winning in both
+// directions and the compiled CSS is unchanged.
+//
+// `button-module` is forwarded on purpose: the menu-icon module reads the
+// batch-shared ambient mirrors ($white, $medium-gray) through it, and
+// flattening it here lets a consumer that pre-assigns those names (the
+// scss/next load units) seed the cells before the module derives from them.
+// The $titlebar-icon-color/-hover mirrors are owned by this module itself
+// (see _menu-icon-module.scss).
+@forward "button-module";
+@forward "menu-icon-module";

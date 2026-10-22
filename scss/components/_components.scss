@@ -55,3 +55,8 @@
 @forward "responsive-embed-module";
 @forward "tabs-module" hide $body-font-color;
 @forward "thumbnail-module";
+// Menu-based containers
+@forward "menu-module";
+@forward "menu-icon-module";
+@forward "accordion-menu-module";
+@forward "drilldown-module";
