@@ -1,0 +1,72 @@
+// Foundation for Sites — load unit for the table component (7.0 line B skeleton)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss. See scss/next/_load-button.scss for the full
+// recipe: receive the reflected user settings map only, pre-assign every
+// setting this unit's partial reads (null falls through to the library
+// !default values, which re-derive settings like $table-border from the
+// effective ambients), @import the legacy partials into this unit's scope,
+// re-apply direct palette-derived color overrides after scss/global, then
+// import and include the component mixin.
+
+@use "sass:map";
+
+$user: () !default;
+
+// Shared ambient names read by scss/components/_table.scss
+$global-font-size: map.get($user, "global-font-size");
+$global-margin: map.get($user, "global-margin");
+$global-radius: map.get($user, "global-radius");
+$global-text-direction: map.get($user, "global-text-direction");
+$global-weight-bold: map.get($user, "global-weight-bold");
+$body-font-color: map.get($user, "body-font-color");
+$white: map.get($user, "white");
+$breakpoints: map.get($user, "breakpoints");
+$print-breakpoint: map.get($user, "print-breakpoint");
+
+// Table component names (settings section "50. Table")
+$table-background: map.get($user, "table-background");
+$table-color-scale: map.get($user, "table-color-scale");
+$table-border: map.get($user, "table-border");
+$table-padding: map.get($user, "table-padding");
+$table-hover-scale: map.get($user, "table-hover-scale");
+$table-row-hover: map.get($user, "table-row-hover");
+$table-row-stripe-hover: map.get($user, "table-row-stripe-hover");
+$table-is-striped: map.get($user, "table-is-striped");
+$table-striped-background: map.get($user, "table-striped-background");
+$table-stripe: map.get($user, "table-stripe");
+$table-head-background: map.get($user, "table-head-background");
+$table-head-row-hover: map.get($user, "table-head-row-hover");
+$table-foot-background: map.get($user, "table-foot-background");
+$table-foot-row-hover: map.get($user, "table-foot-row-hover");
+$table-head-font-color: map.get($user, "table-head-font-color");
+$table-foot-font-color: map.get($user, "table-foot-font-color");
+$show-header-for-stacked: map.get($user, "show-header-for-stacked");
+$table-stack-breakpoint: map.get($user, "table-stack-breakpoint");
+
+// Legacy imports (shared scope inside this unit)
+@import '../util/util';
+@import '../global';
+
+// Direct palette-derived color overrides, re-applied after add-foundation-colors()
+@if map.has-key($user, "primary-color") {
+  $primary-color: map.get($user, "primary-color");
+}
+@if map.has-key($user, "secondary-color") {
+  $secondary-color: map.get($user, "secondary-color");
+}
+@if map.has-key($user, "success-color") {
+  $success-color: map.get($user, "success-color");
+}
+@if map.has-key($user, "warning-color") {
+  $warning-color: map.get($user, "warning-color");
+}
+@if map.has-key($user, "alert-color") {
+  $alert-color: map.get($user, "alert-color");
+}
+
+// Load + emit
+@import '../components/table';
+@include foundation-table;

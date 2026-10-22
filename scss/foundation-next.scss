@@ -1,0 +1,137 @@
+// Foundation for Sites — settings-module configuration pipeline (7.0 line B skeleton)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group next
+////
+
+// Experimental 7.0 configuration pipeline, parallel to the legacy @import entry
+// point scss/foundation.scss (which stays untouched):
+//
+// 1. The user turns their settings file into a settings module: plain top-level
+//    variable assignments, plus `@import 'util/util';` at the top while the
+//    file still calls helpers like rem-calc() (see
+//    audit/line-b-settings-migration-draft.md).
+// 2. The user's entry stylesheet reflects that module with
+//    `meta.module-variables()` and passes the resulting map to the mixin of
+//    each component it wants.
+// 3. `merge-settings()` merges that map over the library defaults loaded from
+//    scss/settings/_settings.scss and precomputes the five palette-derived
+//    colors, so the reflected map is truthful on its own (debugging,
+//    validation).
+// 4. Each mixin loads its component through `meta.load-css(..., $with: ...)`
+//    from a load unit under scss/next/. The unit only applies the keys the
+//    user actually set; everything else falls through to the library
+//    `!default` chain, which re-derives dependent settings inside the unit
+//    (e.g. `$button-radius: $global-radius !default` picks up an overridden
+//    `$global-radius`).
+//
+// Constraints of the meta.load-css() route (they shape the API):
+// - the call cannot sit inside a media query or any other CSS at-rule, so the
+//   mixins below are for top-level includes only;
+// - a load unit is a module, and a module can be configured only once per
+//   compilation — include each component through this pipeline at most once;
+// - do not mix this pipeline with the legacy @import path in one compilation:
+//   both would emit the component CSS twice (the @import and @use module
+//   caches are separate).
+
+@use "sass:map";
+@use "sass:meta";
+@use "settings/settings" as foundation-defaults;
+
+// Internal: the five palette-derived colors ($primary-color, $secondary-color,
+// $success-color, $warning-color, $alert-color). The legacy pipeline produces
+// them at evaluation time through the add-foundation-colors() mixin, which
+// writes `!global` variables (scss/settings/_settings.scss:105,
+// scss/_global.scss:138); a module loaded through @use can never observe
+// another file's globals, so the pipeline treats the colors as configuration
+// and precomputes them from the effective palette instead. A direct user
+// override of a `*-color` variable still wins over the palette derivation
+// (the contract pinned by test/sass/_settings_override.scss), because the
+// user map is merged a second time on top of the derived colors.
+//
+// @param {Map} $foundation-palette - The effective palette.
+// @returns {Map} The five `*-color` settings keys.
+@function -fs-foundation-colors($foundation-palette) {
+  @return (
+    "primary-color": map.get($foundation-palette, "primary"),
+    "secondary-color": map.get($foundation-palette, "secondary"),
+    "success-color": map.get($foundation-palette, "success"),
+    "warning-color": map.get($foundation-palette, "warning"),
+    "alert-color": map.get($foundation-palette, "alert"),
+  );
+}
+
+// Internal: the reflected user map can carry null values. @importing
+// scss/util/util (as the migration guide recommends while settings call
+// helpers like rem-calc()) splices util's `$primary-color: null !default`
+// declarations (scss/util/_color.scss:11-15) into the user module, and
+// meta.module-variables() reflects them. In this pipeline a null value means
+// "not set", so those entries must be dropped before the map is merged over
+// the defaults or handed to a load unit — otherwise a null would clobber the
+// palette-derived colors on its way through.
+//
+// @param {Map} $user-settings - Variables reflected from the user settings
+//   module with meta.module-variables().
+// @returns {Map} The user settings without null values.
+@function -fs-non-null($user-settings) {
+  $result: ();
+  @each $key, $value in $user-settings {
+    @if $value != null {
+      $result: map.set($result, $key, $value);
+    }
+  }
+  @return $result;
+}
+
+// Internal: shared merge pipeline behind merge-settings().
+//
+// @param {Map} $user-settings - Variables reflected from the user settings
+//   module with meta.module-variables().
+// @returns {Map} The effective settings map.
+@function -fs-merge-settings($user-settings) {
+  $user-settings: -fs-non-null($user-settings);
+  $merged: map.merge(meta.module-variables("foundation-defaults"), $user-settings);
+  $palette: map.get($merged, "foundation-palette");
+  @return map.merge(map.merge($merged, -fs-foundation-colors($palette)), $user-settings);
+}
+
+/// Merges the reflected user settings over the library defaults and returns
+/// the effective settings map.
+///
+/// The five palette-derived colors are precomputed from the effective
+/// `$foundation-palette` (see `-fs-foundation-colors()`); a direct user
+/// override of a `*-color` variable is merged back on top and wins. Note that
+/// keys derived inside component partials (e.g. `$button-radius`, which
+/// defaults to `$global-radius`) keep the library settings value in this map;
+/// re-deriving them from overridden ambient settings is the job of the load
+/// units, which is why they are configured with the user map only.
+///
+/// @param {Map} $user-settings [()] - Variables reflected from the user
+///   settings module with `meta.module-variables()`. Empty for a
+///   pure-defaults compilation.
+/// @returns {Map} The effective settings map.
+@function merge-settings($user-settings: ()) {
+  @return -fs-merge-settings($user-settings);
+}
+
+/// Adds all styles for the button component, configured through the
+/// settings-module pipeline.
+///
+/// @param {Map} $user-settings [()] - Variables reflected from the user
+///   settings module with `meta.module-variables()`. Empty for a
+///   pure-defaults compilation.
+@mixin foundation-button($user-settings: ()) {
+  @include meta.load-css("next/load-button", $with: ("user": -fs-non-null($user-settings)));
+}
+
+/// Adds all styles for the table component, configured through the
+/// settings-module pipeline.
+///
+/// @param {Map} $user-settings [()] - Variables reflected from the user
+///   settings module with `meta.module-variables()`. Empty for a
+///   pure-defaults compilation.
+@mixin foundation-table($user-settings: ()) {
+  @include meta.load-css("next/load-table", $with: ("user": -fs-non-null($user-settings)));
+}
