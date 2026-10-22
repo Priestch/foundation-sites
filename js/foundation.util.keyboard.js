@@ -8,6 +8,8 @@
 
 import $ from 'jquery';
 import { rtl as Rtl } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
+import { visible } from './foundation.util.dom';
 
 const keyCodes = {
   9: 'TAB',
@@ -24,24 +26,42 @@ const keyCodes = {
 
 var commands = {}
 
+// Focusable candidates, in DOM order (7.0 line A, S5: the 6.x implementation
+// ran the same selector through jQuery's `.find()`).
+const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]';
+
 // Functions pulled out to be referenceable from internals
 function findFocusable($element) {
   if(!$element) {return false; }
-  return $element.find('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]').filter(function() {
-    if (!$(this).is(':visible') || $(this).attr('tabindex') < 0) { return false; } //only have visible elements and those that have a tabindex greater or equal 0
+  // Mixed state: the outside shape stays a jQuery collection (callers use
+  // `.eq()`, `[0]`, `.length`, `.focus()`), the scan and the sort run on
+  // plain arrays.
+  const roots = Array.from($element.length !== undefined ? $element : [$element]);
+
+  const candidates = [];
+  roots.forEach(root => {
+    if (root && root.querySelectorAll) {
+      candidates.push(...root.querySelectorAll(focusableSelector));
+    }
+  });
+
+  const focusable = candidates.filter(function(el) {
+    //only have visible elements and those that have a tabindex greater or equal 0
+    if (!visible(el) || el.getAttribute('tabindex') < 0) { return false; }
     return true;
-  })
-  .sort( function( a, b ) {
-    if ($(a).attr('tabindex') === $(b).attr('tabindex')) {
+  });
+
+  return $(focusable.sort(function( a, b ) {
+    if (a.getAttribute('tabindex') === b.getAttribute('tabindex')) {
       return 0;
     }
-    let aTabIndex = parseInt($(a).attr('tabindex'), 10),
-      bTabIndex = parseInt($(b).attr('tabindex'), 10);
-    // Undefined is treated the same as 0
-    if (typeof $(a).attr('tabindex') === 'undefined' && bTabIndex > 0) {
+    const aTabIndex = parseInt(a.getAttribute('tabindex'), 10),
+      bTabIndex = parseInt(b.getAttribute('tabindex'), 10);
+    // A missing attribute is treated the same as 0
+    if (a.getAttribute('tabindex') === null && bTabIndex > 0) {
       return 1;
     }
-    if (typeof $(b).attr('tabindex') === 'undefined' && aTabIndex > 0) {
+    if (b.getAttribute('tabindex') === null && aTabIndex > 0) {
       return -1;
     }
     if (aTabIndex === 0 && bTabIndex > 0) {
@@ -56,7 +76,7 @@ function findFocusable($element) {
     if (aTabIndex > bTabIndex) {
       return 1;
     }
-  });
+  }));
 }
 
 function parseKey(event) {
@@ -108,9 +128,9 @@ var Keyboard = {
     if (typeof commandList.ltr === 'undefined') {
         cmds = commandList; // use plain list
     } else { // merge ltr and rtl: if document is rtl, rtl overwrites ltr and vice versa
-        if (Rtl()) cmds = $.extend({}, commandList.ltr, commandList.rtl);
+        if (Rtl()) cmds = Object.assign({}, commandList.ltr, commandList.rtl);
 
-        else cmds = $.extend({}, commandList.rtl, commandList.ltr);
+        else cmds = Object.assign({}, commandList.rtl, commandList.ltr);
     }
     command = cmds[keyCode];
 
@@ -157,6 +177,9 @@ var Keyboard = {
   //
   /**
    * Traps the focus in the given element.
+   * The keydown listener lives on the native event layer (7.0 line A, S5);
+   * real keydowns reach it while the mixed state lasts, and callers keep
+   * handing in the jQuery object.
    * @param  {jQuery} $element  jQuery object to trap the foucs into.
    */
   trapFocus($element) {
@@ -164,7 +187,7 @@ var Keyboard = {
         $firstFocusable = $focusable.eq(0),
         $lastFocusable = $focusable.eq(-1);
 
-    $element.on('keydown.zf.trapfocus', function(event) {
+    Events.on($element[0], 'keydown.zf.trapfocus', function(event) {
       if (event.target === $lastFocusable[0] && parseKey(event) === 'TAB') {
         event.preventDefault();
         $firstFocusable.focus();
@@ -180,7 +203,7 @@ var Keyboard = {
    * @param  {jQuery} $element  jQuery object to release the focus for.
    */
   releaseFocus($element) {
-    $element.off('keydown.zf.trapfocus');
+    Events.off($element[0], 'keydown.zf.trapfocus');
   }
 }
 
