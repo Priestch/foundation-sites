@@ -1,0 +1,426 @@
+// Settings-module pipeline suite (7.0 line B skeleton).
+//
+// Covers scss/foundation-next.scss and the load units under scss/next/:
+// - merge-settings() merge semantics (library defaults, user overrides,
+//   palette-derived colors with and without direct overrides);
+// - the documented gotcha that keys derived inside component partials stay at
+//   their library settings value in the reflected map (the load units
+//   re-derive them);
+// - the compiled CSS of both pilot components (button, table) through the new
+//   mechanism, with the exact output the legacy @import path produces for the
+//   same override set (proven by the /tmp dual-track probe harness described
+//   in audit/line-b-settings-migration-draft.md).
+//
+// A load unit is a module and can be configured only once per compilation,
+// so each component is included exactly once in this suite; both may share
+// one compilation because button and table use separate load units.
+
+@use "sass:map";
+@use "sass:meta";
+
+@use "../scss/foundation-next" as fs;
+@use "settings_module_user" as user-settings;
+@use "settings_module_user_palette" as palette-settings;
+
+@import "true";
+
+$user: meta.module-variables("user-settings");
+$user-palette: meta.module-variables("palette-settings");
+
+@include describe('Settings-module pipeline') {
+
+  @include it('merge-settings() returns the library defaults for an empty user map [function]') {
+    $effective: fs.merge-settings(());
+
+    @include assert-equal(map.get($effective, 'global-radius'), 0,
+      'Keeps the library default for $global-radius');
+
+    @include assert-equal(map.get($effective, 'primary-color'), #1779ba,
+      'Derives $primary-color from the library palette');
+  }
+
+  @include it('merge-settings() merges user settings over the library defaults [function]') {
+    $effective: fs.merge-settings($user);
+
+    @include assert-equal(map.get($effective, 'global-radius'), 8px,
+      'Keeps the user value for $global-radius');
+
+    @include assert-equal(map.get($effective, 'global-margin'), 2rem,
+      'Keeps the user value for $global-margin');
+
+    @include assert-equal(map.get($effective, 'button-padding'), 2rem 3rem,
+      'Keeps the user value for $button-padding');
+
+    @include assert-equal(map.get($effective, 'button-fill'), hollow,
+      'Keeps the user value for $button-fill');
+
+    @include assert-equal(map.get($effective, 'global-width'), 75rem,
+      'Evaluates rem-calc() inside the user module (rem-calc(1200) at the default base)');
+  }
+
+  @include it('Palette-derived colors: direct user overrides win over the palette [function]') {
+    $effective: fs.merge-settings($user);
+
+    @include assert-equal(map.get($effective, 'primary-color'), #123456,
+      'Keeps the direct $primary-color override instead of the palette value');
+
+    @include assert-equal(map.get($effective, 'secondary-color'), #767676,
+      'Derives $secondary-color from the palette when not set directly');
+
+    @include assert-equal(map.get($effective, 'alert-color'), #cc4b37,
+      'Derives $alert-color from the palette when not set directly');
+  }
+
+  @include it('Palette-derived colors: the palette wins without direct overrides [function]') {
+    // This user module imports util/util, so its reflection carries the null
+    // `*-color` entries spliced in by scss/util/_color.scss — the pipeline
+    // must drop them instead of letting them clobber the derivation.
+    $effective: fs.merge-settings($user-palette);
+
+    @include assert-equal(map.get($effective, 'primary-color'), #09665c,
+      'Derives $primary-color from the user palette despite the reflected null entries');
+
+    @include assert-equal(map.get($effective, 'secondary-color'), #767676,
+      'Keeps the library palette value for $secondary-color despite the reflected null entry');
+  }
+
+  @include it('Keys derived inside partials stay at library values in the reflected map [function]') {
+    // Documented gotcha: meta.module-variables() reflects the settings module,
+    // where $button-radius was evaluated against the library $global-radius.
+    // Re-deriving such keys from the overridden ambients is the job of the
+    // load units — which is why they are configured with the user map only
+    // (see scss/next/_load-button.scss, "1.").
+    $effective: fs.merge-settings($user);
+
+    @include assert-equal(map.get($effective, 'button-radius'), 0,
+      'Reflects the frozen library value of $button-radius (the load unit re-derives it as 8px)');
+  }
+
+  @include it('Compiled CSS uses the overridden settings [button component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-button($user);
+      }
+      @include expect($selector: false) {
+        .button {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 0 2rem 0;
+          border: 1px solid transparent;
+          border-radius: 8px;
+          transition: background-color 0.25s ease-out, color 0.25s ease-out;
+          font-family: inherit;
+          font-size: 0.9rem;
+          -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
+          line-height: 1;
+          text-align: center;
+          cursor: pointer;
+          padding: 2rem 3rem;
+        }
+        [data-whatinput=mouse] .button {
+          outline: 0;
+        }
+        .button.tiny {
+          font-size: 0.6rem;
+        }
+        .button.small {
+          font-size: 0.75rem;
+        }
+        .button.large {
+          font-size: 1.25rem;
+        }
+        .button.expanded {
+          display: block;
+          width: 100%;
+          margin-right: 0;
+          margin-left: 0;
+        }
+        .button.solid, .button.solid.disabled, .button.solid[disabled], .button.solid.disabled:hover, .button.solid[disabled]:hover, .button.solid.disabled:focus, .button.solid[disabled]:focus {
+          background-color: #123456;
+          color: #fefefe;
+        }
+        .button.solid:hover, .button.solid:focus {
+          background-color: rgb(15.3, 44.2, 73.1);
+          color: #fefefe;
+        }
+        .button.solid.primary, .button.solid.primary.disabled, .button.solid.primary[disabled], .button.solid.primary.disabled:hover, .button.solid.primary[disabled]:hover, .button.solid.primary.disabled:focus, .button.solid.primary[disabled]:focus {
+          background-color: #1240ab;
+          color: #fefefe;
+        }
+        .button.solid.primary:hover, .button.solid.primary:focus {
+          background-color: rgb(14.4, 51.2, 136.8);
+          color: #fefefe;
+        }
+        .button.solid.secondary, .button.solid.secondary.disabled, .button.solid.secondary[disabled], .button.solid.secondary.disabled:hover, .button.solid.secondary[disabled]:hover, .button.solid.secondary.disabled:focus, .button.solid.secondary[disabled]:focus {
+          background-color: #767676;
+          color: #fefefe;
+        }
+        .button.solid.secondary:hover, .button.solid.secondary:focus {
+          background-color: rgb(94.4, 94.4, 94.4);
+          color: #fefefe;
+        }
+        .button.solid.success, .button.solid.success.disabled, .button.solid.success[disabled], .button.solid.success.disabled:hover, .button.solid.success[disabled]:hover, .button.solid.success.disabled:focus, .button.solid.success[disabled]:focus {
+          background-color: #3adb76;
+          color: #0a0a0a;
+        }
+        .button.solid.success:hover, .button.solid.success:focus {
+          background-color: rgb(34.2386266094, 187.3613733906, 91.3030042918);
+          color: #0a0a0a;
+        }
+        .button.solid.warning, .button.solid.warning.disabled, .button.solid.warning[disabled], .button.solid.warning.disabled:hover, .button.solid.warning[disabled]:hover, .button.solid.warning.disabled:focus, .button.solid.warning[disabled]:focus {
+          background-color: #ffae00;
+          color: #0a0a0a;
+        }
+        .button.solid.warning:hover, .button.solid.warning:focus {
+          background-color: rgb(204, 139.2, 0);
+          color: #0a0a0a;
+        }
+        .button.solid.alert, .button.solid.alert.disabled, .button.solid.alert[disabled], .button.solid.alert.disabled:hover, .button.solid.alert[disabled]:hover, .button.solid.alert.disabled:focus, .button.solid.alert[disabled]:focus {
+          background-color: #cc4b37;
+          color: #fefefe;
+        }
+        .button.solid.alert:hover, .button.solid.alert:focus {
+          background-color: rgb(165.0996015936, 58.6103585657, 42.1003984064);
+          color: #fefefe;
+        }
+        .button, .button:hover, .button:focus, .button.disabled, .button.disabled:hover, .button.disabled:focus, .button[disabled], .button[disabled]:hover, .button[disabled]:focus {
+          background-color: transparent;
+        }
+        .button, .button.disabled, .button[disabled], .button.disabled:hover, .button[disabled]:hover, .button.disabled:focus, .button[disabled]:focus {
+          border: 1px solid #123456;
+          color: #123456;
+        }
+        .button:hover, .button:focus {
+          border-color: #091a2b;
+          color: #091a2b;
+        }
+        .button.primary, .button.primary.disabled, .button.primary[disabled], .button.primary.disabled:hover, .button.primary[disabled]:hover, .button.primary.disabled:focus, .button.primary[disabled]:focus {
+          border: 1px solid #1240ab;
+          color: #1240ab;
+        }
+        .button.primary:hover, .button.primary:focus {
+          border-color: rgb(9, 32, 85.5);
+          color: rgb(9, 32, 85.5);
+        }
+        .button.secondary, .button.secondary.disabled, .button.secondary[disabled], .button.secondary.disabled:hover, .button.secondary[disabled]:hover, .button.secondary.disabled:focus, .button.secondary[disabled]:focus {
+          border: 1px solid #767676;
+          color: #767676;
+        }
+        .button.secondary:hover, .button.secondary:focus {
+          border-color: #3b3b3b;
+          color: #3b3b3b;
+        }
+        .button.success, .button.success.disabled, .button.success[disabled], .button.success.disabled:hover, .button.success[disabled]:hover, .button.success.disabled:focus, .button.success[disabled]:focus {
+          border: 1px solid #3adb76;
+          color: #3adb76;
+        }
+        .button.success:hover, .button.success:focus {
+          border-color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
+          color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
+        }
+        .button.warning, .button.warning.disabled, .button.warning[disabled], .button.warning.disabled:hover, .button.warning[disabled]:hover, .button.warning.disabled:focus, .button.warning[disabled]:focus {
+          border: 1px solid #ffae00;
+          color: #ffae00;
+        }
+        .button.warning:hover, .button.warning:focus {
+          border-color: rgb(127.5, 87, 0);
+          color: rgb(127.5, 87, 0);
+        }
+        .button.alert, .button.alert.disabled, .button.alert[disabled], .button.alert.disabled:hover, .button.alert[disabled]:hover, .button.alert.disabled:focus, .button.alert[disabled]:focus {
+          border: 1px solid #cc4b37;
+          color: #cc4b37;
+        }
+        .button.alert:hover, .button.alert:focus {
+          border-color: rgb(103.187250996, 36.6314741036, 26.312749004);
+          color: rgb(103.187250996, 36.6314741036, 26.312749004);
+        }
+        .button.clear, .button.clear:hover, .button.clear:focus, .button.clear.disabled, .button.clear.disabled:hover, .button.clear.disabled:focus, .button.clear[disabled], .button.clear[disabled]:hover, .button.clear[disabled]:focus {
+          border-color: transparent;
+          background-color: transparent;
+        }
+        .button.clear, .button.clear.disabled, .button.clear[disabled], .button.clear.disabled:hover, .button.clear[disabled]:hover, .button.clear.disabled:focus, .button.clear[disabled]:focus {
+          color: #123456;
+        }
+        .button.clear:hover, .button.clear:focus {
+          color: #091a2b;
+        }
+        .button.clear.primary, .button.clear.primary.disabled, .button.clear.primary[disabled], .button.clear.primary.disabled:hover, .button.clear.primary[disabled]:hover, .button.clear.primary.disabled:focus, .button.clear.primary[disabled]:focus {
+          color: #1240ab;
+        }
+        .button.clear.primary:hover, .button.clear.primary:focus {
+          color: rgb(9, 32, 85.5);
+        }
+        .button.clear.secondary, .button.clear.secondary.disabled, .button.clear.secondary[disabled], .button.clear.secondary.disabled:hover, .button.clear.secondary[disabled]:hover, .button.clear.secondary.disabled:focus, .button.clear.secondary[disabled]:focus {
+          color: #767676;
+        }
+        .button.clear.secondary:hover, .button.clear.secondary:focus {
+          color: #3b3b3b;
+        }
+        .button.clear.success, .button.clear.success.disabled, .button.clear.success[disabled], .button.clear.success.disabled:hover, .button.clear.success[disabled]:hover, .button.clear.success.disabled:focus, .button.clear.success[disabled]:focus {
+          color: #3adb76;
+        }
+        .button.clear.success:hover, .button.clear.success:focus {
+          color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
+        }
+        .button.clear.warning, .button.clear.warning.disabled, .button.clear.warning[disabled], .button.clear.warning.disabled:hover, .button.clear.warning[disabled]:hover, .button.clear.warning.disabled:focus, .button.clear.warning[disabled]:focus {
+          color: #ffae00;
+        }
+        .button.clear.warning:hover, .button.clear.warning:focus {
+          color: rgb(127.5, 87, 0);
+        }
+        .button.clear.alert, .button.clear.alert.disabled, .button.clear.alert[disabled], .button.clear.alert.disabled:hover, .button.clear.alert[disabled]:hover, .button.clear.alert.disabled:focus, .button.clear.alert[disabled]:focus {
+          color: #cc4b37;
+        }
+        .button.clear.alert:hover, .button.clear.alert:focus {
+          color: rgb(103.187250996, 36.6314741036, 26.312749004);
+        }
+        .button.disabled, .button[disabled] {
+          opacity: 0.25;
+          cursor: not-allowed;
+        }
+        .button.dropdown::after {
+          display: block;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 0.4em;
+          content: "";
+          border-bottom-width: 0;
+          border-color: #fefefe transparent transparent;
+          position: relative;
+          top: 0.4em;
+          display: inline-block;
+          float: right;
+          margin-left: 3rem;
+        }
+        .button.dropdown::after {
+          border-top-color: #123456;
+        }
+        .button.dropdown.hollow::after, .button.dropdown.clear::after {
+          border-top-color: #123456;
+        }
+        .button.dropdown.hollow.primary::after, .button.dropdown.clear.primary::after {
+          border-top-color: #1240ab;
+        }
+        .button.dropdown.hollow.secondary::after, .button.dropdown.clear.secondary::after {
+          border-top-color: #767676;
+        }
+        .button.dropdown.hollow.success::after, .button.dropdown.clear.success::after {
+          border-top-color: #3adb76;
+        }
+        .button.dropdown.hollow.warning::after, .button.dropdown.clear.warning::after {
+          border-top-color: #ffae00;
+        }
+        .button.dropdown.hollow.alert::after, .button.dropdown.clear.alert::after {
+          border-top-color: #cc4b37;
+        }
+        .button.arrow-only::after {
+          top: -0.1em;
+          float: none;
+          margin-left: 0;
+        }
+        a.button:hover, a.button:focus {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  @include it('Compiled CSS uses the overridden settings [table component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-table($user);
+      }
+      @include expect($selector: false) {
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          margin-bottom: 2rem;
+          border-radius: 8px;
+        }
+        thead,
+        tbody,
+        tfoot {
+          border: 1px solid rgb(241.3, 241.3, 241.3);
+          background-color: #fefefe;
+        }
+        caption {
+          padding: 0.5rem 0.625rem 0.625rem;
+          font-weight: bold;
+        }
+        thead {
+          background: rgb(247.65, 247.65, 247.65);
+          color: #343434;
+        }
+        tfoot {
+          background: rgb(241.3, 241.3, 241.3);
+          color: #343434;
+        }
+        thead tr,
+        tfoot tr {
+          background: transparent;
+        }
+        thead th,
+        thead td,
+        tfoot th,
+        tfoot td {
+          padding: 0.5rem 0.625rem 0.625rem;
+          font-weight: bold;
+          text-align: left;
+        }
+        tbody th,
+        tbody td {
+          padding: 0.5rem 0.625rem 0.625rem;
+        }
+        tbody tr:nth-child(even) {
+          border-bottom: 0;
+          background-color: rgb(241.3, 241.3, 241.3);
+        }
+        table.unstriped tbody {
+          background-color: #fefefe;
+        }
+        table.unstriped tbody tr {
+          border-bottom: 1px solid rgb(241.3, 241.3, 241.3);
+          background-color: #fefefe;
+        }
+        @media print, screen and (max-width: 63.99875em) {
+          table.stack thead {
+            display: none;
+          }
+          table.stack tfoot {
+            display: none;
+          }
+          table.stack tr,
+          table.stack th,
+          table.stack td {
+            display: block;
+          }
+          table.stack td {
+            border-top: 0;
+          }
+        }
+        table.scroll {
+          display: block;
+          width: 100%;
+          overflow-x: auto;
+        }
+        table.hover thead tr:hover {
+          background-color: rgb(242.55, 242.55, 242.55);
+        }
+        table.hover tfoot tr:hover {
+          background-color: rgb(236.2, 236.2, 236.2);
+        }
+        table.hover tbody tr:hover {
+          background-color: rgb(248.9, 248.9, 248.9);
+        }
+        table.hover:not(.unstriped) tr:nth-of-type(even):hover {
+          background-color: rgb(236.15, 236.15, 236.15);
+        }
+        .table-scroll {
+          overflow-x: auto;
+        }
+      }
+    }
+  }
+
+}

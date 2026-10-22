@@ -1,0 +1,21 @@
+// Second sample user settings module for the settings-module pipeline suite:
+// a palette override with NO direct `*-color` variables, so the palette
+// derivation must win (contrast with _settings_module_user.scss, where the
+// direct $primary-color wins).
+//
+// The `@import 'util/util'` here is deliberate regression coverage: it splices
+// util's `$primary-color: null !default` declarations (scss/util/_color.scss)
+// into this module, so meta.module-variables() reflects null-valued
+// `*-color` entries. The pipeline must drop those nulls — a regression would
+// clobber the palette-derived colors and fail the assertions below.
+
+@import '../scss/util/util';
+
+$global-radius: 8px;
+$foundation-palette: (
+  "primary": #09665c,
+  "secondary": #767676,
+  "success": #3adb76,
+  "warning": #ffae00,
+  "alert": #cc4b37,
+);
