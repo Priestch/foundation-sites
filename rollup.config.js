@@ -1,4 +1,4 @@
-var rollupBabel = require('rollup-plugin-babel');
+var rollupBabel = require('@rollup/plugin-babel').babel;
 
 var baseConfig = {
   external: ['jquery'],

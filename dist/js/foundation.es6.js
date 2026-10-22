@@ -145,12 +145,12 @@ function ignoreMousedisappear(handler, { ignoreLeaveWindow = false, ignoreReappe
 
 var foundation_core_utils = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  rtl: rtl,
   GetYoDigits: GetYoDigits,
   RegExpEscape: RegExpEscape,
-  transitionend: transitionend,
+  ignoreMousedisappear: ignoreMousedisappear,
   onLoad: onLoad,
-  ignoreMousedisappear: ignoreMousedisappear
+  rtl: rtl,
+  transitionend: transitionend
 });
 
 // Default set of media queries
@@ -922,6 +922,7 @@ function onImagesLoaded(images, callback){
  *                                         *
  ******************************************/
 
+
 const keyCodes = {
   9: 'TAB',
   13: 'ENTER',
@@ -1314,6 +1315,10 @@ function Timer(elem, options, cb) {
 }
 
 //**************************************************
+//**Work inspired by multiple jquery swipe plugins**
+//**Done by Yohai Ararat ***************************
+//**************************************************
+
 
 var Touch = {};
 

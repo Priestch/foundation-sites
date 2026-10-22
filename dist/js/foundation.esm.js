@@ -21,12 +21,12 @@ function _classCallCheck(a, n) {
 function _defineProperties(e, r) {
   for (var t = 0; t < r.length; t++) {
     var o = r[t];
-    o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o);
+    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, _toPropertyKey(o.key), o);
   }
 }
 function _createClass(e, r, t) {
   return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
-    writable: !1
+    writable: false
   }), e;
 }
 function _get() {
@@ -48,11 +48,11 @@ function _inherits(t, e) {
   t.prototype = Object.create(e && e.prototype, {
     constructor: {
       value: t,
-      writable: !0,
-      configurable: !0
+      writable: true,
+      configurable: true
     }
   }), Object.defineProperty(t, "prototype", {
-    writable: !1
+    writable: false
   }), e && _setPrototypeOf(t, e);
 }
 function _isNativeReflectConstruct() {
@@ -71,15 +71,12 @@ function _iterableToArrayLimit(r, l) {
       i,
       u,
       a = [],
-      f = !0,
-      o = !1;
+      f = true,
+      o = false;
     try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+      if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
     } catch (r) {
-      o = !0, n = r;
+      o = true, n = r;
     } finally {
       try {
         if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
@@ -111,7 +108,7 @@ function _superPropBase(t, o) {
   return t;
 }
 function _superPropGet(t, e, o, r) {
-  var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), e, o);
+  var p = _get(_getPrototypeOf(t.prototype ), e, o);
   return 2 & r && "function" == typeof p ? function (t) {
     return p.apply(o, t);
   } : p;
@@ -120,11 +117,11 @@ function _toPrimitive(t, r) {
   if ("object" != typeof t || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
-    var i = e.call(t, r || "default");
+    var i = e.call(t, r);
     if ("object" != typeof i) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return ("string" === r ? String : Number)(t);
+  return (String )(t);
 }
 function _toPropertyKey(t) {
   var i = _toPrimitive(t, "string");
@@ -295,12 +292,12 @@ function ignoreMousedisappear(handler) {
 
 var foundation_core_utils = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  rtl: rtl,
   GetYoDigits: GetYoDigits,
   RegExpEscape: RegExpEscape,
-  transitionend: transitionend,
+  ignoreMousedisappear: ignoreMousedisappear,
   onLoad: onLoad,
-  ignoreMousedisappear: ignoreMousedisappear
+  rtl: rtl,
+  transitionend: transitionend
 });
 
 // Default set of media queries
@@ -1018,6 +1015,7 @@ function onImagesLoaded(images, callback) {
  * or the web http://www.mariusolbertz.de/ *
  *                                         *
  ******************************************/
+
 var keyCodes = {
   9: 'TAB',
   13: 'ENTER',
