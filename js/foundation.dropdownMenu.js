@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { rtl as Rtl, ignoreMousedisappear } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { Nest } from './foundation.util.nest';
 import { Box } from './foundation.util.box';
@@ -27,7 +29,7 @@ class DropdownMenu extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, DropdownMenu.defaults, this.$element.data(), options);
+    this.options = $.extend({}, DropdownMenu.defaults, datasetOptions(element[0]), options);
     this.className = 'DropdownMenu'; // ie9 back compat
 
     Touch.init($); // Touch init is idempotent, we just need to make sure it's initialied.
@@ -119,28 +121,45 @@ class DropdownMenu extends Plugin {
           e.stopImmediatePropagation();
           e.preventDefault();
           _this._show($sub);
-          $elem.add($elem.parentsUntil(_this.$element, `.${parClass}`)).attr('data-is-click', true);
+          // S9: the click-state attribute flips natively.
+          $elem.add($elem.parentsUntil(_this.$element, `.${parClass}`)).toArray()
+            .forEach(el => el.setAttribute('data-is-click', 'true'));
         }
       }
     };
 
     if (this.options.clickOpen || hasTouch) {
-      this.$menuItems.on('click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
+      // S9: the click (and real touchstart) consumer flips to the native
+      // event layer - real events reach it directly and jQuery-synthesized
+      // clicks on non-link items ride the `.click()` shortcut bridge
+      // (reveal-native precedent; jQuery suppresses that shortcut for link
+      // anchors, so a jQuery-synthesized click on the `<a>` itself stays
+      // undelivered - a real click is the user contract). The library itself
+      // has no jQuery-synthesized touchstart producer left (the Touch util
+      // makes 'tap').
+      this.$menuItems.toArray().forEach(item => {
+        Events.on(item, 'click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
+      });
     }
 
     // Handle Leaf element Clicks
     if(_this.options.closeOnClickInside){
-      this.$menuItems.on('click.zf.dropdownMenu', function() {
-        var $elem = $(this),
-            hasSub = $elem.hasClass(parClass);
-        if(!hasSub){
-          _this._hide();
-        }
+      this.$menuItems.toArray().forEach(item => {
+        Events.on(item, 'click.zf.dropdownMenu', function() {
+          var $elem = $(this),
+              hasSub = $elem.hasClass(parClass);
+          if(!hasSub){
+            _this._hide();
+          }
+        });
       });
     }
 
     if (hasTouch && this.options.disableHoverOnTouch) this.options.disableHover = true;
 
+    // Seam (S9): hover intent stays on jQuery - the delay timers ride
+    // jQuery element data (`_delay`) and the what-input-style synthetic
+    // hover drives only jQuery listeners.
     if (!this.options.disableHover) {
       this.$menuItems.on('mouseenter.zf.dropdownMenu', function () {
         var $elem = $(this),
@@ -165,6 +184,10 @@ class DropdownMenu extends Plugin {
         }
       }));
     }
+    // Seam (S9): the keydown binding stays on jQuery - the coarse suite
+    // feeds jQuery-synthesized mock keydowns, which only jQuery listeners
+    // can hear (Keyboard util takes the jQuery collection; real keyboards
+    // reach this listener either way through white absorption).
     this.$menuItems.on('keydown.zf.dropdownMenu', function(e) {
       var $element = $(e.target).parentsUntil('ul', '[role="none"]'),
           isTab = _this.$tabs.index($element) > -1,
@@ -272,15 +295,21 @@ class DropdownMenu extends Plugin {
    * @private
    */
   _addBodyHandler() {
-    const $body = $(document.body);
+    const body = document.body;
     this._removeBodyHandler();
-    $body.on('click.zf.dropdownMenu tap.zf.dropdownMenu', (e) => {
+    const bodyHandler = (e) => {
       var isItself = !!$(e.target).closest(this.$element).length;
       if (isItself) return;
 
       this._hide();
       this._removeBodyHandler();
-    });
+    };
+    // S9 split transport: the click half lives on the native event layer
+    // (real clicks and jQuery-synthesized clicks via the `.click()` bridge
+    // both arrive); the tap half stays on jQuery - the Touch util
+    // synthesizes 'tap' through a jQuery trigger in the mixed state.
+    Events.on(body, 'click.zf.dropdownMenu', bodyHandler);
+    $(body).on('tap.zf.dropdownMenu', bodyHandler);
   }
 
   /**
@@ -289,7 +318,8 @@ class DropdownMenu extends Plugin {
    * @private
    */
   _removeBodyHandler() {
-    $(document.body).off('click.zf.dropdownMenu tap.zf.dropdownMenu');
+    Events.off(document.body, 'click.zf.dropdownMenu');
+    $(document.body).off('tap.zf.dropdownMenu');
   }
 
   /**
@@ -305,8 +335,16 @@ class DropdownMenu extends Plugin {
     }));
     var $sibs = $sub.parent('li.is-dropdown-submenu-parent').siblings('li.is-dropdown-submenu-parent');
     this._hide($sibs, idx);
-    $sub.css('visibility', 'hidden').addClass('js-dropdown-active')
-        .parent('li.is-dropdown-submenu-parent').addClass('is-active');
+    // S9: class/inline-style state flips natively (the collection reads and
+    // the Box block below stay on jQuery).
+    $sub.toArray().forEach(subEl => {
+      subEl.style.visibility = 'hidden';
+      subEl.classList.add('js-dropdown-active');
+      const parentLi = subEl.parentElement;
+      if (parentLi && parentLi.matches('li.is-dropdown-submenu-parent')) {
+        parentLi.classList.add('is-active');
+      }
+    });
     var clear = Box.ImNotTouchingYou($sub, null, true);
     if (!clear) {
       var oldClass = this.options.alignment === 'left' ? '-right' : '-left',
@@ -318,13 +356,17 @@ class DropdownMenu extends Plugin {
       }
       this.changed = true;
     }
-    $sub.css('visibility', '');
+    $sub.toArray().forEach(subEl => {
+      subEl.style.visibility = '';
+    });
     if (this.options.closeOnClick) { this._addBodyHandler(); }
     /**
      * Fires when the new dropdown pane is visible.
      * @event DropdownMenu#show
      */
-    this.$element.trigger('show.zf.dropdownMenu', [$sub]);
+    // S9: state production through the native event layer; still-on-jQuery
+    // listeners receive the real bubbling event (white absorption).
+    Events.trigger(this.$element[0], 'show.zf.dropdownMenu', [$sub]);
   }
 
   /**
@@ -351,11 +393,14 @@ class DropdownMenu extends Plugin {
 
     if (somethingToClose) {
       var $activeItem = $toClose.find('li.is-active');
-      $activeItem.add($toClose).attr({
-        'data-is-click': false
-      }).removeClass('is-active');
-
-      $toClose.find('ul.js-dropdown-active').removeClass('js-dropdown-active');
+      // S9: class/data state flips natively.
+      $activeItem.add($toClose).toArray().forEach(el => {
+        el.setAttribute('data-is-click', 'false');
+        el.classList.remove('is-active');
+      });
+      $toClose[0].querySelectorAll('ul.js-dropdown-active').forEach(ul => {
+        ul.classList.remove('js-dropdown-active');
+      });
 
       if (this.changed || $toClose.find('opens-inner').length) {
         var oldClass = this.options.alignment === 'left' ? 'right' : 'left';
@@ -372,7 +417,8 @@ class DropdownMenu extends Plugin {
        * Fires when the open menus are closed.
        * @event DropdownMenu#hide
        */
-      this.$element.trigger('hide.zf.dropdownMenu', [$toClose]);
+      // S9: state production through the native event layer.
+      Events.trigger(this.$element[0], 'hide.zf.dropdownMenu', [$toClose]);
     }
   }
 
@@ -381,8 +427,11 @@ class DropdownMenu extends Plugin {
    * @function
    */
   _destroy() {
+    // S9 double-off discipline: each layer wipes only its own listeners.
+    this.$menuItems.toArray().forEach(item => Events.off(item, '.zf.dropdownMenu'));
     this.$menuItems.off('.zf.dropdownMenu').removeAttr('data-is-click')
         .removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
+    this._removeBodyHandler();
     $(document.body).off('.zf.dropdownMenu');
     Nest.Burn(this.$element, 'dropdown');
   }
