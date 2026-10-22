@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { GetYoDigits } from './foundation.core.utils';
+import { Registry } from './foundation.util.registry';
 import { MediaQuery } from './foundation.util.mediaQuery';
 
 var FOUNDATION_VERSION = '6.9.0';
@@ -37,7 +38,7 @@ var Foundation = {
   /**
    * @function
    * Populates the _uuids array with pointers to each individual plugin instance.
-   * Adds the `zfPlugin` data-attribute to programmatically created plugins to allow use of $(selector).foundation(method) calls.
+   * Adds the `data-<name>` attribute to programmatically created plugins to allow use of $(selector).foundation(method) calls.
    * Also fires the initialization event for each plugin, consolidating repetitive code.
    * @param {Object} plugin - an instance of a plugin, usually `this` in context.
    * @param {String} name - the name of the plugin, passed as a camelCased string.
@@ -48,7 +49,8 @@ var Foundation = {
     plugin.uuid = GetYoDigits(6, pluginName);
 
     if(!plugin.$element.attr(`data-${pluginName}`)){ plugin.$element.attr(`data-${pluginName}`, plugin.uuid); }
-    if(!plugin.$element.data('zfPlugin')){ plugin.$element.data('zfPlugin', plugin); }
+    var el = plugin.$element[0];
+    if(el && !Registry.has(el)){ Registry.setInstance(el, plugin); }
           /**
            * Fires when the plugin has initialized.
            * @event Plugin#init
@@ -62,21 +64,23 @@ var Foundation = {
   /**
    * @function
    * Removes the plugins uuid from the _uuids array.
-   * Removes the zfPlugin data attribute, as well as the data-plugin-name attribute.
+   * Removes the identifying data attribute and the stored Registry entry.
    * Also fires the destroyed event for the plugin, consolidating repetitive code.
    * @param {Object} plugin - an instance of a plugin, usually `this` in context.
    * @fires Plugin#destroyed
    */
   unregisterPlugin: function(plugin){
-    var pluginName = hyphenate(functionName(plugin.$element.data('zfPlugin').constructor));
+    var el = plugin.$element[0];
+    var pluginName = hyphenate(functionName(Registry.getInstance(el).constructor));
 
     this._uuids.splice(this._uuids.indexOf(plugin.uuid), 1);
-    plugin.$element.removeAttr(`data-${pluginName}`).removeData('zfPlugin')
-          /**
-           * Fires when the plugin has been destroyed.
-           * @event Plugin#destroyed
-           */
-          .trigger(`destroyed.zf.${pluginName}`);
+    plugin.$element.removeAttr(`data-${pluginName}`);
+    Registry.removeInstance(el)
+    /**
+     * Fires when the plugin has been destroyed.
+     * @event Plugin#destroyed
+     */
+    plugin.$element.trigger(`destroyed.zf.${pluginName}`);
     for(var prop in plugin){
       if(typeof plugin[prop] === 'function'){
         plugin[prop] = null; //clean up script to prep for garbage collection.
@@ -88,15 +92,20 @@ var Foundation = {
   /**
    * @function
    * Causes one or more active plugins to re-initialize, resetting event listeners, recalculating positions, etc.
-   * @param {String} plugins - optional string of an individual plugin key, attained by calling `$(element).data('pluginName')`, or string of a plugin class i.e. `'dropdown'`
+   * @param {Element|String|Array} plugins - a native element (or, legacy, a jQuery collection) holding the plugin, a string of a plugin class i.e. `'dropdown'`, or an array of such strings.
    * @default If no argument is passed, reflow all currently active plugins.
    */
    reInit: function(plugins){
-     var isJQ = plugins instanceof $;
+     var isCollection = plugins instanceof $ ||
+       (typeof Element !== 'undefined' && plugins instanceof Element);
      try{
-       if(isJQ){
-         plugins.each(function(){
-           $(this).data('zfPlugin')._init();
+       if(isCollection){
+         // 7.0 line A, slice S2: the collection form now takes native
+         // elements (a jQuery collection is still unwrapped during the
+         // mixed state), and the instance is read from the Registry.
+         var elements = plugins instanceof $ ? plugins.get() : [plugins];
+         elements.forEach(function(el){
+           Registry.getInstance(el)._init();
          });
        }else{
          var type = typeof plugins,
@@ -127,7 +136,7 @@ var Foundation = {
 
   /**
    * Initialize plugins on any elements within `elem` (and `elem` itself) that aren't already initialized.
-   * @param {Object} elem - jQuery object containing the element to check inside. Also checks the element itself, unless it's the `document` object.
+   * @param {Element|Document|String|Object} elem - native element or document to scan, a selector string, or (legacy, mixed state) a jQuery object.
    * @param {String|Array} plugins - A list of plugins to initialize. Leave this out to initialize everything.
    */
   reflow: function(elem, plugins) {
@@ -143,14 +152,20 @@ var Foundation = {
 
     var _this = this;
 
+    // 7.0 line A, slice S2: the root accepts native elements, the document
+    // and selector strings; a jQuery collection is still accepted (unwrapped
+    // here) until the components are migrated. The scan itself stays on the
+    // `data-<name>` attribute, through the same find + addBack query as v6.
+    var $root = elem instanceof $ ? elem : $(typeof elem === 'string' ? elem : (elem ? [elem] : []));
+
     // Iterate through each plugin
     $.each(plugins, function(i, name) {
       // Get the current plugin
       var plugin = _this._plugins[name];
 
       // Localize the search to all elements inside elem, as well as elem itself, unless elem === document
-      var $elem = $(elem).find('[data-'+name+']').addBack('[data-'+name+']').filter(function () {
-        return typeof $(this).data("zfPlugin") === 'undefined';
+      var $elem = $root.find('[data-'+name+']').addBack('[data-'+name+']').filter(function () {
+        return typeof Registry.getInstance(this) === 'undefined';
       });
 
       // For each plugin found, initialize it
@@ -165,7 +180,7 @@ var Foundation = {
           });
         }
         try{
-          $el.data('zfPlugin', new plugin($(this), opts));
+          Registry.setInstance($el[0], new plugin($el, opts));
         }catch(er){
           console.error(er);
         }finally{
@@ -196,14 +211,14 @@ var Foundation = {
         Foundation.reflow(this);
       }else if(type === 'string'){//an individual method to invoke on a plugin or group of plugins
         var args = Array.prototype.slice.call(arguments, 1);//collect all the arguments, if necessary
-        var plugClass = this.data('zfPlugin');//determine the class of plugin
+        var plugClass = Registry.getInstance(this[0]);//determine the class of plugin
 
         if(typeof plugClass !== 'undefined' && typeof plugClass[method] !== 'undefined'){//make sure both the class and method exist
           if(this.length === 1){//if there's only one, call it directly.
               plugClass[method].apply(plugClass, args);
           }else{
             this.each(function(i, el){//otherwise loop through the jQuery collection and invoke the method on each
-              plugClass[method].apply($(el).data('zfPlugin'), args);
+              plugClass[method].apply(Registry.getInstance(el), args);
             });
           }
         }else{//error for no class or no method

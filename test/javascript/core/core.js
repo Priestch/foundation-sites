@@ -34,12 +34,15 @@ describe('Foundation core', function() {
     var Probe, $el, initSpy;
 
     // Minimal plugin double: registerPlugin only needs `$element`, a
-    // constructor name, and (via unregisterPlugin) the `zfPlugin` data.
+    // constructor name, and a method reachable through the $(el).foundation()
+    // dispatch, which is how the instance store is observed since S2 moved
+    // it into the Registry.
     Probe = class Probe {
       constructor(element, options) {
         this.$element = element;
         this.options = options || {};
       }
+      probeMethod() {}
     };
 
     beforeEach(function() {
@@ -50,20 +53,20 @@ describe('Foundation core', function() {
 
     afterEach(function() {
       $el.off('init.zf.probe');
-      if ($el.data('zfPlugin')) {
-        $el.off('destroyed.zf.probe');
-        $el.removeData('zfPlugin').removeAttr('data-probe');
-      }
+      $el.removeAttr('data-probe');
       $el.remove();
     });
 
     it('registers a new instance of a plugin', function() {
       var instance = new Probe($el, {});
+      var methodSpy = sinon.spy(instance, 'probeMethod');
 
       Foundation.registerPlugin(instance);
 
       (instance.uuid).should.be.a('string');
-      ($el.data('zfPlugin')).should.equal(instance);
+      $el.foundation('probeMethod');
+      sinon.assert.calledOnce(methodSpy);
+      methodSpy.firstCall.thisValue.should.equal(instance);
       ($el.attr('data-probe')).should.equal(instance.uuid);
     });
 
@@ -101,6 +104,7 @@ describe('Foundation core', function() {
         this.$element = element;
         this.options = options || {};
       }
+      probeMethod() {}
     };
 
     beforeEach(function() {
@@ -113,15 +117,15 @@ describe('Foundation core', function() {
 
     afterEach(function() {
       $el.off('destroyed.zf.probe');
-      $el.removeData('zfPlugin').removeAttr('data-probe');
+      $el.removeAttr('data-probe');
       $el.remove();
     });
 
     it('un-registers a plugin being destroyed', function() {
       Foundation.unregisterPlugin(instance);
 
-      chai.expect($el.data('zfPlugin')).to.not.exist;
       chai.expect($el.attr('data-probe')).to.not.exist;
+      chai.expect(function() { $el.foundation('probeMethod'); }).to.throw(ReferenceError);
     });
 
     it('removes the instance uuid from Foundation._uuids', function() {
@@ -139,13 +143,15 @@ describe('Foundation core', function() {
     it('removes only the destroyed instance (round trip)', function() {
       var $other = $('<div id="probe-el-other"></div>').appendTo('body');
       var other = new Probe($other, {});
+      var otherSpy = sinon.spy(other, 'probeMethod');
       Foundation.registerPlugin(other);
 
       Foundation.unregisterPlugin(instance);
 
-      ($other.data('zfPlugin')).should.equal(other);
-      chai.expect($el.data('zfPlugin')).to.be.undefined;
-      $other.removeData('zfPlugin').removeAttr('data-probe');
+      $other.foundation('probeMethod');
+      sinon.assert.calledOnce(otherSpy);
+      chai.expect(function() { $el.foundation('probeMethod'); }).to.throw(ReferenceError);
+      $other.removeAttr('data-probe');
       $other.remove();
     });
   });
@@ -170,7 +176,9 @@ describe('Foundation core', function() {
       Foundation.plugin(Probe, 'Probe');
       $el = $('<div id="probe-el" data-probe></div>').appendTo('body');
       instance = new Probe($el, {});
-      $el.data('zfPlugin', instance);
+      // S2: instances seed through the public registerPlugin path now that
+      // the store is the Registry instead of jQuery data.
+      Foundation.registerPlugin(instance, 'Probe');
     });
 
     afterEach(function() {
@@ -195,10 +203,18 @@ describe('Foundation core', function() {
       (instance.initCount).should.equal(2);
     });
 
+    it('re-runs _init() of the plugin on a native element', function() {
+      (instance.initCount).should.equal(1);
+
+      Foundation.reInit($el[0]);
+
+      (instance.initCount).should.equal(2);
+    });
+
     it('rebuilds every matching instance, not only the first', function() {
       var $second = $('<div id="probe-el-second" data-probe></div>').appendTo('body');
       var second = new Probe($second, {});
-      $second.data('zfPlugin', second);
+      Foundation.registerPlugin(second, 'Probe');
 
       Foundation.reInit('Probe');
 
@@ -209,19 +225,21 @@ describe('Foundation core', function() {
   });
 
   describe('reflow()', function() {
-    var Probe, constructed;
+    var Probe, constructed, instances;
 
     Probe = class Probe {
       constructor(element, options) {
         this.$element = element;
         this.options = options;
         constructed++;
+        instances.push(this);
       }
     };
 
     beforeEach(function() {
       Foundation.plugin(Probe, 'Probe');
       constructed = 0;
+      instances = [];
     });
 
     afterEach(function() {
@@ -234,21 +252,22 @@ describe('Foundation core', function() {
       var $a = $('<div id="probe-el-a" data-probe></div>').appendTo('body');
       var $b = $('<div id="probe-el-b" data-probe></div>').appendTo('body');
 
-      Foundation.reflow($('body'), 'probe');
+      Foundation.reflow(document.body, 'probe');
 
       constructed.should.equal(2);
-      ($a.data('zfPlugin')).should.be.an.instanceOf(Probe);
-      ($b.data('zfPlugin')).should.be.an.instanceOf(Probe);
+      instances[0].$element[0].should.equal($a[0]);
+      instances[1].$element[0].should.equal($b[0]);
     });
 
     it('does not re-initialize elements that already carry an instance', function() {
       var $a = $('<div id="probe-el-a" data-probe></div>').appendTo('body');
 
+      // First pass in the legacy jQuery-root form, second native: both must
+      // see the registered instance.
       Foundation.reflow($('body'), 'probe');
       constructed.should.equal(1);
 
-      // A second pass sees the existing zfPlugin data and must not re-init.
-      Foundation.reflow($('body'), 'probe');
+      Foundation.reflow(document.body, 'probe');
       constructed.should.equal(1);
     });
 
@@ -257,20 +276,124 @@ describe('Foundation core', function() {
 
       Foundation.reflow($('body'), 'probe');
 
-      var instance = $a.data('zfPlugin');
-      (instance.options.reflow).should.be.true;
-      (instance.options.foo).should.equal(2);
-      (instance.options.bar).should.be.true;
+      (instances[0].$element[0]).should.equal($a[0]);
+      (instances[0].options.reflow).should.be.true;
+      (instances[0].options.foo).should.equal(2);
+      (instances[0].options.bar).should.be.true;
     });
 
     it('only scans inside the given element', function() {
-      var $container = $('<div id="probe-el-container"></div>').appendTo('body');
+      var $container = $('<div id="probe-el-container-a"></div>').appendTo('body');
       $('<div id="probe-el-inside" data-probe></div>').appendTo($container);
       $('<div id="probe-el-outside" data-probe></div>').appendTo('body');
 
-      Foundation.reflow($container, 'probe');
+      Foundation.reflow($container[0], 'probe');
 
       constructed.should.equal(1);
+      (instances[0].$element[0].id).should.equal('probe-el-inside');
+      $container.remove();
+    });
+
+    it('accepts a selector string as the search root', function() {
+      var $container = $('<div id="probe-el-container-b"></div>').appendTo('body');
+      $('<div id="probe-el-inside-b" data-probe></div>').appendTo($container);
+      $('<div id="probe-el-outside-b" data-probe></div>').appendTo('body');
+
+      Foundation.reflow('#probe-el-container-b', 'probe');
+
+      constructed.should.equal(1);
+      (instances[0].$element[0].id).should.equal('probe-el-inside-b');
+      $container.remove();
+    });
+  });
+
+  // The obligation events keep firing through the jQuery trigger channel in
+  // the mixed state (ruling 2026-10-22): call sites, parameters and timing
+  // are unchanged by the S2 storage swap. These cases pin the observable
+  // behavior so the later native-Events switch cannot drift silently.
+  describe('init/destroyed event channel regression', function() {
+    var Probe, $container, $el;
+
+    Probe = class Probe {
+      constructor(element) {
+        this.$element = element;
+      }
+    };
+
+    beforeEach(function() {
+      $container = $('<div id="channel-container"></div>').appendTo('body');
+      $el = $('<div id="channel-el"></div>').appendTo($container);
+    });
+
+    afterEach(function() {
+      $el.removeAttr('data-probe');
+      $container.remove();
+    });
+
+    it('fires init.zf.<name> through jQuery with the sorted namespace', function() {
+      var spy = sinon.spy();
+
+      $el.on('init.zf.probe', spy);
+      Foundation.registerPlugin(new Probe($el), 'Probe');
+      $el.off('init.zf.probe');
+
+      sinon.assert.calledOnce(spy);
+      // jQuery splits the type from its namespaces: type carries the bare
+      // type, .namespace the sorted remainder — the signature of the jQuery
+      // trigger channel (a native CustomEvent would carry the full type).
+      spy.firstCall.args[0].type.should.equal('init');
+      spy.firstCall.args[0].namespace.should.equal('probe.zf');
+    });
+
+    it('fires init.zf.<name> only after the data-<name> attribute is written', function() {
+      var seenAttr = 'unset';
+
+      $el.on('init.zf.probe', function() {
+        seenAttr = $el.attr('data-probe');
+      });
+      Foundation.registerPlugin(new Probe($el), 'Probe');
+      $el.off('init.zf.probe');
+
+      (typeof seenAttr).should.equal('string');
+      seenAttr.length.should.be.above(0);
+    });
+
+    it('bubbles init.zf.<name> to ancestors', function() {
+      var spy = sinon.spy();
+
+      $container.on('init.zf.probe', spy);
+      Foundation.registerPlugin(new Probe($el), 'Probe');
+      $container.off('init.zf.probe');
+
+      sinon.assert.calledOnce(spy);
+    });
+
+    it('passes no extra parameters with init.zf.<name>', function() {
+      var spy = sinon.spy();
+
+      $el.on('init.zf.probe', spy);
+      Foundation.registerPlugin(new Probe($el), 'Probe');
+      $el.off('init.zf.probe');
+
+      spy.firstCall.args.length.should.equal(1);
+    });
+
+    it('fires destroyed.zf.<name> after the data-<name> attribute is removed', function() {
+      var instance = new Probe($el);
+      var spy = sinon.spy();
+      var seenAttr = 'unset';
+
+      Foundation.registerPlugin(instance, 'Probe');
+      $el.on('destroyed.zf.probe', function() {
+        spy();
+        seenAttr = $el.attr('data-probe');
+      });
+      Foundation.unregisterPlugin(instance);
+      $el.off('destroyed.zf.probe');
+
+      sinon.assert.calledOnce(spy);
+      // null hides .should from chai (no property access on null).
+      chai.expect(seenAttr).to.not.exist;
     });
   });
 

@@ -1,8 +1,14 @@
 import { GetYoDigits } from './foundation.core.utils';
+import { Registry } from './foundation.util.registry';
 
 // Abstract class for providing lifecycle hooks. Expect plugins to define AT LEAST
 // {function} _setup (replaces previous constructor),
 // {function} _destroy (replaces previous destroy)
+//
+// 7.0 line A, slice S2: instance storage moved from the `zfPlugin` jQuery data
+// entry to the Registry (WeakMap). Everything else about the lifecycle — the
+// `data-<name>` uuid attribute and the jQuery-fired `init.zf`/`destroyed.zf`
+// obligation events — is kept byte-identical for the mixed state.
 class Plugin {
 
   constructor(element, options) {
@@ -11,7 +17,8 @@ class Plugin {
     this.uuid = GetYoDigits(6, pluginName);
 
     if(!this.$element.attr(`data-${pluginName}`)){ this.$element.attr(`data-${pluginName}`, this.uuid); }
-    if(!this.$element.data('zfPlugin')){ this.$element.data('zfPlugin', this); }
+    var el = this.$element[0];
+    if(el && !Registry.has(el)){ Registry.setInstance(el, this); }
     /**
      * Fires when the plugin has initialized.
      * @event Plugin#init
@@ -22,12 +29,14 @@ class Plugin {
   destroy() {
     this._destroy();
     var pluginName = getPluginName(this);
-    this.$element.removeAttr(`data-${pluginName}`).removeData('zfPlugin')
-        /**
-         * Fires when the plugin has been destroyed.
-         * @event Plugin#destroyed
-         */
-        .trigger(`destroyed.zf.${pluginName}`);
+    this.$element.removeAttr(`data-${pluginName}`);
+    var el = this.$element[0];
+    if(el){ Registry.removeInstance(el); }
+    /**
+     * Fires when the plugin has been destroyed.
+     * @event Plugin#destroyed
+     */
+    this.$element.trigger(`destroyed.zf.${pluginName}`);
     for(var prop in this){
       if (this.hasOwnProperty(prop)) {
         this[prop] = null; //clean up script to prep for garbage collection.
