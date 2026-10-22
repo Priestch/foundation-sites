@@ -4,7 +4,7 @@
 - 基线：master（v6.9.0，f5c7d29db）；develop/Yeti 已放弃
 - 依据：`audit/report-{scss,js,architecture}.md`（调研）、`audit/summary.md`（汇总）、`audit/v7-readiness.md`（7.0 评估）、`audit/docs-updates.md`（文档清单）
 - 状态标记：⬜ 未开始 / 🟨 待拍板阻塞 / 🔄 进行中 / ✅ 已决策（任务清单用 `[x]`/`[ ]`）
-- **进度快照（2026-10-22）**：M0 ✅ 完成；M1 ✅ 代码 + 发版演练完成，6.10.0 **尚未发布**（全部提交在 `dev-v7`，master 仍在 v6.9.0）；M2 线 A Spike 🔄 首步进行中，线 B ⬜；M3/M4 ⬜
+- **进度快照（2026-10-22 晚修订）**：M0 ✅ 完成；M1 ✅ 代码 + 发版演练完成，6.10.0 **尚未发布**（全部提交在 `dev-v7`，master 仍在 v6.9.0）；M2 线 A 🔄 S1 骨架实施中（独立 worktree，追加双列差分测试），线 B 🔄 B1 `divide()` 分流实施中（独立 worktree）；M3/M4 ⬜。本日依线 A/B 探索结论修订：@import 口径、settings 配置路线、Spike 拍板项
 
 ---
 
@@ -116,6 +116,8 @@ M0 基建修复 ──→ M1 6.10.0 发布 ──→ M2 7.0 双线开发 ──�
 ### 线 A：移除 jQuery（XL，关键路径）🔄 Spike 首步进行中
 - 🔄 **Spike（先做）**：选 Toggler + Reveal 两个代表组件，验证新 DOM 层设计——Plugin 基类（注册/reflow/destroy 去 jQuery data 化）、事件系统（命名空间语义保留）、triggers（MutationObserver→新方案）（首步进行中，尚无提交）
 - [ ] 设计定案：公开契约冻结清单（data-attr、事件名、`Foundation.<Name>` 导出形态；`window.Foundation` 副作用去留）
+- [ ] 待拍板语义项（2026-10-22 探索新发现）：`element.data()` 类型自动转换 vs `parseValue` 双轨（22 处 options 合并点受影响）；`:visible/:hidden` 宽窄语义（jQuery 含 width/height=0，收窄会改变 Reveal scroll 锁时机）；`*.zf.*` 事件 detail 参数形状（第二参 jQuery 对象→原生 element？）；triggers off/on 防重复绑定的可观察行为；ResponsiveAccordionTabs `storezfData`/`zfPluginBase` 黑魔法随 WeakMap 化必重写（唯一已知必炸点）
+- [ ] 双列差分测试（2026-10-22 定为线 A 验收门禁）：实现无关的行为规格套件跑两列——jQuery 适配器（golden master，钉住现状语义，仅测试侧依赖）+ 新原生层；两列全绿 = 行为等价。S2-S6 每步迁移以此验收；库代码 import 清零后 jQuery 移 `devDependencies`，S7 迁 Playwright 时 jQuery 列退役
 - [ ] util 层迁移：motion（已核实仅用 `trigger()`，换 native CustomEvent）、what-input 不动、keyboard/touch/box/nest/timer/mediaQuery 逐个重写
 - [ ] 16 组件按复杂度迁移：简单（Toggler/SmoothScroll/ResponsiveToggle）→ 中（Accordion/Tabs/Dropdown/Tooltip/Reveal/Magellan/Equalizer/Interchange）→ 复杂（OffCanvas/Drilldown/AccordionMenu/DropdownMenu/Orbit/Slider/Sticky）→ 响应式包装器最后（ResponsiveMenu/ResponsiveAccordionTabs）
 - [ ] 测试迁移：Playwright 正式替换 mocha-headless-chrome（复用 M0 的 B1 试点；B1 未做则随本项一并补）
@@ -123,13 +125,13 @@ M0 基建修复 ──→ M1 6.10.0 发布 ──→ M2 7.0 双线开发 ──�
 - **退出标准**：全部组件无 jQuery 运行、`test:bundle` 通过、peerDeps 只剩 what-input
 
 ### 线 B：Sass `@use` 模块化（L，可与线 A 并行）⬜
-- [ ] settings 配置机制设计（`@use ... with` + `sass:meta.configuration()`，参考 Bootstrap 5.3；用户 settings 导入约定的新写法定稿并出迁移指南）
-- [ ] `scss/util/` 先行（`divide()` → `math.div`；5 个已 `@use` 文件为样板）
+- [ ] settings 配置机制设计（2026-10-22 修订：推荐**用户 settings 文件模块化 + `sass:meta.module-variables()` 反射 + 配置 map**（`meta.load-css(..., $with:)`）——`@use ... with` 不适合：聚合层需 ~490 行逐变量 `@forward` 转配，且不可变原则与 off-canvas z-index 递增冲突。更正："参考 Bootstrap 5.3"不成立——Bootstrap 5.3 实际**未迁** `@use`（入口至今 `@import`，完整迁移排其 v6），可借鉴的仅"配置用 map 而非散变量"的思路；Foundation 7.0 因 Dart Sass 2.0 删 `@import` 无再拖一个大版本的余地。用户 settings 导入约定的新写法定稿并出迁移指南）
+- [ ] `scss/util/` 先行（`divide()` 内部分流：同单位走 `math.div`、跨单位保留换算表——27 处调用、跨单位除法非 drop-in，**调用点零改动**。更正：原记"5 个已 `@use` 文件为样板"不成立——那 5 处全是 sass 内建模块 `@use`（`sass:color`/`sass:math`，其中仅 3 个在 util/），不能作为项目文件模块化样板）
 - [ ] components/forms/typography/xy-grid 分批迁移（116 处 `@import` 清零）
 - [ ] `foundation-everything()` 参数与 24 处 `!global` 反写重构
 - [ ] settings 拆分（`_global/_grid/_components/...`）
-- **依赖**：M1 批次 D 的 sass-true 新 API 测试 ✅；建议 M1 期间顺手扩组件 mixin 级用例
-- **退出标准**：`@import` 0 处；Dart Sass 下无 deprecation 警告；settings 新旧写法迁移指南发布
+- **依赖**：M1 批次 D 的 sass-true 新 API 测试 ✅；test/sass 当前 **0 处 settings 覆盖用例**（全部套件只依赖 partial 自带 `!default`）——B1 先补覆盖测试作为后续改造的回归网；`!global` 24 处已精确定位（color 10 / off-canvas 5 / foundation 2 / mixins 3 / breakpoint 2 / grid 2）
+- **退出标准**：`@import` 0 处（2026-10-22 修订为全仓 **158** 处口径 = scss/ 116 + assets/ 4 + test/sass/ 22 + docs/assets 16；`@forward` 现状 0 处）；Dart Sass 下无 deprecation 警告；settings 新旧写法迁移指南发布
 
 ---
 
