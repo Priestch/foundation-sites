@@ -103,7 +103,19 @@ var webpackConfig = {
 //
 
 // Compiles JavaScript into a single file
-gulp.task('javascript', gulp.series('javascript:foundation', 'javascript:deps', 'javascript:docs'));
+gulp.task('javascript', gulp.series('javascript:foundation', 'javascript:next', 'javascript:deps', 'javascript:docs'));
+
+// Builds the jQuery-free layer skeleton (7.0 line A, S1) as its own bundle.
+// It exports FoundationNext next to - not inside - the 6.x Foundation global,
+// so the existing foundation.js bundle surface stays untouched.
+gulp.task('javascript:next', function() {
+  return gulp.src('js/entries/foundation-next.js')
+    .pipe(named())
+    .pipe(sourcemaps.init())
+    .pipe(webpackStream(webpackConfig, webpack))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('_build/assets/js'));
+});
 
 // Core has to be dealt with slightly differently due to bootstrapping externals
 // and the dependency on foundation.core.utils
