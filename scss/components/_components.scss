@@ -1,0 +1,47 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group components
+////
+
+// 7.0 Sass modularization (M2 line B, slice B6): the generic components and
+// the first basic components partials are real `@use` modules now, one module
+// per partial (*-module.scss) behind a pure `@forward` facade at the legacy
+// import path (foundation.scss, docs, customizer and the scss/next load units
+// all `@import` the individual partials unchanged). This aggregator forwards
+// the modules themselves, so a `@use "components/components"` consumer gets
+// every member with the module cells live-linked to its own import world.
+// The remaining components (dropdown through visibility) stay plain `@import`
+// partials and join here in slices B7/B8.
+//
+// Where the members live:
+//
+// - Each module owns the mirrors of the scss/_global.scss settings it reads;
+//   a mirror must live in the module whose facade flattens it before that
+//   module derives from it (the scss/next load units pre-assign these names).
+//   $primary-color and the palette are owned by _button-module.scss (the
+//   granular util modules are used instead of the util facade because the
+//   facade own-scope issue-#12080 `*-color: null !default` patch cells would
+//   shadow those mirrors under `@use ... as *`). $body-font-color is owned by
+//   each reader (_table/_callout/_card) and surfaced exactly once (hide below).
+// - The legacy `variable-exists()` checks in _breadcrumbs-module.scss became
+//   null-defaulted module cells ($breadcrumbs-item-slash[-color]), synced
+//   through the live link like the $header-sizes cell in
+//   scss/typography/_base.scss.
+
+// Generic components
+@forward "button-module";
+@forward "button-group-module";
+@forward "close-button-module";
+@forward "label-module";
+@forward "progress-bar-module";
+@forward "slider-module";
+@forward "switch-module";
+@forward "table-module" hide $body-font-color;
+// Basic components (B7 adds dropdown, pagination, tooltip)
+@forward "badge-module";
+@forward "breadcrumbs-module";
+@forward "callout-module" hide $body-font-color;
+@forward "card-module" hide $body-font-color;
