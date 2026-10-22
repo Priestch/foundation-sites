@@ -45,3 +45,6 @@
 @forward "breadcrumbs-module";
 @forward "callout-module" hide $body-font-color;
 @forward "card-module" hide $body-font-color;
+@forward "dropdown-module";
+@forward "pagination-module";
+@forward "tooltip-module";
