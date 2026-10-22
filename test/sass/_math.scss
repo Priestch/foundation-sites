@@ -1,7 +1,7 @@
-@import "true";
+@use "true" as *;
 
-@import '../../scss/util/unit';
-@import '../../scss/util/math';
+@use '../../scss/util/unit' as *;
+@use '../../scss/util/math' as *;
 
 @include describe('Math') {
 

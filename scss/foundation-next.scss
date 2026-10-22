@@ -12,7 +12,7 @@
 // 1. The user turns their settings file into a settings module: plain top-level
 //    variable assignments, plus `@import 'util/util';` at the top while the
 //    file still calls helpers like rem-calc() (see
-//    audit/line-b-settings-migration-draft.md).
+//    audit/line-b-settings-migration.md).
 // 2. The user's entry stylesheet reflects that module with
 //    `meta.module-variables()` and passes the resulting map to the mixin of
 //    each component it wants.

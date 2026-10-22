@@ -18,8 +18,12 @@
 
 @use "sass:map";
 
-@import "true";
+@use "true" as *;
 
+// Slice B10: the framework imports below stay `@import` on purpose — the
+// suite pins the import-world facade contract itself (pre/post-import
+// overrides must rebind the live-linked module cells), which has no `@use`
+// equivalent.
 @import "../../scss/util/util";
 
 // Pre-import overrides (the settings-file flow).

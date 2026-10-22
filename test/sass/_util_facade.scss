@@ -15,8 +15,11 @@
 
 @use "sass:map";
 
-@import "true";
+@use "true" as *;
 
+// Slice B10: this import stays `@import` on purpose — the suite pins the
+// import-world facade contract itself (the `!global` writes below must
+// rebind the live-linked module cells), which has no `@use` equivalent.
 @import '../../scss/util/util';
 
 @include describe('util module facade') {

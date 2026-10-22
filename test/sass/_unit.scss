@@ -1,6 +1,6 @@
-@import "true";
+@use "true" as *;
 
-@import '../../scss/util/unit';
+@use '../../scss/util/unit' as *;
 
 @include describe('Units') {
 

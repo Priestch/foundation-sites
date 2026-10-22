@@ -23,8 +23,13 @@
 // - `$primary-color` can only be set AFTER `scss/global` is imported, because
 //   `add-foundation-colors()` re-derives it from `$foundation-palette` with `!global`
 //   and would clobber an earlier override.
+//
+// Slice B10: the framework imports here stay `@import` on purpose — this suite
+// IS the import-world override contract (assignments before/after the imports
+// must rebind the live-linked globals), which has no `@use` equivalent. Only
+// the test harness itself moved to `@use "true" as *`.
 
-@import "true";
+@use "true" as *;
 
 @import '../../scss/util/util';
 

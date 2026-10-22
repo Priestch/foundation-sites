@@ -1,9 +1,8 @@
-@import "true";
+@use "true" as *;
 
-// The util aggregator is a pure `@forward` facade since the `@use`
-// modularization; importing it once gives every suite member (the individual
+// The util aggregator gives every suite member (the individual
 // partials now cross-`@use` each other and must not be loaded twice).
-@import '../../scss/util/util';
+@use '../../scss/util/util' as *;
 
 @include describe('Breakpoint') {
 

@@ -9,7 +9,7 @@
 // - the compiled CSS of both pilot components (button, table) through the new
 //   mechanism, with the exact output the legacy @import path produces for the
 //   same override set (proven by the /tmp dual-track probe harness described
-//   in audit/line-b-settings-migration-draft.md).
+//   in audit/line-b-settings-migration.md).
 //
 // A load unit is a module and can be configured only once per compilation,
 // so each component is included exactly once in this suite; both may share
@@ -46,8 +46,7 @@ $fs-user: ();
 );
 @use "settings_module_user" as user-settings;
 @use "settings_module_user_palette" as palette-settings;
-
-@import "true";
+@use "true" as *;
 
 $user: meta.module-variables("user-settings");
 $user-palette: meta.module-variables("palette-settings");

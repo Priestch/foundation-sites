@@ -18,7 +18,12 @@
 
 @use "sass:map";
 
-@import "true";
+@use "true" as *;
+
+// Slice B10: the framework imports below stay `@import` on purpose — the
+// suite pins the import-world facade contract itself (pre-import overrides
+// and the live-linked $header-sizes rebuild must reach the module cells),
+// which has no `@use` equivalent.
 
 // Pre-import overrides (the settings-file flow). $header-small-font-color and
 // $keystroke-radius are derived from the first two inside the modules, so they

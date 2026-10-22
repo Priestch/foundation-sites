@@ -1,9 +1,12 @@
-@import "true";
+@use "true" as *;
 
-@import '../../scss/util/math';
-@import '../../scss/global';
-@import '../../scss/components/responsive-embed';
-@import '../../scss/grid/grid';
+// The suite reads only util math helpers (ratio-to-percentage(), divide())
+// and the float-grid column functions (grid-column(), flex-grid-column()):
+// both sources load as plain modules, so the former scss/global and
+// components/responsive-embed imports (which only pulled these in
+// transitively under the import world) are gone.
+@use '../../scss/util/math' as *;
+@use '../../scss/grid/grid' as *;
 
 @include describe('Components') {
 

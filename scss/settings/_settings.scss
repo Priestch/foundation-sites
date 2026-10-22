@@ -69,7 +69,7 @@
 // use would force qualifying every rem-calc()/zf-* call in the file — the
 // file is THE user-facing settings template (copied into projects, shipped in
 // dist), so its body must stay plain `@import`-style Sass. The audit's
-// settings-module migration guide (audit/line-b-settings-migration-draft.md)
+// settings-module migration guide (audit/line-b-settings-migration.md)
 // keeps the same import in user settings modules.
 @import 'util/util';
 
