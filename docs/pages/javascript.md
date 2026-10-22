@@ -4,6 +4,10 @@ description: Our JavaScript is easy to set up and only requires jQuery to get go
 video: 'Mf5ZZfKTe-I'
 ---
 
+<div class="callout alert">
+  <p><strong>Heads up for 7.0:</strong> Foundation 7.0 will <strong>remove jQuery</strong> and rewrite the plugins in vanilla JavaScript. The public contract is kept: the data attributes (<code>data-toggle</code>, <code>data-open</code>, <code>data-close</code>, &hellip;) and the namespaced events (<code>init.zf.*</code>, <code>opened.zf.*</code>, <code>closed.zf.*</code>, &hellip;) keep working. Note also that jQuery 4 is not supported in the 6.x line.</p>
+</div>
+
 ## Installing
 
 You can get the Foundation JavaScript files from a ZIP download, package manager, or CDN. Check out the [Installation](installation.html) page to learn more.

@@ -1,6 +1,9 @@
 // Foundation for Sites
 // https://get.foundation
 // Licensed under MIT Open Source
+//
+// The `.show-for-ie` / `.hide-for-ie` classes are deprecated since 6.10 and
+// will be removed in Foundation 7.0, together with all IE support.
 
 /// Hide an element by default, only displaying it above a certain screen size.
 /// @param {Keyword} $size - Breakpoint to use. **Must be a breakpoint defined in `$breakpoints`.**

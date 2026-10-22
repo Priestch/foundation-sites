@@ -9,6 +9,10 @@ tags:
   - block grid
 ---
 
+<div class="callout alert">
+  <p><strong>Deprecated since 6.10:</strong> the float grid (and the <code>$global-flexbox: false</code> setting) will be <strong>removed in Foundation 7.0</strong>. The <a href="xy-grid.html">XY Grid</a> is the only grid that will ship with 7.0 &mdash; migrate your layouts to it.</p>
+</div>
+
 <!-- <div class="callout training-callout">
   <p>Become a master of the Foundation Grids to create complex layouts faster and with less code. The new XY Grid is the newest and most powerful version. Stay up-to-date with all the new features in Foundation 6.4 and learn how to migrate to the XY Grid with our online webinar training. You’ll also learn all the useful UI components and Foundation JavaScript to really crush your projects.</p>
   <a href="https://zurb.com/university/foundation-intro" target="_blank">Get registered for an upcoming Foundation training →</a>

@@ -5,6 +5,13 @@ For versions up to and including 6.9.0, see the [GitHub releases page](https://g
 
 ## [Unreleased]
 
+### Documentation
+
+- **Deprecation notices for everything 7.0 removes** (docs callouts + SassDoc `@deprecated`): the float grid and `$global-flexbox: false`, the flex grid and `$global-flexbox: true`, the Prototyping Utilities, the standalone RTL build, the `.flex-video` class name, and the `.show-for-ie` / `.hide-for-ie` classes. The RTL page no longer references the discontinued customizer.
+- The JavaScript documentation announces that **Foundation 7.0 removes jQuery** (vanilla rewrite; the data-attribute API and `*.zf.*` events remain the public contract).
+- `CONTRIBUTING.md` rewritten for the current workflow: pull requests target `master`; the GitFlow branch families are retired.
+- `js/typescript/foundation.d.ts` version header updated from 6.3.1 to 6.10.0.
+
 ### Behavior changes
 
 - **Interchange** (`html` mode): plugins inside content fetched and injected by Interchange are now initialized on the nodes actually inserted into the DOM (`Foundation.reflow`), instead of on a detached copy of the response that was never attached. Content inserted in `html` mode gets working plugins now; no action is required unless you relied on the (broken) previous behavior.

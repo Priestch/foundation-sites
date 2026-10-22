@@ -6,6 +6,10 @@ sass:
   - scss/prototype/*.scss
 ---
 
+<div class="callout alert">
+  <p><strong>Deprecated since 6.10:</strong> the Prototyping Utilities (the <code>foundation-prototype</code> CSS build and the <code>$prototype-*</code> classes and mixins) will be <strong>removed in Foundation 7.0</strong>. They may be extracted into a separate package; if you rely on them, pin your version or copy the classes you need into your own Sass.</p>
+</div>
+
 <h4><strong>Prototype to Production</strong></h4>
 
 Prototyping allows us to see problems more clearly—and often earlier—in the development process. Designs in sketches or wireframes only get us so far in understanding the behavior, feasibility, and cost (time or resources) of implementation. Prototyping processes foster collaboration where designers and developers work closely together find better solutions.

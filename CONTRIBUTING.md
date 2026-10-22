@@ -55,33 +55,27 @@ After you made these checks, please follow these advices to create your pull req
 5. **Make sure that everything works and tests pass**.
    You must absolutely check that everything still works after your changes. Please also add tests for features you added or uncovered bugs you fixed. See the [Testing](https://github.com/foundation/foundation-sites#testing) section.
 6. **Create your pull request** ([link](https://github.com/foundation/foundation-sites/compare)).
-   Make sure it targets the right branch: most often `develop`, unless you provide a fix for an older version and it should be `develop-v...`. Take a look at our [Git Workflow](#git-workflow) below.
+   Make sure it targets the `master` branch. Take a look at our [Git Workflow](#git-workflow) below.
 
 When you submit a pull request, @mention a few people you’d like to help you review it. Once those people have signed off on it, the pull request can be merged! Core Team members will handle the merge itself.
 
 ## Git Workflow
 
-Foundation uses a Git workflow close to the successful [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) branching model, to which we added `develop-v...` and `master-v...` branches to prepare and release patches for older Foundation versions. Most of the time you will not have to care about this workflow and can simply open your pull request on `develop`.
-
-The workflow relies on three branches:
-
-- **`develop`**
-
-  Used to prepare the next minor/major version. It always contains all the new features and bug fixes, and is the most up-to-date version of Foundation. Almost every pull request should be opened on this branch (fixes, features, documentation...). When a new version is released, it is merged on `master`, a dedicated `develop-v...` branch is created, and `develop` now targets the next version.
-
-- **`develop-<version>`**
-
-  Used to prepare patches for previous versions. For example: `develop-v6.5` to prepare the `v6.5.1` release. When a pull request for a bug fix is merged on `develop` and is compatible with supported versions, its commits must be added on the compatible `develop-v...` branches too. If a fix is not compatible with `develop`, a pull request can be opened on the latest compatible and supported `develop-v...` branch. When a new patch is released, it is merged on `master-v...` and `develop-v...` now targets the next patch for this minor version.
+Since October 2026, maintenance happens **directly on `master`**: pull requests target `master`, and releases are tagged from it. The old GitFlow model (`develop` plus `develop-v...`/`master-v...` branch families) has been retired.
 
 - **`master`**
 
-  The stable branch. It only contains the latest stable version released. **Do NOT open pull requests on it**.
+  The main branch. It contains the latest released state plus the changes for the next version, and is the target for **all** pull requests (fixes, features, documentation...).
 
-- **`master-<version>`**
+- **`v7`**
 
-  The stable branch for previous versions. For example: `master-v6.5` for stable `v6.5.*` releases. **Do NOT open pull requests on it**.
+  The long-lived development branch for the next major version. Work that belongs to 7.0 happens there and is merged back to `master` when 7.0 ships.
 
-This git workflow was fully adopted as of `v6.5`, so `v6.4` and previous versions are not supported.
+- **Branch naming**
+
+  Name your branches after the change they carry, prefixed with the change type: `fix/dropdown-close-on-scroll-12345`, `feat/datepicker-9876`, `docs/update-testing-guide`.
+
+Patch releases for 6.x are prepared on `master` when needed.
 
 ## Coding Standards
 

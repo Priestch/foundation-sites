@@ -131,6 +131,10 @@ Use the class `.show-on-focus` to hide an element, except when it has focus. Add
 
 ### IE10+ Detection
 
+<div class="callout alert">
+  <p><strong>Deprecated since 6.10:</strong> the <code>.show-for-ie</code> and <code>.hide-for-ie</code> classes will be <strong>removed in Foundation 7.0</strong>, together with all remaining Internet Explorer support.</p>
+</div>
+
 The demise of Internet Explorer cannot come soon enough. These classes will help you target all IE10+ browsers with the `show-for-ie` and `hide-for-ie` classes.
 
 ```html_example

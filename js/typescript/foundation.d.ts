@@ -1,4 +1,4 @@
-// Type definitions for Foundation Sites v6.3.1
+// Type definitions for Foundation Sites v6.10.0
 // Project: https://get.foundation/
 // Github: https://github.com/foundation/foundation-sites
 //

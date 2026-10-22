@@ -4,6 +4,7 @@
 
 ////
 /// @group flex-grid
+/// @deprecated The flex grid and the `$global-flexbox: true` setting are deprecated since 6.10 and will be removed in Foundation 7.0. Use the XY grid (`scss/xy-grid`) instead.
 ////
 
 /// Creates a container for a flex grid row.

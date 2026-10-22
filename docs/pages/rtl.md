@@ -29,7 +29,11 @@ View of a [full list of language codes](https://www.loc.gov/standards/iso639-2/p
 
 ## CSS Download
 
-If you use a CSS version of Foundation, you'll need to create a custom download that includes RTL CSS instead of LTR. Just select "Right-to-left" under the Text Direction section of the customizer.
+The pre-built `foundation-rtl.css` shipped in the package contains the full framework compiled with `$global-text-direction: rtl`. If you need a different combination of components, build it from Sass instead (see below) &mdash; the online customizer referenced by older versions of this documentation has been discontinued.
+
+<div class="callout alert">
+  <p><strong>Looking ahead to 7.0:</strong> the standalone RTL build will be removed in Foundation 7.0, which rewrites the framework to use CSS <em>logical properties</em> so a single stylesheet serves both text directions. Plan your migration accordingly.</p>
+</div>
 
 ---
 
