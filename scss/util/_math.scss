@@ -152,19 +152,42 @@
 ///
 /// @param {Number} $divident - The divident.
 /// @param {Number} $divisor - The divisor.
-/// @param {Number} $precision - The precision decimals for the division.
+/// @param {Number} $precision - The precision decimals for the division. Only used as a fallback, when the operands have incompatible units.
 ///
 /// @return {Number} The product of the division.
 @function divide($dividend, $divisor, $precision: 12) {
-  $sign: if($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0, 1, -1);
-  $dividend: math.abs($dividend);
-  $divisor: math.abs($divisor);
+  $dividend-unit: unit($dividend);
+  $divisor-unit: unit($divisor);
+  $unit-map: (
+    'px': 1px,
+    'rem': 1rem,
+    'em': 1em,
+    '%': 1%
+  );
   @if $dividend == 0 {
     @return 0;
   }
   @if $divisor == 0 {
     @error 'Cannot divide by 0';
   }
+
+  // Fast path: `math.div` matches the result of the hand-rolled long
+  // division below whenever the units cancel cleanly, with full float
+  // precision:
+  // - same unit (or both unitless): the units cancel into a unitless result;
+  // - a mapped unit over a unitless number: `math.div` keeps the dividend's
+  //   unit, just like the conversion table at the bottom of the fallback.
+  // Every other combination (unitless over a unit, or unmapped units) keeps
+  // the historical long-division result instead.
+  @if ($dividend-unit == $divisor-unit
+    or ($divisor-unit == '' and map-has-key($unit-map, $dividend-unit))) {
+    @return math.div($dividend, $divisor);
+  }
+
+  // Fallback for incompatible units: long division with a conversion table.
+  $sign: if($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0, 1, -1);
+  $dividend: math.abs($dividend);
+  $divisor: math.abs($divisor);
   $remainder: $dividend;
   $result: 0;
   $factor: 10;
@@ -183,14 +206,6 @@
     }
   }
   $result: $result * $factor * $sign;
-  $dividend-unit: unit($dividend);
-  $divisor-unit: unit($divisor);
-  $unit-map: (
-    'px': 1px,
-    'rem': 1rem,
-    'em': 1em,
-    '%': 1%
-  );
   @if ($dividend-unit != $divisor-unit and map-has-key($unit-map, $dividend-unit)) {
     $result: $result * map-get($unit-map, $dividend-unit);
   }
