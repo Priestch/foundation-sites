@@ -213,3 +213,283 @@ $primary-color: #123456;
       'Surfaces the util mixins module cell through the components facade');
   }
 }
+
+@include describe('components module facade: B7 batch') {
+
+  @include it('exposes the B7 forwarded members to @import consumers [function]') {
+    @include assert-equal($menu-item-background-active, #1240ab,
+      'Resolves the get-color(primary) replica against the effective palette mirror');
+
+    @include assert-equal($pagination-item-background-current, #123456,
+      'Derives the pagination current background from the second-override-point $primary-color');
+
+    @include assert-equal($accordion-content-color, #0a0a0a,
+      'Derives the accordion content color through the accordion-owned $body-font-color mirror');
+
+    @include assert-equal($tab-content-color, #0a0a0a,
+      'Derives the tab content color through the tabs-owned $body-font-color mirror');
+
+    @include assert-equal($tooltip-font-size, 80%,
+      'Resolves the tooltip font size through the tooltip-owned $small-font-size mirror');
+
+    @include assert-equal($menu-items-padding, 0.7rem 1rem,
+      'Derives the menu item padding from the menu-owned $global-menu-padding mirror');
+
+    @include assert-equal($accordionmenu-padding, 0.7rem 1rem,
+      'Reaches the menu-owned $global-menu-padding mirror through the starred menu-module use');
+
+    @include assert-equal($drilldown-padding, 0.7rem 1rem,
+      'Reaches the menu-owned $global-menu-padding mirror through the starred menu-module use');
+
+    @include assert-equal($dropdownmenu-arrow-size, 6px,
+      'Declares the cross-slice dropdown-menu arrow mirror with the library default');
+
+    @include assert-equal($titlebar-icon-color, #fefefe,
+      'Declares the cross-slice title-bar icon mirror with the library default');
+  }
+
+  @include it('compiles the forwarded menu with the interpolated responsive classes [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-menu;
+      }
+      @include expect($selector: false) {
+    .menu {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    [data-whatinput=mouse] .menu li {
+      outline: 0;
+    }
+    .menu a,
+    .menu .button {
+      line-height: 1;
+      text-decoration: none;
+      display: block;
+      padding: 0.7rem 1rem;
+    }
+    .menu input,
+    .menu select,
+    .menu a,
+    .menu button {
+      margin-bottom: 0;
+    }
+    .menu input {
+      display: inline-block;
+    }
+    .menu, .menu.horizontal {
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+    .menu.vertical {
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
+    .menu.vertical.icon-top li a img,
+    .menu.vertical.icon-top li a i,
+    .menu.vertical.icon-top li a svg, .menu.vertical.icon-bottom li a img,
+    .menu.vertical.icon-bottom li a i,
+    .menu.vertical.icon-bottom li a svg {
+      text-align: left;
+    }
+    .menu.expanded li {
+      flex: 1 1 0px;
+    }
+    .menu.expanded.icon-top li a img,
+    .menu.expanded.icon-top li a i,
+    .menu.expanded.icon-top li a svg, .menu.expanded.icon-bottom li a img,
+    .menu.expanded.icon-bottom li a i,
+    .menu.expanded.icon-bottom li a svg {
+      text-align: left;
+    }
+    .menu.simple {
+      align-items: center;
+    }
+    .menu.simple li + li {
+      margin-left: 1rem;
+    }
+    .menu.simple a {
+      padding: 0;
+    }
+    @media print, screen and (min-width: 40em) {
+      .menu.medium-horizontal {
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+      .menu.medium-vertical {
+        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      .menu.medium-expanded li {
+        flex: 1 1 0px;
+      }
+      .menu.medium-simple li {
+        flex: 1 1 0px;
+      }
+    }
+    @media print, screen and (min-width: 64em) {
+      .menu.large-horizontal {
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+      .menu.large-vertical {
+        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      .menu.large-expanded li {
+        flex: 1 1 0px;
+      }
+      .menu.large-simple li {
+        flex: 1 1 0px;
+      }
+    }
+    .menu.nested {
+      margin-right: 0;
+      margin-left: 1rem;
+    }
+    .menu.icons a {
+      display: flex;
+    }
+    .menu.icon-top a, .menu.icon-right a, .menu.icon-bottom a, .menu.icon-left a {
+      display: flex;
+    }
+    .menu.icon-left li a, .menu.nested.icon-left li a {
+      flex-flow: row nowrap;
+    }
+    .menu.icon-left li a img,
+    .menu.icon-left li a i,
+    .menu.icon-left li a svg, .menu.nested.icon-left li a img,
+    .menu.nested.icon-left li a i,
+    .menu.nested.icon-left li a svg {
+      margin-right: 0.25rem;
+    }
+    .menu.icon-right li a, .menu.nested.icon-right li a {
+      flex-flow: row nowrap;
+    }
+    .menu.icon-right li a img,
+    .menu.icon-right li a i,
+    .menu.icon-right li a svg, .menu.nested.icon-right li a img,
+    .menu.nested.icon-right li a i,
+    .menu.nested.icon-right li a svg {
+      margin-left: 0.25rem;
+    }
+    .menu.icon-top li a, .menu.nested.icon-top li a {
+      flex-flow: column nowrap;
+    }
+    .menu.icon-top li a img,
+    .menu.icon-top li a i,
+    .menu.icon-top li a svg, .menu.nested.icon-top li a img,
+    .menu.nested.icon-top li a i,
+    .menu.nested.icon-top li a svg {
+      align-self: stretch;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    .menu.icon-bottom li a, .menu.nested.icon-bottom li a {
+      flex-flow: column nowrap;
+    }
+    .menu.icon-bottom li a img,
+    .menu.icon-bottom li a i,
+    .menu.icon-bottom li a svg, .menu.nested.icon-bottom li a img,
+    .menu.nested.icon-bottom li a i,
+    .menu.nested.icon-bottom li a svg {
+      align-self: stretch;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    .menu .is-active > a {
+      background: #1240ab;
+      color: #fefefe;
+    }
+    .menu .active > a {
+      background: #1240ab;
+      color: #fefefe;
+    }
+    .menu.align-left {
+      justify-content: flex-start;
+    }
+    .menu.align-right li {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .menu.align-right li .submenu li {
+      justify-content: flex-start;
+    }
+    .menu.align-right.vertical li {
+      display: block;
+      text-align: right;
+    }
+    .menu.align-right.vertical li .submenu li {
+      text-align: right;
+    }
+    .menu.align-right.icon-top li a img,
+    .menu.align-right.icon-top li a i,
+    .menu.align-right.icon-top li a svg, .menu.align-right.icon-bottom li a img,
+    .menu.align-right.icon-bottom li a i,
+    .menu.align-right.icon-bottom li a svg {
+      text-align: right;
+    }
+    .menu.align-right .nested {
+      margin-right: 1rem;
+      margin-left: 0;
+    }
+    .menu.align-center li {
+      display: flex;
+      justify-content: center;
+    }
+    .menu.align-center li .submenu li {
+      justify-content: flex-start;
+    }
+    .menu .menu-text {
+      padding: 0.7rem 1rem;
+      font-weight: bold;
+      line-height: 1;
+      color: inherit;
+    }
+
+    .menu-centered > .menu {
+      justify-content: center;
+    }
+    .menu-centered > .menu li {
+      display: flex;
+      justify-content: center;
+    }
+    .menu-centered > .menu li .submenu li {
+      justify-content: flex-start;
+    }
+
+    .no-js [data-responsive-menu] ul {
+      display: none;
+    }
+      }
+    }
+  }
+
+  @include it('settings overrides assigned after the import reach the B7 modules [component]') {
+    $old-margin: $thumbnail-margin-bottom;
+    $thumbnail-margin-bottom: 3rem !global;
+
+    @include assert {
+      @include output($selector: false) {
+        .probe { @include thumbnail; }
+      }
+      @include expect($selector: false) {
+        .probe {
+          display: inline-block;
+          max-width: 100%;
+          margin-bottom: 3rem;
+          border: 4px solid #fefefe;
+          border-radius: 8px;
+          box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.2);
+          line-height: 0;
+        }
+      }
+    }
+
+    $thumbnail-margin-bottom: $old-margin !global;
+  }
+}
