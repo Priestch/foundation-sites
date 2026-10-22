@@ -29,7 +29,10 @@ $mediaobject-section-padding: $global-padding !default;
 $mediaobject-image-width-stacked: 100% !default;
 
 /// Adds styles for a media object container.
-@mixin media-object-container {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin media-object-container(
+  $global-flexbox: $global-flexbox
+) {
   display: if($global-flexbox, flex, block);
   margin-bottom: $mediaobject-margin-bottom;
 
@@ -52,7 +55,11 @@ $mediaobject-image-width-stacked: 100% !default;
 
 /// Adds styles for sections within a media object.
 /// @param {Number} $padding [$mediaobject-section-padding] - Padding between sections.
-@mixin media-object-section($padding: $mediaobject-section-padding) {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin media-object-section(
+  $padding: $mediaobject-section-padding,
+  $global-flexbox: $global-flexbox
+) {
   @if $global-flexbox {
     flex: 0 1 auto;
   }
@@ -75,7 +82,7 @@ $mediaobject-image-width-stacked: 100% !default;
 
   .stack-for-#{$zf-zero-breakpoint} & {
     @include breakpoint($zf-zero-breakpoint only) {
-      @include media-object-stack;
+      @include media-object-stack($global-flexbox: $global-flexbox);
     }
   }
 
@@ -96,7 +103,10 @@ $mediaobject-image-width-stacked: 100% !default;
 }
 
 /// Adds styles to stack sections of a media object. Apply this to the section elements, not the container.
-@mixin media-object-stack {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin media-object-stack(
+  $global-flexbox: $global-flexbox
+) {
   padding: 0;
   padding-bottom: $mediaobject-section-padding;
 
@@ -113,12 +123,14 @@ $mediaobject-image-width-stacked: 100% !default;
   }
 }
 
-@mixin foundation-media-object {
+@mixin foundation-media-object(
+  $global-flexbox: $global-flexbox
+) {
   .media-object {
-    @include media-object-container;
+    @include media-object-container($global-flexbox: $global-flexbox);
   }
 
   .media-object-section {
-    @include media-object-section;
+    @include media-object-section($global-flexbox: $global-flexbox);
   }
 }

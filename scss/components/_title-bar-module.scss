@@ -47,7 +47,10 @@ $titlebar-text-font-weight: bold !default;
 /// @type Length
 $titlebar-icon-spacing: 0.25rem !default;
 
-@mixin foundation-title-bar {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin foundation-title-bar(
+  $global-flexbox: $global-flexbox
+) {
   .title-bar {
     padding: $titlebar-padding;
     background: $titlebar-background;
@@ -59,7 +62,7 @@ $titlebar-icon-spacing: 0.25rem !default;
       align-items: center;
     }
     @else {
-      @include clearfix;
+      @include clearfix($global-flexbox: $global-flexbox);
     }
 
     .menu-icon {

@@ -42,12 +42,18 @@
 @forward 'meter';
 @forward 'error';
 
-@mixin foundation-forms {
+/// Adds the global form styles.
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
+///   flexbox mode, threaded by `foundation-everything()` (slice B9); defaults
+///   to the ambient `$global-flexbox` setting, so direct calls are unchanged.
+@mixin foundation-forms(
+  $global-flexbox: $global-flexbox
+) {
   @include foundation-form-text;
   @include foundation-form-checkbox;
   @include foundation-form-label;
   @include foundation-form-helptext;
-  @include foundation-form-prepostfix;
+  @include foundation-form-prepostfix($global-flexbox: $global-flexbox);
   @include foundation-form-fieldset;
   @include foundation-form-select;
   @include foundation-form-error;

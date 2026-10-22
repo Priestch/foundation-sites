@@ -41,7 +41,10 @@ $topbar-input-width: 200px !default;
 $topbar-unstack-breakpoint: medium !default;
 
 /// Adds styles for a top bar container.
-@mixin top-bar-container {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin top-bar-container(
+  $global-flexbox: $global-flexbox
+) {
   padding: $topbar-padding;
 
   @if $global-flexbox {
@@ -51,7 +54,7 @@ $topbar-unstack-breakpoint: medium !default;
     align-items: center;
   }
   @else {
-    @include clearfix;
+    @include clearfix($global-flexbox: $global-flexbox);
   }
 
   &,
@@ -84,7 +87,10 @@ $topbar-unstack-breakpoint: medium !default;
 }
 
 /// Makes sections of a top bar stack on top of each other.
-@mixin top-bar-stacked {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin top-bar-stacked(
+  $global-flexbox: $global-flexbox
+) {
   @if $global-flexbox {
     flex-wrap: wrap;
 
@@ -105,7 +111,10 @@ $topbar-unstack-breakpoint: medium !default;
 }
 
 /// Undoes the CSS applied by the `top-bar-stacked()` mixin.
-@mixin top-bar-unstack {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin top-bar-unstack(
+  $global-flexbox: $global-flexbox
+) {
   @if $global-flexbox {
     flex-wrap: nowrap;
 
@@ -127,18 +136,21 @@ $topbar-unstack-breakpoint: medium !default;
   }
 }
 
-@mixin foundation-top-bar {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin foundation-top-bar(
+  $global-flexbox: $global-flexbox
+) {
   .top-bar {
-    @include top-bar-container;
+    @include top-bar-container($global-flexbox: $global-flexbox);
   }
   .top-bar {
     // Stack on small screens by default
-    @include top-bar-stacked;
+    @include top-bar-stacked($global-flexbox: $global-flexbox);
   }
   // Top bar container
   .top-bar {
     @include breakpoint($topbar-unstack-breakpoint) {
-      @include top-bar-unstack;
+      @include top-bar-unstack($global-flexbox: $global-flexbox);
     }
 
     // Generate classes for stacking on each screen size (defined in $breakpoint-classes)
@@ -146,7 +158,7 @@ $topbar-unstack-breakpoint: medium !default;
       @if $size != $zf-zero-breakpoint {
         &.stacked-for-#{$size} {
           @include breakpoint($size down) {
-            @include top-bar-stacked;
+            @include top-bar-stacked($global-flexbox: $global-flexbox);
           }
         }
       }

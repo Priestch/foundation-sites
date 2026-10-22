@@ -186,7 +186,12 @@ $global-flexbox: true !default;
 /// The clearfix is augmented with specific styles to prevent borders in flexbox environments
 /// @link http://nicolasgallagher.com/micro-clearfix-hack/ Micro Clearfix Hack
 /// @link http://danisadesigner.com/blog/flexbox-clear-fix-pseudo-elements/ Flexbox fix
-@mixin clearfix {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
+///   flexbox mode, threaded by the slice B9 refactoring; defaults to the
+///   ambient `$global-flexbox` setting, so direct calls are unchanged.
+@mixin clearfix(
+  $global-flexbox: $global-flexbox
+) {
   &::before,
   &::after {
     display: table;
