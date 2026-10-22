@@ -55,27 +55,31 @@ After you made these checks, please follow these advices to create your pull req
 5. **Make sure that everything works and tests pass**.
    You must absolutely check that everything still works after your changes. Please also add tests for features you added or uncovered bugs you fixed. See the [Testing](https://github.com/foundation/foundation-sites#testing) section.
 6. **Create your pull request** ([link](https://github.com/foundation/foundation-sites/compare)).
-   Make sure it targets the `master` branch. Take a look at our [Git Workflow](#git-workflow) below.
+   Make sure it targets the `dev` branch. Take a look at our [Git Workflow](#git-workflow) below.
 
 When you submit a pull request, @mention a few people you’d like to help you review it. Once those people have signed off on it, the pull request can be merged! Core Team members will handle the merge itself.
 
 ## Git Workflow
 
-Since October 2026, maintenance happens **directly on `master`**: pull requests target `master`, and releases are tagged from it. The old GitFlow model (`develop` plus `develop-v...`/`master-v...` branch families) has been retired.
+Since October 2026 the project follows a simplified GitFlow: pull requests target the **`dev`** integration branch, and releases are merged from `dev` into **`master`**, where they are tagged.
+
+- **`dev`**
+
+  The integration branch and the target for **all** pull requests (fixes, features, documentation...). It always contains the newest state of the 6.x line. Patch releases for 6.x are prepared on it.
 
 - **`master`**
 
-  The main branch. It contains the latest released state plus the changes for the next version, and is the target for **all** pull requests (fixes, features, documentation...).
+  The stable branch. It contains the latest released version; new releases are merged from `dev` and tagged here. Do not open pull requests against it.
 
 - **`v7`**
 
-  The long-lived development branch for the next major version. Work that belongs to 7.0 happens there and is merged back to `master` when 7.0 ships.
+  The long-lived development branch for the next major version. Work that belongs to 7.0 happens there and is merged back when 7.0 ships.
 
 - **Branch naming**
 
   Name your branches after the change they carry, prefixed with the change type: `fix/dropdown-close-on-scroll-12345`, `feat/datepicker-9876`, `docs/update-testing-guide`.
 
-Patch releases for 6.x are prepared on `master` when needed.
+> The old `develop` branch contains the abandoned "Yeti" rewrite and is retired; the name is deliberately not reused.
 
 ## Coding Standards
 

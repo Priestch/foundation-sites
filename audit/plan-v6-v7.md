@@ -15,7 +15,7 @@
 | D2 ✅ | 构建链 | 保持 gulp，不引入 Vite/esbuild；7.0 构建改造在 gulp 内部（至多评估就地升 gulp 5） |
 | D3 ✅ | 浏览器基线 | 两段式：6.x 显式 CSS 侧基线（JS 保持 ES5）；7.0 抬到 2023-24 线并放弃 ES5 |
 | D4 ✅ | 6.x 铁律 | 零公开 API 破坏；deprecate in 6.10, remove in 7.0 |
-| D5 ✅ | 分支模型 | PR → master；7.0 开发拉长命分支（建议 `v7`），master 留给 6.10.x 补丁，发版时合回 |
+| D5 ✅ | 分支模型 | ~~PR → master~~ **2026-10-22 修订：PR → `dev`（集成分支），发版 `dev` → `master` 打 tag；`develop`（Yeti 遗留）封存不复用；7.0 长命分支 `v7`。不复活 develop-v\*/master-v\* 分支族** |
 | D6 ✅ | Node 基线 | engines `">=20"`（只约束贡献者，不影响 dist 用户）；CI 测 22/24，M0 一次性验证 mocha-headless-chrome 兼容性（2026-10-21 确认按原计划执行） |
 | 🟨 | browserslist Chrome/Edge 取 100 还是 110 | 建议 CI 跑 `npx browserslist --debug` 看实际覆盖后取 **110**（阻塞批次 B） |
 | 🟨 | sass-lint 处置 | 建议**迁 stylelint 16**（想控体量可先删后补）（阻塞批次 D 可选项） |

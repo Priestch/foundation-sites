@@ -43,7 +43,7 @@ Notes on the JS test setup:
 
 ## Git workflow & conventions
 
-- **PRs target `master`** (since 2026-10: the old GitFlow `develop`/`develop-v*` workflow is retired; maintenance happens directly on `master`. `CONTRIBUTING.md`'s Git Workflow section still describes the old flow and needs rewriting).
+- **PRs target `dev`** (simplified GitFlow since 2026-10: `dev` is the 6.x integration branch, releases merge `dev` → `master` and are tagged there. The old `develop` branch holds the abandoned Yeti rewrite and is retired — the name is deliberately not reused. 7.0 development happens on the long-lived `v7` branch).
 - Commit messages follow the Angular convention, enforced by commitlint + husky: prefix with `feat|fix|docs|refactor|style|tests|chore`, imperative form, reference the issue: `fix: prevent Dropdown closing on scroll #12345`.
 - Branch naming: `type/description-issue`, e.g. `fix/dropdown-close-on-scroll-12345`.
 - JS style: **no semicolons** (`semi: never` in `.eslintrc`), ES6 modules transpiled with Babel, browserslist `last 2 versions, > 1%`.
