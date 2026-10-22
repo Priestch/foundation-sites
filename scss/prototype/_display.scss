@@ -6,6 +6,12 @@
 /// @group prototype-display
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use 'relation' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for display classes
 /// @type Boolean
 $prototype-display-breakpoints: $global-prototype-breakpoints !default;

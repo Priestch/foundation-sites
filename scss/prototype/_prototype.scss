@@ -6,82 +6,124 @@
 /// @group prototype
 ////
 
+// 7.0 Sass modularization (M2 line B, slice B9): the prototype partials are
+// real `@use` modules now. This aggregator is a pure `@forward` facade:
+// members exposed through it are also defined in the global scope of every
+// `@import` consumer (foundation.scss, docs, customizer), so the legacy
+// `@import 'prototype/prototype'` pipeline keeps compiling unchanged.
+// Overrides of the settings variables stay live-linked between the module
+// scopes and the import-world globals, in both directions.
+//
+// Where the members live:
+//
+// - _relation.scss (the first forwarded module) owns the shared ambient
+//   mirrors ($global-prototype-breakpoints, $global-margin,
+//   $global-weight-normal/bold, $foundation-palette, $primary-color); the
+//   other partials reach them with `@use 'relation' as *`.
+//
+// Slice B9: the facade also `@use`s its own partials — NAMESPACED, not
+// `as *` — so the foundation-prototype-classes() body below resolves its
+// `@include`s when the facade is consumed as a module (`@use
+// "prototype/prototype"` — @forward members pass through to consumers but are
+// not visible to the forwarder's own code). A starred use would splice the
+// partial members into the evaluator's scope, which under the legacy
+// `@import` flow is the consumer's import world and collides with
+// settings-file assignments of the same names.
+
 // Relational Mixins
-@import 'relation';
+@forward 'relation';
 
 // Box Mixin
-@import 'box';
+@forward 'box';
 
 // Rotate Mixin
-@import 'rotate';
+@forward 'rotate';
 
 // Text utilities
-@import 'text-utilities';
+@forward 'text-utilities';
 
 // Text transformation classes
-@import 'text-transformation';
+@forward 'text-transformation';
 
 // Text Decoration classes
-@import 'text-decoration';
+@forward 'text-decoration';
 
 // Font Styling
-@import 'font-styling';
+@forward 'font-styling';
 
 // List Style type
-@import 'list-style-type';
+@forward 'list-style-type';
 
 // Rounded Utility
-@import 'rounded';
+@forward 'rounded';
 
 // Bordered Utility
-@import 'bordered';
+@forward 'bordered';
 
 // Shadow Utility
-@import 'shadow';
+@forward 'shadow';
 
 // Arrow Utility
-@import 'arrow';
+@forward 'arrow';
 
 // Separator Utility
-@import 'separator';
+@forward 'separator';
 
 // Overflow helper classes
-@import 'overflow';
+@forward 'overflow';
 
 // Display classes
-@import 'display';
+@forward 'display';
 
 // Position Helpers
-@import 'position';
+@forward 'position';
 
 // Border box
-@import 'border-box';
+@forward 'border-box';
 
 // Border none Utilty
-@import 'border-none';
+@forward 'border-none';
 
 // Sizing Utilities
-@import 'sizing';
+@forward 'sizing';
 
 // Spacing Utilities
-@import 'spacing';
+@forward 'spacing';
+
+@use 'text-utilities' as proto-text-utilities;
+@use 'text-transformation' as proto-text-transformation;
+@use 'text-decoration' as proto-text-decoration;
+@use 'font-styling' as proto-font-styling;
+@use 'list-style-type' as proto-list-style-type;
+@use 'rounded' as proto-rounded;
+@use 'bordered' as proto-bordered;
+@use 'shadow' as proto-shadow;
+@use 'arrow' as proto-arrow;
+@use 'separator' as proto-separator;
+@use 'overflow' as proto-overflow;
+@use 'display' as proto-display;
+@use 'position' as proto-position;
+@use 'border-box' as proto-border-box;
+@use 'border-none' as proto-border-none;
+@use 'sizing' as proto-sizing;
+@use 'spacing' as proto-spacing;
 
 @mixin foundation-prototype-classes {
-  @include foundation-prototype-text-utilities;
-  @include foundation-prototype-text-transformation;
-  @include foundation-prototype-text-decoration;
-  @include foundation-prototype-font-styling;
-  @include foundation-prototype-list-style-type;
-  @include foundation-prototype-rounded;
-  @include foundation-prototype-bordered;
-  @include foundation-prototype-shadow;
-  @include foundation-prototype-arrow;
-  @include foundation-prototype-separator;
-  @include foundation-prototype-overflow;
-  @include foundation-prototype-display;
-  @include foundation-prototype-position;
-  @include foundation-prototype-border-box;
-  @include foundation-prototype-border-none;
-  @include foundation-prototype-sizing;
-  @include foundation-prototype-spacing;
+  @include proto-text-utilities.foundation-prototype-text-utilities;
+  @include proto-text-transformation.foundation-prototype-text-transformation;
+  @include proto-text-decoration.foundation-prototype-text-decoration;
+  @include proto-font-styling.foundation-prototype-font-styling;
+  @include proto-list-style-type.foundation-prototype-list-style-type;
+  @include proto-rounded.foundation-prototype-rounded;
+  @include proto-bordered.foundation-prototype-bordered;
+  @include proto-shadow.foundation-prototype-shadow;
+  @include proto-arrow.foundation-prototype-arrow;
+  @include proto-separator.foundation-prototype-separator;
+  @include proto-overflow.foundation-prototype-overflow;
+  @include proto-display.foundation-prototype-display;
+  @include proto-position.foundation-prototype-position;
+  @include proto-border-box.foundation-prototype-border-box;
+  @include proto-border-none.foundation-prototype-border-none;
+  @include proto-sizing.foundation-prototype-sizing;
+  @include proto-spacing.foundation-prototype-spacing;
 }

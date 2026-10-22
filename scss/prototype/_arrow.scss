@@ -6,6 +6,12 @@
 /// @group prototype-arrow
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../util/mixins' as *;
+@use '../util/color' as *;
+
 /// Map containing all the `arrow` direction
 /// @type Map
 $prototype-arrow-directions: (
