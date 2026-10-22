@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, GetYoDigits } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
+import { datasetOptions } from './foundation.util.dom';
 import { SmoothScroll } from './foundation.smoothScroll';
 
 import { Triggers } from './foundation.util.triggers';
@@ -24,7 +25,7 @@ class Magellan extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options  = $.extend({}, Magellan.defaults, this.$element.data(), options);
+    this.options  = $.extend({}, Magellan.defaults, datasetOptions(element[0]), options);
     this.className = 'Magellan'; // ie9 back compat
 
     // Triggers init is idempotent, just need to make sure it is initialized
@@ -39,14 +40,14 @@ class Magellan extends Plugin {
    * @private
    */
   _init() {
-    var id = this.$element[0].id || GetYoDigits(6, 'magellan');
+    var element = this.$element[0];
+    var id = element.id || GetYoDigits(6, 'magellan');
+    this.id = id;
     this.$targets = $('[data-magellan-target]');
     this.$links = this.$element.find('a');
-    this.$element.attr({
-      'data-resize': id,
-      'data-scroll': id,
-      'id': id
-    });
+    element.setAttribute('data-resize', id);
+    element.setAttribute('data-scroll', id);
+    element.id = id;
     this.$active = $();
     this.scrollPos = parseInt(window.pageYOffset, 10);
 
@@ -83,6 +84,11 @@ class Magellan extends Plugin {
     var _this = this;
 
     _this.onLoadListener = onLoad($(window), function () {
+      // A load callback can land after destroy() nulled the instance state
+      // (the same post-destroy window the S6 slider guards cover; jQuery's
+      // $(null) tolerance hid this in 6.x).
+      if (!_this.$element) { return; }
+
       if(_this.options.deepLinking){
         if(location.hash){
           _this.scrollToLoc(location.hash);
@@ -90,16 +96,16 @@ class Magellan extends Plugin {
       }
       _this.calcPoints();
       _this._updateActive();
-      _this.$element
-        .on({
-          'resizeme.zf.trigger': _this.reflow.bind(_this),
-          'scrollme.zf.trigger': _this._updateActive.bind(_this)
-        })
-        .on('click.zf.magellan', 'a[href^="#"]', function (e) {
-          e.preventDefault();
-          var arrival = this.getAttribute('href');
-          _this.scrollToLoc(arrival);
-        });
+      // S7: the resizeme/scrollme consumers flip to the native event layer.
+      // Both producers in the Triggers util have dispatched real element-
+      // local events since S4, so this seam closes on the consumer half
+      // alone; the delegated link clicks join them on the same layer.
+      Events.on(_this.$element[0], 'resizeme.zf.trigger', _this.reflow.bind(_this));
+      Events.on(_this.$element[0], 'scrollme.zf.trigger', _this._updateActive.bind(_this));
+      Events.delegate(_this.$element[0], 'click.zf.magellan', 'a[href^="#"]', function (e) {
+        e.preventDefault();
+        _this.scrollToLoc(this.getAttribute('href'));
+      });
     });
 
     this._deepLinkScroll = function() {
@@ -108,7 +114,11 @@ class Magellan extends Plugin {
       }
     };
 
-    $(window).on('hashchange', this._deepLinkScroll);
+    // S7: the deep-link hashchange moves to the native event layer under the
+    // per-instance namespace shape introduced for Reveal's hashchange, so
+    // the destroy path can drop it precisely. Real hashchange events are
+    // unaffected by the namespace.
+    Events.on(window, `hashchange.zf.magellan:${this.id}`, this._deepLinkScroll);
   }
 
   /**
@@ -147,7 +157,7 @@ class Magellan extends Plugin {
    * @function
    * @fires Magellan#update
    */
-  _updateActive(/*evt, elem, scrollPos*/) {
+  _updateActive(/*event, elem, scrollPos*/) {
     if(this._inTransition) return;
 
     const newScrollPos = parseInt(window.pageYOffset, 10);
@@ -179,10 +189,14 @@ class Magellan extends Plugin {
     const isNewActive = !(!this.$active.length && !$oldActive.length) && !this.$active.is($oldActive);
     const isNewHash = activeHash !== window.location.hash;
 
-    // Update the active link element
+    // Update the active link element (native classList, 7.0 line A S7)
     if(isNewActive) {
-      $oldActive.removeClass(this.options.activeClass);
-      this.$active.addClass(this.options.activeClass);
+      for (var i = 0; i < $oldActive.length; i++) {
+        $oldActive[i].classList.remove(this.options.activeClass);
+      }
+      for (var j = 0; j < this.$active.length; j++) {
+        this.$active[j].classList.add(this.options.activeClass);
+      }
     }
 
     // Update the hash (it may have changed with the same active link)
@@ -205,7 +219,11 @@ class Magellan extends Plugin {
        * Fires when magellan is finished updating to the new active element.
        * @event Magellan#update
        */
-    	this.$element.trigger('update.zf.magellan', [this.$active]);
+      // S7: real, bubbling CustomEvent - native listeners receive it
+      // directly, still-on-jQuery listeners through the real-event pass-
+      // through (the forwarded $active rides in event.originalEvent.detail
+      // for them).
+      Events.trigger(this.$element[0], 'update.zf.magellan', [this.$active]);
 	  }
   }
 
@@ -214,10 +232,16 @@ class Magellan extends Plugin {
    * @function
    */
   _destroy() {
+    // jQuery side: legacy listeners in the plugin namespaces, kept while
+    // the mixed state lasts.
     this.$element.off('.zf.trigger .zf.magellan')
         .find(`.${this.options.activeClass}`).removeClass(this.options.activeClass);
 
-    $(window).off('hashchange', this._deepLinkScroll)
+    // Native side: the bare-namespace forms drop the resizeme/scrollme and
+    // delegated click listeners in one pass each, and the deep-link
+    // hashchange goes with its per-instance namespace.
+    Events.off(this.$element[0], '.zf.trigger .zf.magellan');
+    Events.off(window, `hashchange.zf.magellan:${this.id}`);
     if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
   }
 }
