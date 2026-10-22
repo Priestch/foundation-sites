@@ -268,6 +268,9 @@ function removeMatching(el, type, queryNs, fn) {
 
 // Fires a bubbling, cancelable CustomEvent per namespaced type and passes the
 // params to handlers after the event, in order (jQuery extraParameters).
+// The detail params stay pass-through (S1 decision, confirmed 2026-10-22):
+// final form = native Element, to be switched uniformly in the line-A
+// wrap-up slice.
 function trigger(el, types, params) {
   const args = params == null ? [] : (Array.isArray(params) ? params : [params]);
   splitTypes(types).forEach(namespaced => {

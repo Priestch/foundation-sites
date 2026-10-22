@@ -41,15 +41,31 @@ function camelCase(name) {
   return name.replace(/-([a-z])/g, (match, char) => char.toUpperCase());
 }
 
+// jQuery `.data()`'s value conversion (`getData` in its data module):
+// "true"/"false" → boolean, "null" → null, and numbers — but only when the
+// number converts back to the exact same string, so "42", "-3.5", "0.5" and
+// "Infinity" convert, while "042" or "1e3" stay strings. "" stays "".
+function convertData(value) {
+  if (value === 'true') { return true; }
+  if (value === 'false') { return false; }
+  if (value === 'null') { return null; }
+  if (value === +value + '') { return +value; }
+  return value;
+}
+
 /**
  * Reads an element's `data-*` attributes into a camelCased plain object,
- * mirroring `$(el).data()`'s key handling (`data-foo-bar` → `fooBar`).
+ * mirroring `$(el).data()`'s key handling (`data-foo-bar` → `fooBar`) AND its
+ * value conversion ("true"/"false" → boolean, "null" → null, numeric strings
+ * → number, everything else stays a string).
  *
- * Deliberately does NOT convert value types: values stay the raw attribute
- * strings. jQuery `.data()` coerces "true"/"123" to boolean/number, while the
- * v6 option parsing in `Foundation.reflow`/`parseValue` expects to do its own
- * conversion on the raw strings. 7.0 default: no coercion. PENDING DECISION —
- * around 22 options-merge points are affected by the eventual choice.
+ * DECIDED 2026-10-22 (was PENDING "no coercion" in S1): convert like jQuery
+ * `.data()`. Rationale — equivalence: the ~22 component option-merge points
+ * (`$.extend({}, defaults, this.$element.data(), options)`) consume the
+ * CONVERTED values today, so raw attribute strings would flip truthiness
+ * (`"false"` is a truthy string) and feed strings where CSS assignment and
+ * arithmetic expect numbers. Running the values through the same conversion
+ * keeps every current consumer byte-compatible.
  * @param {Element} el - the element to read.
  * @returns {Object} camelCased map of the element's data-* attributes.
  */
@@ -58,7 +74,7 @@ function datasetOptions(el) {
   if (!el || el.nodeType !== 1) { return options; }
   Array.from(el.attributes).forEach(attr => {
     if (attr.name.indexOf('data-') === 0) {
-      options[camelCase(attr.name.slice(5))] = attr.value;
+      options[camelCase(attr.name.slice(5))] = convertData(attr.value);
     }
   });
   return options;

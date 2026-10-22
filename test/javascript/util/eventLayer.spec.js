@@ -302,16 +302,32 @@
           });
         });
 
-        it('does not convert value types', function() {
+        // Decided 2026-10-22 (was "no coercion" in S1): values convert like
+        // jQuery .data() — the jQuery column reads through .data() itself,
+        // so agreeing here pins the native conversion to jQuery's rule.
+        it('converts values like jQuery .data() does', function() {
           el.setAttribute('data-flag', 'true');
+          el.setAttribute('data-off', 'false');
+          el.setAttribute('data-none', 'null');
           el.setAttribute('data-num', '42');
+          el.setAttribute('data-neg', '-3.5');
+          el.setAttribute('data-padded', '042');
+          el.setAttribute('data-exponent', '1e3');
           el.setAttribute('data-empty', '');
+          el.setAttribute('data-text', 'hello');
 
           var options = backend.helpers.datasetOptions(el);
 
-          options.flag.should.equal('true');
-          options.num.should.equal('42');
+          options.flag.should.equal(true);
+          options.off.should.equal(false);
+          // null hides .should from chai (no property access on null).
+          chai.expect(options.none).to.equal(null);
+          options.num.should.equal(42);
+          options.neg.should.equal(-3.5);
+          options.padded.should.equal('042');
+          options.exponent.should.equal('1e3');
           options.empty.should.equal('');
+          options.text.should.equal('hello');
         });
       });
 

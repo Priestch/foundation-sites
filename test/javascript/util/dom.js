@@ -54,8 +54,10 @@ describe('FoundationNext.Dom', function() {
     });
   });
 
-  // No type coercion (7.0 default, PENDING DECISION): values stay raw
-  // attribute strings, aligned with the parseValue side of v6.
+  // jQuery .data() value conversion (DECIDED 2026-10-22, was PENDING "no
+  // coercion" in S1): "true"/"false" → boolean, "null" → null, round-trip
+  // numbers → number, everything else stays a string. The differential suite
+  // pins the same rule against jQuery itself.
   describe('datasetOptions()', function() {
     it('collects data-* attributes as a camelCased object', function() {
       var el = $('<div data-foo-bar="hello" data-simple="world"></div>')[0];
@@ -65,14 +67,18 @@ describe('FoundationNext.Dom', function() {
       options.should.deep.equal({ fooBar: 'hello', simple: 'world' });
     });
 
-    it('does not convert value types', function() {
-      var el = $('<div data-flag="true" data-num="42" data-empty></div>')[0];
+    it('converts values like jQuery .data() does', function() {
+      var el = $('<div data-flag="true" data-off="false" data-none="null" data-num="42" data-empty data-text="hello"></div>')[0];
 
       var options = FoundationNext.Dom.datasetOptions(el);
 
-      options.flag.should.equal('true');
-      options.num.should.equal('42');
+      options.flag.should.equal(true);
+      options.off.should.equal(false);
+      // null hides .should from chai (no property access on null).
+      chai.expect(options.none).to.equal(null);
+      options.num.should.equal(42);
       options.empty.should.equal('');
+      options.text.should.equal('hello');
     });
 
     it('ignores non-data attributes', function() {

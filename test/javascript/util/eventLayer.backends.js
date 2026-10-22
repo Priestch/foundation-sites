@@ -70,27 +70,14 @@
           return $(sel, ctx).get(0);
         },
 
-        // Reads the raw attribute strings. jQuery .data() cannot be used
-        // here: it coerces "true"/"123", which would contradict the
-        // no-coercion semantics this suite pins for both columns.
+        // Reads through jQuery's own .data() so both columns assert the
+        // same jQuery-style value conversion (decided 2026-10-22). The
+        // result is copied so callers cannot mutate jQuery's data cache.
         datasetOptions(el) {
-          const options = {};
-          if (!el || el.nodeType !== 1) { return options; }
-          $.each(el.attributes, function(index, attr) {
-            if (attr.name.indexOf('data-') === 0) {
-              options[camelCase(attr.name.slice(5))] = attr.value;
-            }
-          });
-          return options;
+          return $.extend({}, $(el).data());
         }
       }
     };
-  }
-
-  function camelCase(name) {
-    return name.replace(/-([a-z])/g, function(match, char) {
-      return char.toUpperCase();
-    });
   }
 
   function makeNativeBackend() {
