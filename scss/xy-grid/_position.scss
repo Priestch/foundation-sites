@@ -8,13 +8,15 @@
 
 // Util helpers; `xy-cell-size()`/`xy-cell-gutters()` live in _cell.scss and
 // `$grid-margin-gutters` in _gutters.scss. `$global-left` is this module's only
-// ambient consumer, so its mirror is declared here (same `!default`s as
-// scss/_global.scss, live-linked through the `xy-grid/xy-grid` facade).
+// ambient consumer. Slice B9: `$global-text-direction` itself is owned by
+// scss/util/_flex.scss now — this module starred-uses the util facade, so a
+// local mirror of the same name would be silently dropped by Dart Sass in
+// favor of the forwarded member; the derived `$global-left` below reads that
+// member and keeps the exact same value.
 @use '../util/util' as *;
 @use 'cell' as *;
 @use 'gutters' as *;
 
-$global-text-direction: ltr !default;
 $global-left: if($global-text-direction == rtl, right, left) !default;
 
 /// Returns the appropriate CSS value to offset a cell.

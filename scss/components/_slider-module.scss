@@ -13,13 +13,17 @@
 // scss/forms/_range.scss and the ambient mirrors in scss/forms/_text.scss
 // (slice B4 moved the native slider styles into the forms modules), reached
 // through the granular forms modules so the cells stay live-linked with the
-// import-world globals of the @import consumer.
+// import-world globals of the @import consumer. Slice B9: $global-text-direction
+// itself is owned by scss/util/_flex.scss (seeding the $zf-flex-justify
+// derivation), which as-* uses are not transitive — this module therefore
+// reaches it through the util facade directly.
 @use '../util/color' as *;
 @use '../util/breakpoint' as *;
 @use '../util/mixins' as *;
 @use '../util/unit' as *;
 @use '../util/value' as *;
 @use '../util/math' as *;
+@use '../util/util' as *;
 @use '../forms/range' as *;
 @use '../forms/text' as *;
 

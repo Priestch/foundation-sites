@@ -11,11 +11,28 @@
 }
 
 
-// Assigned by scss/_global.scss (`$zf-flex-justify:
-// zf-flex-justify($global-text-direction)`); through the `util/util` @forward
-// facade this `!default` declaration stays live-linked with that import-world
-// global, so the assignment keeps reaching the mixins below.
-$zf-flex-justify: () !default;
+// 7.0 Sass modularization (M2 line B, slice B9): scss/_global.scss used to
+// assign this cell through the import world (`$zf-flex-justify:
+// zf-flex-justify($global-text-direction)`); a module compilation cannot
+// reproduce that (global-module cannot write the util/_flex cell), so the
+// derivation moved here. _flex.scss now owns the `$global-text-direction`
+// mirror this derives from; through the `util/util` @forward facade the cell
+// stays live-linked with the import-world setting, so user overrides keep
+// winning in both directions, and the value is identical in the ltr and rtl
+// flows.
+//
+// NOTE for the other mirror owners: a module that starred-uses the util
+// facade (`@use '../util/util' as *`) can no longer declare its own
+// `$global-text-direction` cell — Dart Sass drops the shadowed local
+// declaration in favor of the facade-forwarded member. The former local
+// mirrors in scss/forms/_text.scss, scss/typography/_base.scss and
+// scss/xy-grid/_position.scss were therefore removed in this slice; their
+// derived `$global-left`/`$global-right` cells now read this cell and keep
+// the exact same values (this facade is flattened before those facades in
+// scss/foundation.scss, so the seeding order is unchanged).
+$global-text-direction: ltr !default;
+
+$zf-flex-justify: zf-flex-justify($global-text-direction);
 
 $zf-flex-align: (
   'top': flex-start,

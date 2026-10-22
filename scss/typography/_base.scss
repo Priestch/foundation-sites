@@ -40,7 +40,11 @@ $global-weight-normal: normal !default;
 $global-weight-bold: bold !default;
 $global-width: rem-calc(1200) !default;
 $global-radius: 0 !default;
-$global-text-direction: ltr !default;
+// Slice B9: $global-text-direction is owned by scss/util/_flex.scss now (its
+// cell seeds the $zf-flex-justify derivation there). This module starred-uses
+// the util facade, so a local mirror of the same name would be silently
+// dropped by Dart Sass in favor of the forwarded member; the derived
+// $global-left cell below reads that member and keeps the exact same value.
 $global-left: if($global-text-direction == rtl, right, left) !default;
 $medium-gray: #cacaca !default;
 $light-gray: #e6e6e6 !default;

@@ -29,6 +29,18 @@
 //   module member it would read the util facade module's (empty) palette, so
 //   _error.scss resolves its alert color against the mirrored palette through
 //   a private `-forms-palette-color()` replica instead.
+//
+// Slice B9: the facade also `@use`s its own partials — NAMESPACED, not
+// `as *` — so the foundation-forms() body below resolves its `@include`s when
+// the facade is consumed as a module (`@use "forms/forms"` — @forward members
+// pass through to consumers but are not visible to the forwarder's own code).
+// A starred use would splice the partial members into the evaluator's scope,
+// which under the legacy `@import` flow is the consumer's import world and
+// collides with settings-file assignments of the same names (e.g.
+// `$form-spacing: 2rem;` before `@import 'foundation'`). Namespaced uses stay
+// out of the evaluator's scope; the qualified `@include`s compile identically
+// in both flows.
+@use '../util/util' as util;
 
 @forward 'text';
 @forward 'checkbox';
@@ -42,19 +54,31 @@
 @forward 'meter';
 @forward 'error';
 
+@use 'text' as forms-text;
+@use 'checkbox' as forms-checkbox;
+@use 'label' as forms-label;
+@use 'help-text' as forms-help-text;
+@use 'input-group' as forms-input-group;
+@use 'fieldset' as forms-fieldset;
+@use 'select' as forms-select;
+@use 'range' as forms-range;
+@use 'progress' as forms-progress;
+@use 'meter' as forms-meter;
+@use 'error' as forms-error;
+
 /// Adds the global form styles.
 /// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
 ///   flexbox mode, threaded by `foundation-everything()` (slice B9); defaults
 ///   to the ambient `$global-flexbox` setting, so direct calls are unchanged.
 @mixin foundation-forms(
-  $global-flexbox: $global-flexbox
+  $global-flexbox: util.$global-flexbox
 ) {
-  @include foundation-form-text;
-  @include foundation-form-checkbox;
-  @include foundation-form-label;
-  @include foundation-form-helptext;
-  @include foundation-form-prepostfix($global-flexbox: $global-flexbox);
-  @include foundation-form-fieldset;
-  @include foundation-form-select;
-  @include foundation-form-error;
+  @include forms-text.foundation-form-text;
+  @include forms-checkbox.foundation-form-checkbox;
+  @include forms-label.foundation-form-label;
+  @include forms-help-text.foundation-form-helptext;
+  @include forms-input-group.foundation-form-prepostfix($global-flexbox: $global-flexbox);
+  @include forms-fieldset.foundation-form-fieldset;
+  @include forms-select.foundation-form-select;
+  @include forms-error.foundation-form-error;
 }

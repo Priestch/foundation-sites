@@ -65,9 +65,20 @@ $button-hollow-hover-lightness: map.get($user, "button-hollow-hover-lightness");
 $button-transition: map.get($user, "button-transition");
 $button-responsive-expanded: map.get($user, "button-responsive-expanded");
 
-// Legacy imports (shared scope inside this unit)
+// Legacy imports (shared scope inside this unit). Slice B9: scss/global is a
+// @forward facade now — importing it would splice module-flattened settings
+// names whose assignments cannot reach the cells this unit's import-splice
+// flow seeds — so the palette-derived colors are derived right here instead,
+// exactly as the add-foundation-colors() call inside scss/_global-module.scss
+// does (same palette lookups, same fallbacks). The direct user overrides are
+// re-applied below, after this derivation, as before.
 @import '../util/util';
-@import '../global';
+
+$primary-color: if(map.has-key($foundation-palette, primary), map.get($foundation-palette, primary), #1779ba);
+$secondary-color: if(map.has-key($foundation-palette, secondary), map.get($foundation-palette, secondary), #767676);
+$success-color: if(map.has-key($foundation-palette, success), map.get($foundation-palette, success), #3adb76);
+$warning-color: if(map.has-key($foundation-palette, warning), map.get($foundation-palette, warning), #ffae00);
+$alert-color: if(map.has-key($foundation-palette, alert), map.get($foundation-palette, alert), #cc4b37);
 
 // Direct palette-derived color overrides, re-applied after add-foundation-colors()
 @if map.has-key($user, "primary-color") {
