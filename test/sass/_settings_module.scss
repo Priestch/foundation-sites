@@ -15,6 +15,7 @@
 // so each component is included exactly once in this suite; both may share
 // one compilation because button and table use separate load units.
 
+@use "sass:list";
 @use "sass:map";
 @use "sass:meta";
 
@@ -94,6 +95,36 @@ $user-palette: meta.module-variables("palette-settings");
 
     @include assert-equal(map.get($effective, 'button-radius'), 0,
       'Reflects the frozen library value of $button-radius (the load unit re-derives it as 8px)');
+  }
+
+  @include it('unknown-settings-keys() returns an empty list for known keys [function]') {
+    // merge-settings() warns exactly for the keys this returns, so an empty
+    // list is the "no warning" path for a map of known settings.
+    @include assert-equal(fs.unknown-settings-keys(("form-spacing": 2rem, "button-fill": hollow)), (),
+      'Never flags keys that exist in the library defaults');
+  }
+
+  @include it('unknown-settings-keys() flags keys outside the library defaults [function]') {
+    $unknown: fs.unknown-settings-keys(("imput-radius": 4px, "form-spacing": 2rem));
+
+    @include assert-equal(list.length($unknown), 1,
+      'Flags exactly the typo key');
+
+    @include assert-equal(list.nth($unknown, 1), "imput-radius",
+      'Reports the typo key itself');
+  }
+
+  @include it('merge-settings() warns about unknown keys without blocking the merge [function]') {
+    // The unknown key makes merge-settings() @warn (visible on stderr); the
+    // assertions below only run because the warning does not abort the
+    // compilation.
+    $effective: fs.merge-settings(("imput-radius": 4px, "form-spacing": 2rem));
+
+    @include assert-equal(map.get($effective, 'form-spacing'), 2rem,
+      'Still merges the known keys after the warning');
+
+    @include assert-equal(map.get($effective, 'imput-radius'), 4px,
+      'Merges the unknown key through unchanged (the warning is advisory)');
   }
 
   @include it('Compiled CSS uses the overridden settings [button component]') {

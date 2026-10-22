@@ -38,6 +38,7 @@
 
 @use "sass:map";
 @use "sass:meta";
+@use "sass:list";
 @use "settings/settings" as foundation-defaults;
 
 // Internal: the five palette-derived colors ($primary-color, $secondary-color,
@@ -92,9 +93,35 @@
 // @returns {Map} The effective settings map.
 @function -fs-merge-settings($user-settings) {
   $user-settings: -fs-non-null($user-settings);
+  @each $key in unknown-settings-keys($user-settings) {
+    @warn 'merge-settings(): "#{$key}" is not a Foundation settings key. ' +
+      'The load units never read it, so it has no effect; ' +
+      'check it for typos against scss/settings/_settings.scss.';
+  }
   $merged: map.merge(meta.module-variables("foundation-defaults"), $user-settings);
   $palette: map.get($merged, "foundation-palette");
   @return map.merge(map.merge($merged, -fs-foundation-colors($palette)), $user-settings);
+}
+
+/// Returns the keys of `$user-settings` that are not keys of the library
+/// defaults (scss/settings/_settings.scss). Unknown keys are typos in almost
+/// every case: the load units configure themselves with explicit
+/// `map.get($user, "...")` lookups, so a key outside the library defaults is
+/// never read. `merge-settings()` warns for each key this returns — a warning
+/// rather than an error, because a stray key must not break a compilation.
+///
+/// @param {Map} $user-settings - Variables reflected from the user settings
+///   module with `meta.module-variables()`.
+/// @returns {List} The unknown keys, in the user map's order.
+@function unknown-settings-keys($user-settings) {
+  $defaults: meta.module-variables("foundation-defaults");
+  $unknown: ();
+  @each $key in map.keys($user-settings) {
+    @if not map.has-key($defaults, $key) {
+      $unknown: list.append($unknown, $key);
+    }
+  }
+  @return $unknown;
 }
 
 /// Merges the reflected user settings over the library defaults and returns
