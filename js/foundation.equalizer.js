@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { onImagesLoaded } from './foundation.util.imageLoader';
 import { GetYoDigits } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Plugin } from './foundation.core.plugin';
 
 /**
@@ -22,7 +24,7 @@ class Equalizer extends Plugin {
    */
   _setup(element, options){
     this.$element = element;
-    this.options  = $.extend({}, Equalizer.defaults, this.$element.data(), options);
+    this.options  = $.extend({}, Equalizer.defaults, datasetOptions(element[0]), options);
     this.className = 'Equalizer'; // ie9 back compat
 
     this._init();
@@ -39,8 +41,9 @@ class Equalizer extends Plugin {
     MediaQuery._init();
 
     this.$watched = $watched.length ? $watched : this.$element.find('[data-equalizer-watch]');
-    this.$element.attr('data-resize', (eqId || GetYoDigits(6, 'eq')));
-    this.$element.attr('data-mutate', (eqId || GetYoDigits(6, 'eq')));
+    // State attributes go through the native layer (7.0 line A, S8).
+    this.$element[0].setAttribute('data-resize', (eqId || GetYoDigits(6, 'eq')));
+    this.$element[0].setAttribute('data-mutate', (eqId || GetYoDigits(6, 'eq')));
 
     this.hasNested = this.$element.find('[data-equalizer]').length > 0;
     this.isNested = this.$element.parentsUntil(document.body, '[data-equalizer]').length > 0;
@@ -55,6 +58,10 @@ class Equalizer extends Plugin {
     var tooSmall;
     if(this.options.equalizeOn){
       tooSmall = this._checkMQ();
+      // Seam (S8): the 'changed.zf.mediaquery' consumer stays on the jQuery
+      // side. MediaQuery still synthesizes that event through a jQuery
+      // trigger with no real-event bridge - the seam flips on both sides in
+      // the MediaQuery slice (same seam as ResponsiveToggle S7 and Tabs S8).
       $(window).on('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
     }else{
       this._events();
@@ -74,12 +81,13 @@ class Equalizer extends Plugin {
    */
   _pauseEvents() {
     this.isOn = false;
+    // jQuery side: the mediaquery seam (see _init) and the mutateme seam
+    // (see _events) keep their jQuery listeners while the mixed state lasts.
     $(window).off('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
-    this.$element.off({
-      '.zf.equalizer': this._bindHandler.onPostEqualizedBound,
-      'resizeme.zf.trigger': this._bindHandler.onResizeMeBound,
-	  'mutateme.zf.trigger': this._bindHandler.onResizeMeBound
-    });
+    this.$element.off('mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
+    // Native side: the resizeme consumer (S4 producer) and the equalizer
+    // lifecycle listeners drop in one pass.
+    Events.off(this.$element[0], 'resizeme.zf.trigger .zf.equalizer');
   }
 
   /**
@@ -105,10 +113,22 @@ class Equalizer extends Plugin {
   _events() {
     this._pauseEvents();
     if(this.hasNested){
-      this.$element.on('postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
+      // S8: the postequalized consumer flips together with its producer
+      // (applyHeight below) in the same commit - both sides of the nested
+      // equalizer chain live on the native event layer now.
+      Events.on(this.$element[0], 'postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
     }else{
-      this.$element.on('resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
-	  this.$element.on('mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
+      // S8: the resizeme consumer flips to the native event layer; the
+      // producer in the Triggers util has dispatched real element-local
+      // events since S4, so this seam closes on the consumer half alone.
+      Events.on(this.$element[0], 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
+      // Seam (S8): the mutateme consumer stays on the jQuery side. The
+      // mutateme ecosystem still carries jQuery-synthesized producers -
+      // element-local triggerHandler forwards (ResponsiveToggle's animated
+      // half) and bubbling triggers (Tabs) - which a real event listener can
+      // never hear. Producer and consumer flip together in the
+      // complex-group slice.
+      this.$element.on('mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
     }
     this.isOn = true;
   }
@@ -226,7 +246,7 @@ class Equalizer extends Plugin {
      * Fires before the heights are applied
      * @event Equalizer#preequalized
      */
-    this.$element.trigger('preequalized.zf.equalizer');
+    Events.trigger(this.$element[0], 'preequalized.zf.equalizer');
 
     this.$watched.css('height', max);
 
@@ -234,7 +254,7 @@ class Equalizer extends Plugin {
      * Fires when the heights have been applied
      * @event Equalizer#postequalized
      */
-     this.$element.trigger('postequalized.zf.equalizer');
+     Events.trigger(this.$element[0], 'postequalized.zf.equalizer');
   }
 
   /**
@@ -249,7 +269,7 @@ class Equalizer extends Plugin {
     /**
      * Fires before the heights are applied
      */
-    this.$element.trigger('preequalized.zf.equalizer');
+    Events.trigger(this.$element[0], 'preequalized.zf.equalizer');
     for (var i = 0, len = groups.length; i < len ; i++) {
       var groupsILength = groups[i].length,
           max = groups[i][groupsILength - 1];
@@ -261,7 +281,7 @@ class Equalizer extends Plugin {
         * Fires before the heights per row are applied
         * @event Equalizer#preequalizedrow
         */
-      this.$element.trigger('preequalizedrow.zf.equalizer');
+      Events.trigger(this.$element[0], 'preequalizedrow.zf.equalizer');
       for (var j = 0, lenJ = (groupsILength-1); j < lenJ ; j++) {
         $(groups[i][j][0]).css({'height':max});
       }
@@ -269,12 +289,12 @@ class Equalizer extends Plugin {
         * Fires when the heights per row have been applied
         * @event Equalizer#postequalizedrow
         */
-      this.$element.trigger('postequalizedrow.zf.equalizer');
+      Events.trigger(this.$element[0], 'postequalizedrow.zf.equalizer');
     }
     /**
      * Fires when the heights have been applied
      */
-     this.$element.trigger('postequalized.zf.equalizer');
+     Events.trigger(this.$element[0], 'postequalized.zf.equalizer');
   }
 
   /**
