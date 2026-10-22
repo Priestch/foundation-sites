@@ -1,5 +1,17 @@
 @use "sass:color";
 
+// 7.0 Sass modularization (M2 line B, slice B10): the self-contained
+// dependency loads as a module (`@use 'motion-ui' as *` — Motion UI does not
+// read Foundation globals, so it needs no import world; the starred alias
+// keeps `motion-ui-transitions` and the example partials' `mui-*` mixins
+// unqualified). The framework itself stays on `@import` for this entry: the
+// foundation-docs package (pinned, import-only) and the docs-local example
+// partials below evaluate against the import world and must splice their CSS
+// at these exact positions, so `@import 'foundation'` remains the load path
+// that feeds them. The former standalone `@import 'settings/settings'` is
+// gone — no pre-import settings overrides are made here and the settings
+// module is forwarded (live-linked) by `scss/foundation.scss` itself.
+
 // The CSS for the Foundation docs is stored in an external codebase:
 // https://github.com/foundation/foundation-docs
 //
@@ -9,9 +21,9 @@
 //
 // Feel free to submit pull requests to foundation-docs like you would Foundation itself!
 
-@import 'settings/settings';
+@use 'motion-ui' as *;
+
 @import 'foundation';
-@import 'motion-ui';
 
 @include foundation-everything($flex: false);
 @include foundation-xy-grid-classes;

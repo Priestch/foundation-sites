@@ -71,22 +71,19 @@ If you're using Compass, open your project's `config.rb` and add the import path
 add_import_path "node_modules/foundation-sites/scss"
 ```
 
-Finally, add an `@import` statement to the top of your primary Sass file. Refer to [Adjusting CSS Output](#adjusting-css-output) below to learn how to control the CSS output of the framework.
+Finally, load the framework as a module at the top of your primary Sass file and include its mixins through the module's namespace. Refer to [Adjusting CSS Output](#adjusting-css-output) below to learn how to control the CSS output of the framework.
 
 ```scss
-@import 'foundation';
+@use 'foundation';
+
+@include foundation.foundation-everything;
 ```
 
-You're also going to want a settings file for your project, which will allow you to modify the default styles of Foundation. **[Download the latest settings file here](https://raw.githubusercontent.com/foundation/foundation-sites/master/scss/settings/_settings.scss)**, add it to your project as `_settings.scss`, then import it *before* Foundation itself.
+You're also going to want a settings file for your project, which will allow you to modify the default styles of Foundation. See [The Settings File](#the-settings-file) below for both configuration workflows.
 
 <div class="callout">
-The settings file needs to import `util/util` from Foundation. Please ensure that the Foundation folder is included in Sass or change `@import util/util` for it to points to the full path of the file. For example, NPM users may need to change the import to `node_modules/foundation-sites/scss/util/util`.
+The module path above is the forward-looking workflow this documentation now teaches. The legacy <code>@import</code> workflow (<code>@import 'settings'; @import 'foundation';</code>) keeps compiling unchanged and is documented in the <a href="#legacy-import-workflow">compatibility appendix</a> &mdash; Foundation 7 keeps both paths alive, but new projects should start with <code>@use</code>, and the Sass project itself will remove <code>@import</code> in Dart Sass 3.0.
 </div>
-
-```scss
-@import 'settings';
-@import 'foundation';
-```
 
 ### Using Compiled CSS
 
@@ -107,83 +104,146 @@ Foundation outputs many classes for its various components. These help developer
 Each component has an **export mixin** which prints out the CSS for that component. If you're cool with having everything, you just need one line of code:
 
 ```scss
-@include foundation-everything;
+@use 'foundation';
+
+@include foundation.foundation-everything;
 ```
 
-Our [starter projects](starter-projects.html) include the full list of imports, making it easy to comment out the components you don't need. A full list is also included below.
+Our [starter projects](starter-projects.html) include the full list of includes, making it easy to comment out the components you don't need. A full list is also included below.
 
 ```scss
-@import 'foundation';
+@use 'foundation';
 
 // Global styles
-@include foundation-global-styles;
-@include foundation-forms;
-@include foundation-typography;
+@include foundation.foundation-global-styles;
+@include foundation.foundation-forms;
+@include foundation.foundation-typography;
 
 // Grids (choose one)
-@include foundation-xy-grid-classes;
-// @include foundation-grid;
-// @include foundation-flex-grid;
+@include foundation.foundation-xy-grid-classes;
+// @include foundation.foundation-grid;
+// @include foundation.foundation-flex-grid;
 
 // Generic components
-@include foundation-button;
-@include foundation-button-group;
-@include foundation-close-button;
-@include foundation-label;
-@include foundation-progress-bar;
-@include foundation-slider;
-@include foundation-switch;
-@include foundation-table;
+@include foundation.foundation-button;
+@include foundation.foundation-button-group;
+@include foundation.foundation-close-button;
+@include foundation.foundation-label;
+@include foundation.foundation-progress-bar;
+@include foundation.foundation-slider;
+@include foundation.foundation-switch;
+@include foundation.foundation-table;
 // Basic components
-@include foundation-badge;
-@include foundation-breadcrumbs;
-@include foundation-callout;
-@include foundation-card;
-@include foundation-dropdown;
-@include foundation-pagination;
-@include foundation-tooltip;
+@include foundation.foundation-badge;
+@include foundation.foundation-breadcrumbs;
+@include foundation.foundation-callout;
+@include foundation.foundation-card;
+@include foundation.foundation-dropdown;
+@include foundation.foundation-pagination;
+@include foundation.foundation-tooltip;
 
 // Containers
-@include foundation-accordion;
-@include foundation-media-object;
-@include foundation-orbit;
-@include foundation-responsive-embed;
-@include foundation-tabs;
-@include foundation-thumbnail;
+@include foundation.foundation-accordion;
+@include foundation.foundation-media-object;
+@include foundation.foundation-orbit;
+@include foundation.foundation-responsive-embed;
+@include foundation.foundation-tabs;
+@include foundation.foundation-thumbnail;
 // Menu-based containers
-@include foundation-menu;
-@include foundation-menu-icon;
-@include foundation-accordion-menu;
-@include foundation-drilldown-menu;
-@include foundation-dropdown-menu;
+@include foundation.foundation-menu;
+@include foundation.foundation-menu-icon;
+@include foundation.foundation-accordion-menu;
+@include foundation.foundation-drilldown-menu;
+@include foundation.foundation-dropdown-menu;
 
 // Layout components
-@include foundation-off-canvas;
-@include foundation-reveal;
-@include foundation-sticky;
-@include foundation-title-bar;
-@include foundation-top-bar;
+@include foundation.foundation-off-canvas;
+@include foundation.foundation-reveal;
+@include foundation.foundation-sticky;
+@include foundation.foundation-title-bar;
+@include foundation.foundation-top-bar;
 
 // Helpers
-@include foundation-float-classes;
-// @include foundation-flex-classes;
-@include foundation-visibility-classes;
-// @include foundation-prototype-classes;
+@include foundation.foundation-float-classes;
+// @include foundation.foundation-flex-classes;
+@include foundation.foundation-visibility-classes;
+// @include foundation.foundation-prototype-classes;
 ```
 
 ---
 
 ## The Settings File
 
-All Foundation projects include a settings file, named `_settings.scss`. If you're using the CLI to create a Foundation for Sites project, you can find the settings file under scss/ (basic template) or src/assets/scss/ (ZURB template). If you're installing the framework standalone using npm, there's a settings file included in this package, which you can move into your own Sass files to work with.
+Every Foundation component ships a set of variables that modify its core structural or visual styles. If there's something you can't customize with a variable, you can just write your own CSS to add it.
 
-Every component includes a set of variables that modify core structural or visual styles. If there's something you can't customize with a variable, you can just write your own CSS to add it.
+Foundation supports two configuration workflows:
+
+- **The settings-module workflow** (`@use`): you keep only the variables you actually changed in a small settings *module*, and each component reads your values through Foundation's configuration pipeline. This is the workflow new projects should adopt.
+- **The legacy settings-file workflow** (`@import`): you copy the full settings template, change values in place, and import it before Foundation. It keeps working unchanged &mdash; see the [compatibility appendix](#legacy-import-workflow).
 
 <div class="callout warning">
   <p>Once you've set up a new project, your settings file can't be automatically updated when new versions change, add, or remove variables. Keep tabs on new <a href="https://github.com/foundation/foundation-sites/releases">Foundation releases</a> so you know when things change.</p>
 </div>
 
-Here's an example set of settings variables. These change the default styling of [buttons](button.html):
+### Settings-Module Workflow
+
+**1. Turn your settings file into a settings module.** Keep only the variables you actually want to change &mdash; the library defaults are merged in for you, so an untouched copy of the settings template is no longer needed. Helper functions like `rem-calc()` still come from `util/util`:
+
+```scss
+// _my-settings.scss
+@import 'util/util'; // keep while the module calls helpers like rem-calc()
+
+$global-radius: 8px;
+$foundation-palette: (
+  "primary": #1240ab,
+  "secondary": #767676,
+  "success": #3adb76,
+  "warning": #ffae00,
+  "alert": #cc4b37,
+);
+$button-padding: 2rem 3rem;
+```
+
+A direct assignment of a palette-derived color such as `$primary-color` wins over the palette derivation. Colors you do not assign directly are derived from the effective `$foundation-palette`.
+
+**2. Reflect the module and pass it to the components you want.** The component mixins of the `foundation-next` entry take your settings map:
+
+```scss
+// main.scss
+@use "sass:meta";
+@use "foundation-next" as fs;
+@use "my-settings" as prefs;
+
+@include fs.foundation-button(meta.module-variables("prefs"));
+@include fs.foundation-table(meta.module-variables("prefs"));
+```
+
+Calling a mixin without arguments (plain `fs.foundation-button`) compiles the component with pure library defaults. Typo'd keys in your module (say `$gobal-radius`) are reported with a `@warn` so they don't fail silently.
+
+<div class="callout">
+The settings-module pipeline currently covers the <strong>button</strong> and <strong>table</strong> components and is being extended component by component. Configure every other component through the <a href="#legacy-import-workflow">legacy workflow</a> for now, and never mix both pipelines in one compilation &mdash; the component CSS would be emitted twice.
+</div>
+
+The pipeline has a few structural constraints worth knowing: each component can be included once per compilation (a module can be configured only once), the includes must sit at the top level of your stylesheet (they cannot be nested inside `@media` or other at-rules), and variables defined inside component partials &mdash; like `$button-radius`, which derives from `$global-radius` &mdash; are re-derived from your ambient settings automatically.
+
+---
+
+## Legacy Import Workflow
+
+<div class="callout">
+This is the classic Foundation workflow, fully supported in Foundation 6. It compiles on Dart Sass today, but the Sass project will remove <code>@import</code> in Dart Sass 3.0, so plan a move to the <a href="#settings-module-workflow">settings-module workflow</a>.
+</div>
+
+**[Download the latest settings file here](https://raw.githubusercontent.com/foundation/foundation-sites/master/scss/settings/_settings.scss)**, add it to your project as `_settings.scss`, then import it *before* Foundation itself. The settings file needs to import `util/util` from Foundation &mdash; ensure the Foundation folder is included in your Sass load paths, or point the import at the full path of the file (for example `node_modules/foundation-sites/scss/util/util` for npm users).
+
+```scss
+@import 'settings';
+@import 'foundation';
+
+@include foundation-everything;
+```
+
+With this workflow you edit the copied settings template in place. Here's an example set of settings variables from that template. These change the default styling of [buttons](button.html):
 
 ```scss
 // Default padding for button.
