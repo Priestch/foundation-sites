@@ -71,7 +71,7 @@ Since October 2026 the project follows a simplified GitFlow: pull requests targe
 
   The stable branch. It contains the latest released version; new releases are merged from `dev` and tagged here. Do not open pull requests against it.
 
-- **`v7`**
+- **`dev-v7`**
 
   The long-lived development branch for the next major version. Work that belongs to 7.0 happens there and is merged back when 7.0 ships.
 
