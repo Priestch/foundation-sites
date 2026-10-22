@@ -10,6 +10,7 @@ var selectorFile = path.join(__dirname, '_selector.scss');
 var unitFile = path.join(__dirname, '_unit.scss');
 var valueFile = path.join(__dirname, '_value.scss');
 var componentsFile = path.join(__dirname, '_components.scss');
+var settingsOverrideFile = path.join(__dirname, '_settings_override.scss');
 
 // Run Tests
 sassTrue.runSass({describe, it, sass }, breakpointFile);
@@ -19,3 +20,4 @@ sassTrue.runSass({describe, it, sass }, selectorFile);
 sassTrue.runSass({describe, it, sass }, unitFile);
 sassTrue.runSass({describe, it, sass }, valueFile);
 sassTrue.runSass({describe, it, sass }, componentsFile);
+sassTrue.runSass({describe, it, sass }, settingsOverrideFile);
