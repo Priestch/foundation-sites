@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
-import { onLoad } from './foundation.core.utils';
+import { onLoad, GetYoDigits } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { onImagesLoaded } from './foundation.util.imageLoader';
@@ -22,7 +23,7 @@ class Tabs extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, Tabs.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Tabs.defaults, datasetOptions(element[0]), options);
     this.className = 'Tabs'; // ie9 back compat
 
     this._init();
@@ -45,8 +46,11 @@ class Tabs extends Plugin {
   _init() {
     var _this = this;
     this._isInitializing = true;
+    // Per-instance id for the native deep-link hashchange namespace (7.0 line
+    // A, S8) - the same shape Reveal/Magellan/Accordion use.
+    this.id = this.$element[0].id || GetYoDigits(6, 'tabs');
 
-    this.$element.attr({'role': 'tablist'});
+    this.$element[0].setAttribute('role', 'tablist');
     this.$tabTitles = this.$element.find(`.${this.options.linkClass}`);
     this.$tabContent = $(`[data-tabs-content="${this.$element[0].id}"]`);
 
@@ -58,20 +62,18 @@ class Tabs extends Plugin {
           linkId = $link[0].id ? $link[0].id : `${hash}-label`,
           $tabContent = $(`#${hash}`);
 
-      $elem.attr({'role': 'presentation'});
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      $elem[0].setAttribute('role', 'presentation');
 
-      $link.attr({
-        'role': 'tab',
-        'aria-controls': hash,
-        'aria-selected': isActive,
-        'id': linkId,
-        'tabindex': isActive ? '0' : '-1'
-      });
+      var link = $link[0];
+      link.setAttribute('role', 'tab');
+      link.setAttribute('aria-controls', hash);
+      link.setAttribute('aria-selected', `${isActive}`);
+      link.setAttribute('id', linkId);
+      link.setAttribute('tabindex', isActive ? '0' : '-1');
 
-      $tabContent.attr({
-        'role': 'tabpanel',
-        'aria-labelledby': linkId
-      });
+      $tabContent[0].setAttribute('role', 'tabpanel');
+      $tabContent[0].setAttribute('aria-labelledby', linkId);
 
       // Save up the initial hash to return to it later when going back in history
       if (isActive) {
@@ -79,11 +81,14 @@ class Tabs extends Plugin {
       }
 
       if(!isActive) {
-        $tabContent.attr('aria-hidden', 'true');
+        $tabContent[0].setAttribute('aria-hidden', 'true');
       }
 
       if(isActive && _this.options.autoFocus){
         _this.onLoadListener = onLoad($(window), function() {
+          // A load callback can land after destroy() nulled the instance
+          // state (the S6 slider guard pattern).
+          if (!_this.$element) { return; }
           $('html, body').animate({ scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, () => {
             $link.focus();
           });
@@ -138,7 +143,11 @@ class Tabs extends Plugin {
          * Fires when the plugin has deeplinked at pageload
          * @event Tabs#deeplink
          */
-        this.$element.trigger('deeplink.zf.tabs', [$link, $anchor]);
+        // S8: real, bubbling CustomEvent - native listeners receive it
+        // directly, still-on-jQuery listeners through the real-event
+        // pass-through (the forwarded $link/$anchor ride in
+        // event.originalEvent.detail for them).
+        Events.trigger(this.$element[0], 'deeplink.zf.tabs', [$link, $anchor]);
       }
     }
 
@@ -164,11 +173,20 @@ class Tabs extends Plugin {
     if (this.options.matchHeight) {
       this._setHeightMqHandler = this._setHeight.bind(this);
 
+      // Seam (S8): the 'changed.zf.mediaquery' consumer stays on the jQuery
+      // side. MediaQuery still synthesizes that event through a jQuery
+      // trigger with no real-event bridge - the seam flips on both sides in
+      // the MediaQuery slice (same seam as ResponsiveToggle S7 and
+      // Equalizer S8).
       $(window).on('changed.zf.mediaquery', this._setHeightMqHandler);
     }
 
     if(this.options.deepLink) {
-      $(window).on('hashchange', this._checkDeepLink);
+      // S8: the deep-link hashchange moves to the native event layer under
+      // the per-instance namespace shape introduced for Reveal's hashchange,
+      // so the destroy path can drop it precisely. Real hashchange events are
+      // unaffected by the namespace.
+      Events.on(window, `hashchange.zf.tabs:${this.id}`, this._checkDeepLink);
     }
   }
 
@@ -179,12 +197,15 @@ class Tabs extends Plugin {
   _addClickHandler() {
     var _this = this;
 
-    this.$element
-      .off('click.zf.tabs')
-      .on('click.zf.tabs', `.${this.options.linkClass}`, function(e){
-        e.preventDefault();
-        _this._handleTabChange($(this));
-      });
+    // S8: the delegated click consumer flips to the native event layer. Its
+    // producers are real user clicks only (the keyboard flow calls
+    // _handleTabChange directly), so this half can move alone; inside the
+    // handler `this` is the matched title element, like jQuery's delegation.
+    Events.off(this.$element[0], 'click.zf.tabs');
+    Events.delegate(this.$element[0], 'click.zf.tabs', `.${this.options.linkClass}`, function(e){
+      e.preventDefault();
+      _this._handleTabChange($(this));
+    });
   }
 
   /**
@@ -194,6 +215,11 @@ class Tabs extends Plugin {
   _addKeyHandler() {
     var _this = this;
 
+    // Seam (S8): the keydown binding stays on jQuery. The coarse keyboard
+    // suite feeds jQuery-synthesized mock keydowns, which can never reach
+    // native listeners; real keydowns keep arriving through jQuery's
+    // pass-through. This half flips when its synthetic producers do
+    // (Keyboard test migration).
     this.$tabTitles.off('keydown.zf.tabs').on('keydown.zf.tabs', function(e){
       if (e.which === 9) return;
 
@@ -280,9 +306,19 @@ class Tabs extends Plugin {
      * Fires when the plugin has successfully changed tabs.
      * @event Tabs#change
      */
+    // Seam (S8): the change production stays on jQuery. Its jQuery-side
+    // consumers (the coarse suite, user code) read the forwarded collections
+    // as trailing handler arguments - a real CustomEvent delivers them only
+    // in event.originalEvent.detail, which would silently break those
+    // signatures. This producer flips together with that consumer base in
+    // the wrap-up/test-migration slice.
     this.$element.trigger('change.zf.tabs', [$target, $targetContent]);
 
-    //fire to children a mutation event
+    // Seam (S8): the mutateme forward stays on jQuery. Its consumer base
+    // (Equalizer/Drilldown/Sticky) still listens on the jQuery side, and the
+    // mutateme ecosystem also carries element-local triggerHandler producers
+    // (ResponsiveToggle) that cannot bridge to real events - the whole
+    // producer/consumer set flips together in the complex-group slice.
     $targetContent.find("[data-mutate]").trigger("mutateme.zf.trigger");
   }
 
@@ -296,15 +332,14 @@ class Tabs extends Plugin {
           hash = $tabLink.attr('data-tabs-target') || $tabLink[0].hash.slice(1),
           $targetContent = this.$tabContent.find(`#${hash}`);
 
-      $target.addClass(`${this.options.linkActiveClass}`);
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      $target[0].classList.add(`${this.options.linkActiveClass}`);
 
-      $tabLink.attr({
-        'aria-selected': 'true',
-        'tabindex': '0'
-      });
+      $tabLink[0].setAttribute('aria-selected', 'true');
+      $tabLink[0].setAttribute('tabindex', '0');
 
-      $targetContent
-        .addClass(`${this.options.panelActiveClass}`).removeAttr('aria-hidden');
+      $targetContent[0].classList.add(`${this.options.panelActiveClass}`);
+      $targetContent[0].removeAttribute('aria-hidden');
   }
 
   /**
@@ -313,17 +348,17 @@ class Tabs extends Plugin {
    * @function
    */
   _collapseTab($target) {
-    var $targetAnchor = $target
-      .removeClass(`${this.options.linkActiveClass}`)
-      .find('[role="tab"]')
-      .attr({
-        'aria-selected': 'false',
-        'tabindex': -1
-      });
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    var $tabLink = $target.find('[role="tab"]');
+    $target[0].classList.remove(`${this.options.linkActiveClass}`);
+    $tabLink[0].setAttribute('aria-selected', 'false');
+    $tabLink[0].setAttribute('tabindex', '-1');
 
-    $(`#${$targetAnchor.attr('aria-controls')}`)
-      .removeClass(`${this.options.panelActiveClass}`)
-      .attr({ 'aria-hidden': 'true' })
+    var panel = document.getElementById($tabLink[0].getAttribute('aria-controls'));
+    if (panel) {
+      panel.classList.remove(`${this.options.panelActiveClass}`);
+      panel.setAttribute('aria-hidden', 'true');
+    }
   }
 
   /**
@@ -341,7 +376,11 @@ class Tabs extends Plugin {
       * Fires when the plugin has successfully collapsed tabs.
       * @event Tabs#collapse
       */
-      this.$element.trigger('collapse.zf.tabs', [$activeTab]);
+      // S8: real, bubbling CustomEvent - native listeners receive it
+      // directly, still-on-jQuery listeners through the real-event
+      // pass-through (the forwarded $activeTab rides in
+      // event.originalEvent.detail for them).
+      Events.trigger(this.$element[0], 'collapse.zf.tabs', [$activeTab]);
     }
   }
 
@@ -425,14 +464,18 @@ class Tabs extends Plugin {
       .find(`.${this.options.panelClass}`)
       .hide();
 
+    // Native side: the delegated click listener and the deep-link
+    // hashchange go with their namespaces.
+    Events.off(this.$element[0], 'click.zf.tabs');
+
     if (this.options.matchHeight) {
       if (this._setHeightMqHandler != null) {
-         $(window).off('changed.zf.mediaquery', this._setHeightMqHandler);
+         $(window).off('changed.zf.mediaquery', this._setHeightMqHandler); // jQuery seam, see _events
       }
     }
 
     if (this.options.deepLink) {
-      $(window).off('hashchange', this._checkDeepLink);
+      Events.off(window, `hashchange.zf.tabs:${this.id}`);
     }
 
     if (this.onLoadListener) {
@@ -460,7 +503,7 @@ Tabs.defaults = {
   deepLinkSmudge: false,
 
   /**
-   * If `deepLinkSmudge` is enabled, animation time (ms) for the deep link adjustment
+   * If `deepLink` is enabled, animation time (ms) for the deep link adjustment
    * @option
    * @type {number}
    * @default 300
@@ -468,7 +511,7 @@ Tabs.defaults = {
   deepLinkSmudgeDelay: 300,
 
   /**
-   * If `deepLinkSmudge` is enabled, animation offset from the top for the deep link adjustment
+   * If `deepLink` is enabled, animation offset from the top for the deep link adjustment
    * @option
    * @type {number}
    * @default 0
