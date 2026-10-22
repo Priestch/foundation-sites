@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
+import { datasetOptions, visible } from './foundation.util.dom';
 import { Keyboard } from './foundation.util.keyboard';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Motion } from './foundation.util.motion';
@@ -15,8 +16,39 @@ import { Touch } from './foundation.util.touch'
  * @requires foundation.util.touch
  * @requires foundation.util.triggers
  * @requires foundation.util.mediaQuery
+ * @requires foundation.util.events
+ * @requires foundation.util.dom
  * @requires foundation.util.motion if using animations
  */
+
+// `$('.reveal:visible')` replacement (7.0 line A, S6): the compound
+// pseudo-class has no native equivalent, so the scan runs through
+// querySelectorAll and Dom's narrow visibility filter per element.
+function countVisibleReveals() {
+  let count = 0;
+  document.querySelectorAll('.reveal').forEach(element => {
+    if (visible(element)) { count++; }
+  });
+  return count;
+}
+
+// `$(document).height()` / `$(window).height()` equivalents. The max()
+// formula is load-bearing: while `html.is-reveal-open` is applied (the
+// stylesheet puts `position: fixed` on html), documentElement.scrollHeight
+// collapses to the viewport, but body's scrollHeight still reflects the
+// content - jQuery's formula kept seeing "page taller than viewport" and so
+// kept the zf-has-scroll scrollbar class; a naive
+// documentElement.scrollHeight comparison would drop it and re-introduce
+// the scrollbar shift the class exists to prevent.
+function documentHeight() {
+  const body = document.body;
+  const html = document.documentElement;
+  return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+}
+
+function windowHeight() {
+  return document.documentElement.clientHeight;
+}
 
 class Reveal extends Plugin {
   /**
@@ -28,7 +60,7 @@ class Reveal extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, Reveal.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Reveal.defaults, datasetOptions(element[0]), options);
     this.className = 'Reveal'; // ie9 back compat
     this._init();
 
@@ -47,7 +79,7 @@ class Reveal extends Plugin {
    */
   _init() {
     MediaQuery._init();
-    this.id = this.$element.attr('id');
+    this.id = this.$element[0].id;
     this.isActive = false;
     this.cached = {mq: MediaQuery.current};
 
@@ -58,7 +90,7 @@ class Reveal extends Plugin {
       'tabindex': 0
     });
 
-    if (this.options.fullScreen || this.$element.hasClass('full')) {
+    if (this.options.fullScreen || this.$element[0].classList.contains('full')) {
       this.options.fullScreen = true;
       this.options.overlay = false;
     }
@@ -74,10 +106,12 @@ class Reveal extends Plugin {
     });
 
     if(this.$overlay) {
-      this.$element.detach().appendTo(this.$overlay);
+      // appendChild moves the element - the same net effect as the former
+      // detach().appendTo() jQuery dance.
+      this.$overlay[0].appendChild(this.$element[0]);
     } else {
-      this.$element.detach().appendTo($(this.options.appendTo));
-      this.$element.addClass('without-overlay');
+      document.querySelector(this.options.appendTo).appendChild(this.$element[0]);
+      this.$element[0].classList.add('without-overlay');
     }
     this._events();
     if (this.options.deepLink && window.location.hash === ( `#${this.id}`)) {
@@ -87,6 +121,9 @@ class Reveal extends Plugin {
 
   /**
    * Creates an overlay div to display behind the modal.
+   * The element is created and appended natively (7.0 line A, S6); it is
+   * stored as a jQuery collection because the public `plugin.$overlay`
+   * surface stays jQuery in the mixed state.
    * @private
    */
   _makeOverlay() {
@@ -96,9 +133,25 @@ class Reveal extends Plugin {
       additionalOverlayClasses = ' ' + this.options.additionalOverlayClasses;
     }
 
-    return $('<div></div>')
-      .addClass('reveal-overlay' + additionalOverlayClasses)
-      .appendTo(this.options.appendTo);
+    const overlay = document.createElement('div');
+    overlay.className = 'reveal-overlay' + additionalOverlayClasses;
+    document.querySelector(this.options.appendTo).appendChild(overlay);
+    return $(overlay);
+  }
+
+  /**
+   * Native stand-in for jQuery's `.show()`: clears an inline display
+   * override and, when the stylesheet still hides the element (`.reveal`
+   * and `.reveal-overlay` ship `display: none`), falls back to the default
+   * display of a block element - what jQuery's getDefaultDisplay resolved
+   * to for everything this plugin shows.
+   * @private
+   */
+  _show(element) {
+    element.style.display = '';
+    if (window.getComputedStyle(element).display === 'none') {
+      element.style.display = 'block';
+    }
   }
 
   /**
@@ -146,33 +199,43 @@ class Reveal extends Plugin {
    */
   _events() {
     var _this = this;
+    const element = this.$element[0];
 
-    this.$element.on({
-      'open.zf.trigger': this.open.bind(this),
-      'close.zf.trigger': (event, $element) => {
-        if ((event.target === _this.$element[0]) ||
-            ($(event.target).parents('[data-closable]')[0] === $element)) { // only close reveal when it's explicitly called
-          return this.close.apply(this);
-        }
-      },
-      'toggle.zf.trigger': this.toggle.bind(this),
-      'resizeme.zf.trigger': function() {
-        _this._updatePosition();
+    // S4/S6: the Triggers util produces open/toggle.zf.trigger as element-
+    // local dual dispatches and close.zf.trigger as a real bubbling event;
+    // this consumer listens on the native side of that seam.
+    Events.on(element, 'open.zf.trigger', this.open.bind(this));
+    Events.on(element, 'close.zf.trigger', (event, $element) => {
+      if ((event.target === _this.$element[0]) ||
+          ($(event.target).parents('[data-closable]')[0] === $element)) { // only close reveal when it's explicitly called
+        return this.close.apply(this);
       }
+    });
+    Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
+    Events.on(element, 'resizeme.zf.trigger', function() {
+      _this._updatePosition();
     });
 
     if (this.options.closeOnClick && this.options.overlay) {
-      this.$overlay.off('.zf.reveal').on('click.zf.reveal tap.zf.reveal', function(e) {
+      const closeOnOverlayEvent = function(e) {
         if (e.target === _this.$element[0] ||
-          $.contains(_this.$element[0], e.target) ||
-            !$.contains(document, e.target)) {
+          _this.$element[0].contains(e.target) ||
+            !document.contains(e.target)) {
               return;
         }
         _this.close();
-      });
+      };
+      // The M1-fixed off-then-on order is kept: one handler pair per
+      // overlay, rebound cleanly on re-init. The click half lives on the
+      // native event layer; the tap half stays on jQuery - the Touch util
+      // synthesizes 'tap' through jQuery trigger in the mixed state, and a
+      // jQuery synthetic event cannot reach native listeners.
+      Events.off(this.$overlay[0], '.zf.reveal');
+      Events.on(this.$overlay[0], 'click.zf.reveal', closeOnOverlayEvent);
+      $(this.$overlay).off('.zf.reveal').on('tap.zf.reveal', closeOnOverlayEvent);
     }
     if (this.options.deepLink) {
-      $(window).on(`hashchange.zf.reveal:${this.id}`, this._handleState.bind(this));
+      Events.on(window, `hashchange.zf.reveal:${this.id}`, this._handleState.bind(this));
     }
   }
 
@@ -190,10 +253,11 @@ class Reveal extends Plugin {
   * @param {number} scrollTop - Scroll to visually apply, window current scroll by default
   */
   _disableScroll(scrollTop) {
-    scrollTop = scrollTop || $(window).scrollTop();
-    if ($(document).height() > $(window).height()) {
-      $("html")
-        .css("top", -scrollTop);
+    scrollTop = scrollTop || window.scrollY;
+    if (documentHeight() > windowHeight()) {
+      // The px unit is explicit on purpose: a bare number assigned to a
+      // native style property is silently dropped (jQuery appended it).
+      document.documentElement.style.top = `${-scrollTop}px`;
     }
   }
 
@@ -202,11 +266,10 @@ class Reveal extends Plugin {
   * @param {number} scrollTop - Scroll to restore, html "top" property by default (as set by `_disableScroll`)
   */
   _enableScroll(scrollTop) {
-    scrollTop = scrollTop || parseInt($("html").css("top"), 10);
-    if ($(document).height() > $(window).height()) {
-      $("html")
-        .css("top", "");
-      $(window).scrollTop(-scrollTop);
+    scrollTop = scrollTop || parseInt(document.documentElement.style.top, 10);
+    if (documentHeight() > windowHeight()) {
+      document.documentElement.style.top = "";
+      window.scrollTo(0, -scrollTop);
     }
   }
 
@@ -234,31 +297,31 @@ class Reveal extends Plugin {
     }
 
     // Remember anchor that opened it to set focus back later, have general anchors as fallback
-    this.$activeAnchor = $(document.activeElement).is(this.$anchor) ? $(document.activeElement) : this.$anchor;
+    this.$activeAnchor = this.$anchor.toArray().indexOf(document.activeElement) > -1 ? $(document.activeElement) : this.$anchor;
 
     this.isActive = true;
 
     // Make elements invisible, but remove display: none so we can get size and positioning
-    this.$element
-        .css({ 'visibility': 'hidden' })
-        .show()
-        .scrollTop(0);
+    this.$element[0].style.visibility = 'hidden';
+    this._show(this.$element[0]);
+    this.$element[0].scrollTop = 0;
     if (this.options.overlay) {
-      this.$overlay.css({'visibility': 'hidden'}).show();
+      this.$overlay[0].style.visibility = 'hidden';
+      this._show(this.$overlay[0]);
     }
 
     this._updatePosition();
 
-    this.$element
-      .hide()
-      .css({ 'visibility': '' });
+    this.$element[0].style.display = 'none';
+    this.$element[0].style.visibility = '';
 
     if(this.$overlay) {
-      this.$overlay.css({'visibility': ''}).hide();
-      if(this.$element.hasClass('fast')) {
-        this.$overlay.addClass('fast');
-      } else if (this.$element.hasClass('slow')) {
-        this.$overlay.addClass('slow');
+      this.$overlay[0].style.visibility = '';
+      this.$overlay[0].style.display = 'none';
+      if(this.$element[0].classList.contains('fast')) {
+        this.$overlay[0].classList.add('fast');
+      } else if (this.$element[0].classList.contains('slow')) {
+        this.$overlay[0].classList.add('slow');
       }
     }
 
@@ -269,10 +332,17 @@ class Reveal extends Plugin {
        * Closes any other modals that are currently open
        * @event Reveal#closeme
        */
+      // Seam (S6): the closeme production stays on jQuery. The Triggers
+      // closeMeListener is still registered through jQuery and reads the
+      // plugin id from the handler's second argument and the plugin name
+      // from the jQuery event namespace - a real CustomEvent would deliver
+      // neither (extra params stay in event.originalEvent.detail for jQuery
+      // handlers, and real events carry no namespace), so this producer
+      // flips together with that listener in the Triggers-owned slice.
       this.$element.trigger('closeme.zf.reveal', this.id);
     }
 
-    if ($('.reveal:visible').length === 0) {
+    if (countVisibleReveals() === 0) {
       this._disableScroll();
     }
 
@@ -300,12 +370,17 @@ class Reveal extends Plugin {
         }
       });
     }
-    // jQuery method of reveal
+    // Native method of reveal
     else {
+      // S6: display is applied synchronously, exactly where jQuery's
+      // `.show(duration)` restored it. The legacy fx tween (a size/opacity
+      // "grow" that ran for non-zero showDelay values) is dropped - the
+      // display and event contracts never depended on it, and the option
+      // never delayed the display flip in the first place.
       if (this.options.overlay) {
-        this.$overlay.show(0);
+        this._show(this.$overlay[0]);
       }
-      this.$element.show(this.options.showDelay);
+      this._show(this.$element[0]);
     }
 
     // handle accessibility
@@ -325,7 +400,7 @@ class Reveal extends Plugin {
      * Fires when the modal has successfully opened.
      * @event Reveal#open
      */
-    this.$element.trigger('open.zf.reveal');
+    Events.trigger(this.$element[0], 'open.zf.reveal');
   }
 
   /**
@@ -341,12 +416,12 @@ class Reveal extends Plugin {
    */
   _addGlobalClasses() {
     const updateScrollbarClass = () => {
-      $('html').toggleClass('zf-has-scroll', !!($(document).height() > $(window).height()));
+      document.documentElement.classList.toggle('zf-has-scroll', documentHeight() > windowHeight());
     };
 
-    this.$element.on('resizeme.zf.trigger.revealScrollbarListener', () => updateScrollbarClass());
+    Events.on(this.$element[0], 'resizeme.zf.trigger.revealScrollbarListener', () => updateScrollbarClass());
     updateScrollbarClass();
-    $('html').addClass('is-reveal-open');
+    document.documentElement.classList.add('is-reveal-open');
   }
 
   /**
@@ -354,9 +429,9 @@ class Reveal extends Plugin {
    * @private
    */
   _removeGlobalClasses() {
-    this.$element.off('resizeme.zf.trigger.revealScrollbarListener');
-    $('html').removeClass('is-reveal-open');
-    $('html').removeClass('zf-has-scroll');
+    Events.off(this.$element[0], 'resizeme.zf.trigger.revealScrollbarListener');
+    document.documentElement.classList.remove('is-reveal-open');
+    document.documentElement.classList.remove('zf-has-scroll');
   }
 
   /**
@@ -369,15 +444,23 @@ class Reveal extends Plugin {
     this.focusableElements = Keyboard.findFocusable(this.$element);
 
     if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
-      $('body').on('click.zf.reveal tap.zf.reveal', function(e) {
+      const closeOnBodyEvent = function(e) {
         if (e.target === _this.$element[0] ||
-          $.contains(_this.$element[0], e.target) ||
-            !$.contains(document, e.target)) { return; }
+          _this.$element[0].contains(e.target) ||
+            !document.contains(e.target)) { return; }
         _this.close();
-      });
+      };
+      // Same split as the overlay handler: click on the native layer, tap
+      // on jQuery until the Touch util migrates.
+      Events.on(document.body, 'click.zf.reveal', closeOnBodyEvent);
+      $(document.body).on('tap.zf.reveal', closeOnBodyEvent);
     }
 
     if (this.options.closeOnEsc) {
+      // Seam (S6): the ESC keydown stays on jQuery. `$(window).trigger()`
+      // dispatches purely synthetically - window has no `keydown()` method
+      // that could produce the real event native listeners need - so this
+      // consumer cannot flip before its synthetic producers do.
       $(window).on(`keydown.zf.reveal:${this.id}`, function(e) {
         Keyboard.handleKey(e, 'Reveal', {
           close: function() {
@@ -396,7 +479,7 @@ class Reveal extends Plugin {
    * @fires Reveal#closed
    */
   close() {
-    if (!this.isActive || !this.$element.is(':visible')) {
+    if (!this.isActive || !visible(this.$element[0])) {
       return false;
     }
     var _this = this;
@@ -409,12 +492,16 @@ class Reveal extends Plugin {
 
       Motion.animateOut(this.$element, this.options.animationOut, finishUp);
     }
-    // jQuery method of hiding
+    // Native method of hiding
     else {
-      this.$element.hide(this.options.hideDelay);
+      this.$element[0].style.display = 'none';
 
       if (this.options.overlay) {
-        this.$overlay.hide(0, finishUp);
+        this.$overlay[0].style.display = 'none';
+        // finishUp keeps its after-completion timing contract: 6.x ran it
+        // from `.hide(0, finishUp)`, one macrotask after the call, and it
+        // now runs once the (aligned) hideDelay has elapsed.
+        setTimeout(finishUp, this.options.hideDelay);
       }
       else {
         finishUp();
@@ -425,7 +512,8 @@ class Reveal extends Plugin {
     $(window).off(`keydown.zf.reveal:${this.id}`);
 
     if (!this.options.overlay && this.options.closeOnClick) {
-      $('body').off('click.zf.reveal tap.zf.reveal');
+      Events.off(document.body, 'click.zf.reveal');
+      $(document.body).off('tap.zf.reveal');
     }
 
     this.$element.off('keydown.zf.reveal');
@@ -435,9 +523,9 @@ class Reveal extends Plugin {
       // Get the current top before the modal is closed and restore the scroll after.
       // TODO: use component properties instead of HTML properties
       // See https://github.com/foundation/foundation-sites/pull/10786
-      var scrollTop = parseInt($("html").css("top"), 10);
+      var scrollTop = parseInt(document.documentElement.style.top, 10);
 
-      if ($('.reveal:visible').length  === 0) {
+      if (countVisibleReveals() === 0) {
         _this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
       }
 
@@ -445,7 +533,7 @@ class Reveal extends Plugin {
 
       _this.$element.attr('aria-hidden', true);
 
-      if ($('.reveal:visible').length  === 0) {
+      if (countVisibleReveals() === 0) {
         _this._enableScroll(scrollTop);
       }
 
@@ -453,7 +541,7 @@ class Reveal extends Plugin {
       * Fires when the modal is done closing.
       * @event Reveal#closed
       */
-      _this.$element.trigger('closed.zf.reveal');
+      Events.trigger(_this.$element[0], 'closed.zf.reveal');
     }
 
     /**
@@ -501,15 +589,23 @@ class Reveal extends Plugin {
    */
   _destroy() {
     if (this.options.overlay) {
-      this.$element.appendTo($(this.options.appendTo)); // move $element outside of $overlay to prevent error unregisterPlugin()
-      this.$overlay.hide().off().remove();
+      // move $element outside of $overlay to prevent error unregisterPlugin()
+      document.querySelector(this.options.appendTo).appendChild(this.$element[0]);
+      this.$overlay[0].style.display = 'none';
+      Events.off(this.$overlay[0]);
+      $(this.$overlay).off();
+      this.$overlay[0].remove();
     }
-    this.$element.hide().off();
-    this.$anchor.off('.zf');
+    this.$element[0].style.display = 'none';
+    Events.off(this.$element[0]);
+    this.$element.off();
+    Events.off(this.$anchor[0], '.zf');
+    $(this.$anchor).off('.zf');
+    Events.off(window, `.zf.reveal:${this.id}`);
     $(window).off(`.zf.reveal:${this.id}`)
     if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
 
-    if ($('.reveal:visible').length  === 0) {
+    if (countVisibleReveals() === 0) {
       this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
     }
   };

@@ -265,6 +265,9 @@ class Slider extends Plugin {
     var moveTime = this.$element.data('dragging') ? 1000/60 : this.options.moveTime;
 
     Move(moveTime, $hndl, function() {
+      // A Move chain can complete after the slider was destroyed (the
+      // completion runs off a requestAnimationFrame) and options are gone.
+      if (!_this.options) { return; }
       // adjusting the left/top property of the handle, based on the percentage calculated above
       // if movement isNaN, that is because the slider is hidden and we cannot determine handle width,
       // fall back to next best guess.
@@ -286,6 +289,8 @@ class Slider extends Plugin {
 
     if (this.initialized) {
       this.$element.one('finished.zf.animate', function() {
+        // the chain can fire after destroy() (see the Move callback above)
+        if (!_this.$element) { return; }
         /**
          * Fires when the handle is done moving.
          * @event Slider#moved

@@ -72,35 +72,42 @@ describe('Slider', function() {
     it('fires changed.zf.slider event', function(done) {
       $html = $(template).appendTo('body');
       plugin = new Foundation.Slider($html, {changedDelay: 50});
+      var slider = plugin;
 
       $html.on('changed.zf.slider', function(e, $handle) {
-        $handle[0].should.be.equal(plugin.$handle[0]);
+        $handle[0].should.be.equal(slider.$handle[0]);
         done();
       });
 
-      // Rapidly change to see if event fires only once
+      // Rapidly change to see if event fires only once. Timer jitter can
+      // outlast the test (afterEach destroys the plugin), so each tick bails
+      // once its instance is torn down instead of throwing uncaught.
       for (let i = 0; i < 5; i++) {
         setTimeout(function() {
-          plugin._setHandlePos(plugin.$handle, i * 10, true);
+          if (!slider.$element) { return; }
+          slider._setHandlePos(slider.$handle, i * 10, true);
         }, i * 20);
       }
     });
     it('fires moved.zf.slider event', function(done) {
       $html = $(template).appendTo('body');
       plugin = new Foundation.Slider($html, {});
+      var slider = plugin;
 
       let timesCallbackCalled = 0;
       $html.on('moved.zf.slider', function(e, $handle) {
         if (++timesCallbackCalled === 4) {
-          $handle[0].should.be.equal(plugin.$handle[0]);
+          $handle[0].should.be.equal(slider.$handle[0]);
           done();
         }
       });
 
-      // Rapidly change to see if event fires multiple times
+      // Rapidly change to see if event fires multiple times. Same teardown
+      // guard as the changed.zf.slider test above.
       for (let i = 0; i < 5; i++) {
         setTimeout(function() {
-          plugin._setHandlePos(plugin.$handle, i * 10, true);
+          if (!slider.$element) { return; }
+          slider._setHandlePos(slider.$handle, i * 10, true);
         }, i * 20);
       }
     });
