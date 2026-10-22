@@ -1,0 +1,105 @@
+// `scss/util` module-transition suite (M2 line B, slice B3).
+//
+// Pins the contracts introduced by turning the util partials into `@use`
+// modules behind a pure `@forward` facade (`scss/util/_util.scss`):
+// - @import consumers still see every util member in their global scope;
+// - settings overrides assigned through the import world win over module
+//   `!default` declarations in both assignments seen here (live-linked
+//   storage), including when assigned *after* the facade was loaded;
+// - the breakpoint iterators pass the current breakpoint through `@content`
+//   explicitly (`using ($size)`), replacing the old `$-zf-size` global writes;
+// - `zf-breakpoint-value()` passes the resolved value through `@content`
+//   (`using ($bp-value)`), replacing the old `$-zf-bp-value` global;
+// - the module-private breakpoint context stays reachable through
+//   `zf-current-breakpoint()` inside `breakpoint()` content.
+
+@use "sass:map";
+
+@import "true";
+
+@import '../../scss/util/util';
+
+@include describe('util module facade') {
+
+  @include it('exposes the forwarded module members to @import consumers [function]') {
+    @include assert-equal(rem-calc(32px), 2rem,
+      'resolves rem-calc() through the facade');
+
+    @include assert-equal(strip-unit(4px), 4,
+      'resolves strip-unit() through the facade');
+
+    @include assert-equal(breakpoint(medium), '(min-width: 40em)',
+      'resolves breakpoint() through the facade');
+  }
+
+  @include it('settings overrides assigned after the import reach the modules [function]') {
+    $old-font-size: $global-font-size;
+    $global-font-size: 200% !global;
+
+    @include assert-equal(rem-calc(32px), 1rem,
+      'rem-calc() picks up the overridden $global-font-size (32px base)');
+
+    $global-font-size: $old-font-size !global;
+  }
+
+  @include it('settings overrides of the breakpoints map reach the modules [function]') {
+    $old-breakpoints: $breakpoints;
+    $breakpoints: map.merge($breakpoints, (medium: 700px)) !global;
+
+    @include assert-equal(breakpoint(medium), '(min-width: 43.75em)',
+      'breakpoint() picks up the overridden medium value');
+
+    $breakpoints: $old-breakpoints !global;
+  }
+
+  @include it('zf-each-breakpoint passes the breakpoint to @content') {
+    @include assert {
+      @include output($selector: false) {
+        @include zf-each-breakpoint using ($size) {
+          .facade-#{$size}-probe {
+            position: relative;
+          }
+        }
+      }
+      @include expect($selector: false) {
+        .facade-small-probe {
+          position: relative;
+        }
+        @media print, screen and (min-width: 40em) {
+          .facade-medium-probe {
+            position: relative;
+          }
+        }
+        @media print, screen and (min-width: 64em) {
+          .facade-large-probe {
+            position: relative;
+          }
+        }
+      }
+    }
+  }
+
+  @include it('zf-breakpoint-value passes the resolved value to @content') {
+    @include assert {
+      @include output($selector: false) {
+        @include zf-breakpoint-value(medium, (medium: 8px)) using ($bp-value) {
+          .facade-bp-value-probe {
+            margin: $bp-value;
+          }
+        }
+      }
+      @include expect($selector: false) {
+        .facade-bp-value-probe {
+          margin: 8px;
+        }
+      }
+    }
+  }
+
+  @include it('zf-current-breakpoint() reads the module context inside breakpoint() [function]') {
+    @include breakpoint(large) {
+      @include assert-equal(zf-current-breakpoint(), large,
+        'the breakpoint() content context is visible to the accessor');
+    }
+  }
+}
