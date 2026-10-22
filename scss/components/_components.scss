@@ -6,14 +6,13 @@
 /// @group components
 ////
 
-// 7.0 Sass modularization (M2 line B, slices B6-B8): the scss/components
-// partials become real `@use` modules slice by slice, one module per partial
+// 7.0 Sass modularization (M2 line B, slices B6-B8): every scss/components
+// partial is a real `@use` module now, one module per partial
 // (*-module.scss) behind a pure `@forward` facade at the legacy import path
 // (foundation.scss, docs, customizer and the scss/next load units all
-// `@import` the individual partials unchanged). This aggregator forwards the
-// modules themselves, so a `@use "components/components"` consumer gets
-// every forwarded member with the module cells live-linked to its own import
-// world.
+// `@import` the individual partials unchanged). This aggregator forwards all
+// 34 modules, so a `@use "components/components"` consumer gets every member
+// with the module cells live-linked to its own import world.
 //
 // Where the members live:
 //
@@ -75,3 +74,7 @@
 @forward "sticky-module";
 @forward "title-bar-module" hide $titlebar-icon-color, $titlebar-icon-color-hover;
 @forward "top-bar-module";
+// Helpers (B8, documentation-level deprecations in 6.10)
+@forward "float-module";
+@forward "flex-module";
+@forward "visibility-module";

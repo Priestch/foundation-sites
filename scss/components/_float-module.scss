@@ -1,0 +1,34 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group float
+////
+
+// Util helper (clearfix() from scss/util/_mixins.scss — NOT the util facade:
+// its own-scope issue-#12080 `*-color: null !default` patch cells would
+// shadow the mirrors under a starred use). The float classes read no
+// settings; they ship for the float grid (6.10 documentation-level
+// deprecation, removal in 7.0 — see the facade comment).
+@use '../util/mixins' as *;
+
+@mixin foundation-float-classes {
+  .float-left {
+    float: left !important;
+  }
+
+  .float-right {
+    float: right !important;
+  }
+
+  .float-center {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .clearfix {
+    @include clearfix;
+  }
+}
