@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, GetYoDigits } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
 import { SmoothScroll } from './foundation.smoothScroll';
 
 import { Triggers } from './foundation.util.triggers';
@@ -217,7 +218,7 @@ class Magellan extends Plugin {
         .find(`.${this.options.activeClass}`).removeClass(this.options.activeClass);
 
     $(window).off('hashchange', this._deepLinkScroll)
-    if (this.onLoadListener) $(window).off(this.onLoadListener);
+    if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
   }
 }
 

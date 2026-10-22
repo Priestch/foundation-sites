@@ -294,8 +294,12 @@ function trigger(el, types, params) {
   return el;
 }
 
-// Non-bubbling, non-cancelling-trigger variant: runs the handlers of the
-// element itself only and returns the last non-undefined result.
+// Non-bubbling variant: runs the handlers of the element itself only and
+// returns the last non-undefined result. Deliberately NOT a real dispatch:
+// a real event would bypass namespace filtering on the jQuery side (jQuery
+// cannot filter real DOM events), so the mixed-state delivery to still-on-
+// jQuery consumers is done by the callers that own the seam (Triggers util)
+// through jQuery's own filtered triggerHandler.
 function triggerHandler(el, types, params) {
   const args = params == null ? [] : (Array.isArray(params) ? params : [params]);
   let result;

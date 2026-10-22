@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, GetYoDigits } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Triggers } from './foundation.util.triggers';
 
@@ -404,7 +405,7 @@ class Sticky extends Plugin {
       this.$anchor.off('change.zf.sticky');
     }
     if (this.scrollListener) $(window).off(this.scrollListener)
-    if (this.onLoadListener) $(window).off(this.onLoadListener)
+    if (this.onLoadListener) Events.off(window, this.onLoadListener) // S4: onLoad registers on the native event layer
 
     if (this.wasWrapped) {
       this.$element.unwrap();

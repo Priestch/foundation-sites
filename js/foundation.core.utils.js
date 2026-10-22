@@ -1,6 +1,13 @@
 import $ from 'jquery';
+import { Events } from './foundation.util.events';
 
 // Core Foundation Utilities, utilized in a number of places.
+
+// Accepts both the jQuery objects un-migrated callers still pass and plain
+// elements, so the helper survives the line-A migration unchanged.
+function toElement(obj) {
+  return obj && obj[0] !== undefined ? obj[0] : obj;
+}
 
   /**
    * Returns a boolean for RTL support
@@ -57,8 +64,14 @@ function transitionend($elem){
   if (end) {
     return end;
   } else {
+    // Fallback for engines without transitions (not reached on the baseline
+    // browsers). Dual dispatch like the Triggers util: the native layer for
+    // migrated consumers, jQuery's filtered triggerHandler for the
+    // `.one(transitionend($elem), ...)` listeners of un-migrated ones.
+    let el = toElement($elem);
     setTimeout(function(){
-      $elem.triggerHandler('transitionend', [$elem]);
+      Events.triggerHandler(el, 'transitionend', [el]);
+      $(el).triggerHandler('transitionend', [el]);
     }, 1);
     return 'transitionend';
   }
@@ -79,15 +92,20 @@ function transitionend($elem){
 function onLoad($elem, handler) {
   const didLoad = document.readyState === 'complete';
   const eventType = (didLoad ? '_didLoad' : 'load') + '.zf.util.onLoad';
-  const cb = () => $elem.triggerHandler(eventType);
 
   if ($elem) {
-    if (handler) $elem.one(eventType, handler);
+    const el = toElement($elem);
+    // Local, native-only dispatch: the handler is registered right below on
+    // the native layer, and a real echoed 'load' on window would re-notify
+    // third-party window-load listeners.
+    const cb = () => Events.triggerHandler(el, eventType);
+
+    if (handler) Events.one(el, eventType, handler);
 
     if (didLoad)
       setTimeout(cb);
     else
-      $(window).one('load', cb);
+      Events.one(window, 'load', cb);
   }
 
   return eventType;

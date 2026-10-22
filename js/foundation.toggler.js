@@ -102,11 +102,11 @@ class Toggler extends Plugin {
    * @private
    */
   _events() {
-    // Mixed-state seam (7.0 line A, S3): the Triggers util still dispatches
-    // 'toggle.zf.trigger' through jQuery's triggerHandler, which native
-    // listeners cannot receive. This consumer stays on the jQuery side until
-    // the Triggers util migrates (S4) - then both sides flip to Events.
-    this.$element.off('toggle.zf.trigger').on('toggle.zf.trigger', this.toggle.bind(this));
+    // S4: both sides of the 'toggle.zf.trigger' seam are native now - the
+    // Triggers util dispatches through the Events layer, so this consumer
+    // listens there too. (jQuery-synthesized triggers no longer reach it:
+    // a jQuery trigger() never produces a real DOM event.)
+    Events.on(this.$element[0], 'toggle.zf.trigger', this.toggle.bind(this));
   }
 
   /**
@@ -193,10 +193,12 @@ class Toggler extends Plugin {
    * @function
    */
   _destroy() {
-    // jQuery side: holds the S4 seam listener (toggle.zf.trigger).
+    // jQuery side: legacy listeners in the plugin namespace, kept while the
+    // mixed state lasts.
     this.$element.off('.zf.toggler');
-    // Native side: every listener this plugin registered through the Events
-    // layer is dropped by the bare-namespace form in one call.
+    // Native side: the toggle.zf.trigger seam listener and every other
+    // listener this plugin registered through the Events layer are dropped
+    // by the bare-namespace form in one call.
     Events.off(this.$element[0], '.zf.toggler');
   }
 }

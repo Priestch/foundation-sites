@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, transitionend, RegExpEscape } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { MediaQuery } from './foundation.util.mediaQuery';
 
@@ -592,7 +593,7 @@ class OffCanvas extends Plugin {
     this.$overlay.off('.zf.offCanvas');
     if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
     if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
-    if (this.onLoadListener) $(window).off(this.onLoadListener);
+    if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
   }
 }
 

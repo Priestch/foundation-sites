@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { onImagesLoaded } from './foundation.util.imageLoader';
 /**
@@ -435,7 +436,7 @@ class Tabs extends Plugin {
     }
 
     if (this.onLoadListener) {
-      $(window).off(this.onLoadListener);
+      Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
     }
   }
 }

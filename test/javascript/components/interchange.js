@@ -209,9 +209,9 @@ describe('Interchange', function () {
       // Debounce: time Triggers is waiting for an other event without firing anything (10 by default)
       const debounce = 10;
       // Initialize Triggers manually to control and test the debounce time
-      Foundation.Triggers.Initializers.addMutationEventsListener($(document));
+      // (since S4, addResizeListener dispatches 'resizeme' directly; the
+      // MutationObserver-based listener no longer exists).
       Foundation.Triggers.Initializers.addResizeListener(debounce);
-      $.triggersInitialized = true;
 
       // Trigger several window resize synchrnously and asynchronously.
       // ---
@@ -236,7 +236,6 @@ describe('Interchange', function () {
               sinon.assert.calledOnce(spy);
             },
             then: () => {
-              $.triggersInitialized = false;
               done();
             },
           });

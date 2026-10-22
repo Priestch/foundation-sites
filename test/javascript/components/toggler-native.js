@@ -2,6 +2,8 @@
 // Registry/Events/DOM layer while the public contract stays byte-identical.
 // These tests pin that contract from the outside; the pre-existing
 // toggler.js suite is untouched on purpose.
+// S4 update: the toggle.zf.trigger seam was closed on both sides - the two
+// mixed-state cases below were flipped and re-pinned accordingly.
 describe('Toggler (native layer contract)', function() {
   var plugin;
   var $html;
@@ -74,27 +76,31 @@ describe('Toggler (native layer contract)', function() {
   });
 
   describe('toggle.zf.trigger consumption', function() {
-    it('toggles through toggle.zf.trigger fired on the jQuery side', function() {
+    // S4: the Triggers util dispatches 'toggle.zf.trigger' on the native
+    // event layer and the consumer listens there too - the S3 seam is closed
+    // on both sides in one move.
+    it('toggles through toggle.zf.trigger fired on the native event layer', function() {
       $html = $('<div id="toggler" data-toggler="is-visible"></div>').appendTo('body');
       plugin = new Foundation.Toggler($html, {});
 
-      // Exactly how the Triggers util dispatches it today (jQuery triggerHandler).
-      $html.triggerHandler('toggle.zf.trigger');
+      // The consumer listens on the native event layer now. FoundationNext
+      // carries its own copy of the Events module, so the proof crosses the
+      // bundles the way every cross-bundle pin here does: through a real
+      // event (Events.trigger), which the Toggler's own listener receives.
+      FoundationNext.Events.trigger($html[0], 'toggle.zf.trigger', [$html[0]]);
       $html.should.have.class('is-visible');
 
-      $html.triggerHandler('toggle.zf.trigger');
+      FoundationNext.Events.trigger($html[0], 'toggle.zf.trigger');
       $html.should.not.have.class('is-visible');
     });
 
-    it('does not consume toggle.zf.trigger on the native layer before S4', function() {
+    it('does not consume toggle.zf.trigger fired on the jQuery side anymore', function() {
       $html = $('<div id="toggler" data-toggler="is-visible"></div>').appendTo('body');
       plugin = new Foundation.Toggler($html, {});
 
-      // Native triggerHandler only runs listeners registered in the native
-      // event layer; the consumer still lives on the jQuery side, so nothing
-      // matches. (Flips in S4, when the listener moves to Events.on.)
-      var result = FoundationNext.Events.triggerHandler($html[0], 'toggle.zf.trigger');
-      chai.expect(result).to.not.exist;
+      // The consumer moved to the native event layer in S4; a jQuery
+      // triggerHandler is purely synthetic, so nothing consumes it.
+      $html.triggerHandler('toggle.zf.trigger');
       $html.should.not.have.class('is-visible');
     });
   });

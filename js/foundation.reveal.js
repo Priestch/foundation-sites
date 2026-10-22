@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Motion } from './foundation.util.motion';
@@ -506,7 +507,7 @@ class Reveal extends Plugin {
     this.$element.hide().off();
     this.$anchor.off('.zf');
     $(window).off(`.zf.reveal:${this.id}`)
-    if (this.onLoadListener) $(window).off(this.onLoadListener);
+    if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
 
     if ($('.reveal:visible').length  === 0) {
       this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
