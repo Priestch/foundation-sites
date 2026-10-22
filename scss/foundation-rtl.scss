@@ -27,9 +27,9 @@
 // entry keeps working unchanged; this module exists for `@use` consumers
 // (7.0 compiles: `@use 'foundation-rtl';`).
 
+// The direction trio's single owner is scss/util/_flex.scss: configuring it
+// seeds $global-left/$global-right and $zf-flex-justify for every reader.
 @use 'util/flex' with ($global-text-direction: rtl);
-@use './global-module' with ($global-text-direction: rtl);
-@use 'components/button-module' with ($global-text-direction: rtl);
 
 @use 'foundation' as foundation;
 
