@@ -2,6 +2,9 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
+// Breakpoint iterators and the breakpoint list come from the util modules.
+@use '../util/util' as *;
+
 @mixin foundation-text-alignment {
   @each $size in $breakpoint-classes {
     @include breakpoint($size) {

@@ -22,6 +22,30 @@
 //   - Citations <cite>
 //   - Keystrokes <kbd>
 
+@use '../util/util' as *;
+
+// Ambient settings consumed here and by the later typography partials, declared
+// as module variables so the partials work as `@use` modules (a module cannot
+// see compilation globals). This mirrors the scss/forms/_text.scss pattern from
+// slice B4: each `!default` mirrors the library default in scss/_global.scss —
+// or, for `$primary-color`, the value add-foundation-colors() derives there —
+// and through the `typography/typography` @forward facade the cells stay
+// live-linked with the import-world globals, so user settings overrides keep
+// winning. `$black`, `$dark-gray` and `$global-font-size` are *not* mirrored
+// here: they are already declared by scss/util/_color.scss and
+// scss/util/_unit.scss and reached through the util facade above. Later
+// partials reach these through `@use 'base' as *` instead of redeclaring them.
+$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif !default;
+$global-weight-normal: normal !default;
+$global-weight-bold: bold !default;
+$global-width: rem-calc(1200) !default;
+$global-radius: 0 !default;
+$global-text-direction: ltr !default;
+$global-left: if($global-text-direction == rtl, right, left) !default;
+$medium-gray: #cacaca !default;
+$light-gray: #e6e6e6 !default;
+$primary-color: #1779ba !default;
+
 /// Font family for header elements.
 /// @type String | List
 $header-font-family: $body-font-family !default;
@@ -71,6 +95,15 @@ $header-styles: (
   ),
 ) !default;
 
+/// Legacy `$header-sizes` map, still honored to build `$header-styles` from when
+/// set. Declared as a null-defaulted module cell because the import-world check
+/// it replaces (`variable-exists(header-sizes)`, a compile-global read) cannot
+/// reach a `@use` module: the facade live link syncs a settings-file
+/// `$header-sizes` into this cell before the rebuild below runs. Unlike the old
+/// check, an explicit `$header-sizes: null` no longer triggers the rebuild.
+/// @type Map | Null
+$header-sizes: null !default;
+
 // $header-styles map is built from $header-sizes in order to ensure downward compatibility
 // when $header-sizes is depreciated, $header-styles needs to get !default values like settings.scss
 @function build-from-header-sizes($header-sizes) {
@@ -86,8 +119,8 @@ $header-styles: (
   @return $header-styles;
 }
 
-// If it exists $headers-sizes is used to build $header-styles. See the documentation.
-@if variable-exists(header-sizes) {
+// If it exists $header-sizes is used to build $header-styles. See the documentation.
+@if $header-sizes {
   $header-styles: build-from-header-sizes($header-sizes);
 }
 
