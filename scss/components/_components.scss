@@ -48,3 +48,10 @@
 @forward "dropdown-module";
 @forward "pagination-module";
 @forward "tooltip-module";
+// Containers
+@forward "accordion-module" hide $body-font-color;
+@forward "media-object-module";
+@forward "orbit-module";
+@forward "responsive-embed-module";
+@forward "tabs-module" hide $body-font-color;
+@forward "thumbnail-module";
