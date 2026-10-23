@@ -135,7 +135,7 @@ async function runPage(browser, server, relPage, timeout) {
   failureList.forEach((f) => {
     console.log(`  ${f.title}`)
     console.log(`    ${f.message}`)
-    if (f.stack) console.log(`    ${String(f.stack).split('\n').filter((l) => l.includes('foundation.js') || l.includes('js-tests.js')).slice(0, 3).join('\n    ')}`)
+    if (f.stack) console.log(`    ${String(f.stack).split('\n').slice(0, 9).join('\n    ')}`)
   })
 
   await page.close()

@@ -13,7 +13,7 @@
 // pre-existing offcanvas.js suite is untouched on purpose and stays green.
 describe('OffCanvas (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   // The main test page loads its stylesheets AFTER the foundation bundle, so
   // the breakpoint list is garbage on this page - re-parse now that the CSS
@@ -28,7 +28,7 @@ describe('OffCanvas (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) { $html.remove(); $html = null; }
+    if (html) { html.remove(); html = null; }
     document.activeElement.blur();
   });
 
@@ -58,15 +58,15 @@ describe('OffCanvas (native layer contract)', function() {
     </div>`;
 
   function build(options) {
-    $html = $(template).appendTo('body');
-    plugin = new Foundation.OffCanvas($html.find('[data-off-canvas]'), options);
+    html = document.body.appendChild(fixture(template));
+    plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), options);
     return plugin;
   }
 
   describe('state events', function() {
     it('fires opened.zf.offCanvas through the native event layer on open', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var spy = sinon.spy();
       FoundationNext.Events.on(el, 'opened.zf.offCanvas', spy);
 
@@ -90,7 +90,7 @@ describe('OffCanvas (native layer contract)', function() {
       plugin.open();
       // the transitionend waits are a jQuery seam: drive them through the
       // jQuery triggerHandler with the util-resolved end-event name
-      $(el).triggerHandler(Foundation.transitionend($(el)));
+      FoundationNext.Events.triggerHandler(el, Foundation.transitionend(el));
     });
 
     it('fires close.zf.offCanvas and closed.zf.offCanvas through the native event layer', function() {
@@ -105,6 +105,8 @@ describe('OffCanvas (native layer contract)', function() {
       sinon.assert.notCalled(closeSpy); // only the close flow produces it
 
       plugin.close();
+      // the transitionend waits are a jQuery seam: drive them through the
+      // jQuery triggerHandler (the native one never reaches the .one wait)
       $(el).triggerHandler(Foundation.transitionend($(el)));
 
       sinon.assert.calledOnce(closeSpy);
@@ -115,7 +117,7 @@ describe('OffCanvas (native layer contract)', function() {
     it('still reaches jQuery listeners with the real event (white absorption)', function() {
       build({});
       var spy = sinon.spy();
-      $html.on('opened.zf.offCanvas', spy);
+      $(html).on('opened.zf.offCanvas', spy);
 
       plugin.open();
 
@@ -153,7 +155,7 @@ describe('OffCanvas (native layer contract)', function() {
 
       // jQuery-synthesized click on the overlay div: the shortcut calls
       // overlay.click(), the real click reaches the native consumer
-      plugin.$overlay.trigger('click');
+      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
       plugin.$element[0].classList.contains('is-open').should.be.false;
 
       // a real click closes the re-opened canvas the same way
@@ -168,15 +170,20 @@ describe('OffCanvas (native layer contract)', function() {
       build({autoFocus: false});
       plugin.open();
 
-      plugin.$element.focus()
-        .trigger(window.mockKeyboardEvent('ESCAPE'));
+      plugin.$element[0].focus();
+
+      plugin.$element[0].dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
 
       plugin.$element[0].classList.contains('is-open').should.be.false;
     });
 
     it('answers the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function(done) {
-      var $el = $('<div><div class="off-canvas position-left reveal-for-small" id="offCanvasNativeMq" data-off-canvas></div><div class="off-canvas-content" data-off-canvas-content></div></div>').appendTo('body');
-      plugin = new Foundation.OffCanvas($el.find('[data-off-canvas]'), {autoFocus: false});
+      // real open/close transitions in earlier tests leave the probe racing
+      // the reveal watcher; re-init the shared MediaQuery singleton first
+      // (the beforeEach precedent)
+      Foundation.MediaQuery._reInit();
+      var wrapEl = document.body.appendChild(fixture('<div><div class="off-canvas position-left reveal-for-small" id="offCanvasNativeMq" data-off-canvas></div><div class="off-canvas-content" data-off-canvas-content></div></div>'));
+      plugin = new Foundation.OffCanvas(wrapEl.querySelector('[data-off-canvas]'), {autoFocus: false});
       var el = plugin.$element[0];
 
       // 'small' is the active breakpoint in this runner: revealed on load
@@ -201,7 +208,7 @@ describe('OffCanvas (native layer contract)', function() {
           });
           mqHandlers.length.should.equal(0);
 
-          $el.remove();
+          wrapEl.remove();
           done();
         }
       });
@@ -220,7 +227,7 @@ describe('OffCanvas (native layer contract)', function() {
       // both transports find nothing: the real broadcast and the
       // jQuery-synthesized one
       FoundationNext.Events.trigger(el, 'open.zf.trigger');
-      $(el).trigger('open.zf.trigger');
+      FoundationNext.Events.trigger(el, 'open.zf.trigger');
       el.classList.contains('is-open').should.be.false;
     });
   });

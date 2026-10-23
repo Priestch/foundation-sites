@@ -27,8 +27,12 @@ class OffCanvas extends Plugin {
    */
   _setup(element, options) {
     this.className = 'OffCanvas'; // ie9 back compat
-    this.$element = element;
-    this.options = $.extend({}, OffCanvas.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, OffCanvas.defaults, datasetOptions(this.$element[0]), options);
     this.contentClasses = { base: [], reveal: [] };
     this.$lastTrigger = $();
     this.$triggers = $();
@@ -633,6 +637,9 @@ class OffCanvas extends Plugin {
     // Both layers (S10): jQuery for the keydown listener and any legacy
     // namespaced listeners, native for the flipped trigger/click consumers.
     this.$element.off('.zf.trigger .zf.offCanvas');
+    // the transitionend waits carry no namespace, so the .off above misses
+    // them; a late real transitionend would dereference the nulled instance
+    this.$element.off(transitionend(this.$element));
     Events.off(this.$element[0], '.zf.trigger .zf.offCanvas');
     this.$overlay.off('.zf.offCanvas');
     Events.off(this.$overlay[0], '.zf.offCanvas');

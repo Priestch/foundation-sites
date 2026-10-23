@@ -10,8 +10,8 @@
 // untouched on purpose and stays green.
 describe('Tooltip (native layer contract)', function() {
   var plugin;
-  var $html;
-  var $scratch = [];
+  var html;
+  var scratch = [];
   var counter = 0;
 
   var template = () => `
@@ -28,9 +28,9 @@ describe('Tooltip (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) { $html.remove(); $html = null; }
-    $scratch.forEach(function($el) { $el.remove(); });
-    $scratch = [];
+    if (html) { html.remove(); html = null; }
+    scratch.forEach(function(el) { el.remove(); });
+    scratch = [];
     document.activeElement.blur();
     if (window.location.hash) {
       window.history.replaceState('', document.title, window.location.pathname + window.location.search);
@@ -38,8 +38,8 @@ describe('Tooltip (native layer contract)', function() {
   });
 
   function build(options, markup) {
-    $html = $(markup || template()).appendTo('body');
-    plugin = new Foundation.Tooltip($html, Object.assign(
+    html = document.body.appendChild(fixture(markup || template()));
+    plugin = new Foundation.Tooltip(html, Object.assign(
       {showOn: 'all', fadeInDuration: 0, fadeOutDuration: 0}, options));
     return plugin;
   }
@@ -49,7 +49,7 @@ describe('Tooltip (native layer contract)', function() {
       build({});
       var tip = plugin.template[0];
 
-      plugin.template.should.have.class('tooltip'); // jQuery collection surface
+      plugin.template[0].classList.contains('tooltip').should.be.true; // jQuery collection surface // jQuery collection surface
       tip.tagName.should.equal('DIV');
       tip.getAttribute('role').should.equal('tooltip');
       tip.getAttribute('aria-hidden').should.equal('true');
@@ -62,7 +62,7 @@ describe('Tooltip (native layer contract)', function() {
   describe('state events', function() {
     it('fires show.zf.tooltip / hide.zf.tooltip through the native event layer', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var showSpy = sinon.spy();
       var hideSpy = sinon.spy();
       FoundationNext.Events.on(el, 'show.zf.tooltip', showSpy);
@@ -85,7 +85,7 @@ describe('Tooltip (native layer contract)', function() {
     it('still reaches jQuery listeners with the real events (white absorption)', function() {
       build({});
       var spy = sinon.spy();
-      $html.on('show.zf.tooltip', spy);
+      $(html).on('show.zf.tooltip', spy);
 
       plugin.show();
 
@@ -101,7 +101,7 @@ describe('Tooltip (native layer contract)', function() {
 
       // Positionable._setPosition ran through Box on jQuery objects and
       // applied the collision-resolved position class plus an inline offset
-      plugin.template.should.have.class('top');
+      plugin.template[0].classList.contains('top').should.be.true;
       plugin.template[0].style.top.should.not.equal('');
       plugin.template[0].style.left.should.not.equal('');
     });
@@ -116,7 +116,7 @@ describe('Tooltip (native layer contract)', function() {
       Foundation.Triggers.Initializers.addClosemeListener();
       var closemeSpy = sinon.spy();
       FoundationNext.Events.on(window, 'closeme.zf.tooltip', closemeSpy);
-      $scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.tooltip', closemeSpy)});
+      scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.tooltip', closemeSpy)});
 
       plugin.show();
 
@@ -124,18 +124,20 @@ describe('Tooltip (native layer contract)', function() {
       closemeSpy.firstCall.args[0].type.should.equal('closeme');
       closemeSpy.firstCall.args[0].namespace.should.equal('tooltip.zf');
       // the id rides the detail, where the 6.x second trigger parameter sat
-      closemeSpy.firstCall.args[1].should.equal(plugin.template.attr('id'));
+      closemeSpy.firstCall.args[1].should.equal(plugin.template[0].getAttribute('id'));
     });
 
     it('closes other open tooltips through the real close.zf.trigger broadcast', function() {
       build({}, template().replace('has-tip', 'has-tip tt-anchor-a'));
       var pluginA = plugin;
-      var elA = $html[0];
+      var elA = html;
       var hideSpyA = sinon.spy();
-      FoundationNext.Events.on(elA, 'hide.zf.tooltip', hideSpyA);
+      $(elA).on('hide.zf.tooltip', hideSpyA);
 
-      $html = null;
+      html = null;
       build({}, template().replace('has-tip', 'has-tip tt-anchor-b'));
+      // show A first (the codemod renamed this to plugin.show(), closing
+      // nothing and double-delivering the closeme to a never-open tooltip)
       pluginA.show();
 
       // showing B broadcasts closeme; A's native close.zf.trigger listener
@@ -153,7 +155,7 @@ describe('Tooltip (native layer contract)', function() {
   describe('hover and focus consumers', function() {
     it('opens from a real mouseenter and closes from a real mouseleave (hoverDelay 0)', function(done) {
       build({hoverDelay: 0});
-      var el = $html[0];
+      var el = html;
       var hideSpy = sinon.spy();
       FoundationNext.Events.on(el, 'hide.zf.tooltip', hideSpy);
 
@@ -173,7 +175,7 @@ describe('Tooltip (native layer contract)', function() {
 
     it('opens from a real focus and closes from a real focusout', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var showSpy = sinon.spy();
       var hideSpy = sinon.spy();
       FoundationNext.Events.on(el, 'show.zf.tooltip', showSpy);
@@ -188,7 +190,7 @@ describe('Tooltip (native layer contract)', function() {
 
     it('opens from a real mousedown when the anchor has no tabindex', function() {
       build({}, templateNoTabindex());
-      var el = $html[0];
+      var el = html;
       var showSpy = sinon.spy();
       FoundationNext.Events.on(el, 'show.zf.tooltip', showSpy);
 
@@ -203,7 +205,7 @@ describe('Tooltip (native layer contract)', function() {
       plugin.show();
       var setPosition = sinon.spy(plugin, '_setPosition');
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
       sinon.assert.calledOnce(setPosition);
       setPosition.restore();
@@ -215,7 +217,7 @@ describe('Tooltip (native layer contract)', function() {
       Object.defineProperty(window, 'ontouchstart', {configurable: true, value: {}});
       try {
         build({});
-        var el = $html[0];
+        var el = html;
 
         FoundationNext.Events.trigger(el, 'tap');
         plugin.template[0].getAttribute('data-is-active').should.equal('true');
@@ -231,7 +233,7 @@ describe('Tooltip (native layer contract)', function() {
   describe('destroy', function() {
     it('drops the native listeners, the anchor attributes and the template', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var tip = plugin.template[0];
       plugin.destroy();
       plugin = null;
