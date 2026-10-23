@@ -10,16 +10,16 @@
 // abide.js suite is untouched on purpose and stays green.
 describe('Abide (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   afterEach(function() {
     if (plugin) {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
   });
 
@@ -45,7 +45,7 @@ describe('Abide (native layer contract)', function() {
   }
 
   describe('pseudo-selector equivalence (Dom helpers vs jQuery)', function() {
-    var fixture = `
+    var formFixture = `
       <form id="abide-pseudo-fixture">
         <input type="text" value="text">
         <input value="no-type">
@@ -65,30 +65,30 @@ describe('Abide (native layer contract)', function() {
     var Dom = window.FoundationNext.Dom;
 
     it('matches jQuery :input with the four form-control tags, in document order', function() {
-      $html = $(fixture).appendTo('body');
-      var form = $html[0];
+      html = document.body.appendChild(fixture(formFixture));
+      var form = html;
 
       assertSameElements(Dom.formControls(form), $(':input', form).toArray());
     });
 
     it('matches jQuery :button (any <button>, plus input[type=button])', function() {
-      $html = $(fixture).appendTo('body');
-      var form = $html[0];
+      html = document.body.appendChild(fixture(formFixture));
+      var form = html;
 
       assertSameElements(Dom.formControls(form).filter(Dom.isButton), $(':button', form).toArray());
     });
 
     it('matches jQuery :submit and :reset (input/button by .type)', function() {
-      $html = $(fixture).appendTo('body');
-      var form = $html[0];
+      html = document.body.appendChild(fixture(formFixture));
+      var form = html;
 
       assertSameElements(Dom.formControls(form).filter(Dom.isSubmit), $(':submit', form).toArray());
       assertSameElements(Dom.formControls(form).filter(Dom.isReset), $(':reset', form).toArray());
     });
 
     it('matches jQuery :hidden and :radio/:checkbox within the control sweep', function() {
-      $html = $(fixture).appendTo('body');
-      var form = $html[0];
+      html = document.body.appendChild(fixture(formFixture));
+      var form = html;
 
       // `:hidden` is narrowed to input[type=hidden]: its only effect on a
       // rendered form (jQuery's zero-box sense is a PENDING DECISION of the
@@ -99,28 +99,32 @@ describe('Abide (native layer contract)', function() {
       );
       assertSameElements(
         Array.from(form.querySelectorAll('input[type="radio"][name="fixture-radios"]')),
-        $(':radio[name="fixture-radios"]', form).toArray()
+        form.querySelectorAll("input[type=radio][name=fixture-radios]")
       );
       assertSameElements(
         Array.from(form.querySelectorAll('input[type="checkbox"][name="fixture-checkboxes"]')),
-        $(':checkbox[name="fixture-checkboxes"]', form).toArray()
+        form.querySelectorAll("input[type=checkbox][name=fixture-checkboxes]")
       );
     });
 
     it('collects the validated fields like the former find/merge chain', function() {
-      $html = $(fixture).appendTo('body');
-      plugin = new Foundation.Abide($html, {});
+      html = document.body.appendChild(fixture(formFixture));
+      plugin = new Foundation.Abide(html, {});
 
-      var expected = $html.find('input').not('[type="submit"]').add($html.find('textarea, select')).toArray().sort(docOrder);
+      // the former `$inputs = $form.find('input, textarea, select').not('[type=submit]')`
+      // chain, on the native sweep
+      var inputs = Array.from(html.querySelectorAll('input')).filter(function(el) { return el.type !== 'submit'; });
+      var others = Array.from(html.querySelectorAll('textarea, select'));
+      var expected = inputs.concat(others).sort(docOrder);
       assertSameElements(plugin.inputs.slice().sort(docOrder), expected);
     });
   });
 
   describe('field validation (native events)', function() {
     it('validates on a real change event and marks the field through classList and attributes', function() {
-      $html = $('<form data-abide novalidate><input type="text" required></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var input = $html.find('input')[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required></form>'));
+      plugin = new Foundation.Abide(html, {});
+      var input = html.querySelector('input');
       var invalidSpy = sinon.spy();
       FoundationNext.Events.on(input, 'invalid.zf.abide', invalidSpy);
 
@@ -135,9 +139,9 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('clears the error state and fires valid.zf.abide once the value passes', function() {
-      $html = $('<form data-abide novalidate><input type="text" required></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var input = $html.find('input')[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required></form>'));
+      plugin = new Foundation.Abide(html, {});
+      var input = html.querySelector('input');
       var validSpy = sinon.spy();
       FoundationNext.Events.on(input, 'valid.zf.abide', validSpy);
 
@@ -152,9 +156,9 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('validates on real input events with liveValidate and on real blur events with validateOnBlur', function() {
-      $html = $('<form data-abide novalidate><input type="text" required></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {liveValidate: true, validateOnBlur: true});
-      var input = $html.find('input')[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required></form>'));
+      plugin = new Foundation.Abide(html, {liveValidate: true, validateOnBlur: true});
+      var input = html.querySelector('input');
       var invalidSpy = sinon.spy();
       var validSpy = sinon.spy();
       FoundationNext.Events.on(input, 'invalid.zf.abide', invalidSpy);
@@ -173,24 +177,21 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('skips ignored, hidden and disabled fields', function() {
-      $html = $('<form data-abide novalidate>' +
-        '<input type="text" required data-abide-ignore>' +
-        '<input type="text" required disabled>' +
-        '</form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var ignored = $html.find('[data-abide-ignore]')[0];
-      var disabled = $html.find('[disabled]')[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate>' + '<input type="text" required data-abide-ignore>' + '<input type="text" required disabled>' + '</form>'));
+      plugin = new Foundation.Abide(html, {});
+      var ignored = html.querySelector('[data-abide-ignore]');
+      var disabled = html.querySelector('[disabled]');
 
-      plugin.validateInput($(ignored)).should.be.true;
-      plugin.validateInput($(disabled)).should.be.true;
+      plugin.validateInput(ignored).should.be.true;
+      plugin.validateInput(disabled).should.be.true;
       ignored.classList.contains('is-invalid-input').should.be.false;
       disabled.classList.contains('is-invalid-input').should.be.false;
     });
 
     it('runs custom validators with the jQuery collection, required flag and parent', function() {
       var calls = [];
-      $html = $('<form data-abide novalidate><input type="text" required data-validator="yes"></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required data-validator="yes"></form>'));
+      plugin = new Foundation.Abide(html, {
         validators: {
           yes: function(el, required, parent) {
             calls.push([el, required, parent]);
@@ -198,7 +199,7 @@ describe('Abide (native layer contract)', function() {
           }
         }
       });
-      var input = $html.find('input')[0];
+      var input = html.querySelector('input');
 
       input.dispatchEvent(new Event('change', {bubbles: true}));
 
@@ -207,15 +208,15 @@ describe('Abide (native layer contract)', function() {
       calls[0][1].should.be.true;
       calls[0][2][0].should.equal(input.parentNode);
       // the failed validator name lands in the error targeting
-      $html.find('input').should.have.attr('aria-invalid', 'true');
+      html.querySelector('input').getAttribute('aria-invalid').should.equal('true');
     });
   });
 
   describe('form validation (native events)', function() {
     it('fires forminvalid on a real submit and cancels the native submission', function() {
-      $html = $('<form data-abide novalidate><input type="text" required><input type="submit"></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var form = $html[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required><input type="submit"></form>'));
+      plugin = new Foundation.Abide(html, {});
+      var form = html;
       var invalidSpy = sinon.spy();
       FoundationNext.Events.on(form, 'forminvalid.zf.abide', invalidSpy);
 
@@ -229,17 +230,14 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('fires formvalid on a valid submit, hides the global error and lets the submission proceed', function() {
-      $html = $('<form data-abide novalidate>' +
-        '<input type="text" required value="filled">' +
-        '<span data-abide-error>global error</span>' +
-        '</form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var form = $html[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate>' + '<input type="text" required value="filled">' + '<span data-abide-error>global error</span>' + '</form>'));
+      plugin = new Foundation.Abide(html, {});
+      var form = html;
       var releaseGuard = guardAgainstNavigation(form);
       var validSpy = sinon.spy();
       var jQuerySpy = sinon.spy();
       FoundationNext.Events.on(form, 'formvalid.zf.abide', validSpy);
-      $html.on('formvalid.zf.abide', jQuerySpy);
+      FoundationNext.Events.on(html, 'formvalid.zf.abide', jQuerySpy);
 
       var event = new Event('submit', {bubbles: true, cancelable: true});
       form.dispatchEvent(event);
@@ -253,26 +251,23 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('shows the global error block when the form is invalid', function() {
-      $html = $('<form data-abide novalidate>' +
-        '<input type="text" required>' +
-        '<span data-abide-error>global error</span>' +
-        '</form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
+      html = document.body.appendChild(fixture('<form data-abide novalidate>' + '<input type="text" required>' + '<span data-abide-error>global error</span>' + '</form>'));
+      plugin = new Foundation.Abide(html, {});
 
       plugin.validateForm();
 
-      $html.find('[data-abide-error]')[0].style.display.should.equal('block');
-      $html.find('[data-abide-error]').should.have.attr('aria-live', 'assertive');
+      html.querySelector('[data-abide-error]').style.display.should.equal('block');
+      html.querySelector('[data-abide-error]').getAttribute('aria-live').should.equal('assertive');
     });
   });
 
   describe('submit buttons (native events)', function() {
     it('runs the validation from a real click and keeps the click prevented', function() {
-      $html = $('<form data-abide novalidate><input type="text" required><input type="submit"></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required><input type="submit"></form>'));
+      plugin = new Foundation.Abide(html, {});
       var invalidSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'forminvalid.zf.abide', invalidSpy);
-      var button = $html.find('input[type="submit"]')[0];
+      FoundationNext.Events.on(html, 'forminvalid.zf.abide', invalidSpy);
+      var button = html.querySelector('input[type="submit"]');
 
       var click = new MouseEvent('click', {bubbles: true, cancelable: true});
       button.dispatchEvent(click);
@@ -282,12 +277,12 @@ describe('Abide (native layer contract)', function() {
     });
 
     it('skips the validation for a formnovalidate submit button', function() {
-      $html = $('<form data-abide novalidate><input type="text" required><input type="submit" formnovalidate></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var releaseGuard = guardAgainstNavigation($html[0]);
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required><input type="submit" formnovalidate></form>'));
+      plugin = new Foundation.Abide(html, {});
+      var releaseGuard = guardAgainstNavigation(html);
       var invalidSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'forminvalid.zf.abide', invalidSpy);
-      var button = $html.find('input[type="submit"]')[0];
+      FoundationNext.Events.on(html, 'forminvalid.zf.abide', invalidSpy);
+      var button = html.querySelector('input[type="submit"]');
 
       var click = new MouseEvent('click', {bubbles: true, cancelable: true});
       button.dispatchEvent(click);
@@ -296,15 +291,15 @@ describe('Abide (native layer contract)', function() {
       click.defaultPrevented.should.be.true;
       sinon.assert.notCalled(invalidSpy);
       (plugin.formnovalidate === null).should.be.true;
-      $html.find('input[type="text"]').should.not.have.class('is-invalid-input');
+      html.querySelector('input[type="text"]').classList.contains('is-invalid-input').should.be.false;
     });
 
     it('runs the validation from a real Enter keydown on the submit button', function() {
-      $html = $('<form data-abide novalidate><input type="text" required><input type="submit"></form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
+      html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required><input type="submit"></form>'));
+      plugin = new Foundation.Abide(html, {});
       var invalidSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'forminvalid.zf.abide', invalidSpy);
-      var button = $html.find('input[type="submit"]')[0];
+      FoundationNext.Events.on(html, 'forminvalid.zf.abide', invalidSpy);
+      var button = html.querySelector('input[type="submit"]');
 
       button.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
 
@@ -314,19 +309,14 @@ describe('Abide (native layer contract)', function() {
 
   describe('reset (native event)', function() {
     it('resets the fields through a real reset event and fires formreset.zf.abide', function() {
-      $html = $('<form data-abide novalidate>' +
-        '<input type="text" required value="keep-out">' +
-        '<input type="radio" name="r" checked>' +
-        '<input type="checkbox" name="c" checked>' +
-        '<button type="button" value="keep-me">plain</button>' +
-        '</form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var form = $html[0];
+      html = document.body.appendChild(fixture('<form data-abide novalidate>' + '<input type="text" required value="keep-out">' + '<input type="radio" name="r" checked>' + '<input type="checkbox" name="c" checked>' + '<button type="button" value="keep-me">plain</button>' + '</form>'));
+      plugin = new Foundation.Abide(html, {});
+      var form = html;
       var text = form.querySelector('input[type="text"]');
       var radio = form.querySelector('input[type="radio"]');
       var checkbox = form.querySelector('input[type="checkbox"]');
       var button = form.querySelector('button');
-      plugin.addErrorClasses($(text));
+      plugin.addErrorClasses(text);
       text.classList.contains('is-invalid-input').should.be.true;
 
       var resetSpy = sinon.spy();
@@ -345,50 +335,47 @@ describe('Abide (native layer contract)', function() {
 
   describe('ARIA (native attribute writes)', function() {
     it('describes the field and marks the errors on init', function() {
-      $html = $(`
+      html = document.body.appendChild(fixture(`
         <form data-abide novalidate>
           <input type="text" id="native-input">
           <label class="form-error is-visible" id="native-error">Error</label>
-        </form>`).appendTo('body');
-      plugin = new Foundation.Abide($html, {});
+        </form>`));
+      plugin = new Foundation.Abide(html, {});
 
-      $html.find('input').should.have.attr('aria-describedby', 'native-error');
-      $html.find('#native-error').should.have.attr('role', 'alert');
-      $html.find('#native-error').should.have.attr('for', 'native-input');
+      html.querySelector('input').getAttribute('aria-describedby').should.equal('native-error');
+      html.querySelector('#native-error').getAttribute('role').should.equal('alert');
+      html.querySelector('#native-error').getAttribute('for').should.equal('native-input');
     });
 
     it('drops the aria-describedby flag with the error state', function() {
-      $html = $(`
+      html = document.body.appendChild(fixture(`
         <form data-abide novalidate>
           <input type="text" required>
           <label class="form-error is-visible">Error</label>
-        </form>`).appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var input = $html.find('input')[0];
+        </form>`));
+      plugin = new Foundation.Abide(html, {});
+      var input = html.querySelector('input');
 
-      plugin.validateInput($(input));
+      plugin.validateInput(input);
       input.hasAttribute('aria-describedby').should.be.true;
 
       input.value = 'now valid';
-      plugin.validateInput($(input));
+      plugin.validateInput(input);
       input.hasAttribute('aria-describedby').should.be.false;
     });
   });
 
   describe('destroy', function() {
     it('drops the native listeners and clears the error state', function() {
-      $html = $('<form data-abide novalidate>' +
-        '<input type="text" required>' +
-        '<span data-abide-error style="display: block">global error</span>' +
-        '</form>').appendTo('body');
-      plugin = new Foundation.Abide($html, {});
-      var input = $html.find('input')[0];
-      plugin.validateInput($(input));
+      html = document.body.appendChild(fixture('<form data-abide novalidate>' + '<input type="text" required>' + '<span data-abide-error style="display: block">global error</span>' + '</form>'));
+      plugin = new Foundation.Abide(html, {});
+      var input = html.querySelector('input');
+      plugin.validateInput(input);
       input.classList.contains('is-invalid-input').should.be.true;
       plugin.destroy();
       plugin = null;
 
-      $html.find('[data-abide-error]')[0].style.display.should.equal('none');
+      html.querySelector('[data-abide-error]').style.display.should.equal('none');
       input.classList.contains('is-invalid-input').should.be.false;
 
       // a real change must find nothing

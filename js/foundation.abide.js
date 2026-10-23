@@ -16,13 +16,14 @@ const describedBy = new WeakSet();
 
 // jQuery collection / element / array acceptance for the public $el-shaped
 // parameters (core.utils toElement shape, kept local until that helper is
-// exported).
+// exported). A node is recognized by nodeType and never unwrapped: native
+// array-likes like HTMLSelectElement expose their first option as [0].
 function toEl(obj) {
-  return obj && obj[0] !== undefined ? obj[0] : obj;
+  return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
 }
 
 function toEls(obj) {
-  if (obj && obj[0] !== undefined) { return Array.from(obj); }
+  if (obj && obj.nodeType === undefined && obj[0] !== undefined) { return Array.from(obj); }
   return obj ? [obj] : [];
 }
 
@@ -50,7 +51,11 @@ class Abide extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options = {}) {
-    this.$element = element;
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
     // Native deep merge (7.0 line A, S14): the Dom deepMerge mirrors jQuery's
     // `$.extend(true)` semantics (array index merge, null overwrite,
     // reference assignment for functions/RegExps - the validator functions
