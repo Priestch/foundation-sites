@@ -210,11 +210,13 @@ describe('Orbit', function() {
       $html.find('.orbit-slide').eq(0).should.be.visible;
       $html.find('.orbit-slide').eq(1).should.be.hidden;
     });*/
+    // S13: the swipe listeners live on the native event layer, so the
+    // synthesized events are driven through it
     it('changes slides on swipeleft', function() {
       $html = $(template).appendTo('body');
       plugin = new Foundation.Orbit($html, {});
 
-      $html.find('.orbit-slide').eq(0).trigger('swipeleft');
+      FoundationNext.Events.trigger($html.find('.orbit-slide')[0], 'swipeleft');
 
       $html.find('.orbit-slide').eq(0).should.be.hidden;
       $html.find('.orbit-slide').eq(1).should.be.visible;
@@ -223,7 +225,7 @@ describe('Orbit', function() {
       $html = $(template).appendTo('body');
       plugin = new Foundation.Orbit($html, {});
 
-      $html.find('.orbit-slide').eq(0).trigger('swiperight');
+      FoundationNext.Events.trigger($html.find('.orbit-slide')[0], 'swiperight');
 
       $html.find('.orbit-slide').eq(0).should.be.hidden;
       $html.find('.orbit-slide').eq(-1).should.be.visible;

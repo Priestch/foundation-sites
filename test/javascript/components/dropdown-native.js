@@ -5,12 +5,11 @@
 // block stays on jQuery objects (Box util, tooltip precedent), hover stays on
 // jQuery (the coarse suite drives a jQuery-synthesized mouseenter, which
 // cannot reach a native listener), the keydown binding stays on jQuery (the
-// coarse suite feeds jQuery-synthesized mock keydowns) and the closeme
-// production stays on jQuery (the Triggers closeMeListener reads the plugin
-// name from the jQuery event namespace). The body handler's tap half stays on
-// jQuery (the Touch util synthesizes tap). These tests pin that contract from
-// the outside; the pre-existing dropdown.js suite is untouched on purpose and
-// stays green.
+// coarse suite feeds jQuery-synthesized mock keydowns). The body handler's
+// tap half joined the native layer with the Touch util's real synthesized
+// tap (S13); the closeme production follows in the same slice's Triggers
+// flip. These tests pin that contract from the outside; the pre-existing
+// dropdown.js suite is untouched on purpose and stays green.
 describe('Dropdown (native layer contract)', function() {
   var plugin;
   var $html;
@@ -233,11 +232,14 @@ describe('Dropdown (native layer contract)', function() {
       $html[0].classList.contains('is-open').should.be.true;
     });
 
-    it('closes on a jQuery-synthesized tap (the Touch seam keeps the tap half on jQuery)', function() {
+    it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function() {
       build({closeOnClick: true});
       plugin.open();
 
-      $(document.body).trigger('tap');
+      // the Touch util dispatches 'tap' as a real, bubbling event on the
+      // touched element; the body listener hears it (tap alone here - no
+      // touchend - so the click half stays out of the pin)
+      FoundationNext.Events.trigger(document.body, 'tap');
 
       $html[0].classList.contains('is-open').should.be.false;
     });
@@ -291,7 +293,7 @@ describe('Dropdown (native layer contract)', function() {
       // no handler left on either transport: the click lands, nothing closes
       // (the pane is closed again by destroy already), and no error surfaces
       document.body.click();
-      $(document.body).trigger('tap');
+      FoundationNext.Events.trigger(document.body, 'tap');
     });
   });
 });

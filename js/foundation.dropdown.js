@@ -31,7 +31,7 @@ class Dropdown extends Positionable {
     this.className = 'Dropdown'; // ie9 back compat
 
     // Touch and Triggers init are idempotent, just need to make sure they are initialized
-    Touch.init($);
+    Touch.init();
     Triggers.init($);
 
     this._init();
@@ -256,12 +256,10 @@ class Dropdown extends Positionable {
      };
 
      this._removeBodyHandler();
-     // S9 split transport: the click half lives on the native event layer
-     // (real clicks and jQuery-synthesized clicks via the `.click()` bridge
-     // both arrive); the tap half stays on jQuery - the Touch util
-     // synthesizes 'tap' through a jQuery trigger in the mixed state.
-     Events.on(body, 'click.zf.dropdown', bodyHandler);
-     $(body).on('tap.zf.dropdown', bodyHandler);
+     // S13: the tap half flips with the Touch util - 'tap' is a real,
+     // bubbling event on the touched element now, so this native body
+     // listener hears it (real clicks arrived through this layer since S9).
+     Events.on(body, 'click.zf.dropdown tap.zf.dropdown', bodyHandler);
   }
 
   /**
@@ -270,8 +268,7 @@ class Dropdown extends Positionable {
    * @private
    */
   _removeBodyHandler() {
-    Events.off(document.body, 'click.zf.dropdown');
-    $(document.body).off('tap.zf.dropdown');
+    Events.off(document.body, 'click.zf.dropdown tap.zf.dropdown');
   }
 
   /**

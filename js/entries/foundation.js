@@ -51,10 +51,12 @@ Foundation.Motion = Motion;
 Foundation.Move = Move;
 Foundation.Nest = Nest;
 Foundation.Timer = Timer;
+// S13: Touch gained an explicit native surface (addTouch, init), so it is
+// exported on Foundation like the other utils.
+Foundation.Touch = Touch;
 
-// Touch and Triggers previously were almost purely sede effect driven,
-// so no need to add it to Foundation, just init them.
-Touch.init($);
+// Touch and Triggers init are side-effect driven, just idempotent setup.
+Touch.init();
 Triggers.init($, Foundation);
 MediaQuery._init();
 

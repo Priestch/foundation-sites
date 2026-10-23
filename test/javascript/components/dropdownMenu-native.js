@@ -4,12 +4,12 @@
 // stays byte-identical. Known seams: the whole positioning block stays on
 // jQuery objects (Box util, tooltip precedent), the hover-intent listeners
 // stay on jQuery (delay timers ride jQuery data, hover synthesizes only
-// through jQuery), the keydown binding stays on jQuery (the coarse suite
-// feeds jQuery-synthesized mock keydowns) and the tap half of the body
-// handler stays on jQuery (the Touch util synthesizes tap). The
-// selector-filtered collection class writes keep their jQuery form. These
-// tests pin that contract from the outside; the pre-existing dropdownMenu.js
-// suite is untouched on purpose and stays green.
+// through jQuery) and the keydown binding stays on jQuery (the coarse suite
+// feeds jQuery-synthesized mock keydowns). The tap half of the body handler
+// joined the native layer with the Touch util's real synthesized tap (S13).
+// The selector-filtered collection class writes keep their jQuery form.
+// These tests pin that contract from the outside; the pre-existing
+// dropdownMenu.js suite is untouched on purpose and stays green.
 describe('DropdownMenu (native layer contract)', function() {
   var plugin;
   var $html;
@@ -209,12 +209,12 @@ describe('DropdownMenu (native layer contract)', function() {
       $html.find('> li:nth-child(1)').should.have.class('is-active');
     });
 
-    it('closes on a jQuery-synthesized tap (the Touch seam keeps the tap half on jQuery)', function() {
+    it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function() {
       build({clickOpen: true});
       $html.find('> li:nth-child(1) > a')[0].click();
       $html.find('> li:nth-child(1)').should.have.class('is-active');
 
-      $(document.body).trigger('tap');
+      FoundationNext.Events.trigger(document.body, 'tap');
 
       $html.find('> li:nth-child(1)').should.not.have.class('is-active');
     });

@@ -511,9 +511,11 @@ declare module FoundationSites {
   }
 
   interface Touch {
-    setupSpotSwipe(event: Object): void;
-    setupTouchHandler(event: Object): void;
-    init(event: Object): void;
+    spotSwipe: Object;
+    setupSpotSwipe(): void;
+    setupTouchHandler(): void;
+    addTouch(element: Object): void;
+    init(): void;
   }
 
   interface Triggers {

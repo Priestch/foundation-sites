@@ -5,11 +5,12 @@
 // is cleaned up on the way (behavior neutral). Known seams: the moved/
 // changed.zf.slider production stays on jQuery (the coarse suite reads the
 // forwarded handle as a trailing handler argument, Tabs S8 change.zf.tabs
-// precedent), the keydown binding stays on jQuery (the coarse keyboard
-// suite feeds jQuery-synthesized mock keydowns) and the drag chain stays on
-// jQuery (Touch util + body-wide mousemove/mouseup). These tests pin that
-// contract from the outside; the pre-existing slider.js suite is untouched
-// on purpose and stays green.
+// precedent). The drag chain (addTouch feed + mousedown/mousemove/mouseup)
+// joined the native layer with the Touch util's real mouse replay (S13);
+// the keydown binding stays on jQuery (the coarse keyboard suite feeds
+// jQuery-synthesized mock keydowns). These tests pin that contract from the
+// outside; the pre-existing slider.js suite is untouched on purpose and
+// stays green.
 describe('Slider (native layer contract)', function() {
   var plugin;
   var $html;
@@ -145,13 +146,13 @@ describe('Slider (native layer contract)', function() {
       plugin.$handle[0].getAttribute('aria-valuenow').should.equal('11');
     });
 
-    it('runs the drag chain from jQuery-synthesized mouse events (the Touch/drag seam stays jQuery-side)', function() {
+    it('runs the drag chain from real mouse events (the S13 Touch/drag flip)', function() {
       build({});
 
-      plugin.$handle.trigger('mousedown');
+      plugin.$handle[0].dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
       plugin.$element.data('dragging').should.be.true;
 
-      $('body').trigger($.Event('mouseup', {pageX: 5, pageY: 5}));
+      document.body.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true, clientX: 5, clientY: 5}));
       plugin.$element.data('dragging').should.be.false;
     });
   });

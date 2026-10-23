@@ -34,7 +34,7 @@ class Slider extends Plugin {
     this.initialized = false;
 
   // Touch and Triggers inits are idempotent, we just need to make sure it's initialied.
-    Touch.init($);
+    Touch.init();
     Triggers.init($);
 
     this._init();
@@ -509,37 +509,37 @@ class Slider extends Plugin {
       }
 
     if (this.options.draggable) {
-      // Seam (S10): the drag chain stays on jQuery - the Touch util's
-      // addTouch feed and the body-wide mousemove/mouseup pair are jQuery
-      // mechanics through and through (Touch slice flips them).
-      this.handles.addTouch();
+      // S13: the drag chain flips with the Touch util - addTouch feeds real
+      // synthesized mouse events now, so the mousedown/mousemove/mouseup
+      // listeners live on the native event layer and serve the mouse and
+      // the touch feed alike.
+      this.handles.toArray().forEach(handleEl => Touch.addTouch(handleEl));
 
-      var $body = $('body');
-      $handle
-        .off('mousedown.zf.slider')
-        .on('mousedown.zf.slider', function(e) {
-          $handle.addClass('is-dragging');
-          _this.$fill.addClass('is-dragging');//
-          _this.$element.data('dragging', true);
+      var handleEl = $handle[0];
+      Events.off(handleEl, 'mousedown.zf.slider selectstart.zf.slider touchmove.zf.slider');
+      Events.on(handleEl, 'mousedown.zf.slider', function(e) {
+        $handle.addClass('is-dragging');
+        _this.$fill.addClass('is-dragging');//
+        _this.$element.data('dragging', true);
 
-          curHandle = $(e.currentTarget);
+        curHandle = $(e.currentTarget);
 
-          $body.on('mousemove.zf.slider', function(ev) {
-            ev.preventDefault();
-            _this._handleEvent(ev, curHandle);
+        Events.on(document.body, 'mousemove.zf.slider', function(ev) {
+          ev.preventDefault();
+          _this._handleEvent(ev, curHandle);
+        });
+        Events.on(document.body, 'mouseup.zf.slider', function(ev) {
+          _this._handleEvent(ev, curHandle);
 
-          }).on('mouseup.zf.slider', function(ev) {
-            _this._handleEvent(ev, curHandle);
+          $handle.removeClass('is-dragging');
+          _this.$fill.removeClass('is-dragging');
+          _this.$element.data('dragging', false);
 
-            $handle.removeClass('is-dragging');
-            _this.$fill.removeClass('is-dragging');
-            _this.$element.data('dragging', false);
-
-            $body.off('mousemove.zf.slider mouseup.zf.slider');
-          });
-      })
+          Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
+        });
+      });
       // prevent events triggered by touch
-      .on('selectstart.zf.slider touchmove.zf.slider', function(e) {
+      Events.on(handleEl, 'selectstart.zf.slider touchmove.zf.slider', function(e) {
         e.preventDefault();
       });
     }
@@ -589,13 +589,16 @@ class Slider extends Plugin {
    * Destroys the slider plugin.
    */
   _destroy() {
-    // jQuery side: the keydown/drag listeners live here (S10 seams).
+    // jQuery side: the keydown listeners live here (S10 seam).
     this.handles.off('.zf.slider');
     this.inputs.off('.zf.slider');
     this.$element.off('.zf.slider');
 
-    // Native side: the flipped input/click listeners drop in one pass each.
+    // Native side: the flipped input/click/drag listeners drop in one pass
+    // each (S13 drag chain), plus any body-wide drag pair left mid-drag.
     this.inputs.toArray().forEach(input => Events.off(input, '.zf.slider'));
+    this.handles.toArray().forEach(handle => Events.off(handle, '.zf.slider'));
+    Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
     Events.off(this.$element[0], '.zf.slider');
 
     clearTimeout(this.timeout);

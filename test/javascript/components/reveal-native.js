@@ -128,7 +128,7 @@ describe('Reveal (native layer contract)', function() {
       plugin.$overlay.trigger('click');
     });
 
-    it('closes on a jQuery-synthesized tap (the Touch seam keeps the tap half on jQuery)', function(done) {
+    it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function(done) {
       $html = $(template).appendTo('body');
       plugin = new Foundation.Reveal($html, {overlay: true});
       plugin.open();
@@ -138,7 +138,7 @@ describe('Reveal (native layer contract)', function() {
         done();
       });
 
-      plugin.$overlay.trigger('tap');
+      FoundationNext.Events.trigger(plugin.$overlay[0], 'tap');
     });
 
     it('does not close on clicks inside the modal itself', function(done) {

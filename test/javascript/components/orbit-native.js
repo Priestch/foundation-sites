@@ -2,12 +2,13 @@
 // state attribute writes and the beforeslidechange/slidechange production
 // moved to the native Events/DOM layer while the public contract stays
 // byte-identical; the Timer namespace is now passed explicitly ('orbit') and
-// the S2 data-key probe is retired. Known seams: swipe stays on jQuery (the
-// Touch util synthesizes its events through jQuery trigger), the keydown
-// binding stays on jQuery (the coarse suite feeds jQuery-synthesized mock
-// keydowns), mouseenter/mouseleave stay on jQuery (hover synthesis) and the
-// slide show/hide tweens stay on jQuery. These tests pin that contract from
-// the outside; the pre-existing orbit.js suite is untouched on purpose and
+// the S2 data-key probe is retired. The swipe consumers joined the native
+// layer with the Touch util's real synthesized swipes (S13). Known seams:
+// the keydown binding stays on jQuery (the coarse suite feeds
+// jQuery-synthesized mock keydowns), mouseenter/mouseleave stay on jQuery
+// (hover synthesis) and the slide show/hide tweens stay on jQuery. These
+// tests pin that contract from the outside; the pre-existing orbit.js suite
+// is untouched on purpose and
 // stays green.
 describe('Orbit (native layer contract)', function() {
   var plugin;
@@ -170,10 +171,10 @@ describe('Orbit (native layer contract)', function() {
   });
 
   describe('seams', function() {
-    it('changes slides on a jQuery-synthesized swipeleft (the Touch seam stays jQuery-side)', function() {
+    it('changes slides on a real synthesized swipeleft (the S13 Touch flip)', function() {
       build({pauseOnHover: false});
 
-      $html.find('.orbit-slide').eq(0).trigger('swipeleft');
+      FoundationNext.Events.trigger($html.find('.orbit-slide')[0], 'swipeleft');
 
       $html.find('.orbit-slide').eq(1).should.be.visible;
     });

@@ -65,7 +65,7 @@ class Reveal extends Plugin {
     this._init();
 
     // Touch and Triggers init are idempotent, just need to make sure they are initialized
-    Touch.init($);
+    Touch.init();
     Triggers.init($);
 
     Keyboard.register('Reveal', {
@@ -226,13 +226,11 @@ class Reveal extends Plugin {
         _this.close();
       };
       // The M1-fixed off-then-on order is kept: one handler pair per
-      // overlay, rebound cleanly on re-init. The click half lives on the
-      // native event layer; the tap half stays on jQuery - the Touch util
-      // synthesizes 'tap' through jQuery trigger in the mixed state, and a
-      // jQuery synthetic event cannot reach native listeners.
+      // overlay, rebound cleanly on re-init. The click and tap halves both
+      // live on the native event layer now (S13): 'tap' is a real, bubbling
+      // event on the touched element.
       Events.off(this.$overlay[0], '.zf.reveal');
-      Events.on(this.$overlay[0], 'click.zf.reveal', closeOnOverlayEvent);
-      $(this.$overlay).off('.zf.reveal').on('tap.zf.reveal', closeOnOverlayEvent);
+      Events.on(this.$overlay[0], 'click.zf.reveal tap.zf.reveal', closeOnOverlayEvent);
     }
     if (this.options.deepLink) {
       Events.on(window, `hashchange.zf.reveal:${this.id}`, this._handleState.bind(this));
@@ -450,10 +448,9 @@ class Reveal extends Plugin {
             !document.contains(e.target)) { return; }
         _this.close();
       };
-      // Same split as the overlay handler: click on the native layer, tap
-      // on jQuery until the Touch util migrates.
-      Events.on(document.body, 'click.zf.reveal', closeOnBodyEvent);
-      $(document.body).on('tap.zf.reveal', closeOnBodyEvent);
+      // Both halves on the native layer (S13): click since S6, tap with the
+      // Touch util's real synthesized events.
+      Events.on(document.body, 'click.zf.reveal tap.zf.reveal', closeOnBodyEvent);
     }
 
     if (this.options.closeOnEsc) {
@@ -512,8 +509,7 @@ class Reveal extends Plugin {
     $(window).off(`keydown.zf.reveal:${this.id}`);
 
     if (!this.options.overlay && this.options.closeOnClick) {
-      Events.off(document.body, 'click.zf.reveal');
-      $(document.body).off('tap.zf.reveal');
+      Events.off(document.body, 'click.zf.reveal tap.zf.reveal');
     }
 
     this.$element.off('keydown.zf.reveal');

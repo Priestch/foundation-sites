@@ -3,11 +3,11 @@
 // Registry/Events/DOM layer while the public contract stays byte-identical.
 // Known seams: the whole positioning block stays on jQuery objects (the Box
 // util consumes/produces jQuery collections and is self-consistent), the
-// fade in/out tweens stay on jQuery fx, the closeme production stays on
-// jQuery (the Triggers closeMeListener reads the plugin name from the jQuery
-// namespace) and the tap/touchend binding stays on jQuery (the Touch util
-// synthesizes tap). These tests pin that contract from the outside; the
-// pre-existing tooltip.js suite is untouched on purpose and stays green.
+// fade in/out tweens stay on jQuery fx and the closeme production stays on
+// jQuery until the S13 Triggers flip. The tap/touchend binding joined the
+// native layer with the Touch util's real synthesized tap (S13). These tests
+// pin that contract from the outside; the pre-existing tooltip.js suite is
+// untouched on purpose and stays green.
 describe('Tooltip (native layer contract)', function() {
   var plugin;
   var $html;
@@ -209,7 +209,7 @@ describe('Tooltip (native layer contract)', function() {
       setPosition.restore();
     });
 
-    it('toggles through a jQuery-synthesized tap (the Touch seam stays jQuery-side)', function() {
+    it('toggles through a real synthesized tap (the Touch tap flips to the native layer in S13)', function() {
       // hasTouch is checked at _events time: fake the touch capability, then
       // restore it
       Object.defineProperty(window, 'ontouchstart', {configurable: true, value: {}});
@@ -217,10 +217,10 @@ describe('Tooltip (native layer contract)', function() {
         build({});
         var el = $html[0];
 
-        $(el).trigger('tap.zf.tooltip');
+        FoundationNext.Events.trigger(el, 'tap');
         plugin.template[0].getAttribute('data-is-active').should.equal('true');
 
-        $(el).trigger('tap.zf.tooltip');
+        FoundationNext.Events.trigger(el, 'tap');
         plugin.template[0].getAttribute('data-is-active').should.equal('false');
       } finally {
         delete window.ontouchstart;

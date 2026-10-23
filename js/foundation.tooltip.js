@@ -3,6 +3,7 @@ import { GetYoDigits, ignoreMousedisappear } from './foundation.core.utils';
 import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { MediaQuery } from './foundation.util.mediaQuery';
+import { Touch } from './foundation.util.touch';
 import { Triggers } from './foundation.util.triggers';
 import { Positionable } from './foundation.positionable';
 
@@ -235,11 +236,12 @@ class Tooltip extends Positionable {
     }
 
     if (hasTouch) {
-      // Seam (S8): the tap half stays on jQuery - the Touch util synthesizes
-      // 'tap' through a jQuery trigger in the mixed state, and a jQuery
-      // synthetic event cannot reach native listeners. 'touchend' rides along
-      // on the same binding; it flips with the Touch slice.
-      $(element).on('tap.zf.tooltip touchend.zf.tooltip', function () {
+      // S13: the tap/touchend consumer flips with the Touch util - 'tap' is
+      // a real, bubbling event on the touched element now. The anchor itself
+      // has no tap listener outside this binding, so arming the document
+      // touch chain (Touch.init, idempotent) covers it.
+      Touch.init();
+      Events.on(element, 'tap.zf.tooltip touchend.zf.tooltip', function () {
         _this.isActive ? _this.hide() : _this.show();
       });
     }

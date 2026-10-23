@@ -33,7 +33,7 @@ class Orbit extends Plugin {
     this.options = $.extend({}, Orbit.defaults, datasetOptions(element[0]), options);
     this.className = 'Orbit'; // ie9 back compat
 
-    Touch.init($); // Touch init is idempotent, we just need to make sure it's initialied.
+    Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
 
     this._init();
 
@@ -197,16 +197,19 @@ class Orbit extends Plugin {
     if (this.$slides.length > 1) {
 
       if (this.options.swipe) {
-        // Seam (S10): swipe stays on jQuery - the Touch util synthesizes
-        // swipeleft/swiperight through jQuery trigger, which a native
-        // listener cannot hear (the Touch slice flips both sides).
-        this.$slides.off('swipeleft.zf.orbit swiperight.zf.orbit')
-        .on('swipeleft.zf.orbit', function(e){
-          e.preventDefault();
-          _this.changeSlide(true);
-        }).on('swiperight.zf.orbit', function(e){
-          e.preventDefault();
-          _this.changeSlide(false);
+        // S13: the swipe consumers flip with the Touch util - swipeleft/
+        // swiperight are real, bubbling events on the slide now, so these
+        // listeners live on the native event layer.
+        this.$slides.toArray().forEach(slide => {
+          Events.off(slide, 'swipeleft.zf.orbit swiperight.zf.orbit');
+          Events.on(slide, 'swipeleft.zf.orbit', function(e){
+            e.preventDefault();
+            _this.changeSlide(true);
+          });
+          Events.on(slide, 'swiperight.zf.orbit', function(e){
+            e.preventDefault();
+            _this.changeSlide(false);
+          });
         });
       }
       //***************************************
@@ -306,9 +309,9 @@ class Orbit extends Plugin {
     }
 
     if (this.$slides.length > 1) {
-      // Remove old events - both layers (S10): the jQuery wipe stays for the
-      // still-jQuery swipe/keydown/hover listeners, the native wipe drops
-      // the flipped click listeners on the element and its descendants.
+      // Remove old events - both layers (S10/S13): the jQuery wipe stays for
+      // the still-jQuery keydown/hover listeners, the native wipe drops the
+      // flipped click and swipe listeners on the element and its descendants.
       this.$element.off('.zf.orbit').find('*').off('.zf.orbit')
       Events.off(this.$element[0], '.zf.orbit');
       Array.from(this.$element[0].querySelectorAll('*')).forEach(el => Events.off(el, '.zf.orbit'));
@@ -461,8 +464,8 @@ class Orbit extends Plugin {
   * @function
   */
   _destroy() {
-    // Both layers, like _reset (S10): jQuery for the swipe/keydown/hover
-    // listeners, native for the flipped click listeners.
+    // Both layers, like _reset (S10/S13): jQuery for the keydown/hover
+    // listeners, native for the flipped click and swipe listeners.
     this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
     Events.off(this.$element[0], '.zf.orbit');
     Array.from(this.$element[0].querySelectorAll('*')).forEach(el => Events.off(el, '.zf.orbit'));

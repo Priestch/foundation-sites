@@ -32,7 +32,7 @@ class DropdownMenu extends Plugin {
     this.options = $.extend({}, DropdownMenu.defaults, datasetOptions(element[0]), options);
     this.className = 'DropdownMenu'; // ie9 back compat
 
-    Touch.init($); // Touch init is idempotent, we just need to make sure it's initialied.
+    Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
 
     this._init();
 
@@ -304,12 +304,10 @@ class DropdownMenu extends Plugin {
       this._hide();
       this._removeBodyHandler();
     };
-    // S9 split transport: the click half lives on the native event layer
-    // (real clicks and jQuery-synthesized clicks via the `.click()` bridge
-    // both arrive); the tap half stays on jQuery - the Touch util
-    // synthesizes 'tap' through a jQuery trigger in the mixed state.
-    Events.on(body, 'click.zf.dropdownMenu', bodyHandler);
-    $(body).on('tap.zf.dropdownMenu', bodyHandler);
+    // S13: the tap half flips with the Touch util - 'tap' is a real,
+    // bubbling event on the touched element now, so this native body
+    // listener hears it (real clicks arrived through this layer since S9).
+    Events.on(body, 'click.zf.dropdownMenu tap.zf.dropdownMenu', bodyHandler);
   }
 
   /**
@@ -318,8 +316,7 @@ class DropdownMenu extends Plugin {
    * @private
    */
   _removeBodyHandler() {
-    Events.off(document.body, 'click.zf.dropdownMenu');
-    $(document.body).off('tap.zf.dropdownMenu');
+    Events.off(document.body, 'click.zf.dropdownMenu tap.zf.dropdownMenu');
   }
 
   /**
