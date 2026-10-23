@@ -1,4 +1,4 @@
-(function (global, $) {
+(function (global) {
 
   /**
   * Try to catch the `do` function every `interval` delay, until it succedes
@@ -7,10 +7,9 @@
   * If a `catch` function is passed, it is called after each time `do` fails.
   *
   * @param  {object} opts
-  * @param  {object} opts
   */
   global.tryInterval = function (opts) {
-    var _opts = $.extend({}, opts);
+    var _opts = Object.assign({}, opts);
     var totalTime = 0;
 
     var interval = setInterval(function () {
@@ -65,4 +64,22 @@
     return script;
   };
 
-})(window, jQuery);
+  /**
+  * Native fixture builder (S15): parses an HTML string into a DETACHED
+  * element, like `$(html)[0]` did for single-root fixtures. Suites append
+  * it to `document.body` themselves and remove it in `afterEach`.
+  *
+  * @param  {string} html - the fixture markup (single root element).
+  * @returns {HTMLElement} the detached root element.
+  */
+  global.fixture = function (html) {
+    var template = document.createElement('template');
+    template.innerHTML = html.trim();
+    var root = template.content.firstElementChild;
+    if (!root) {
+      throw new Error('fixture() requires a single root element, got: ' + html);
+    }
+    return root;
+  };
+
+})(window);

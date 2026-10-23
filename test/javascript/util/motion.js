@@ -56,9 +56,9 @@ describe('Motion util', function() {
       var $el = $('<div></div>').appendTo('body');
       var el = $el[0];
       var cb = sinon.spy(function() {
-        // the callback still arrives with jQuery conventions
-        this.should.have.property('jquery');
-        this[0].should.be.equal(el);
+        // S15: the callback is applied with the animation target element
+        // (the jQuery convention died with Motion's jQuery import)
+        this.should.be.equal(el);
       });
 
       Foundation.Motion.animateIn($el, 'fade-in', cb);
@@ -133,7 +133,7 @@ describe('Motion util', function() {
       var $el = $('<div></div>').appendTo('body');
       var el = $el[0];
       var cb = sinon.spy(function() {
-        this.should.have.property('jquery');
+        this.should.be.equal(el);
       });
 
       Foundation.Motion.animateOut($el, 'fade-out', cb);
@@ -242,8 +242,10 @@ describe('Motion util', function() {
       // event.originalEvent.detail, not as handler arguments
       seen[0].paramUndefined.should.be.true;
       seen[0].detail.length.should.equal(1);
-      // v6 passed the jQuery object Move() was called with - unchanged
-      seen[0].detail[0].should.equal($el);
+      // S15 (detail-to-Element ruling): the extra parameter is the
+      // animation target element, not the jQuery collection Move() was
+      // called with (which v6 passed)
+      seen[0].detail[0].should.equal(el);
     });
 
     it('delivers the event once per listener while bubbling', function() {

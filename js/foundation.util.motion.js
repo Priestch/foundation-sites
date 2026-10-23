@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { Events } from './foundation.util.events';
 
 /**
@@ -32,6 +31,22 @@ function toElement(obj) {
   return obj && obj[0] !== undefined ? obj[0] : obj;
 }
 
+// Native stand-ins for jQuery's `.show()`/`.hide()`, after the S6 Reveal
+// `_show` precedent: show clears an inline display override and falls back
+// to `block` when the stylesheet still hides the element (what jQuery's
+// getDefaultDisplay resolved to for everything animated here), hide sets
+// the inline `none` jQuery would have written.
+function show(el) {
+  el.style.display = '';
+  if (window.getComputedStyle(el).display === 'none') {
+    el.style.display = 'block';
+  }
+}
+
+function hide(el) {
+  el.style.display = 'none';
+}
+
 // v6 fired 'finished.zf.animate' twice per Move (bubbling `trigger` plus the
 // element-local `triggerHandler`), so persistent element-local handlers ran
 // on every pass. The 7.0 flip dispatches ONE real, bubbling CustomEvent:
@@ -39,7 +54,9 @@ function toElement(obj) {
 // still-on-jQuery listeners keep receiving it through the S3/S4 white
 // absorption (extra params are on `event.originalEvent.detail` for them).
 function fireFinished(elem) {
-  Events.trigger(toElement(elem), 'finished.zf.animate', [elem]);
+  // S15 (detail-to-Element ruling): the extra parameter is the animation
+  // target element, no longer the jQuery collection Move() was called with.
+  Events.trigger(toElement(elem), 'finished.zf.animate', [toElement(elem)]);
 }
 
 function Move(duration, elem, fn){
@@ -81,14 +98,13 @@ function Move(duration, elem, fn){
  * @param {Function} cb - Callback to run when animation is finished.
  */
 function animate(isIn, element, animation, cb) {
-  // Mixed state: the element is still fed to (and hidden/shown through)
-  // jQuery, the animation target for classes, styles and events is taken
-  // from $element[0].
-  const $element = $(element).eq(0);
+  // The mixed-state input is unwrapped to the animation target; the plugin
+  // layer now hands in native elements (S15) while the not-yet-migrated
+  // callers still pass jQuery collections.
+  const el = toElement(element);
 
-  if (!$element.length) return;
+  if (!el || el.nodeType !== 1) return;
 
-  const el = $element[0];
   var initClass = isIn ? initClasses[0] : initClasses[1];
   var activeClass = isIn ? activeClasses[0] : activeClasses[1];
   // One completion per animate() call: both end-event names are armed below.
@@ -102,7 +118,7 @@ function animate(isIn, element, animation, cb) {
 
   requestAnimationFrame(() => {
     addClass(el, initClass);
-    if (isIn) $element.show();
+    if (isIn) show(el);
   });
 
   // Start the animation
@@ -122,9 +138,9 @@ function animate(isIn, element, animation, cb) {
   function finish() {
     if (finished) return;
     finished = true;
-    if (!isIn) $element.hide();
+    if (!isIn) hide(el);
     reset();
-    if (cb) cb.apply($element);
+    if (cb) cb.apply(el);
   }
 
   // Resets transitions and removes motion-specific classes

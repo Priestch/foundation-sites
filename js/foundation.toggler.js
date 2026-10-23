@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
 import { RegExpEscape } from './foundation.core.utils';
@@ -21,17 +20,19 @@ class Toggler extends Plugin {
    * @class
    * @name Toggler
    * @fires Toggler#init
-   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} element - Element (7.0) or, in the mixed state, a jQuery object to add the trigger to.
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Toggler.defaults, datasetOptions(element[0]), options);
+    // 7.0 line A, slice S15: the plugin works on the native element; the
+    // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+    this.$element = element.length !== undefined ? element[0] : element;
+    this.options = Object.assign({}, Toggler.defaults, datasetOptions(this.$element), options);
     this.className = '';
     this.className = 'Toggler'; // ie9 back compat
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init();
 
     this._init();
     this._events();
@@ -44,7 +45,7 @@ class Toggler extends Plugin {
    */
   _init() {
     // Collect triggers to set ARIA attributes to
-    var id = this.$element[0].id,
+    var id = this.$element.id,
       triggers = document.querySelectorAll(`[data-open~="${id}"], [data-close~="${id}"], [data-toggle~="${id}"]`);
 
     var input;
@@ -58,7 +59,7 @@ class Toggler extends Plugin {
       // - aria-expanded: according to the element visibility.
       //   (was `!this.$element.is(':hidden')`; Dom's visible() carries the
       //   narrow display-based semantics decided for the 7.0 line, slice S1)
-      this._setTriggersExpanded(triggers, visible(this.$element[0]));
+      this._setTriggersExpanded(triggers, visible(this.$element));
     }
     // Otherwise, parse toggle class
     else {
@@ -70,7 +71,7 @@ class Toggler extends Plugin {
       this.className = input[0] === '.' ? input.slice(1) : input;
 
       // - aria-expanded: according to the elements class set.
-      this._setTriggersExpanded(triggers, this.$element[0].classList.contains(this.className));
+      this._setTriggersExpanded(triggers, this.$element.classList.contains(this.className));
     }
 
     // - aria-controls: adding the element id to it if not already in it.
@@ -106,7 +107,7 @@ class Toggler extends Plugin {
     // Triggers util dispatches through the Events layer, so this consumer
     // listens there too. (jQuery-synthesized triggers no longer reach it:
     // a jQuery trigger() never produces a real DOM event.)
-    Events.on(this.$element[0], 'toggle.zf.trigger', this.toggle.bind(this));
+    Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
   }
 
   /**
@@ -120,7 +121,7 @@ class Toggler extends Plugin {
   }
 
   _toggleClass() {
-    var element = this.$element[0];
+    var element = this.$element;
     element.classList.toggle(this.className);
 
     var isOn = element.classList.contains(this.className);
@@ -145,7 +146,7 @@ class Toggler extends Plugin {
 
   _toggleAnimate() {
     var _this = this,
-      element = this.$element[0];
+      element = this.$element;
 
     // Mixed-state seam (7.0 line A, S3): Motion still runs on jQuery, so it
     // is fed the jQuery object and its callback still arrives with jQuery
@@ -168,7 +169,7 @@ class Toggler extends Plugin {
   }
 
   _updateARIA(isOn) {
-    var id = this.$element[0].id;
+    var id = this.$element.id;
     var triggers = document.querySelectorAll(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`);
 
     this._setTriggersExpanded(triggers, isOn);
@@ -181,7 +182,7 @@ class Toggler extends Plugin {
    * @private
    */
   _triggerMutate() {
-    var mutated = this.$element[0].querySelectorAll('[data-mutate]');
+    var mutated = this.$element.querySelectorAll('[data-mutate]');
 
     for (var i = 0; i < mutated.length; i++) {
       Events.trigger(mutated[i], 'mutateme.zf.trigger');
@@ -193,13 +194,12 @@ class Toggler extends Plugin {
    * @function
    */
   _destroy() {
-    // jQuery side: legacy listeners in the plugin namespace, kept while the
-    // mixed state lasts.
-    this.$element.off('.zf.toggler');
     // Native side: the toggle.zf.trigger seam listener and every other
     // listener this plugin registered through the Events layer are dropped
-    // by the bare-namespace form in one call.
-    Events.off(this.$element[0], '.zf.toggler');
+    // by the bare-namespace form in one call. (The 6.x jQuery-side
+    // `off('.zf.toggler')` line died with this file's jQuery import: the
+    // plugin registers nothing on the jQuery side anymore.)
+    Events.off(this.$element, '.zf.toggler');
   }
 }
 
