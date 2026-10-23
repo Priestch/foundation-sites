@@ -1,7 +1,28 @@
-# 线 A 收尾报告（S14 机械收尾 · FINAL）
+# 线 A 收尾报告（S15 进行中 · S14 终态 + S15 增量）
 
-分支 `dev-v7-remove-jquery`（S14 在 worktree 分支上产出，合入时以此为准）。
-S14 tip 起点为 9e664cd1c（S13 收口），本报告定稿于 2026-10-23。
+分支 `dev-v7-remove-jquery`（S14/S15 在 worktree 分支上产出，合入时以此为准）。
+S14 tip 起点为 9e664cd1c（S13 收口），本报告 S14 定稿于 2026-10-23，S15 增量续记于后（见"六、S15 增量"）。
+
+## 〇、S15 增量（Playwright 切片，进行中）
+
+已完成（提交序列 15:30–16:30）：
+
+1. **测试栈迁移 Playwright**（两个提交：先并存、后切默认）：`test/javascript/playwright-runner.js` 本地 HTTP 服务 + Playwright 打开既有 mocha 页，mocha `end` 事件回写 `window.__mochaDone/__mochaStats/__mochaFailures`，runner 轮询取结果、非零退出。浏览器选择：先试打包 chromium（CI 侧 `npx playwright install chromium`），失败回落系统 Chrome（channel `chrome`；本环境 `npx playwright install chromium` 下载被墙塞住，超时未完成——**本环境结论：用系统 Chrome 或设 `PW_CHROME_CHANNEL`；CI 方案：预装 `npx playwright install chromium` 或直接用 channel chrome**）。mocha-headless-chrome 已从 devDependencies 移除，`test:javascript:units/ci`、`test:bundle` 及 single-process 别名全部走 Playwright；viewport 钉 800x600 与 mocha-headless 对齐（slider/sticky 几何）。yarn.lock 全程 registry.yarnpkg.com，resolutions 7 键未动。
+2. **环境漂移修正**（tip 在本机 Chrome 155 基线 726+4fail → 730 全绿）：Reveal `finishUp` 补 destroy 竞态守卫（S14 Orbit 判例同形）；Motion animateIn pin 改断 transition longhand（shorthand 序列化随 Chrome 版本漂移）；SmoothScroll 程序化点击 pin 改用元素原生 `.click()`（jQuery 3.6.3+ special.click._default 对链接抑制原生 click 捷径——jQuery 合成 click 从此过不了桥，归⑨同族公告）。
+3. **which→e.key**（P3-2）：`Keyboard.parseKey` 先读 `event.key`（Tab/Enter/Escape/Space/End/Home/四向映射），which/keyCode 回退保留一期；mock 补 `key` 字段（维持 $.Event 形态——jQuery trigger 无法包装真 KeyboardEvent，suite 逐个切真事件派发时 mock 退役）。
+4. **首个原生化纵切**（Toggler+Motion+插件基类，import 29→27）：toggler/motion 去掉 jquery import；插件基类收元素或集合双形、init.zf/destroyed.zf 改真冒泡事件（jQuery 监听白吸收照旧）；Motion show/hide 原生 display（Reveal `_show` 判例）、完成回调以元素施用、finished.zf.animate extra 参数切元素；两份 Toggler suite 全原生化（`fixture()` helper 入 lib/utils.js，utils.js 去 jQuery）。
+5. **⑦ 文档欠账**：javascript-utilities.md Touch 节改为 `Foundation.Touch.addTouch(el)` + 原生监听，并公告合成事件不再过桥。
+
+S15 实测门禁：`yarn test` 全绿（build + sass 38 + units **729 passing/6 pending** + bundle 1）；`gulp lint` 0/0。**计数微调说明**：730→729，toggler-native destroy 节两条并一条（被钉的 jQuery 侧 off('.zf.toggler') 行已随 import 删除；原两条一条改写为"注册表清空→同元素可再建新实例"，另一条无原生等价物，删除；净 -1）。
+
+### S15 dist 重建差异类别（人工 review 结论）
+对比基点 57b3187ee（重建后 sha 记录于流水，blob 未存档，按源 diff 复核类别）：变化 6 个产物（foundation.js、plugins/core、reveal、toggler、util.keyboard、util.motion），全部对应本切片 3 个源提交的编译产物：① jQuery 运行时收窄（toggler/motion 模块工厂不再引 jquery external）；② Reveal finishUp 守卫；③ Keyboard keyNames 映射；④ 插件基类 Events.trigger + 元素归一；⑤ Motion 原生 show/hide + detail 元素 + cb.apply(el)。无逻辑漂移项。
+
+### S15 剩余作业（S16 输入，按依赖链）
+- **粗网 27 套件原生化**（除 Toggler×2 外全部；422 处 chai-jquery 断言 → `fixture()` + 原生断言 + `FoundationNext.Dom.visible`——**visible 断言只准用 Dom 实现，双标禁止**；mockKeyboardEvent 消费点随各组件 keydown 绑定翻真事件派发）。
+- 随后按 wrapup 第四节链 b→f：dispatchLocal jQuery 半边、detail 全量切元素、`$.extend`×20/`$.isEmptyObject`×2/`$.each`、addToJquery 处置、peerDeps 移除、27 文件 import 归零、fx 缝另切片。
+
+---
 
 ## 一、S14 完成项
 
@@ -60,12 +81,19 @@ S14 tip 起点为 9e664cd1c（S13 收口），本报告定稿于 2026-10-23。
 | ④ | `$primary-color` 前置赋值翻转（线 B B9） | **已定案**（线 B 台账④，与线 A 无关，合并态时进 CHANGELOG 行为变化列） |
 | ⑤ | Touch 真事件化：第三方 jQuery 合成 arming（`$.event.special` per-element）不复存在 | **已钉测试**（S13 touch.js），收尾公告（第三方若直接 `.on('tap')` 在 jQuery 侧将收不到合成事件，须用原生监听或 Foundation.Touch 面） |
 | ⑥ | MediaQuery watcher 命名空间变化（`changed.zf.mediaquery` 改真事件投递，参数走 detail） | **已钉测试**（S13 mediaquery），收尾公告 |
-| ⑦ | `$.spotSwipe` / `$.fn.addTouch` 公共面移除 | **待公告**（docs/pages/javascript-utilities.md:148 仍写 `$('selector').addTouch()`——**文档修订欠账**，Playwright 切片一并改；`Foundation.Touch.addTouch(el)` 是新面，已导出） |
+| ⑦ | `$.spotSwipe` / `$.fn.addTouch` 公共面移除 | **已公告**（S15：docs/pages/javascript-utilities.md Touch 节改写为 `Foundation.Touch.addTouch(el)` + 原生监听，并载明合成事件不再过桥；`Foundation.Touch.addTouch(el)` 是新面，已导出） |
 | ⑧ | `Foundation.Touch` 新增导出 | **已定案**（S13，entries/foundation.js:56），收尾公告（新增而非破坏） |
 | ⑨ | jQuery 合成 window 事件不再驱动 window 监听 | **已钉测试**（interchange-native"does not consume resizeme on the jQuery side"等），收尾公告 |
-| ⑩ | 第三方 `$form.trigger('reset')` 不再达原生监听 | **待公告**（abide 注释+钉头注释已写明；第三方应以原生 `form.reset()` 或真实 submit 触发；收尾公告与 ⑨ 合并为"合成事件不再过桥"一条） |
+| ⑩ | 第三方 `$form.trigger('reset')` 不再达原生监听 | **待公告**（abide 注释+钉头注释已写明；第三方应以原生 `form.reset()` 或真实 submit 触发；收尾公告与 ⑨ 合并为"合成事件不再过桥"一条。SmoothScroll 程序化点击 pin 的改写（S15）同族） |
 
-公告口径建议：①②⑤⑥⑦⑧⑨⑩ 合并为一节"7.0 事件层原生化行为变化"，③ 单列"待定夺项"，④ 归线 B CHANGELOG。
+公告口径建议：①②⑤⑥⑦⑧⑨⑩⑪⑫⑬ 合并为一节"7.0 事件层原生化行为变化"（其中⑪⑫⑬为 S15 新增，随纵切扩散到其余组件时逐条对号），③ 单列"待定夺项"，④ 归线 B CHANGELOG。
+S15 新增台账行：
+
+| # | 条目 | 状态 |
+|---|---|---|
+| ⑪ | 插件基类 `init.zf.*`/`destroyed.zf.*` 从 jQuery 合成（元素本地）改为真冒泡事件（原生监听为第一面，jQuery 直绑监听经白吸收照收；document 级监听从此也能收到） | **已落地+钉**（S15 core.plugin 纵切，core.js 套件原钉全过），随 7.0 公告 |
+| ⑫ | `Motion` 收口：完成回调 `this` 从 jQuery 集合改元素；`finished.zf.animate` extra 参数从调用时的 jQuery 集合改动画目标元素；animateIn/Out 的 show/hide 原生 display 处理（清内联+computed 回落 block，同 Reveal `_show` 判例） | **已落地+钉**（S15 motion 纵切，motion.js 套件 pin 同步改写），随 7.0 公告 |
+| ⑬ | 组件构造器 7.0 契约收元素（Toggler 首切：`plugin.$element` 为原生元素；混合态 reflow 喂入的 jQuery 集合被展开兼容）；d.ts 与迁移指南在 M3 随全组件铺开 | **进行中**（S15 Toggler 纵切；其余 19 组件随 S16 粗网批次铺开） |
 
 ## 四、给 Playwright 切片的完整交接（S15 输入）
 
