@@ -469,7 +469,13 @@ class Orbit extends Plugin {
     this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
     Events.off(this.$element[0], '.zf.orbit');
     Array.from(this.$element[0].querySelectorAll('*')).forEach(el => Events.off(el, '.zf.orbit'));
-    this.timer.pause();
+    // Guarded (S14): the timer only exists when geoSync ran - autoPlay on
+    // AND more than one slide. 6.x threw a TypeError on every destroy of a
+    // single-slide or non-autoplay carousel; the guard keeps the M1 fix
+    // (destroy stops the timer) for the instances that have one.
+    if (this.timer) {
+      this.timer.pause();
+    }
   }
 }
 

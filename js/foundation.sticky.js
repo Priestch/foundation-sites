@@ -438,7 +438,10 @@ class Sticky extends Plugin {
     Events.off(this.$element[0], 'resizeme.zf.trigger mutateme.zf.trigger');
     Events.off(this.$element[0], 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
     if (this.$anchor && this.$anchor.length) {
-      this.$anchor.off('change.zf.sticky');
+      // The 'change.zf.sticky' off below is removed (S14): 6.x never bound a
+      // change listener on the anchor (grep master confirms - only this off
+      // existed), so the wipe always matched nothing, and on the native
+      // layer it could never unregister anything either. Dead code.
       Events.off(this.$anchor[0], 'mutateme.zf.trigger');
     }
     if (this.scrollListener) Events.off(window, this.scrollListener)

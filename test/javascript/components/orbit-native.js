@@ -199,6 +199,22 @@ describe('Orbit (native layer contract)', function() {
       sinon.assert.calledOnce(pause);
     });
 
+    it('does not throw when no timer exists (single slide, S14 guard)', function() {
+      var template = `<div class="orbit" role="region" data-orbit>
+        <ul class="orbit-container">
+          <li class="is-active orbit-slide">
+            Only slide.
+          </li>
+        </ul>
+      </div>`;
+      $html = $(template).appendTo('body');
+      plugin = new Foundation.Orbit($html, {useMUI: false});
+      // geoSync never ran: autoPlay requires more than one slide
+      chai.expect(plugin.timer).to.be.undefined;
+
+      chai.expect(function() { plugin.destroy(); }).to.not.throw();
+    });
+
     it('drops every click listener on destroy, against both transports', function() {
       build({pauseOnHover: false});
       plugin.destroy();
