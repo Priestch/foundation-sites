@@ -22,8 +22,12 @@ class Tabs extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Tabs.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, Tabs.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'Tabs'; // ie9 back compat
 
     this._init();
@@ -397,7 +401,9 @@ class Tabs extends Plugin {
     var idStr, hashIdStr;
 
     if (typeof elem === 'object') {
-      idStr = elem[0].id;
+      // nodeType marks a real node: a native element arrives unwrapped
+      // (the 7.0 contract), a jQuery collection still needs the [0] head
+      idStr = elem.nodeType === 1 ? elem.id : elem[0].id;
     } else {
       idStr = elem;
     }

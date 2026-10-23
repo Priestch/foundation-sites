@@ -11,7 +11,7 @@
 // rebuild semantics at the instance/attribute level.
 describe('ResponsiveAccordionTabs (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
   var atLeastStub;
 
   beforeEach(function() {
@@ -27,9 +27,9 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
     // _handleMarkup drops its placeholder divs OUTSIDE the wrapper
     // collection; remove them so the ids stay unique across tests
@@ -79,8 +79,12 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
   </ul>`;
 
   function build(markup, options) {
-    $html = $(markup).appendTo('body');
-    plugin = new Foundation.ResponsiveAccordionTabs($html, Object.assign({slideSpeed: 0}, options));
+    html = document.body.appendChild(fixture(markup));
+    // single-root markup IS the ul; multi-root markup is wrapped in a
+    // container by fixture() and the wrapper is the ul inside it (either
+    // way the former $(markup) head element)
+    var wrapper = html.tagName === 'UL' ? html : html.querySelector('ul');
+    plugin = new Foundation.ResponsiveAccordionTabs(wrapper, Object.assign({slideSpeed: 0}, options));
     return plugin;
   }
 
@@ -143,7 +147,9 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       el.hasAttribute('data-responsive-accordion-tabs').should.be.true;
       el.hasAttribute('data-accordion').should.be.true;
       // the S11 removals: the wrapper no longer writes the phantom keys
-      chai.expect($html.data('zfPluginBase')).to.be.undefined;
+      // the S11 removals, on the native layer: no registry entry leaks onto the
+      // wrapper through the base-constructor path either
+      chai.expect(FoundationNext.Registry.getInstance(el)).to.be.undefined;
       chai.expect(plugin.storezfData).to.be.undefined;
     });
   });
@@ -240,29 +246,29 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       build(tabsMarkup);
       var el = document.getElementById('rat-native-tabs');
       var items = el.querySelectorAll('li');
-      var $panel2 = $(items[1].querySelector('[data-tab-content]'));
+      var panel2 = items[1].querySelector('[data-tab-content]');
 
-      plugin.toggle($panel2);
+      plugin.toggle(panel2);
       items[1].classList.contains('is-active').should.be.true;
       // allowAllClosed defaults to false: closing the only open pane is a
       // no-op (Accordion.up guard, 6.x semantics)
-      plugin.close($panel2);
+      plugin.close(panel2);
       items[1].classList.contains('is-active').should.be.true;
-      plugin.open($(items[0].querySelector('[data-tab-content]')));
+      plugin.open(items[0].querySelector('[data-tab-content]'));
       items[0].classList.contains('is-active').should.be.true;
       items[1].classList.contains('is-active').should.be.false;
-      plugin.open($panel2);
+      plugin.open(panel2);
       items[1].classList.contains('is-active').should.be.true;
 
       // tabs state: only open is supported, like 6.x
       matchOnly('medium');
       FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
-      var $tabPanel2 = $(document.getElementById('rat-native-panel2'));
+      var tabPanel2 = document.getElementById('rat-native-panel2');
 
-      chai.expect(plugin.toggle($tabPanel2)).to.be.undefined;
-      chai.expect(plugin.close($tabPanel2)).to.be.undefined;
-      plugin.open($tabPanel2);
-      $tabPanel2[0].classList.contains('is-active').should.be.true;
+      chai.expect(plugin.toggle(tabPanel2)).to.be.undefined;
+      chai.expect(plugin.close(tabPanel2)).to.be.undefined;
+      plugin.open(tabPanel2);
+      tabPanel2.classList.contains('is-active').should.be.true;
       document.querySelectorAll('#rat-native-tabs li a')[1].getAttribute('aria-selected').should.equal('true');
     });
   });
@@ -279,7 +285,11 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       el.querySelectorAll('li')[0].classList.contains('accordion-item').should.be.false;
       el.querySelectorAll('li')[0].hasAttribute('data-accordion-item').should.be.false;
 
-      var container = el.nextElementSibling;
+      // the tab panes moved to a fresh container, appended next to the
+      // wrapper (inside the fixture container for multi-root markup, inside
+      // body for a single-root fixture)
+      var containers = el.parentElement.querySelectorAll(':scope > [data-tabs-content]');
+      var container = containers[containers.length - 1];
       container.getAttribute('data-tabs-content').should.equal('rat-native-acc');
       var panels = container.querySelectorAll('.tabs-panel');
       panels.length.should.equal(2);
@@ -324,7 +334,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
 
   describe('nested submenu inside a pane', function() {
     it('survives the outer round trip: attrs and click behavior intact', function() {
-      $html = $(`<ul id="rat-native-outer" data-responsive-accordion-tabs="accordion medium-tabs">
+      html = document.body.appendChild(fixture(`<ul id="rat-native-outer" data-responsive-accordion-tabs="accordion medium-tabs">
         <li class="tabs-title is-active"><a href="#rat-native-outer-p1">Tab 1</a></li>
         <li class="tabs-title"><a href="#rat-native-outer-p2">Tab 2</a></li>
       </ul>
@@ -340,12 +350,12 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
           </ul>
         </div>
         <div class="tabs-panel" id="rat-native-outer-p2"><p>two</p></div>
-      </div>`).appendTo('body');
+      </div>`));
 
       var innerEl = document.getElementById('rat-native-inner');
-      var inner = new Foundation.AccordionMenu($(innerEl), {slideSpeed: 0});
+      var inner = new Foundation.AccordionMenu(innerEl, {slideSpeed: 0});
       matchOnly('small');
-      plugin = new Foundation.ResponsiveAccordionTabs($('#rat-native-outer'), {slideSpeed: 0});
+      plugin = new Foundation.ResponsiveAccordionTabs(document.querySelector('#rat-native-outer'), {slideSpeed: 0});
 
       // AccordionMenu carries aria-expanded on the parent item (li), the
       // click consumer sits on the anchor (S9 native layer)
