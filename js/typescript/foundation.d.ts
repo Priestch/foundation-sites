@@ -287,7 +287,6 @@ declare module FoundationSites {
   }
 
   interface ResponsiveAccordionTabs {
-    storezfData: any;
     open(_target: any, ...args: any[]): any;
     close(_target: any, ...args: any[]): any;
     toggle(_target: any, ...args: any[]): any;

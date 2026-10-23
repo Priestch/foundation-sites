@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { GetYoDigits } from './foundation.core.utils';
 import { Plugin }from './foundation.core.plugin';
+import { datasetOptions } from './foundation.util.dom';
 
 import { Accordion } from './foundation.accordion';
 import { Tabs } from './foundation.tabs';
@@ -33,12 +34,17 @@ var MenuPlugins = {
  * @requires foundation.tabs
  */
 
-class ResponsiveAccordionTabs extends Plugin{
-  constructor(element, options) {
-    super(element, options);
-    return this.options.reflow && this.storezfData || this;
-  }
-
+// 7.0 line A, slice S11: the wrapper runs on the native layer, and the mq
+// switch is an explicit destroy+rebuild of the inner Accordion/Tabs. The 6.x
+// code kept a storezfData/zfPluginBase "store/restore" illusion around the
+// swap - archaeology (confirmed against the 6.x base class): the restore
+// line wrote the PREVIOUS inner instance into the `zfPlugin` jQuery data
+// slot and the inner destroy() on the next line removed it again, so the
+// restore never survived and every switch was in fact rebuild-only. The
+// phantom keys are no longer written; the wrapper registers itself in the
+// Registry like every plugin (S2), and the inner ctor/destroy dance around
+// the registry slot mirrors the old zfPlugin guard/reoccupy machine.
+class ResponsiveAccordionTabs extends Plugin {
   /**
    * Creates a new instance of a responsive accordion tabs.
    * @class
@@ -49,16 +55,15 @@ class ResponsiveAccordionTabs extends Plugin{
    */
   _setup(element, options) {
     this.$element = $(element);
-    this.$element.data('zfPluginBase', this);
-    this.options = $.extend({}, ResponsiveAccordionTabs.defaults, this.$element.data(), options);
+    this.options = $.extend({}, ResponsiveAccordionTabs.defaults, datasetOptions(this.$element[0]), options);
 
     this.rules = this.$element.data('responsive-accordion-tabs');
     this.currentMq = null;
     this.currentRule = null;
     this.currentPlugin = null;
     this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
-    if (!this.$element.attr('id')) {
-      this.$element.attr('id',GetYoDigits(6, 'responsiveaccordiontabs'));
+    if (!this.$element[0].getAttribute('id')) {
+      this.$element[0].setAttribute('id', GetYoDigits(6, 'responsiveaccordiontabs'));
     }
 
     this._init();
@@ -132,6 +137,11 @@ class ResponsiveAccordionTabs extends Plugin{
    * @private
    */
   _events() {
+    // Seam (S11): 'changed.zf.mediaquery' is synthesized through jQuery by
+    // the MediaQuery watcher - mediaQuery is not migrated yet and a jQuery
+    // trigger() cannot produce a real event - so this consumer stays on the
+    // jQuery side until the MediaQuery slice flips both sides in one move
+    // (ResponsiveToggle/OffCanvas/Equalizer/Tabs precedent).
     this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
     $(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
@@ -142,9 +152,11 @@ class ResponsiveAccordionTabs extends Plugin{
    * @private
    */
   _checkMediaQueries() {
-    var matchedMq, _this = this;
+    var matchedMq = null;
+    var element = this.$element[0];
+
     // Iterate through each rule and find the last matching rule
-    $.each(this.rules, function(key) {
+    Object.keys(this.rules).forEach(function(key) {
       if (MediaQuery.atLeast(key)) {
         matchedMq = key;
       }
@@ -157,24 +169,22 @@ class ResponsiveAccordionTabs extends Plugin{
     if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
 
     // Remove existing plugin-specific CSS classes
-    $.each(MenuPlugins, function(key, value) {
-      _this.$element.removeClass(value.cssClass);
+    Object.keys(MenuPlugins).forEach(function(key) {
+      element.classList.remove(MenuPlugins[key].cssClass);
     });
 
     // Add the CSS class for the new plugin
-    this.$element.addClass(this.rules[matchedMq].cssClass);
+    element.classList.add(this.rules[matchedMq].cssClass);
 
-    // Create an instance of the new plugin
-    if (this.currentPlugin) {
-      //don't know why but on nested elements data zfPlugin get's lost
-      if (!this.currentPlugin.$element.data('zfPlugin') && this.storezfData) this.currentPlugin.$element.data('zfPlugin',this.storezfData);
-      this.currentPlugin.destroy();
-    }
+    // mq switch = explicit rebuild (see the class comment): tear the current
+    // inner instance down, convert the markup for the new type, construct
+    // the new inner. The rebuilt inner writes its own uuid attr and takes
+    // over the registry slot the base destroy just freed - the same state
+    // machine the 6.x zfPlugin key ran.
+    if (this.currentPlugin) this.currentPlugin.destroy();
     this._handleMarkup(this.rules[matchedMq].cssClass);
     this.currentRule = this.rules[matchedMq];
     this.currentPlugin = new this.currentRule.plugin(this.$element, this.options);
-    this.storezfData = this.currentPlugin.$element.data('zfPlugin');
-
   }
 
   _handleMarkup(toSet){
@@ -281,6 +291,8 @@ class ResponsiveAccordionTabs extends Plugin{
    * @function
    */
   _destroy() {
+    // The inner plugin cleans its own listeners/state (S8/S9 double-off
+    // discipline); the wrapper only owns the mq seam listener.
     if (this.currentPlugin) this.currentPlugin.destroy();
     $(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
