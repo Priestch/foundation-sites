@@ -1,13 +1,13 @@
-// S12 contract pins (7.0 line A): Abide's field collection, pseudo-selector
+// S12/S14 contract pins (7.0 line A): Abide's field collection, pseudo-selector
 // queries, event surface and ARIA/class writes moved to the native
 // Events/DOM layer while the public contract stays byte-identical. The
 // Dom pseudo-selector stand-ins are pinned element-by-element against the
-// jQuery selectors on a fixture form. Known seams: the options deep merge
-// stays on $.extend(true) (wrap-up slice) and the reset/submit consumers
-// no longer hear jQuery-synthesized trigger() calls (their real producers
-// are the browser and this plugin itself). These tests pin that contract
-// from the outside; the pre-existing abide.js suite is untouched on
-// purpose and stays green.
+// jQuery selectors on a fixture form. The options deep merge moved to the
+// Dom deepMerge in S14 (jQuery-extend semantics pinned in the deepMerge
+// suite); the reset/submit consumers no longer hear jQuery-synthesized
+// trigger() calls (their real producers are the browser and this plugin
+// itself). These tests pin that contract from the outside; the pre-existing
+// abide.js suite is untouched on purpose and stays green.
 describe('Abide (native layer contract)', function() {
   var plugin;
   var $html;
