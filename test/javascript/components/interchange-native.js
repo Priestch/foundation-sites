@@ -9,22 +9,22 @@
 // pre-existing interchange.js suite is untouched on purpose and stays green.
 describe('Interchange (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   afterEach(function() {
     if (plugin) {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
   });
 
   function build(attr, options) {
-    $html = $(`<div ${attr || ''}></div>`).appendTo('body');
-    plugin = new Foundation.Interchange($html, options);
+    html = document.body.appendChild(fixture(`<div ${attr || ''}></div>`));
+    plugin = new Foundation.Interchange(html, options);
     return plugin;
   }
 
@@ -58,9 +58,9 @@ describe('Interchange (native layer contract)', function() {
     it('writes the data-resize and id state attributes through the native layer', function() {
       build('data-interchange="[native-interchange.png, (min-width: 99999px)]"');
 
-      var id = $html[0].getAttribute('data-resize');
+      var id = html.getAttribute('data-resize');
       (id || '').should.have.length.of.at.least(6);
-      $html[0].id.should.equal(id);
+      html.id.should.equal(id);
     });
 
     it('matches the rules from the data-interchange attribute on _reflow', function() {
@@ -99,7 +99,7 @@ describe('Interchange (native layer contract)', function() {
       build('data-interchange="[native-a.png, (min-width: 1px)]"');
       var replaceSpy = sinon.spy(plugin, 'replace');
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
       sinon.assert.calledOnce(replaceSpy);
       replaceSpy.firstCall.args[0].should.equal('native-a.png');
@@ -109,7 +109,9 @@ describe('Interchange (native layer contract)', function() {
       build('data-interchange="[native-a.png, (min-width: 1px)]"');
       var replaceSpy = sinon.spy(plugin, 'replace');
 
-      $html.trigger('resizeme.zf.trigger');
+      // jQuery-synthesized dispatch stays the instrument: the flipped
+      // consumer cannot hear it (no real event)
+      $(html).trigger('resizeme.zf.trigger');
 
       sinon.assert.notCalled(replaceSpy);
     });
@@ -120,11 +122,11 @@ describe('Interchange (native layer contract)', function() {
       // type 'src' on a div with a path the browser never loads: no real
       // load event can race the assertions below.
       build('', {type: 'src'});
-      var el = $html[0];
+      var el = html;
       var nativeSpy = sinon.spy();
       var jQuerySpy = sinon.spy();
       FoundationNext.Events.on(el, 'replaced.zf.interchange', nativeSpy);
-      $html.on('replaced.zf.interchange', jQuerySpy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', jQuerySpy);
 
       plugin.replace('native-never-loaded.png');
 
@@ -139,15 +141,15 @@ describe('Interchange (native layer contract)', function() {
       build('', {type: 'src'});
 
       plugin.replace('native-first.png');
-      FoundationNext.Events.trigger($html[0], 'load');
+      FoundationNext.Events.trigger(html, 'load');
       plugin.currentPath.should.equal('native-first.png');
 
       // the next replace re-arms exactly one one-time listener; a second
       // load dispatch leaves the state untouched
       plugin.replace('native-second.png');
-      FoundationNext.Events.trigger($html[0], 'load');
+      FoundationNext.Events.trigger(html, 'load');
       plugin.currentPath.should.equal('native-second.png');
-      FoundationNext.Events.trigger($html[0], 'load');
+      FoundationNext.Events.trigger(html, 'load');
       plugin.currentPath.should.equal('native-second.png');
     });
   });
@@ -156,11 +158,11 @@ describe('Interchange (native layer contract)', function() {
     it('writes the escaped url into the inline style and fires replaced', function() {
       build('data-interchange=""', {type: 'background'});
       var nativeSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'replaced.zf.interchange', nativeSpy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', nativeSpy);
 
       plugin.replace('native/img(1).png');
 
-      $html[0].style.backgroundImage.should.contain('native/img%281%29.png');
+      html.style.backgroundImage.should.contain('native/img%281%29.png');
       sinon.assert.calledOnce(nativeSpy);
     });
   });
@@ -176,8 +178,8 @@ describe('Interchange (native layer contract)', function() {
       return fetchWith('native-partial.html', response).then(function() {
         // the raw response markup is in place (plus the attributes reflow's
         // init added to the child)
-        $html[0].innerHTML.indexOf('<div data-interchange="[native-inner.png, (min-width: 99999px)]"').should.equal(0);
-        var child = $html[0].firstElementChild;
+        html.innerHTML.indexOf('<div data-interchange="[native-inner.png, (min-width: 99999px)]"').should.equal(0);
+        var child = html.firstElementChild;
         (child.getAttribute('data-resize') !== null).should.be.true;
         plugin.currentPath.should.equal('native-partial.html');
       });
@@ -186,7 +188,7 @@ describe('Interchange (native layer contract)', function() {
     it('fires replaced.zf.interchange from the fetch text handler', function() {
       build('data-interchange=""', {type: 'html'});
       var nativeSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'replaced.zf.interchange', nativeSpy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', nativeSpy);
 
       return fetchWith('native-partial-2.html', '<p>content</p>').then(function() {
         sinon.assert.calledOnce(nativeSpy);
@@ -210,7 +212,7 @@ describe('Interchange (native layer contract)', function() {
     it('is silent on a non-2xx response ($.get parity: no event, no state change)', function() {
       build('data-interchange=""', {type: 'html'});
       var nativeSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'replaced.zf.interchange', nativeSpy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', nativeSpy);
       // fetch resolves on any status; a 404 carries ok=false, which the
       // plugin filters out exactly where $.get's success filter dropped it
       var fetchStub = sinon.stub(window, 'fetch').resolves({
@@ -225,7 +227,7 @@ describe('Interchange (native layer contract)', function() {
       return Promise.resolve().then(function() {
         sinon.assert.notCalled(nativeSpy);
         plugin.currentPath.should.equal('');
-        $html[0].innerHTML.should.equal('');
+        html.innerHTML.should.equal('');
         fetchStub.restore();
       });
     });
@@ -233,7 +235,7 @@ describe('Interchange (native layer contract)', function() {
     it('is silent on a network failure ($.get parity: no event, no state change)', function() {
       build('data-interchange=""', {type: 'html'});
       var nativeSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'replaced.zf.interchange', nativeSpy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', nativeSpy);
       var fetchStub = sinon.stub(window, 'fetch').rejects(new TypeError('Failed to fetch'));
 
       plugin.replace('native-unreachable.html');
@@ -254,7 +256,7 @@ describe('Interchange (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
       sinon.assert.notCalled(replaceSpy);
     });

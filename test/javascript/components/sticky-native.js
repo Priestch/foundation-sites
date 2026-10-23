@@ -12,7 +12,7 @@
 // pre-existing sticky.js suite is a placeholder and stays untouched.
 describe('Sticky (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   // The main test page loads its stylesheets AFTER the foundation bundle, so
   // the breakpoint list is garbage on this page - re-parse now that the CSS
@@ -29,7 +29,7 @@ describe('Sticky (native layer contract)', function() {
       plugin.destroy();
     }
     plugin = null;
-    if ($html) { $html.remove(); $html = null; }
+    if (html) { html.remove(); html = null; }
     window.scrollTo(0, 0);
   });
 
@@ -37,8 +37,8 @@ describe('Sticky (native layer contract)', function() {
     <div data-sticky data-anchor="stickyNativeAnchor" style="height: 50px">Sticky content</div>`;
 
   function build(options) {
-    $html = $(template).appendTo('body');
-    plugin = new Foundation.Sticky($html.filter('[data-sticky]'), Object.assign({stickyOn: 'small'}, options));
+    html = document.body.appendChild(fixture(template));
+    plugin = new Foundation.Sticky(html.querySelector('[data-sticky]'), Object.assign({stickyOn: 'small'}, options));
     return plugin;
   }
 
@@ -150,8 +150,9 @@ describe('Sticky (native layer contract)', function() {
         setSizes.callCount.should.equal(2);
 
         // the mixed-state boundary: a jQuery-synthesized dispatch never
-        // produces a real event, so the flipped consumers cannot hear it
-        plugin.$element.trigger('mutateme.zf.trigger');
+        // produces a real event, so the flipped consumers cannot hear it.
+        // jQuery trigger stays the instrument for the nothing-found half
+        $(plugin.$element).trigger('mutateme.zf.trigger');
         $('#stickyNativeAnchor').trigger('mutateme.zf.trigger');
         setSizes.callCount.should.equal(2);
 

@@ -9,7 +9,7 @@
 // untouched on purpose and stays green.
 describe('Equalizer (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   // The main test page loads its stylesheets AFTER the foundation bundle, so
   // the breakpoint list is garbage on this page - re-parse now that the CSS
@@ -24,7 +24,7 @@ describe('Equalizer (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) { $html.remove(); $html = null; }
+    if (html) { html.remove(); html = null; }
   });
 
   // min-height (not height) on the watched children, so the measurement
@@ -37,13 +37,13 @@ describe('Equalizer (native layer contract)', function() {
     </div>`;
 
   function build(options) {
-    $html = $(template).appendTo('body');
-    plugin = new Foundation.Equalizer($html, options);
+    html = document.body.appendChild(fixture(template));
+    plugin = new Foundation.Equalizer(html, options);
     return plugin;
   }
 
   function watched() {
-    return $html[0].querySelectorAll('[data-equalizer-watch]');
+    return html.querySelectorAll('[data-equalizer-watch]');
   }
 
   describe('equalization', function() {
@@ -53,16 +53,16 @@ describe('Equalizer (native layer contract)', function() {
 
       elements[0].style.height.should.equal('40px');
       elements[1].style.height.should.equal('40px');
-      $html[0].getAttribute('data-resize').should.be.a('string');
-      $html[0].getAttribute('data-mutate').should.be.a('string');
+      html.getAttribute('data-resize').should.be.a('string');
+      html.getAttribute('data-mutate').should.be.a('string');
     });
 
     it('fires preequalized/postequalized through the native event layer in order', function() {
-      $html = $(template).appendTo('body');
+      html = document.body.appendChild(fixture(template));
       var order = [];
-      FoundationNext.Events.on($html[0], 'preequalized.zf.equalizer', function() { order.push('pre'); });
-      FoundationNext.Events.on($html[0], 'postequalized.zf.equalizer', function() { order.push('post'); });
-      plugin = new Foundation.Equalizer($html, {});
+      FoundationNext.Events.on(html, 'preequalized.zf.equalizer', function() { order.push('pre'); });
+      FoundationNext.Events.on(html, 'postequalized.zf.equalizer', function() { order.push('post'); });
+      plugin = new Foundation.Equalizer(html, {});
 
       // the init reflow already produced the pair, in order, as real events
       order.should.deep.equal(['pre', 'post']);
@@ -73,7 +73,7 @@ describe('Equalizer (native layer contract)', function() {
       build({});
       var reflow = sinon.spy(plugin, '_reflow');
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
       sinon.assert.calledOnce(reflow);
       reflow.restore();
@@ -84,7 +84,7 @@ describe('Equalizer (native layer contract)', function() {
       var elements = watched();
       elements[1].style.minHeight = '90px';
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
       elements[0].style.height.should.equal('90px');
       elements[1].style.height.should.equal('90px');
@@ -96,12 +96,13 @@ describe('Equalizer (native layer contract)', function() {
       build({});
       var reflow = sinon.spy(plugin, '_reflow');
 
-      FoundationNext.Events.trigger($html[0], 'mutateme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'mutateme.zf.trigger');
       sinon.assert.calledOnce(reflow);
 
       // the mixed-state boundary: a jQuery-synthesized dispatch never
-      // produces a real event, so the flipped consumer cannot hear it
-      $html.trigger('mutateme.zf.trigger');
+      // produces a real event, so the flipped consumer cannot hear it.
+      // jQuery trigger stays the instrument for the nothing-found half
+      $(html).trigger('mutateme.zf.trigger');
       sinon.assert.calledOnce(reflow);
       reflow.restore();
     });
@@ -133,8 +134,8 @@ describe('Equalizer (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
-      FoundationNext.Events.trigger($html[0], 'mutateme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'mutateme.zf.trigger');
 
       sinon.assert.notCalled(reflow);
       reflow.restore();
@@ -165,26 +166,26 @@ describe('Equalizer (native layer contract)', function() {
     </div>`;
 
     var tabs;
-    var $wrap;
+    var wrap;
 
     afterEach(function() {
       if (tabs) { tabs.destroy(); tabs = null; }
-      if ($wrap) { $wrap.remove(); $wrap = null; }
+      if (wrap) { wrap.remove(); wrap = null; }
     });
 
     it('receives the Tabs forward exactly once per delivery, on both transports', function() {
       Foundation.MediaQuery._reInit();
-      $wrap = $(tabsTemplate).appendTo('body');
-      tabs = new Foundation.Tabs($wrap.find('[data-tabs]'), {});
-      var eqEl = $wrap.find('[data-equalizer]')[0];
-      var eq = new Foundation.Equalizer($(eqEl), {});
+      wrap = document.body.appendChild(fixture(tabsTemplate));
+      tabs = new Foundation.Tabs(wrap.querySelector('[data-tabs]'), {});
+      var eqEl = wrap.querySelector('[data-equalizer]');
+      var eq = new Foundation.Equalizer(eqEl, {});
 
       // the counters sit on the wrapper: every mutateme of the ecosystem
       // bubbles through it exactly once per producer dispatch
       var nativeCount = 0;
       var jqCount = 0;
-      FoundationNext.Events.on($wrap[0], 'mutateme.zf.trigger', function() { nativeCount++; });
-      $wrap.on('mutateme.zf.trigger', function() { jqCount++; });
+      FoundationNext.Events.on(wrap, 'mutateme.zf.trigger', function() { nativeCount++; });
+      FoundationNext.Events.on(wrap, 'mutateme.zf.trigger', function() { jqCount++; });
 
       tabs.selectTab('#eqFlipPanel2'); // no [data-mutate] on the incoming panel
       tabs.selectTab('#eqFlipPanel1'); // one forward onto the equalizer element
@@ -199,7 +200,7 @@ describe('Equalizer (native layer contract)', function() {
 
     it('receives the native Toggler production exactly once per delivery, on both transports', function() {
       Foundation.MediaQuery._reInit();
-      $wrap = $(`
+      wrap = document.body.appendChild(fixture(`
         <div>
           <button data-toggle="eqFlipMutate">Toggle</button>
           <div id="eqFlipMutate" data-toggler="is-open">
@@ -207,17 +208,17 @@ describe('Equalizer (native layer contract)', function() {
               <div data-equalizer-watch style="min-height: 40px">One</div>
             </div>
           </div>
-        </div>`).appendTo('body');
-      var eqEl = $wrap.find('[data-equalizer]')[0];
-      var eq = new Foundation.Equalizer($(eqEl), {});
-      var tog = new Foundation.Toggler($wrap.find('[data-toggler]'), {});
+        </div>`));
+      var eqEl = wrap.querySelector('[data-equalizer]');
+      var eq = new Foundation.Equalizer(eqEl, {});
+      var tog = new Foundation.Toggler(wrap.querySelector('[data-toggler]'), {});
 
       var nativeCount = 0;
       var jqCount = 0;
-      FoundationNext.Events.on($wrap[0], 'mutateme.zf.trigger', function() { nativeCount++; });
-      $wrap.on('mutateme.zf.trigger', function() { jqCount++; });
+      FoundationNext.Events.on(wrap, 'mutateme.zf.trigger', function() { nativeCount++; });
+      FoundationNext.Events.on(wrap, 'mutateme.zf.trigger', function() { jqCount++; });
 
-      $wrap.find('[data-toggle]')[0].click();
+      wrap.querySelector('[data-toggle]').click();
 
       // the S4-era native production reaches the flipped consumer once; a
       // jQuery listener absorbs the same single real event once
