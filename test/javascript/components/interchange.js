@@ -89,7 +89,8 @@ describe('Interchange', function () {
       $html = $(generateTemplate('template')).attr('data-interchange', '').appendTo('body');
       plugin = new Foundation.Interchange($html, {});
 
-      var spy = sinon.spy($, 'get');
+      // S14: the partial fetch moved to window.fetch
+      var spy = sinon.spy(window, 'fetch');
 
       plugin.replace(getPath('template', 'large'));
 

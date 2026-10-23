@@ -204,10 +204,19 @@ class Interchange extends Plugin {
     }
     // Replacing HTML
     else if (type === 'html') {
-      // Seam (S12): the partial fetch stays on jQuery's $.get - swapping it
-      // for fetch() changes transport and error semantics, a move for the
-      // wrap-up slice (same seam family as the $.extend(true) option merges).
-      $.get(path, (response) => {
+      // Native fetch (7.0 line A, S14): the former `$.get(path, callback)`.
+      // Error semantics aligned to the 6.x observed behavior: `$.get` only
+      // called back on HTTP 2xx (its internal success filter), so a failure
+      // was SILENT - no event, no state change, a console error from the
+      // failed request itself. `fetch` resolves on any status, so `res.ok`
+      // reproduces that filter: a non-2xx response drops the promise's
+      // result exactly like the dropped jQuery callback (fetch additionally
+      // logs its own failed-request console error, as jQuery did).
+      fetch(path).then(res => {
+        if (!res.ok) { return; }
+        return res.text();
+      }).then(response => {
+        if (response === undefined) { return; }
         // Native html injection (7.0 line A, S12): the assignment re-parses
         // `response` in place, exactly like the former `.html()`.
         element.innerHTML = response;
