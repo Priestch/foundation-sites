@@ -65,7 +65,10 @@ describe('Motion util', function() {
 
       // setup: animation class on, transitions off, transition duration zeroed
       classesOf(el).should.deep.equal(['fade-in']);
-      el.style.transition.should.equal('none 0s ease 0s');
+      // The shorthand's exact serialization drifts across Chrome versions
+      // ('none 0s ease 0s' on older Blink, 'none' on newer), so pin the
+      // longhands the code actually means.
+      el.style.transitionProperty.should.equal('none');
       el.style.transitionDuration.should.equal('0s');
 
       // frame 1: init class (and the element is shown for in animations)

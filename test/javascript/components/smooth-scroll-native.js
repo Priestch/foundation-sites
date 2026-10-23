@@ -131,10 +131,17 @@ describe('SmoothScroll (native layer contract)', function() {
       });
     });
 
-    it('still scrolls on a jQuery-synthesized click (the native .click() shortcut bridges the layers)', function(done) {
+    it('still scrolls on a programmatic click (the element\'s native .click() drives the layers)', function(done) {
       var $nav = buildNav(shortOptions());
+      var link = $nav.find('a')[0];
 
-      $nav.find('a').trigger('click');
+      // jQuery's `.trigger('click')` cannot drive this input anymore:
+      // since jQuery 3.6.3 its special.click._default suppresses the native
+      // .click() shortcut on links, and a jQuery-synthesized event never
+      // reaches the native listener layer (same ledger as the "synthetic
+      // events no longer bridge" announcement). The programmatic click the
+      // contract needs is the element's own DOM .click() method.
+      link.click();
 
       var expected = absoluteTop(document.getElementById('ss-target'));
       tryInterval({

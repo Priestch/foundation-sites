@@ -512,6 +512,12 @@ class Reveal extends Plugin {
     this.$element.off('keydown.zf.reveal');
 
     function finishUp() {
+      // destroy() can land while the out-animation is still running (it
+      // nulls every own property); the completion must then bail instead of
+      // dereferencing the nulled $element (same guard shape as the Orbit
+      // destroy fix, S14). 6.x never threw here only because its cleanup ran
+      // on emptied jQuery collections.
+      if (!_this.$element) { return; }
 
       // Get the current top before the modal is closed and restore the scroll after.
       // TODO: use component properties instead of HTML properties
