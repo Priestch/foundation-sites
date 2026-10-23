@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { GetYoDigits } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
-import { visible, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox } from './foundation.util.dom';
+import { visible, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox, deepMerge } from './foundation.util.dom';
 
 /**
  * Abide module.
@@ -51,12 +51,12 @@ class Abide extends Plugin {
    */
   _setup(element, options = {}) {
     this.$element = element;
-    // Seam (S12): the options deep merge stays on jQuery's $.extend(true) -
-    // it is the last deep merge of the plugin layer and moves together with
-    // the wrap-up slice's shared deep-clone utility (validator functions and
-    // RegExp patterns must survive the merge by reference rules, not by
-    // JSON clone rules).
-    this.options  = $.extend(true, {}, Abide.defaults, this.$element.data(), options);
+    // Native deep merge (7.0 line A, S14): the Dom deepMerge mirrors jQuery's
+    // `$.extend(true)` semantics (array index merge, null overwrite,
+    // reference assignment for functions/RegExps - the validator functions
+    // and RegExp patterns above survive the merge by reference). Pinned
+    // against jQuery in the deepMerge equivalence suite.
+    this.options = deepMerge({}, Abide.defaults, this.$element.data(), options);
     this.isEnabled = true;
     this.formnovalidate = null;
 

@@ -122,4 +122,75 @@ function isCheckbox(el) {
   return isTag(el, 'input') && el.type === 'checkbox';
 }
 
-export {q, visible, datasetOptions, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox};
+// --- jQuery `$.extend(true, ...)` stand-in (7.0 line A, S14) ---
+// Deep-merges `sources` into `target`, mirroring jQuery's deep-extend
+// semantics where they differ from naive deep clones:
+// - Arrays are merged by INDEX like jQuery does (not concatenated): source
+//   slots overwrite target slots, longer tails survive.
+// - A source `null` (or undefined) at a key that exists overwrites the value
+//   (only keys absent from the source are skipped).
+// - A source plain object meets a non-object: it replaces it (jQuery's
+//   "deep" only descends when BOTH sides are plain objects/arrays).
+// - Functions, RegExps and other class instances are assigned by reference,
+//   never cloned (validator functions and pattern RegExps in Abide's
+//   defaults must survive the merge as the same objects).
+// - Enumeration mirrors jQuery's `for...in`: inherited enumerable keys are
+//   copied too; only `__proto__` and self-references are excluded (the
+//   Object.prototype-pollution guard from the jQuery source).
+function isPlainObjectish(value) {
+  return Object.prototype.toString.call(value) === '[object Object]' ||
+    Array.isArray(value);
+}
+
+function deepMerge(target, ...sources) {
+  // jQuery iterates its sources in order and mutates the first object; the
+  // `target` given by the callers here is a fresh `{}`, so the mutation is
+  // invisible to callers. `null`/primitive targets fall back to a fresh
+  // object, like jQuery's handling of a non-object first argument.
+  if (!isPlainObjectish(target)) {
+    target = {};
+  }
+
+  sources.forEach(source => {
+    // jQuery skips null/undefined sources entirely.
+    if (source == null) { return; }
+
+    // jQuery iterates `for (name in options)` - INHERITED keys are copied
+    // too (only `__proto__` and self-references are excluded). Object.keys
+    // would silently diverge for prototype-chained option sources, so the
+    // inherited enumeration is kept; the `__proto__` guard carries the
+    // Object.prototype-pollution protection from the jQuery source.
+    // (eslint-disable at function level: guard-for-in wants an `if`
+    // prototype filter, but the inherited enumeration is the point here -
+    // parity with the jQuery loop - and the `__proto__` guard does the
+    // pollution filtering the rule would otherwise ask for.)
+    /* eslint-disable-next-line guard-for-in */
+    for (const key in source) {
+      const srcValue = source[key];
+      // `undefined` source values are skipped (jQuery's copy !== undefined
+      // guard), so an option can never be reset to undefined by omission.
+      if (srcValue === undefined || key === '__proto__' || srcValue === target) { continue; }
+
+      if (isPlainObjectish(srcValue)) {
+        const dstValue = target[key];
+        const srcIsArray = Array.isArray(srcValue);
+        // jQuery descends only when the destination side carries the
+        // matching kind: an array source merges by index into an array
+        // destination, an object source into an object destination;
+        // anything else (primitive, kind mismatch) starts from a fresh
+        // carrier of the source's shape.
+        const mergeIntoDst = srcIsArray
+          ? Array.isArray(dstValue)
+          : !Array.isArray(dstValue) && isPlainObjectish(dstValue);
+        target[key] = deepMerge(mergeIntoDst ? dstValue : (srcIsArray ? [] : {}), srcValue);
+      } else {
+        // Primitives, functions, RegExps, DOM nodes: assigned as-is.
+        target[key] = srcValue;
+      }
+    }
+  });
+
+  return target;
+}
+
+export {q, visible, datasetOptions, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox, deepMerge};
