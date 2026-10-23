@@ -94,31 +94,31 @@ describe('Dropdown (native layer contract)', function() {
   });
 
   describe('closeme chain', function() {
-    beforeEach(function() {
-      // The window closeme listener snapshots [data-yeti-box] when it is
-      // installed (at load time); re-run the initializer so the chain is
-      // armed here (reveal/tooltip-native precedent).
-      Foundation.Triggers.Initializers.addClosemeListener();
-    });
 
-    it('keeps the closeme production on jQuery: the broadcast listener hears the namespaced synthetic event', function() {
+    it('produces closeme.zf.dropdown as a real event with the id on the detail (the S13 Triggers flip)', function() {
       build({});
+      // The window closeme listener only registers when [data-yeti-box]
+      // elements exist (the 6.x existence condition) - arm HERE, after the
+      // fixtures, so the chain does not depend on load-time leftovers.
+      Foundation.Triggers.Initializers.addClosemeListener();
       var closemeSpy = sinon.spy();
-      $(window).on('closeme.zf.dropdown', closemeSpy);
-      $scratch.push({remove: () => $(window).off('closeme.zf.dropdown', closemeSpy)});
+      FoundationNext.Events.on(window, 'closeme.zf.dropdown', closemeSpy);
+      $scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.dropdown', closemeSpy)});
 
       plugin.open();
 
       sinon.assert.calledOnce(closemeSpy);
-      // a real CustomEvent carries no jQuery namespace - only the kept
-      // jQuery production delivers the plugin name to closeMeListener
+      closemeSpy.firstCall.args[0].type.should.equal('closeme');
       closemeSpy.firstCall.args[0].namespace.should.equal('dropdown.zf');
+      // the id rides the detail, where the 6.x second trigger parameter sat
       closemeSpy.firstCall.args[1].should.equal($html.attr('id'));
     });
 
     it('closes another open dropdown through the real close.zf.trigger broadcast', function() {
       var pluginA = build({}, {id: 'dropdownNativeClosemeA'});
       var elA = $html[0];
+      // arm after the fixtures (see the existence-condition note above)
+      Foundation.Triggers.Initializers.addClosemeListener();
       pluginA.open();
 
       $html = null;

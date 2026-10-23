@@ -283,11 +283,9 @@ class Dropdown extends Positionable {
      * Fires to close other open dropdowns, typically when dropdown is opening
      * @event Dropdown#closeme
      */
-    // Seam (S9): the closeme production stays on jQuery. The Triggers
-    // closeMeListener is still registered through jQuery and reads the
-    // plugin name from the jQuery event namespace - a real CustomEvent
-    // carries no namespace (S6 Reveal / S8 Tooltip precedent).
-    this.$element.trigger('closeme.zf.dropdown', this.$element.attr('id'));
+    // S13: the closeme production flipped with the Triggers listener -
+    // a real, bubbling event whose detail carries the plugin id.
+    Events.trigger(this.$element[0], 'closeme.zf.dropdown', [this.$element.attr('id')]);
 
     // S9: class/ARIA state flips natively.
     this.$anchors.toArray().forEach(anchor => {

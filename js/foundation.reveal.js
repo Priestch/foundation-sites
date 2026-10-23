@@ -330,14 +330,11 @@ class Reveal extends Plugin {
        * Closes any other modals that are currently open
        * @event Reveal#closeme
        */
-      // Seam (S6): the closeme production stays on jQuery. The Triggers
-      // closeMeListener is still registered through jQuery and reads the
-      // plugin id from the handler's second argument and the plugin name
-      // from the jQuery event namespace - a real CustomEvent would deliver
-      // neither (extra params stay in event.originalEvent.detail for jQuery
-      // handlers, and real events carry no namespace), so this producer
-      // flips together with that listener in the Triggers-owned slice.
-      this.$element.trigger('closeme.zf.reveal', this.id);
+      // S13: the closeme production flipped with the Triggers listener -
+      // a real, bubbling event whose detail carries the plugin id (the 6.x
+      // second trigger parameter) and whose listener is registered per
+      // plugin name.
+      Events.trigger(this.$element[0], 'closeme.zf.reveal', [this.id]);
     }
 
     if (countVisibleReveals() === 0) {

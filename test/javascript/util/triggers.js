@@ -1,14 +1,15 @@
-// S4 pins (7.0 line A): the Triggers util produces its events on the native
-// Events layer while many consumers are still jQuery listeners. Real events
-// (resize/scroll broadcast, closeme forwarding) reach those jQuery listeners
-// through "white absorption" - jQuery applies no namespace filtering to real
-// DOM events. The element-local open/toggle dispatches instead use a dual
-// transport (native + namespace-filtered jQuery triggerHandler), because a
-// real event there would over-deliver to same-type handlers under other
-// namespaces. The window-level resize/scroll/closeme listeners stay
-// jQuery-registered on purpose: a jQuery-synthesized trigger() only reaches
-// jQuery listeners, and real events arrive at the very same listener from
-// the native side.
+// S4/S13 pins (7.0 line A): the Triggers util produces its events on the
+// native Events layer while many consumers are still jQuery listeners. Real
+// events (resize/scroll broadcast, closeme forwarding) reach those jQuery
+// listeners through "white absorption" - jQuery applies no namespace
+// filtering to real DOM events. The element-local open/toggle dispatches use
+// a dual transport (native + namespace-filtered jQuery triggerHandler),
+// because a real event there would over-deliver to same-type handlers under
+// other namespaces. Since S13 the window-level resize/scroll/closeme
+// listeners are native too: they hear the real window events directly, and
+// the closeme producers fire real events through Events.trigger in the same
+// slice (the listener is registered per plugin name, so the name is an
+// explicit parameter instead of the 6.x namespace derivation).
 describe('Triggers (native dispatch)', function() {
   var plugins = [];
   var $fixtures = [];
@@ -107,7 +108,7 @@ describe('Triggers (native dispatch)', function() {
   });
 
   describe('closeme broadcast', function() {
-    it('forwards closeme.zf.<plugin> natively so un-migrated jQuery consumers still close', function() {
+    it('forwards closeme.zf.<plugin> natively so jQuery consumers still close (S13: native producer, native listener)', function() {
       var $a = append('<div class="dropdown-pane" data-dropdown id="s4-dd-a">A</div>');
       var $b = append('<div class="dropdown-pane" data-dropdown id="s4-dd-b">B</div>');
       append('<button type="button" data-toggle="s4-dd-a">A</button>');
@@ -125,9 +126,10 @@ describe('Triggers (native dispatch)', function() {
       pluginB.open();
       $b.should.have.class('is-open');
 
-      // pluginA.open() fires 'closeme.zf.dropdown' through jQuery (the
-      // producer is un-migrated); the window listener forwards it as a real
-      // event, and B - a jQuery consumer - must close while A stays open.
+      // pluginA.open() fires 'closeme.zf.dropdown' as a real, bubbling
+      // event (S13 producer flip); the native window listener forwards it as
+      // a real event, and B - a jQuery consumer - must close while A stays
+      // open.
       pluginA.open();
 
       $b.should.not.have.class('is-open');
@@ -137,6 +139,35 @@ describe('Triggers (native dispatch)', function() {
       // native element as parameter.
       sinon.assert.calledOnce(nativeSpy);
       nativeSpy.firstCall.args[1].should.equal($b[0]);
+    });
+
+    it('keeps the native chain armed across re-initialization and reads the id from the detail (S13)', function() {
+      var $a = append('<div class="dropdown-pane" data-dropdown id="s13-dd-a">A</div>');
+      var $b = append('<div class="dropdown-pane" data-dropdown id="s13-dd-b">B</div>');
+      append('<button type="button" data-toggle="s13-dd-a">A</button>');
+      append('<button type="button" data-toggle="s13-dd-b">B</button>');
+      var pluginA = track(new Foundation.Dropdown($a, {}));
+      var pluginB = track(new Foundation.Dropdown($b, {}));
+      Foundation.Triggers.Initializers.addClosemeListener();
+      // third parties / plugin inits re-run the initializer freely: the
+      // per-name flags keep exactly one window listener (one broadcast)
+      Foundation.Triggers.Initializers.addClosemeListener();
+
+      // round one: opening A closes B
+      pluginB.open();
+      pluginA.open();
+      $b.should.not.have.class('is-open');
+      $a.should.have.class('is-open');
+
+      // close both, then round two through a fresh broadcast
+      pluginA.close();
+      pluginB.open();
+      pluginA.open();
+
+      // B closed again and A stayed open: the id comparison used the
+      // detail-carried plugin id (A's id), not a stale or shared value
+      $b.should.not.have.class('is-open');
+      $a.should.have.class('is-open');
     });
 
     it('builds the closeme listener names dynamically from plugNames', function() {
@@ -149,7 +180,9 @@ describe('Triggers (native dispatch)', function() {
       var spy = sinon.spy();
       $target.on('close.zf.trigger', spy);
 
-      $source.trigger('closeme.zf.magic', 's4-magic-source');
+      // S13: the window listener is native, so the producer drives the real
+      // event through the Events layer (a jQuery trigger would not reach it).
+      FoundationNext.Events.trigger($source[0], 'closeme.zf.magic', ['s4-magic-source']);
 
       sinon.assert.calledOnce(spy);
       // jQuery passes real events without extra parameters: the forwarded
@@ -169,7 +202,8 @@ describe('Triggers (native dispatch)', function() {
       FoundationNext.Events.on($el[0], 'resizeme.zf.trigger', nativeSpy);
 
       Foundation.Triggers.Initializers.addResizeListener(10);
-      $(window).trigger('resize');
+      // S13: the window listener is native - a real resize event drives it
+      window.dispatchEvent(new Event('resize'));
 
       tryInterval({
         interval: 10,
@@ -198,7 +232,8 @@ describe('Triggers (native dispatch)', function() {
       $el.on('scrollme.zf.trigger', jqSpy);
 
       Foundation.Triggers.Initializers.addScrollListener(10);
-      $(window).trigger('scroll');
+      // S13: the window listener is native - a real scroll event drives it
+      window.dispatchEvent(new Event('scroll'));
 
       tryInterval({
         interval: 10,

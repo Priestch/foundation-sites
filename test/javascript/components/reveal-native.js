@@ -319,13 +319,6 @@ describe('Reveal (native layer contract)', function() {
   });
 
   describe('closeme chain', function() {
-    beforeEach(function() {
-      // The window closeme listener snapshots [data-yeti-box] when it is
-      // installed (at load time); re-run the initializer so the chain is
-      // armed here. The jQuery off-then-on registration makes it idempotent.
-      Foundation.Triggers.Initializers.addClosemeListener();
-    });
-
     it('closes other open reveals when a reveal opens (closeme producer seam)', function(done) {
       $html = $(template.replace('revealNative1', 'revealNative5')).appendTo('body');
       var $html2 = $(template.replace('revealNative1', 'revealNative6')).appendTo('body');
@@ -338,6 +331,11 @@ describe('Reveal (native layer contract)', function() {
         plugin2.destroy();
         done();
       });
+
+      // The window closeme listener only registers when [data-yeti-box]
+      // elements exist (the 6.x existence condition) - arm HERE, after the
+      // fixtures, so the chain does not depend on load-time leftovers.
+      Foundation.Triggers.Initializers.addClosemeListener();
 
       // multipleOpened defaults to false: opening must close the other modal
       plugin = new Foundation.Reveal($html, {});

@@ -222,12 +222,14 @@ describe('Interchange', function () {
       //   called way after the expected time.
       setTimeout(function () {
         let spy = sinon.spy(plugin, '_reflow');
-        $(window).trigger('resize');
-        $(window).trigger('resize');
+        // S13: the Triggers window listeners are native - real resize events
+        // drive the debounce
+        window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event('resize'));
 
         setTimeout(function () {
-          $(window).trigger('resize');
-          $(window).trigger('resize');
+          window.dispatchEvent(new Event('resize'));
+          window.dispatchEvent(new Event('resize'));
 
           tryInterval({
             interval: debounce,

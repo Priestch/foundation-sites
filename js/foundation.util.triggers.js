@@ -3,19 +3,18 @@ import { onLoad } from './foundation.core.utils';
 import { Motion } from './foundation.util.motion';
 import { Events } from './foundation.util.events';
 
-// Mixed-state dispatchers (7.0 line A, S4): the Triggers util now produces
-// its events on the native Events layer as real DOM events. Still-on-jQuery
-// consumers (Reveal, Dropdown, Tooltip, OffCanvas, ...) keep receiving them
-// because jQuery applies no namespace filtering to real DOM events on the
-// dispatch target ("white absorption"). The reverse direction does not exist
-// - a jQuery-synthesized trigger() never reaches native listeners - which is
-// why the window-level resize/scroll/closeme listeners below stay registered
-// through jQuery: they must hear jQuery-synthesized events from un-migrated
-// producers now, and keep hearing the real events once those producers
-// migrate. For the element-local triggerHandler dispatches (open/toggle/
-// toggle-focus), a real event would over-deliver to jQuery handlers of the
-// same base type under other namespaces, which jQuery cannot filter - so
-// those go out as a dual transport instead (see dispatchLocal below).
+// S13 (7.0 line A): the window-level listeners (resize/scroll debounce,
+// closeme broadcast) run on the native event layer. The closeme producers
+// (reveal/dropdown/tooltip) fire real events through Events.trigger in the
+// same slice, and the listener is registered per plugin name so the name is
+// an explicit parameter - the 6.x derivation from the jQuery event
+// namespace does not exist on real events. Still-on-jQuery producers (third
+// parties) keep reaching the element-level dispatchers through real-event
+// pass-through; a jQuery-synthesized window event can no longer drive the
+// window-level listeners (jQuery triggers produce no real events).
+// dispatchLocal keeps its jQuery half until the wrap-up slice deletes it
+// (S4 clause), and closeableListener's fadeOut fx chain stays jQuery-side
+// (same ledger as the accordion fx).
 
 const triggers = (el, type) => {
   (el.getAttribute(`data-${type}`) || '').split(' ').forEach(id => {
@@ -142,8 +141,13 @@ Triggers.Initializers.addToggleFocusListener = () => {
 
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global  = {
-  closeMeListener: function(e, pluginId){
-    let plugin = e.namespace.split('.')[0];
+  closeMeListener: function(e, pluginId, pluginName){
+    // S13: the plugin name is an explicit parameter - the listener is
+    // registered once per name (the 6.x single jQuery listener derived it
+    // from the event namespace, which real events do not carry) - and the
+    // id rides the event detail, where Events.trigger puts the extra
+    // parameters (the 6.x second trigger parameter).
+    let plugin = pluginName || (e.namespace ? e.namespace.split('.')[0] : 'dropdown');
     let plugins = document.querySelectorAll(`[data-${plugin}]`);
 
     for (let i = 0; i < plugins.length; i++) {
@@ -174,21 +178,27 @@ Triggers.Initializers.addClosemeListener = function(pluginName) {
     }
   }
   if(yetiBoxes.length){
-    let listeners = plugNames.map((name) => {
-      return `closeme.zf.${name}`;
-    }).join(' ');
-
-    // jQuery-side on purpose (S4): the closeme producers are the still
-    // un-migrated plugins, and a jQuery trigger() only reaches jQuery
-    // listeners. Real events keep arriving through this same listener.
-    $(window).off(listeners).on(listeners, Triggers.Listeners.Global.closeMeListener);
+    // Native side (S13): the producers below fire real events through the
+    // Events layer in the same slice. One listener per name keeps the name
+    // explicit, and the 6.x off-then-on shape is kept so every arm call
+    // leaves exactly one fresh listener set behind (self-healing: a later
+    // initializer call rebuilds the window listeners whatever happened to
+    // the previous ones).
+    let listeners = plugNames.map((name) => `closeme.zf.${name}`).join(' ');
+    Events.off(window, listeners);
+    plugNames.forEach((name) => {
+      Events.on(window, `closeme.zf.${name}`, function(e, pluginId) {
+        Triggers.Listeners.Global.closeMeListener(e, pluginId, name);
+      });
+    });
   }
 }
 
 function debounceGlobalListener(debounce, trigger, listener) {
   let timer;
-  // jQuery-side, like the closeme listener above (see the note at the top).
-  $(window).on(trigger, function() {
+  // Native side (S13): real resize/scroll events reach the listener through
+  // the Events layer.
+  Events.on(window, trigger, function() {
     if (timer) { clearTimeout(timer); }
     timer = setTimeout(listener, debounce || 10); //default time to emit scroll event
   });
@@ -239,7 +249,7 @@ Triggers.Initializers.addGlobalListeners = function() {
 
 
 Triggers.init = function (__, Foundation) {
-  onLoad($(window), function () {
+  onLoad(window, function () {
     if (triggersInitialized !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();

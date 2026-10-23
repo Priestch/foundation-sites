@@ -108,25 +108,22 @@ describe('Tooltip (native layer contract)', function() {
   });
 
   describe('closeme chain', function() {
-    beforeEach(function() {
-      // The window closeme listener snapshots [data-yeti-box] when it is
-      // installed (at load time); re-run the initializer so the chain is
-      // armed here (reveal-native precedent).
-      Foundation.Triggers.Initializers.addClosemeListener();
-    });
-
-    it('keeps the closeme production on jQuery: the broadcast listener hears the namespaced synthetic event', function() {
+    it('produces closeme.zf.tooltip as a real event with the id on the detail (the S13 Triggers flip)', function() {
       build({});
+      // The window closeme listener only registers when [data-yeti-box]
+      // elements exist (the 6.x existence condition) - arm HERE, after the
+      // fixtures (reveal-native precedent).
+      Foundation.Triggers.Initializers.addClosemeListener();
       var closemeSpy = sinon.spy();
-      $(window).on('closeme.zf.tooltip', closemeSpy);
-      $scratch.push({remove: () => $(window).off('closeme.zf.tooltip', closemeSpy)});
+      FoundationNext.Events.on(window, 'closeme.zf.tooltip', closemeSpy);
+      $scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.tooltip', closemeSpy)});
 
       plugin.show();
 
       sinon.assert.calledOnce(closemeSpy);
-      // a real CustomEvent carries no jQuery namespace - only the kept
-      // jQuery production delivers the plugin name to closeMeListener
+      closemeSpy.firstCall.args[0].type.should.equal('closeme');
       closemeSpy.firstCall.args[0].namespace.should.equal('tooltip.zf');
+      // the id rides the detail, where the 6.x second trigger parameter sat
       closemeSpy.firstCall.args[1].should.equal(plugin.template.attr('id'));
     });
 
@@ -142,7 +139,10 @@ describe('Tooltip (native layer contract)', function() {
       pluginA.show();
 
       // showing B broadcasts closeme; A's native close.zf.trigger listener
-      // must hide it
+      // must hide it. The window listener's existence condition needs
+      // [data-yeti-box] fixtures in the document, so the chain is armed
+      // HERE, after the fixtures (same existence condition as 6.x).
+      Foundation.Triggers.Initializers.addClosemeListener();
       plugin.show();
 
       sinon.assert.calledOnce(hideSpyA);

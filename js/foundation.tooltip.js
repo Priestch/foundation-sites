@@ -155,12 +155,9 @@ class Tooltip extends Positionable {
      * Fires to close all other open tooltips on the page
      * @event Closeme#tooltip
      */
-    // Seam (S8): the closeme production stays on jQuery. The Triggers
-    // closeMeListener is still registered through jQuery and reads the
-    // plugin name from the jQuery event namespace - a real CustomEvent
-    // carries no namespace, so this producer flips together with that
-    // listener in the Triggers-owned slice (S6 Reveal precedent).
-    this.$element.trigger('closeme.zf.tooltip', this.template.attr('id'));
+    // S13: the closeme production flipped with the Triggers listener -
+    // a real, bubbling event whose detail carries the plugin id.
+    Events.trigger(this.$element[0], 'closeme.zf.tooltip', [this.template.attr('id')]);
 
 
     // State/ARIA go through the native layer (7.0 line A, S8).
