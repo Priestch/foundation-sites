@@ -24,6 +24,22 @@ const keyCodes = {
   40: 'ARROW_DOWN'
 }
 
+// P3-2: real KeyboardEvents carry `key`; map it to the command names the
+// keyCode table produces. The keyCode/which fallback below stays for one
+// release (legacy synthetic events and the mock's non-mapped keys).
+const keyNames = {
+  'Tab': 'TAB',
+  'Enter': 'ENTER',
+  'Escape': 'ESCAPE',
+  ' ': 'SPACE',
+  'End': 'END',
+  'Home': 'HOME',
+  'ArrowLeft': 'ARROW_LEFT',
+  'ArrowUp': 'ARROW_UP',
+  'ArrowRight': 'ARROW_RIGHT',
+  'ArrowDown': 'ARROW_DOWN'
+}
+
 var commands = {}
 
 // Focusable candidates, in DOM order (7.0 line A, S5: the 6.x implementation
@@ -80,7 +96,7 @@ function findFocusable($element) {
 }
 
 function parseKey(event) {
-  var key = keyCodes[event.which || event.keyCode] || String.fromCharCode(event.which).toUpperCase();
+  var key = keyNames[event.key] || keyCodes[event.which || event.keyCode] || String.fromCharCode(event.which).toUpperCase();
 
   // Remove un-printable characters, e.g. for `fromCharCode` calls for CTRL only events
   key = key.replace(/\W+/, '');

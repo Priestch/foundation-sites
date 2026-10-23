@@ -13,6 +13,26 @@
     'ARROW_DOWN': 40
   };
 
+  // The `key` field real KeyboardEvents carry (S14 exploration, landed in
+  // S15): Keyboard.parseKey prefers it. The mock stays a jQuery Event for
+  // now because the coarse suites feed it through jQuery `.trigger()` -
+  // jQuery cannot wrap a real KeyboardEvent (its `type` lives on the
+  // prototype, so `trigger` misparses it). Suites migrate to real
+  // KeyboardEvent dispatch together with their component's keydown binding,
+  // at which point this mock is retired.
+  var keyNames = {
+    9: 'Tab',
+    13: 'Enter',
+    27: 'Escape',
+    32: ' ',
+    35: 'End',
+    36: 'Home',
+    37: 'ArrowLeft',
+    38: 'ArrowUp',
+    39: 'ArrowRight',
+    40: 'ArrowDown'
+  };
+
   /**
    * Creates a dummy event to parse.
    * Uses jQuery Event class constructor.
@@ -32,6 +52,7 @@
           altKey: isAlt,
           ctrlKey: isCtrl,
           metaKey: isMeta,
+          key: keyNames[keyCode] || String.fromCharCode(keyCode),
           keyCode: keyCode,
           which: keyCode
         };
