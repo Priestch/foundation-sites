@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { Move } from './foundation.util.motion';
 import { GetYoDigits, rtl as Rtl } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 
 import { Plugin } from './foundation.core.plugin';
 
@@ -27,7 +29,7 @@ class Slider extends Plugin {
    */
   _setup(element, options) {
     this.$element = element;
-    this.options = $.extend({}, Slider.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Slider.defaults, datasetOptions(element[0]), options);
     this.className = 'Slider'; // ie9 back compat
     this.initialized = false;
 
@@ -72,9 +74,10 @@ class Slider extends Plugin {
     this.$input = this.inputs.length ? this.inputs.eq(0) : $(`#${this.$handle.attr('aria-controls')}`);
     this.$fill = this.$element.find('[data-slider-fill]').css(this.options.vertical ? 'height' : 'width', 0);
 
-    if (this.options.disabled || this.$element.hasClass(this.options.disabledClass)) {
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    if (this.options.disabled || this.$element[0].classList.contains(this.options.disabledClass)) {
       this.options.disabled = true;
-      this.$element.addClass(this.options.disabledClass);
+      this.$element[0].classList.add(this.options.disabledClass);
     }
     if (!this.inputs.length) {
       this.inputs = $().add(this.$input);
@@ -288,7 +291,10 @@ class Slider extends Plugin {
     });
 
     if (this.initialized) {
-      this.$element.one('finished.zf.animate', function() {
+      // S10: the finished.zf.animate consumer flips to the native event
+      // layer; the producer (Motion) has dispatched one real bubbling event
+      // per Move since S5, so this seam closes on the consumer half alone.
+      Events.one(this.$element[0], 'finished.zf.animate', function() {
         // the chain can fire after destroy() (see the Move callback above)
         if (!_this.$element) { return; }
         /**
@@ -317,22 +323,21 @@ class Slider extends Plugin {
   _setInitAttr(idx) {
     var initVal = (idx === 0 ? this.options.initialStart : this.options.initialEnd)
     var id = this.inputs.eq(idx).attr('id') || GetYoDigits(6, 'slider');
-    this.inputs.eq(idx).attr({
-      'id': id,
-      'max': this.options.end,
-      'min': this.options.start,
-      'step': this.options.step
-    });
-    this.inputs.eq(idx).val(initVal);
-    this.handles.eq(idx).attr({
-      'role': 'slider',
-      'aria-controls': id,
-      'aria-valuemax': this.options.end,
-      'aria-valuemin': this.options.start,
-      'aria-valuenow': initVal,
-      'aria-orientation': this.options.vertical ? 'vertical' : 'horizontal',
-      'tabindex': 0
-    });
+    // State attributes go through the native layer (7.0 line A, S10).
+    var input = this.inputs.eq(idx)[0];
+    input.setAttribute('id', id);
+    input.setAttribute('max', this.options.end);
+    input.setAttribute('min', this.options.start);
+    input.setAttribute('step', this.options.step);
+    input.value = initVal;
+    var handle = this.handles.eq(idx)[0];
+    handle.setAttribute('role', 'slider');
+    handle.setAttribute('aria-controls', id);
+    handle.setAttribute('aria-valuemax', this.options.end);
+    handle.setAttribute('aria-valuemin', this.options.start);
+    handle.setAttribute('aria-valuenow', initVal);
+    handle.setAttribute('aria-orientation', this.options.vertical ? 'vertical' : 'horizontal');
+    handle.setAttribute('tabindex', 0);
   }
 
   /**
@@ -345,7 +350,8 @@ class Slider extends Plugin {
   _setValues($handle, val) {
     var idx = this.options.doubleSided ? this.handles.index($handle) : 0;
     this.inputs.eq(idx).val(val);
-    $handle.attr('aria-valuenow', val);
+    // State attributes go through the native layer (7.0 line A, S10).
+    $handle[0].setAttribute('aria-valuenow', val);
   }
 
   /**
@@ -470,14 +476,26 @@ class Slider extends Plugin {
       // IE only triggers the change event when the input loses focus which strictly follows the HTML specification
       // listen for the enter key and trigger a change
       // @see https://html.spec.whatwg.org/multipage/input.html#common-input-element-events
-      this.inputs.off('keyup.zf.slider').on('keyup.zf.slider', function (e) {
-        if(e.keyCode === 13) handleChangeEvent.call(this, e);
+      // S10: the input keyup/change consumers flip to the native event
+      // layer - their producers are real browser events, which reach native
+      // listeners directly. `this` is the input element, and the listeners
+      // are re-registered on every element of the collection like jQuery's
+      // collection-wide .on() did.
+      this.inputs.toArray().forEach(input => {
+        Events.off(input, 'keyup.zf.slider change.zf.slider');
+        Events.on(input, 'keyup.zf.slider', function (e) {
+          if(e.keyCode === 13) handleChangeEvent.call(this, e);
+        });
+        Events.on(input, 'change.zf.slider', handleChangeEvent);
       });
 
-      this.inputs.off('change.zf.slider').on('change.zf.slider', handleChangeEvent);
-
       if (this.options.clickSelect) {
-        this.$element.off('click.zf.slider').on('click.zf.slider', function(e) {
+        // S10: the bar-click consumer flips to the native event layer -
+        // real clicks arrive directly and jQuery-synthesized clicks on the
+        // container ride the `.click()` shortcut bridge (reveal-native
+        // precedent).
+        Events.off(this.$element[0], 'click.zf.slider');
+        Events.on(this.$element[0], 'click.zf.slider', function(e) {
           if (_this.$element.data('dragging')) { return false; }
 
           if (!$(e.target).is('[data-slider-handle]')) {
@@ -491,6 +509,9 @@ class Slider extends Plugin {
       }
 
     if (this.options.draggable) {
+      // Seam (S10): the drag chain stays on jQuery - the Touch util's
+      // addTouch feed and the body-wide mousemove/mouseup pair are jQuery
+      // mechanics through and through (Touch slice flips them).
       this.handles.addTouch();
 
       var $body = $('body');
@@ -523,9 +544,12 @@ class Slider extends Plugin {
       });
     }
 
+    // Seam (S10): the keydown binding stays on jQuery - the coarse keyboard
+    // suite feeds jQuery-synthesized mock keydowns, which can never reach
+    // native listeners (Tabs S8 precedent); real keydowns keep arriving
+    // through jQuery's pass-through.
     $handle.off('keydown.zf.slider').on('keydown.zf.slider', function(e) {
       var _$handle = $(this),
-          idx = _this.options.doubleSided ? _this.handles.index(_$handle) : 0,
           oldValue = parseFloat($handle.attr('aria-valuenow')),
           newValue;
 
@@ -565,9 +589,14 @@ class Slider extends Plugin {
    * Destroys the slider plugin.
    */
   _destroy() {
+    // jQuery side: the keydown/drag listeners live here (S10 seams).
     this.handles.off('.zf.slider');
     this.inputs.off('.zf.slider');
     this.$element.off('.zf.slider');
+
+    // Native side: the flipped input/click listeners drop in one pass each.
+    this.inputs.toArray().forEach(input => Events.off(input, '.zf.slider'));
+    Events.off(this.$element[0], '.zf.slider');
 
     clearTimeout(this.timeout);
   }
