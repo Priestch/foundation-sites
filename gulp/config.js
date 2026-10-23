@@ -12,6 +12,10 @@ module.exports = {
 
   JS_DEPS: [
     'node_modules/jquery/dist/jquery.js',
+    // motion-ui's dist UMD (window.MotionUI) stays in vendor.js: the docs
+    // layout and the visual-regression pages load vendor.js, and the docs
+    // motion-ui page demos the standalone library next to Foundation's
+    // inlined Foundation.Motion (7.0 line A, S14 evaluation - kept).
     'node_modules/motion-ui/dist/motion-ui.js',
     'node_modules/what-input/dist/what-input.js'
   ],
@@ -37,6 +41,9 @@ module.exports = {
 
   SASS_DOC_PATHS: [
     'scss',
+    // motion-ui's src mixins stay on the docs compile path: docs.scss
+    // `@import 'motion-ui'` + `@include motion-ui-transitions` (the docs
+    // motion-ui and orbit pages consume the generated classes).
     'node_modules/motion-ui/src',
     'node_modules/foundation-docs/scss'
   ],
