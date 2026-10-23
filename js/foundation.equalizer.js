@@ -81,13 +81,14 @@ class Equalizer extends Plugin {
    */
   _pauseEvents() {
     this.isOn = false;
-    // jQuery side: the mediaquery seam (see _init) and the mutateme seam
-    // (see _events) keep their jQuery listeners while the mixed state lasts.
+    // jQuery side: the mediaquery seam (see _init) keeps its jQuery
+    // listener removal while the mixed state lasts.
     $(window).off('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
-    this.$element.off('mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
-    // Native side: the resizeme consumer (S4 producer) and the equalizer
-    // lifecycle listeners drop in one pass.
-    Events.off(this.$element[0], 'resizeme.zf.trigger .zf.equalizer');
+    // Native side: the resizeme and mutateme consumers (S4 producers) and
+    // the equalizer lifecycle listeners drop in one pass each. The mutateme
+    // consumer flipped together with its last producers in the S10 group
+    // flip (Tabs forward, ResponsiveToggle animated half).
+    Events.off(this.$element[0], 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
   }
 
   /**
@@ -122,13 +123,12 @@ class Equalizer extends Plugin {
       // producer in the Triggers util has dispatched real element-local
       // events since S4, so this seam closes on the consumer half alone.
       Events.on(this.$element[0], 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
-      // Seam (S8): the mutateme consumer stays on the jQuery side. The
-      // mutateme ecosystem still carries jQuery-synthesized producers -
-      // element-local triggerHandler forwards (ResponsiveToggle's animated
-      // half) and bubbling triggers (Tabs) - which a real event listener can
-      // never hear. Producer and consumer flip together in the
-      // complex-group slice.
-      this.$element.on('mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
+      // S10 group flip: the mutateme consumer joins the native event layer
+      // together with its last jQuery-synthesized producers - the Tabs
+      // forward and the ResponsiveToggle animated half flip in the same
+      // commit, so every element listens on exactly one side and nothing
+      // double-fires.
+      Events.on(this.$element[0], 'mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
     }
     this.isOn = true;
   }

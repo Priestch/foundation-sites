@@ -159,17 +159,16 @@ class Sticky extends Plugin {
         _this._eventsHandler(id);
     });
 
-    // Seam (S10): the mutateme consumers stay on jQuery - Tabs and the
-    // ResponsiveToggle animated half still produce mutateme through jQuery,
-    // and a jQuery-synthesized event cannot reach a native listener (S8
-    // Equalizer precedent; the whole mutateme ecosystem flips together in
-    // this slice's group commit).
-    this.$element.on('mutateme.zf.trigger', function () {
+    // S10 group flip: the mutateme consumers (element and anchor) join the
+    // native event layer together with the last jQuery-synthesized
+    // producers (Tabs forward, ResponsiveToggle animated half), so every
+    // listener receives each dispatch exactly once.
+    Events.on(this.$element[0], 'mutateme.zf.trigger', function () {
         _this._eventsHandler(id);
     });
 
     if(this.$anchor) {
-      this.$anchor.on('mutateme.zf.trigger', function () {
+      Events.on(this.$anchor[0], 'mutateme.zf.trigger', function () {
           _this._eventsHandler(id);
       });
     }
@@ -434,7 +433,8 @@ class Sticky extends Plugin {
                  .off('mutateme.zf.trigger')
                  .off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
     // Native side: the flipped resizeme/mutateme/transitionend listeners and
-    // the per-instance window scroll listener drop precisely.
+    // the per-instance window scroll listener drop precisely. The mutateme
+    // listeners live on the native layer since the S10 group flip.
     Events.off(this.$element[0], 'resizeme.zf.trigger mutateme.zf.trigger');
     Events.off(this.$element[0], 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
     if (this.$anchor && this.$anchor.length) {

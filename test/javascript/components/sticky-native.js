@@ -1,15 +1,15 @@
-// S10 contract pins (7.0 line A): Sticky's window scroll and resizeme
-// consumers, the transitionend-family consumer, the stuckto/unstuckfrom/pause
-// production and the state class/attribute writes moved to the native
-// Events/DOM layer while the public contract stays byte-identical; the
-// anchor/容器 calculations read getBoundingClientRect + pageYOffset instead
-// of offset() (S7 SmoothScroll precedent). Known seams: the mutateme
-// consumers (element + anchor) stay on jQuery (Tabs and the ResponsiveToggle
-// animated half still produce mutateme through jQuery; the whole ecosystem
-// flips in this slice's group commit), the css writes stay on jQuery (css
-// seam) and the MediaQuery reads stay (MediaQuery not migrated). These tests
-// pin that contract from the outside; the pre-existing sticky.js suite is a
-// placeholder and stays untouched.
+// S10 contract pins (7.0 line A): Sticky's window scroll, resizeme and
+// mutateme consumers (element + anchor), the transitionend-family consumer,
+// the stuckto/unstuckfrom/pause production and the state class/attribute
+// writes moved to the native Events/DOM layer while the public contract
+// stays byte-identical; the anchor/容器 calculations read
+// getBoundingClientRect + pageYOffset instead of offset() (S7 SmoothScroll
+// precedent). The mutateme consumers joined the native layer in this
+// slice's group flip, together with the last jQuery-synthesized producers
+// (Tabs forward, ResponsiveToggle animated half). Known seams: the css
+// writes stay on jQuery (css seam) and the MediaQuery reads stay (MediaQuery
+// not migrated). These tests pin that contract from the outside; the
+// pre-existing sticky.js suite is a placeholder and stays untouched.
 describe('Sticky (native layer contract)', function() {
   var plugin;
   var $html;
@@ -138,17 +138,23 @@ describe('Sticky (native layer contract)', function() {
   });
 
   describe('seams', function() {
-    it('keeps answering jQuery-synthesized mutateme on the element and the anchor (the mutateme seam stays jQuery-side)', function(done) {
+    it('runs _setSizes through the native mutateme on the element and the anchor (S10 group flip); the jQuery-synthesized form finds nothing', function(done) {
       build({});
 
       waitReady(() => {
         var setSizes = sinon.spy(plugin, '_setSizes');
 
+        // the element and the anchor each deliver once (two listeners)
+        FoundationNext.Events.trigger(plugin.$element[0], 'mutateme.zf.trigger');
+        FoundationNext.Events.trigger(document.getElementById('stickyNativeAnchor'), 'mutateme.zf.trigger');
+        setSizes.callCount.should.equal(2);
+
+        // the mixed-state boundary: a jQuery-synthesized dispatch never
+        // produces a real event, so the flipped consumers cannot hear it
         plugin.$element.trigger('mutateme.zf.trigger');
         $('#stickyNativeAnchor').trigger('mutateme.zf.trigger');
-
-        // two jQuery-synthesized dispatches, two handler runs
         setSizes.callCount.should.equal(2);
+
         setSizes.restore();
         done();
       });
@@ -192,7 +198,7 @@ describe('Sticky (native layer contract)', function() {
   });
 
   describe('destroy', function() {
-    it('drops the native scroll/resizeme listeners and the jQuery mutateme listeners', function(done) {
+    it('drops the native scroll/resizeme/mutateme listeners', function(done) {
       build({});
 
       waitReady(() => {
@@ -202,8 +208,8 @@ describe('Sticky (native layer contract)', function() {
         plugin = null;
 
         FoundationNext.Events.trigger(el, 'resizeme.zf.trigger');
+        FoundationNext.Events.trigger(el, 'mutateme.zf.trigger');
         window.dispatchEvent(new Event('scroll'));
-        $(el).trigger('mutateme.zf.trigger');
 
         sinon.assert.notCalled(setSizes);
         setSizes.restore();

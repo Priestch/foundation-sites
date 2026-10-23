@@ -155,12 +155,16 @@ class ResponsiveToggle extends Plugin {
         if (menuHidden) {
           Motion.animateIn(this.$targetMenu, this.animationIn, () => {
             Events.trigger(this.$element[0], 'toggled.zf.responsiveToggle');
-            // Seam (S7): the animated half of the mutateme forwarding stays
-            // on jQuery's element-local triggerHandler - the mutateme
-            // consumers (Equalizer, Drilldown, Sticky) are still on jQuery
-            // and an element-local dispatch has no native-to-jQuery bridge.
-            // It flips together with them in their slice.
-            this.$targetMenu.find('[data-mutate]').triggerHandler('mutateme.zf.trigger');
+            // S10 group flip: the animated half of the mutateme forwarding
+            // joins the native event layer. It keeps the 6.x triggerHandler
+            // form - element-local and non-bubbling, the Triggers
+            // dispatchLocal ruling (a bubbling dispatch would over-deliver
+            // to ancestor listeners) - and the last jQuery-side consumers
+            // (Equalizer, Drilldown, Sticky) flip in the same commit.
+            var mutated = targetMenu.querySelectorAll('[data-mutate]');
+            for (var i = 0; i < mutated.length; i++) {
+              Events.triggerHandler(mutated[i], 'mutateme.zf.trigger');
+            }
           });
         }
         else {

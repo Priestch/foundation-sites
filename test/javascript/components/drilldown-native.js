@@ -4,12 +4,12 @@
 // native Registry/Events/DOM layer while the public contract stays
 // byte-identical. Known seams: the keydown binding and the transitionend
 // `.one()` follow-ups stay on jQuery (the coarse suite feeds mock keydowns
-// and drives transitionend through jQuery triggerHandler), the mutateme
-// consumer stays on jQuery (Tabs/ResponsiveToggle still produce it through
-// jQuery triggerHandler), the scroll tween stays on jQuery fx, and the
-// selector-filtered collection class writes keep their jQuery form. These
-// tests pin that contract from the outside; the pre-existing drilldown.js
-// suite is untouched on purpose and stays green.
+// and drives transitionend through jQuery triggerHandler), the scroll tween
+// stays on jQuery fx, and the selector-filtered collection class writes
+// keep their jQuery form. The mutateme consumer joined the native layer in
+// the S10 group flip (together with its last jQuery-synthesized producers).
+// These tests pin that contract from the outside; the pre-existing
+// drilldown.js suite is untouched on purpose and stays green.
 describe('Drilldown (native layer contract)', function() {
   var plugin;
   var $html;
@@ -197,14 +197,19 @@ describe('Drilldown (native layer contract)', function() {
     });
   });
 
-  describe('mutateme (jQuery seam)', function() {
-    it('resizes through a jQuery-synthesized mutateme (the seam stays jQuery-side)', function() {
+  describe('mutateme (S10 group flip)', function() {
+    it('resizes through the native mutateme.zf.trigger; the jQuery-synthesized form finds nothing', function() {
       build({});
       var getDimensions = sinon.spy(Foundation.Box, 'GetDimensions');
 
-      $(plugin.$element).trigger('mutateme.zf.trigger');
-
+      FoundationNext.Events.trigger(plugin.$element[0], 'mutateme.zf.trigger');
       sinon.assert.called(getDimensions);
+      var count = getDimensions.callCount;
+
+      // the mixed-state boundary: a jQuery-synthesized dispatch never
+      // produces a real event, so the flipped consumer cannot hear it
+      $(plugin.$element).trigger('mutateme.zf.trigger');
+      getDimensions.callCount.should.equal(count);
       getDimensions.restore();
     });
   });

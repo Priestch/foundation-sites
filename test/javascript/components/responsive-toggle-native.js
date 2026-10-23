@@ -2,7 +2,9 @@
 // native Registry/Events/DOM layer while the public contract stays
 // byte-identical. The known seam: the 'changed.zf.mediaquery' consumer
 // stays on the jQuery side (MediaQuery still synthesizes it there), pinned
-// as such below. These tests pin the contract from the outside; the
+// as such below. The animated half of the mutateme forwarding joined the
+// native layer in the S10 group flip, keeping its 6.x element-local
+// triggerHandler shape. These tests pin the contract from the outside; the
 // pre-existing responsiveToggle.js suite is untouched on purpose.
 describe('ResponsiveToggle (native layer contract)', function() {
   var plugin;
@@ -117,16 +119,25 @@ describe('ResponsiveToggle (native layer contract)', function() {
       menu.style.display.should.not.equal('none');
     });
 
-    it('runs the animated branch and keeps the seam halves split: toggled native, mutateme jQuery', function(done) {
-      build();
+    it('runs the animated branch on the native layer: toggled bubbles, mutateme stays element-local (6.x triggerHandler form)', function(done) {
+      build(`<div id="rt-bar" data-responsive-toggle="rt-menu">
+        <button data-toggle="rt-menu" type="button">menu</button>
+      </div>
+      <ul id="rt-menu"><li><a href="#">item</a></li><li data-mutate data-equalizer><div data-equalizer-watch style="min-height: 10px">mutable</div></li></ul>`);
       plugin = new Foundation.ResponsiveToggle($('#rt-bar'), Object.assign(mobileOptions(), {animate: 'fade-in fade-out'}));
       var menu = document.getElementById('rt-menu');
-      var mutateEl = menu.querySelector('[data-mutate]');
 
       var toggledSpy = sinon.spy();
       FoundationNext.Events.on(document.getElementById('rt-bar'), 'toggled.zf.responsiveToggle', toggledSpy);
-      var jqMutateSpy = sinon.spy();
-      $(mutateEl).on('mutateme.zf.trigger', jqMutateSpy);
+
+      // The animated mutateme forwarding is element-local (native
+      // triggerHandler), so it can only be heard by an in-bundle consumer:
+      // an Equalizer on the [data-mutate] element listens through the same
+      // Events module instance the plugin dispatches on. (FoundationNext in
+      // this page is a separate bundle instance - its trigger/on pair can
+      // only exchange real events.)
+      var eq = new Foundation.Equalizer($('[data-equalizer]', menu), {});
+      var reflow = sinon.spy(eq, '_reflow');
 
       // hidden menu -> the animateIn branch runs the motion-ui class
       // lifecycle; the end event is dispatched manually, exactly what the
@@ -137,10 +148,15 @@ describe('ResponsiveToggle (native layer contract)', function() {
         menu.dispatchEvent(new Event('transitionend', {bubbles: true}));
 
         sinon.assert.calledOnce(toggledSpy);
-        sinon.assert.calledOnce(jqMutateSpy);
+        // the S10 group flip moved the animated half to the native layer,
+        // keeping the 6.x element-local triggerHandler shape: the in-bundle
+        // consumer hears it once (ancestors and jQuery listeners do not -
+        // non-bubbling synthetic dispatch)
+        sinon.assert.calledOnce(reflow);
         // the motion lifecycle reset ran: no animation classes left behind
         menu.classList.contains('mui-enter-active').should.be.false;
         menu.classList.contains('mui-enter').should.be.false;
+        eq.destroy();
         done();
       }, 60);
     });

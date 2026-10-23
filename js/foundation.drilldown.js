@@ -188,12 +188,12 @@ class Drilldown extends Plugin {
       this._bindHandler = this._scrollTop.bind(this);
       Events.on(this.$element[0], 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
     }
-    // Seam (S9): the mutateme consumer stays on jQuery - ResponsiveToggle's
-    // animated half and Tabs still produce mutateme through jQuery
-    // triggerHandler, and a jQuery-synthesized event cannot reach a native
-    // listener (S8 Equalizer precedent; the whole mutateme ecosystem flips
-    // together in the complex-group slice).
-    this.$element.on('mutateme.zf.trigger', this._resize.bind(this));
+    // S10 group flip: the mutateme consumer joins the native event layer
+    // together with its last jQuery-synthesized producers - the Tabs
+    // forward and the ResponsiveToggle animated half flip in the same
+    // commit (S8 Equalizer precedent), so this seam closes on both sides at
+    // once.
+    Events.on(this.$element[0], 'mutateme.zf.trigger', this._resize.bind(this));
   }
 
   /**
@@ -588,8 +588,9 @@ class Drilldown extends Plugin {
       this.$element.off('.zf.drilldown', this._bindHandler);
     }
     this._hideAll();
-    // Seam (S9): the mutateme consumer stays on jQuery (see _registerEvents).
-    this.$element.off('mutateme.zf.trigger');
+    // S10 group flip: the mutateme consumer lives on the native layer now
+    // (see _registerEvents).
+    Events.off(this.$element[0], 'mutateme.zf.trigger');
     Nest.Burn(this.$element, 'drilldown');
     if (!this.wasWrapped) this.$element.unwrap();
     this.$element

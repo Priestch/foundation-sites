@@ -314,12 +314,15 @@ class Tabs extends Plugin {
     // the wrap-up/test-migration slice.
     this.$element.trigger('change.zf.tabs', [$target, $targetContent]);
 
-    // Seam (S8): the mutateme forward stays on jQuery. Its consumer base
-    // (Equalizer/Drilldown/Sticky) still listens on the jQuery side, and the
-    // mutateme ecosystem also carries element-local triggerHandler producers
-    // (ResponsiveToggle) that cannot bridge to real events - the whole
-    // producer/consumer set flips together in the complex-group slice.
-    $targetContent.find("[data-mutate]").trigger("mutateme.zf.trigger");
+    // S10 group flip: the mutateme forward joins the native event layer -
+    // the last jQuery-side consumers (Equalizer, Drilldown, Sticky) flip in
+    // the same commit, so each listener receives the real bubbling event
+    // exactly once; still-on-jQuery third-party listeners keep receiving it
+    // through the real-event pass-through (white absorption).
+    var mutated = $targetContent.length ? $targetContent[0].querySelectorAll('[data-mutate]') : [];
+    for (var i = 0; i < mutated.length; i++) {
+      Events.trigger(mutated[i], 'mutateme.zf.trigger');
+    }
   }
 
   /**

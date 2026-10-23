@@ -4,11 +4,12 @@
 // Known seams: the keydown binding stays on jQuery (the coarse suite feeds
 // jQuery-synthesized mock keydowns), change.zf.tabs keeps its jQuery
 // production (jQuery consumers read the forwarded collections as trailing
-// handler arguments, which real events cannot deliver), the mutateme forward
-// stays on jQuery (consumer-base deadlock) and matchHeight's
-// changed.zf.mediaquery consumer stays on jQuery (MediaQuery seam). These
-// tests pin that contract from the outside; the pre-existing tabs.js suite
-// is untouched on purpose and stays green.
+// handler arguments, which real events cannot deliver) and matchHeight's
+// changed.zf.mediaquery consumer stays on jQuery (MediaQuery seam). The
+// mutateme forward joined the native layer in the S10 group flip (together
+// with its last jQuery-side consumers). These tests pin that contract from
+// the outside; the pre-existing tabs.js suite is untouched on purpose and
+// stays green.
 describe('Tabs (native layer contract)', function() {
   var plugin;
   var $html;
@@ -211,7 +212,7 @@ describe('Tabs (native layer contract)', function() {
   });
 
   describe('seams', function() {
-    it('forwards mutateme.zf.trigger as a jQuery-synthesized event (the mutateme seam stays jQuery-side)', function() {
+    it('forwards mutateme.zf.trigger as one real bubbling event since the S10 group flip (one delivery per listener)', function() {
       build({});
       var mutateEl = $html.find('[data-mutate]')[0];
       var jqSpy = sinon.spy();
@@ -225,8 +226,10 @@ describe('Tabs (native layer contract)', function() {
       plugin.selectTab(`#tabsNative${counter}-panel2`);
       plugin.selectTab(`#tabsNative${counter}-panel1`);
 
+      // the native forward reaches the flipped consumers directly, and a
+      // third-party jQuery listener absorbs the same single real event
+      sinon.assert.calledOnce(nativeSpy);
       sinon.assert.calledOnce(jqSpy);
-      sinon.assert.notCalled(nativeSpy);
     });
 
     it('re-runs _setHeight from the jQuery-synthesized mediaquery broadcast (the MediaQuery seam stays jQuery-side)', function() {
