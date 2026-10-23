@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, transitionend, RegExpEscape } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
+import { datasetOptions } from './foundation.util.dom';
 import { Keyboard } from './foundation.util.keyboard';
 import { MediaQuery } from './foundation.util.mediaQuery';
 
@@ -27,7 +28,7 @@ class OffCanvas extends Plugin {
   _setup(element, options) {
     this.className = 'OffCanvas'; // ie9 back compat
     this.$element = element;
-    this.options = $.extend({}, OffCanvas.defaults, this.$element.data(), options);
+    this.options = $.extend({}, OffCanvas.defaults, datasetOptions(element[0]), options);
     this.contentClasses = { base: [], reveal: [] };
     this.$lastTrigger = $();
     this.$triggers = $();
@@ -67,7 +68,8 @@ class OffCanvas extends Plugin {
   _init() {
     var id = this.$element.attr('id');
 
-    this.$element.attr('aria-hidden', 'true');
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    this.$element[0].setAttribute('aria-hidden', 'true');
 
     // Find off-canvas content, either by ID (if specified), by siblings or by closest selector (fallback)
     if (this.options.contentId) {
@@ -92,30 +94,32 @@ class OffCanvas extends Plugin {
       // Force transition overlap if nested
       this.options.transition = 'overlap';
       // Remove appropriate classes if already assigned in markup
-      this.$element.removeClass('is-transition-push');
+      this.$element[0].classList.remove('is-transition-push');
     }
 
-    this.$element.addClass(`is-transition-${this.options.transition} is-closed`);
+    this.$element[0].classList.add(`is-transition-${this.options.transition}`, 'is-closed');
 
     // Find triggers that affect this element and add aria-expanded to them
     this.$triggers = $(document)
-      .find('[data-open="'+id+'"], [data-close="'+id+'"], [data-toggle="'+id+'"]')
-      .attr('aria-expanded', 'false')
-      .attr('aria-controls', id);
+      .find(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`);
+    this.$triggers.each(function() {
+      this.setAttribute('aria-expanded', 'false');
+      this.setAttribute('aria-controls', id);
+    });
 
     // Get position by checking for related CSS class
-    this.position = this.$element.is('.position-left, .position-top, .position-right, .position-bottom') ? this.$element.attr('class').match(/position\-(left|top|right|bottom)/)[1] : this.position;
+    this.position = this.$element[0].matches('.position-left, .position-top, .position-right, .position-bottom') ? this.$element[0].className.match(/position\-(left|top|right|bottom)/)[1] : this.position;
 
     // Add an overlay over the content if necessary
     if (this.options.contentOverlay === true) {
       var overlay = document.createElement('div');
-      var overlayPosition = $(this.$element).css("position") === 'fixed' ? 'is-overlay-fixed' : 'is-overlay-absolute';
+      var overlayPosition = window.getComputedStyle(this.$element[0]).position === 'fixed' ? 'is-overlay-fixed' : 'is-overlay-absolute';
       overlay.setAttribute('class', 'js-off-canvas-overlay ' + overlayPosition);
       this.$overlay = $(overlay);
       if(overlayPosition === 'is-overlay-fixed') {
-        $(this.$overlay).insertAfter(this.$element);
+        this.$element[0].after(this.$overlay[0]);
       } else {
-        this.$content.append(this.$overlay);
+        this.$content[0].appendChild(this.$overlay[0]);
       }
     }
 
@@ -129,7 +133,7 @@ class OffCanvas extends Plugin {
 
     // Ensure the `reveal-on-*` class is set.
     if (this.options.isRevealed === true && this.options.revealOn) {
-      this.$element.first().addClass(`${this.options.revealClass}${this.options.revealOn}`);
+      this.$element[0].classList.add(`${this.options.revealClass}${this.options.revealOn}`);
       this._setMQChecker();
     }
 
@@ -145,13 +149,13 @@ class OffCanvas extends Plugin {
       this.options.contentScroll = false;
     }
 
-    let inCanvasFor = this.$element.attr('class').match(/\bin-canvas-for-(\w+)/);
+    let inCanvasFor = this.$element[0].className.match(/\bin-canvas-for-(\w+)/);
     if (inCanvasFor && inCanvasFor.length === 2) {
       // Set `inCanvasOn` option if found in-canvas-for-[BREAKPONT] CSS class
       this.options.inCanvasOn = inCanvasFor[1];
     } else if (this.options.inCanvasOn) {
       // Ensure the CSS class is set
-      this.$element.addClass(`in-canvas-for-${this.options.inCanvasOn}`);
+      this.$element[0].classList.add(`in-canvas-for-${this.options.inCanvasOn}`);
     }
 
     if (this.options.inCanvasOn) {
@@ -168,19 +172,40 @@ class OffCanvas extends Plugin {
    * @private
    */
   _events() {
-    this.$element.off('.zf.trigger .zf.offCanvas').on({
-      'open.zf.trigger': this.open.bind(this),
-      'close.zf.trigger': this.close.bind(this),
-      'toggle.zf.trigger': this.toggle.bind(this),
-      'keydown.zf.offCanvas': this._handleKeyboard.bind(this)
-    });
+    // jQuery side: the legacy bare-namespace wipe stays while the mixed
+    // state lasts.
+    this.$element.off('.zf.trigger .zf.offCanvas');
+
+    // S10: the open/close/toggle consumers flip to the native event layer;
+    // the Triggers producers dispatch element-local on both transports
+    // since S4 (dispatchLocal), so exactly one layer holds the listener and
+    // nothing double-fires.
+    Events.off(this.$element[0], 'open.zf.trigger close.zf.trigger toggle.zf.trigger');
+    Events.on(this.$element[0], 'open.zf.trigger', this.open.bind(this));
+    Events.on(this.$element[0], 'close.zf.trigger', this.close.bind(this));
+    Events.on(this.$element[0], 'toggle.zf.trigger', this.toggle.bind(this));
+
+    // Seam (S10): the keydown binding stays on jQuery - the coarse keyboard
+    // suite feeds jQuery-synthesized mock keydowns, which can never reach
+    // native listeners (Tabs S8 precedent); real keydowns keep arriving
+    // through jQuery's pass-through.
+    this.$element.on('keydown.zf.offCanvas', this._handleKeyboard.bind(this));
 
     if (this.options.closeOnClick === true) {
       var $target = this.options.contentOverlay ? this.$overlay : this.$content;
-      $target.on({'click.zf.offCanvas': this.close.bind(this)});
+      // S10: the close-on-click consumer flips to the native event layer -
+      // real clicks arrive directly and jQuery-synthesized clicks on the
+      // overlay/content ride the `.click()` shortcut bridge (reveal-native
+      // precedent).
+      Events.off($target[0], 'click.zf.offCanvas');
+      Events.on($target[0], 'click.zf.offCanvas', this.close.bind(this));
     }
 
     if (this.options.inCanvasOn) {
+      // Seam (S10): 'changed.zf.mediaquery' stays on the jQuery side -
+      // MediaQuery still synthesizes it through a jQuery trigger
+      // (Equalizer/ResponsiveToggle/Tabs seam; flips in the MediaQuery
+      // slice).
       if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
       this._inCanvasMqHandler = () => {
         this._checkInCanvas();
@@ -232,10 +257,11 @@ class OffCanvas extends Plugin {
    * @private
    */
   _removeContentClasses(hasReveal) {
+    // State classes go through the native layer (7.0 line A, S10).
     if (typeof hasReveal !== 'boolean') {
-      this.$content.removeClass(this.contentClasses.base.join(' '));
+      this.contentClasses.base.forEach(token => this.$content[0].classList.remove(token));
     } else if (hasReveal === false) {
-      this.$content.removeClass(`has-reveal-${this.position}`);
+      this.$content[0].classList.remove(`has-reveal-${this.position}`);
     }
   }
 
@@ -248,9 +274,9 @@ class OffCanvas extends Plugin {
   _addContentClasses(hasReveal) {
     this._removeContentClasses(hasReveal);
     if (typeof hasReveal !== 'boolean') {
-      this.$content.addClass(`has-transition-${this.options.transition} has-position-${this.position}`);
+      this.$content[0].classList.add(`has-transition-${this.options.transition}`, `has-position-${this.position}`);
     } else if (hasReveal === true) {
-      this.$content.addClass(`has-reveal-${this.position}`);
+      this.$content[0].classList.add(`has-reveal-${this.position}`);
     }
   }
 
@@ -304,17 +330,16 @@ class OffCanvas extends Plugin {
     if (isRevealed) {
       this.close();
       this.isRevealed = true;
-      this.$element.attr('aria-hidden', 'false');
-      this.$element.off('open.zf.trigger toggle.zf.trigger');
-      this.$element.removeClass('is-closed');
+      this.$element[0].setAttribute('aria-hidden', 'false');
+      Events.off(this.$element[0], 'open.zf.trigger toggle.zf.trigger');
+      this.$element[0].classList.remove('is-closed');
     } else {
       this.isRevealed = false;
-      this.$element.attr('aria-hidden', 'true');
-      this.$element.off('open.zf.trigger toggle.zf.trigger').on({
-        'open.zf.trigger': this.open.bind(this),
-        'toggle.zf.trigger': this.toggle.bind(this)
-      });
-      this.$element.addClass('is-closed');
+      this.$element[0].setAttribute('aria-hidden', 'true');
+      Events.off(this.$element[0], 'open.zf.trigger toggle.zf.trigger');
+      Events.on(this.$element[0], 'open.zf.trigger', this.open.bind(this));
+      Events.on(this.$element[0], 'toggle.zf.trigger', this.toggle.bind(this));
+      this.$element[0].classList.add('is-closed');
     }
     this._addContentClasses(isRevealed);
   }
@@ -421,12 +446,16 @@ class OffCanvas extends Plugin {
       this.$element.siblings('[data-off-canvas-content]').css('transition-duration', '');
     }
 
-    this.$element.addClass('is-open').removeClass('is-closed');
+    // State classes and ARIA go through the native layer (7.0 line A, S10).
+    this.$element[0].classList.add('is-open');
+    this.$element[0].classList.remove('is-closed');
 
-    this.$triggers.attr('aria-expanded', 'true');
-    this.$element.attr('aria-hidden', 'false');
+    this.$triggers.each(function() {
+      this.setAttribute('aria-expanded', 'true');
+    });
+    this.$element[0].setAttribute('aria-hidden', 'false');
 
-    this.$content.addClass('is-open-' + this.position);
+    this.$content[0].classList.add('is-open-' + this.position);
 
     // If `contentScroll` is set to false, add class and disable scrolling on touch devices.
     if (this.options.contentScroll === false) {
@@ -438,11 +467,11 @@ class OffCanvas extends Plugin {
     }
 
     if (this.options.contentOverlay === true) {
-      this.$overlay.addClass('is-visible');
+      this.$overlay[0].classList.add('is-visible');
     }
 
     if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
-      this.$overlay.addClass('is-closable');
+      this.$overlay[0].classList.add('is-closable');
     }
 
     if (this.options.autoFocus === true) {
@@ -474,14 +503,19 @@ class OffCanvas extends Plugin {
      * Fires when the off-canvas menu opens.
      * @event OffCanvas#opened
      */
-    this.$element.trigger('opened.zf.offCanvas');
+    // S10: real, bubbling CustomEvent - native listeners receive it
+    // directly, still-on-jQuery listeners through the real-event pass-
+    // through (white absorption).
+    Events.trigger(this.$element[0], 'opened.zf.offCanvas');
 
     /**
      * Fires when the off-canvas menu open transition is done.
      * @event OffCanvas#openedEnd
      */
+    // Seam (S10): the transitionend wait stays on jQuery - the coarse suite
+    // drives it through jQuery triggerHandler (fx seam).
     this.$element.one(transitionend(this.$element), () => {
-      this.$element.trigger('openedEnd.zf.offCanvas');
+      Events.trigger(this.$element[0], 'openedEnd.zf.offCanvas');
     });
   }
 
@@ -499,29 +533,33 @@ class OffCanvas extends Plugin {
      * Fires when the off-canvas menu closes.
      * @event OffCanvas#close
      */
-    this.$element.trigger('close.zf.offCanvas');
+    Events.trigger(this.$element[0], 'close.zf.offCanvas');
 
-    this.$element.removeClass('is-open');
+    this.$element[0].classList.remove('is-open');
 
-    this.$element.attr('aria-hidden', 'true');
+    this.$element[0].setAttribute('aria-hidden', 'true');
 
-    this.$content.removeClass('is-open-left is-open-top is-open-right is-open-bottom');
+    this.$content[0].classList.remove('is-open-left', 'is-open-top', 'is-open-right', 'is-open-bottom');
 
     if (this.options.contentOverlay === true) {
-      this.$overlay.removeClass('is-visible');
+      this.$overlay[0].classList.remove('is-visible');
     }
 
     if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
-      this.$overlay.removeClass('is-closable');
+      this.$overlay[0].classList.remove('is-closable');
     }
 
-    this.$triggers.attr('aria-expanded', 'false');
+    this.$triggers.each(function() {
+      this.setAttribute('aria-expanded', 'false');
+    });
 
 
     // Listen to transitionEnd: add class, re-enable scrolling and release focus when done.
+    // Seam (S10): the transitionend wait stays on jQuery - the coarse suite
+    // drives it through jQuery triggerHandler (fx seam).
     this.$element.one(transitionend(this.$element), () => {
 
-      this.$element.addClass('is-closed');
+      this.$element[0].classList.add('is-closed');
       this._removeContentClasses();
 
       if (this.options.transition === 'push') {
@@ -546,7 +584,7 @@ class OffCanvas extends Plugin {
        * Fires when the off-canvas menu close transition is done.
        * @event OffCanvas#closed
        */
-      this.$element.trigger('closed.zf.offCanvas');
+      Events.trigger(this.$element[0], 'closed.zf.offCanvas');
     });
   }
 
@@ -589,8 +627,12 @@ class OffCanvas extends Plugin {
    */
   _destroy() {
     this.close();
+    // Both layers (S10): jQuery for the keydown listener and any legacy
+    // namespaced listeners, native for the flipped trigger/click consumers.
     this.$element.off('.zf.trigger .zf.offCanvas');
+    Events.off(this.$element[0], '.zf.trigger .zf.offCanvas');
     this.$overlay.off('.zf.offCanvas');
+    Events.off(this.$overlay[0], '.zf.offCanvas');
     if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
     if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
     if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
