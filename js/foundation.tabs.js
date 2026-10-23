@@ -173,12 +173,12 @@ class Tabs extends Plugin {
     if (this.options.matchHeight) {
       this._setHeightMqHandler = this._setHeight.bind(this);
 
-      // Seam (S8): the 'changed.zf.mediaquery' consumer stays on the jQuery
-      // side. MediaQuery still synthesizes that event through a jQuery
-      // trigger with no real-event bridge - the seam flips on both sides in
-      // the MediaQuery slice (same seam as ResponsiveToggle S7 and
-      // Equalizer S8).
-      $(window).on('changed.zf.mediaquery', this._setHeightMqHandler);
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs/offcanvas all flipped with the producer in
+      // the same move).
+      Events.on(window, 'changed.zf.mediaquery', this._setHeightMqHandler);
     }
 
     if(this.options.deepLink) {
@@ -473,7 +473,7 @@ class Tabs extends Plugin {
 
     if (this.options.matchHeight) {
       if (this._setHeightMqHandler != null) {
-         $(window).off('changed.zf.mediaquery', this._setHeightMqHandler); // jQuery seam, see _events
+         Events.off(window, 'changed.zf.mediaquery', this._setHeightMqHandler); // S13 flip, see _events
       }
     }
 

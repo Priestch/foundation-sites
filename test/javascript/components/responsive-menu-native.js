@@ -2,11 +2,11 @@
 // over the three menu plugins, all native since S9 (DropdownMenu,
 // AccordionMenu, Drilldown). The mq switch is an explicit destroy+rebuild of
 // the sub-plugin on the same element; the class/attr bookkeeping around it
-// moved to the native DOM layer. Known seam: the 'changed.zf.mediaquery'
-// consumer stays on the jQuery side (MediaQuery is not migrated yet, same
-// ruling as ResponsiveToggle/OffCanvas/Equalizer/Tabs). These tests pin the
-// contract from the outside; the pre-existing responsiveMenu.js suite is
-// untouched on purpose and stays green.
+// moved to the native DOM layer. The 'changed.zf.mediaquery' consumer joined
+// the native layer in the S13 MediaQuery flip and answers the real
+// broadcast. These tests pin the contract from the outside; the
+// pre-existing responsiveMenu.js suite is untouched on purpose and stays
+// green.
 describe('ResponsiveMenu (native layer contract)', function() {
   var plugin;
   var $html;
@@ -93,7 +93,7 @@ describe('ResponsiveMenu (native layer contract)', function() {
 
     // small -> medium: accordion-menu takes over
     matchOnly('medium');
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     plugin.currentPlugin.should.be.an.instanceof(Foundation.AccordionMenu);
     plugin.currentPlugin.should.not.equal(plugin);
@@ -104,7 +104,7 @@ describe('ResponsiveMenu (native layer contract)', function() {
 
     // medium -> large: drilldown takes over
     matchOnly('large');
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     plugin.currentPlugin.should.be.an.instanceof(Foundation.Drilldown);
     el.classList.contains('drilldown').should.be.true;
@@ -114,7 +114,7 @@ describe('ResponsiveMenu (native layer contract)', function() {
 
     // and back: large -> medium -> small, the full cycle in reverse
     matchOnly('medium');
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     plugin.currentPlugin.should.be.an.instanceof(Foundation.AccordionMenu);
     el.classList.contains('accordion-menu').should.be.true;
@@ -122,7 +122,7 @@ describe('ResponsiveMenu (native layer contract)', function() {
     el.hasAttribute('data-drilldown').should.be.false;
 
     matchOnly('small');
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     plugin.currentPlugin.should.be.an.instanceof(Foundation.DropdownMenu);
     el.classList.contains('dropdown').should.be.true;
@@ -135,7 +135,7 @@ describe('ResponsiveMenu (native layer contract)', function() {
     build();
     var first = plugin.currentPlugin;
 
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     plugin.currentPlugin.should.equal(first);
     document.getElementById('rm-native-menu').hasAttribute('data-dropdown-menu').should.be.true;
@@ -159,18 +159,20 @@ describe('ResponsiveMenu (native layer contract)', function() {
     el.hasAttribute('data-responsive-menu').should.be.false;
     el.hasAttribute('data-dropdown-menu').should.be.false;
 
-    var events = $._data(window, 'events') || {};
-    var handlers = (events.changed || []).filter(function(ev) {
-      return ev.handler === handler;
-    });
-    handlers.should.be.empty;
+    // the mq listener is gone (S13 flip: native layer): a broadcast with
+    // 'small' matching would rebuild the sub-plugin if the handler had
+    // survived - it rebuilds nothing and rewrites no attrs
+    matchOnly('small');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+    el.hasAttribute('data-dropdown-menu').should.be.false;
+    chai.expect(handler).to.not.be.undefined;
   });
 
   it('destroy() after a swap tears down the swapped-in sub-plugin', function() {
     matchOnly('small');
     build();
     matchOnly('medium');
-    $(window).trigger('changed.zf.mediaquery');
+    FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
     var el = document.getElementById('rm-native-menu');
     plugin.destroy();

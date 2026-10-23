@@ -1,7 +1,7 @@
 // S7 contract pins (7.0 line A): ResponsiveToggle's internals moved to the
 // native Registry/Events/DOM layer while the public contract stays
-// byte-identical. The known seam: the 'changed.zf.mediaquery' consumer
-// stays on the jQuery side (MediaQuery still synthesizes it there), pinned
+// byte-identical. The 'changed.zf.mediaquery' consumer joined the native
+// layer in the S13 MediaQuery flip and answers the real broadcast, pinned
 // as such below. The animated half of the mutateme forwarding joined the
 // native layer in the S10 group flip, keeping its 6.x element-local
 // triggerHandler shape. These tests pin the contract from the outside; the
@@ -48,7 +48,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
   }
 
   describe('mediaquery update', function() {
-    it('follows changed.zf.mediaquery synthesized through jQuery (the MediaQuery seam stays jQuery-side)', function() {
+    it('follows the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function() {
       build();
       plugin = new Foundation.ResponsiveToggle($('#rt-bar'), mobileOptions());
       var bar = document.getElementById('rt-bar');
@@ -58,10 +58,10 @@ describe('ResponsiveToggle (native layer contract)', function() {
       bar.style.display.should.equal('');
       menu.style.display.should.equal('none');
 
-      // the consumer listens on the jQuery side: a jQuery-synthesized
-      // changed.zf.mediaquery must re-run the update
+      // the consumer listens on the native event layer: the real broadcast
+      // re-runs the update
       bar.style.display = 'none';
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
       bar.style.display.should.equal('');
     });
 
@@ -187,9 +187,9 @@ describe('ResponsiveToggle (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
 
-      // jQuery seam half is gone: the synthetic broadcast no longer updates
+      // the mq listener is gone: the real broadcast no longer updates
       bar.style.display = 'none';
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
       bar.style.display.should.equal('none');
 
       // native click half is gone: the toggle would show the hidden menu

@@ -5,7 +5,8 @@
 // keydown binding stays on jQuery (the coarse suite feeds jQuery-synthesized
 // mock keydowns), both transitionend waits stay on jQuery (the coarse suite
 // drives them through jQuery triggerHandler, fx seam), the
-// changed.zf.mediaquery consumers stay on jQuery (MediaQuery seam), the
+// changed.zf.mediaquery consumers run on the native layer (the S13
+// MediaQuery flip), the
 // scrollbox touchmove chain stays on jQuery (touch seam with event.data
 // delegation) and the transition-duration/body-class writes stay on jQuery
 // (css seam). These tests pin that contract from the outside; the
@@ -173,7 +174,7 @@ describe('OffCanvas (native layer contract)', function() {
       plugin.$element[0].classList.contains('is-open').should.be.false;
     });
 
-    it('keeps the changed.zf.mediaquery consumer on the jQuery side (the MediaQuery seam)', function(done) {
+    it('answers the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function(done) {
       var $el = $('<div><div class="off-canvas position-left reveal-for-small" id="offCanvasNativeMq" data-off-canvas></div><div class="off-canvas-content" data-off-canvas-content></div></div>').appendTo('body');
       plugin = new Foundation.OffCanvas($el.find('[data-off-canvas]'), {autoFocus: false});
       var el = plugin.$element[0];
@@ -187,18 +188,19 @@ describe('OffCanvas (native layer contract)', function() {
           el.classList.contains('is-closed').should.be.false;
         },
         then: () => {
-          // the consumer is registered in the jQuery event registry, exactly
-          // where the pre-existing offcanvas.js suite probes for it
+          // the real broadcast re-runs the reveal watcher through the
+          // native listener (MediaQuery.atLeast('small') is true here)
+          FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+          el.getAttribute('aria-hidden').should.equal('false');
+          el.classList.contains('is-closed').should.be.false;
+
+          // the consumer no longer sits in the jQuery registry
           var events = $._data(window, 'events') || {};
           var mqHandlers = (events.changed || []).filter(function(ev) {
             return ev.handler === plugin._revealMqHandler;
           });
-          mqHandlers.length.should.equal(1);
+          mqHandlers.length.should.equal(0);
 
-          // the jQuery-synthesized broadcast is answered through that
-          // listener and re-reveals the canvas
-          $(window).trigger('changed.zf.mediaquery');
-          el.getAttribute('aria-hidden').should.equal('false');
           $el.remove();
           done();
         }

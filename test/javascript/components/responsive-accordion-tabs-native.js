@@ -41,13 +41,14 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
     });
   });
 
-  // The mq seam: MediaQuery still synthesizes 'changed.zf.mediaquery' on the
-  // jQuery side, so the round trips below drive the swap through a jQuery
-  // window trigger. Which breakpoint "matches" is pinned by stubbing
-  // MediaQuery.atLeast (shared singleton with window.Foundation.MediaQuery),
-  // keeping the suite independent of the headless viewport size. State-
-  // dependent tests stub BEFORE building, because the last matching rule
-  // wins at init and the headless viewport sits at or above 'medium'.
+  // The mq seam (S13 flip): MediaQuery produces 'changed.zf.mediaquery' as
+  // a real bubbling window event on the native layer, so the round trips
+  // below drive the swap through a native window trigger. Which breakpoint
+  // "matches" is pinned by stubbing MediaQuery.atLeast (shared singleton
+  // with window.Foundation.MediaQuery), keeping the suite independent of
+  // the headless viewport size. State-dependent tests stub BEFORE building,
+  // because the last matching rule wins at init and the headless viewport
+  // sits at or above 'medium'.
   function matchOnly(size) {
     if (atLeastStub) {
       atLeastStub.restore();
@@ -155,7 +156,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
 
       var firstInner = plugin.currentPlugin;
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       plugin.currentPlugin.should.be.an.instanceof(Foundation.Tabs);
       plugin.currentPlugin.should.not.equal(firstInner);
@@ -180,7 +181,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
 
       // and back to accordion through the same seam
       matchOnly('small');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       plugin.currentPlugin.should.be.an.instanceof(Foundation.Accordion);
       plugin.currentPlugin.should.not.equal(firstInner);
@@ -197,9 +198,9 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       var el = document.getElementById('rat-native-tabs');
 
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
       matchOnly('small');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       var items = el.querySelectorAll('li');
       var link2 = items[1].querySelector('a');
@@ -223,7 +224,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       var wrapperUuid = el.getAttribute('data-responsive-accordion-tabs');
 
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       // the rebuilt Tabs writes its own uuid attr on the element, exactly
       // like the 6.x inner reoccupied the zfPlugin key after the first
@@ -255,7 +256,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
 
       // tabs state: only open is supported, like 6.x
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
       var $tabPanel2 = $(document.getElementById('rat-native-panel2'));
 
       chai.expect(plugin.toggle($tabPanel2)).to.be.undefined;
@@ -299,7 +300,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       var el = document.getElementById('rat-native-acc');
 
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       plugin.currentPlugin.should.be.an.instanceof(Foundation.Accordion);
       el.classList.contains('accordion').should.be.true;
@@ -354,7 +355,7 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       parentLi.getAttribute('aria-expanded').should.equal('true');
 
       matchOnly('medium');
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
       // the pane carrying the nested menu was moved to the fresh tabs
       // container - element identity survives, so the inner plugin must too
@@ -382,11 +383,14 @@ describe('ResponsiveAccordionTabs (native layer contract)', function() {
       el.hasAttribute('data-responsive-accordion-tabs').should.be.false;
       el.hasAttribute('data-accordion').should.be.false;
 
-      var events = $._data(window, 'events') || {};
-      var handlers = (events.changed || []).filter(function(ev) {
-        return ev.handler === handler;
-      });
-      handlers.should.be.empty;
+      // the mq listener is gone (S13 flip: native layer): a broadcast with
+      // 'small' matching would rebuild an Accordion if the handler had
+      // survived - nothing comes back
+      matchOnly('small');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+      el.hasAttribute('data-responsive-accordion-tabs').should.be.false;
+      el.hasAttribute('data-accordion').should.be.false;
+      chai.expect(handler).to.not.be.undefined;
     });
   });
 });

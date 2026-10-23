@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { MediaQuery } from './foundation.util.mediaQuery';
+import { Events } from './foundation.util.events';
 import { GetYoDigits } from './foundation.core.utils';
 import { Plugin }from './foundation.core.plugin';
 import { datasetOptions } from './foundation.util.dom';
@@ -137,13 +138,12 @@ class ResponsiveAccordionTabs extends Plugin {
    * @private
    */
   _events() {
-    // Seam (S11): 'changed.zf.mediaquery' is synthesized through jQuery by
-    // the MediaQuery watcher - mediaQuery is not migrated yet and a jQuery
-    // trigger() cannot produce a real event - so this consumer stays on the
-    // jQuery side until the MediaQuery slice flips both sides in one move
-    // (ResponsiveToggle/OffCanvas/Equalizer/Tabs precedent).
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer binds
+    // there (equalizer/tabs/responsiveToggle/responsiveMenu/offcanvas all
+    // flipped with the producer in the same move).
     this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
-    $(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 
   /**
@@ -292,9 +292,9 @@ class ResponsiveAccordionTabs extends Plugin {
    */
   _destroy() {
     // The inner plugin cleans its own listeners/state (S8/S9 double-off
-    // discipline); the wrapper only owns the mq seam listener.
+    // discipline); the wrapper only owns the mq seam listener (S13 flip).
     if (this.currentPlugin) this.currentPlugin.destroy();
-    $(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 }
 

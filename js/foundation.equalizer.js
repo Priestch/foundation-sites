@@ -58,11 +58,12 @@ class Equalizer extends Plugin {
     var tooSmall;
     if(this.options.equalizeOn){
       tooSmall = this._checkMQ();
-      // Seam (S8): the 'changed.zf.mediaquery' consumer stays on the jQuery
-      // side. MediaQuery still synthesizes that event through a jQuery
-      // trigger with no real-event bridge - the seam flips on both sides in
-      // the MediaQuery slice (same seam as ResponsiveToggle S7 and Tabs S8).
-      $(window).on('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs/offcanvas all flipped with the producer in
+      // the same move).
+      Events.on(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
     }else{
       this._events();
     }
@@ -81,13 +82,12 @@ class Equalizer extends Plugin {
    */
   _pauseEvents() {
     this.isOn = false;
-    // jQuery side: the mediaquery seam (see _init) keeps its jQuery
-    // listener removal while the mixed state lasts.
-    $(window).off('changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
-    // Native side: the resizeme and mutateme consumers (S4 producers) and
-    // the equalizer lifecycle listeners drop in one pass each. The mutateme
-    // consumer flipped together with its last producers in the S10 group
-    // flip (Tabs forward, ResponsiveToggle animated half).
+    // Native side: the mediaquery consumer (S13 flip), the resizeme and
+    // mutateme consumers (S4 producers) and the equalizer lifecycle
+    // listeners drop in one pass each. The mutateme consumer flipped
+    // together with its last producers in the S10 group flip (Tabs forward,
+    // ResponsiveToggle animated half).
+    Events.off(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
     Events.off(this.$element[0], 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
   }
 

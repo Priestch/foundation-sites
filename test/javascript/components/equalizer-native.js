@@ -3,10 +3,10 @@
 // public contract stays byte-identical. The mutateme consumer joined the
 // native layer in the S10 group flip (together with its last
 // jQuery-synthesized producers, the Tabs forward and the ResponsiveToggle
-// animated half); the changed.zf.mediaquery consumer still waits for the
-// MediaQuery slice on jQuery. These tests pin that contract from the
-// outside; the pre-existing equalizer.js suite is untouched on purpose and
-// stays green.
+// animated half); the changed.zf.mediaquery consumer followed in the S13
+// MediaQuery flip and answers the real broadcast. These tests pin that
+// contract from the outside; the pre-existing equalizer.js suite is
+// untouched on purpose and stays green.
 describe('Equalizer (native layer contract)', function() {
   var plugin;
   var $html;
@@ -106,23 +106,23 @@ describe('Equalizer (native layer contract)', function() {
       reflow.restore();
     });
 
-    it('keeps the changed.zf.mediaquery consumer on the jQuery side (the MediaQuery seam)', function() {
+    it('answers the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function() {
       // the headless viewport sits between 'small' and 'xxlarge', so 'small'
       // is active and 'xxlarge' is not (responsive-toggle-native precedent)
       build({equalizeOn: 'small'});
       plugin.isOn.should.be.true;
 
-      // the consumer is registered in the jQuery event registry, exactly
-      // where the pre-existing equalizer.js suite probes for it
+      // the consumer is registered on the native event layer now: the real
+      // broadcast re-runs _checkMQ (isOn stays true at this viewport) and
+      // the jQuery registry holds no handler anymore
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+      plugin.isOn.should.be.true;
+
       var events = $._data(window, 'events') || {};
       var mqHandlers = (events.changed || []).filter(function(ev) {
         return ev.handler === plugin._bindHandler.onCheckMQBound;
       });
-      mqHandlers.length.should.equal(1);
-
-      // the jQuery-synthesized broadcast is answered through that listener
-      $(window).trigger('changed.zf.mediaquery');
-      plugin.isOn.should.be.true;
+      mqHandlers.length.should.equal(0);
     });
   });
 

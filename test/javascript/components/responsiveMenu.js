@@ -1,6 +1,7 @@
 describe('Responsive Menu', function() {
 	var plugin;
 	var $html;
+	var atLeastStub;
 	var template = `<ul data-responsive-menu="dropdown">
 	  <li><a href="#">Item 1</a>
 	    <ul class="menu">
@@ -11,18 +12,39 @@ describe('Responsive Menu', function() {
 	  <li><a href="#">Item 2</a></li>
 	</ul>`;
 
+  afterEach(function() {
+    if (plugin && plugin.$element) {
+      plugin.destroy();
+    }
+    $html.remove();
+    if (atLeastStub) {
+      atLeastStub.restore();
+      atLeastStub = null;
+    }
+  });
+
   describe('destroy()', function() {
     it('removes its media query handler from window', function() {
       $html = $(template).appendTo('body');
       plugin = new Foundation.ResponsiveMenu($html, {});
 
+      // S13 flip: the mq consumer listens on the native event layer now.
+      // MediaQuery.atLeast is what _checkMediaQueries calls: count its
+      // invocations to pin that the real broadcast reaches the handler
+      // before the destroy and finds nothing after it.
+      atLeastStub = sinon.stub(Foundation.MediaQuery, 'atLeast').callsFake(function(query) {
+        return query === 'small';
+      });
+
+      var calls = atLeastStub.callCount;
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+      atLeastStub.callCount.should.be.above(calls);
+
       plugin.destroy();
 
-      var events = $._data(window, 'events') || {};
-      var menuHandlers = (events.changed || []).filter(function(ev) {
-        return ev.handler === plugin._changedZfMediaQueryHandler;
-      });
-      menuHandlers.should.be.empty;
+      var afterDestroy = atLeastStub.callCount;
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
+      atLeastStub.callCount.should.equal(afterDestroy);
     });
   });
 

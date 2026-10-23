@@ -202,15 +202,16 @@ class OffCanvas extends Plugin {
     }
 
     if (this.options.inCanvasOn) {
-      // Seam (S10): 'changed.zf.mediaquery' stays on the jQuery side -
-      // MediaQuery still synthesizes it through a jQuery trigger
-      // (Equalizer/ResponsiveToggle/Tabs seam; flips in the MediaQuery
-      // slice).
-      if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs all flipped with the producer in the same
+      // move).
+      if (this._inCanvasMqHandler) Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
       this._inCanvasMqHandler = () => {
         this._checkInCanvas();
       };
-      $(window).on('changed.zf.mediaquery', this._inCanvasMqHandler);
+      Events.on(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
     }
 
   }
@@ -228,7 +229,9 @@ class OffCanvas extends Plugin {
       }
     });
 
-    if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
+    // S13 flip: the reveal-on-breakpoint watcher binds to the real
+    // changed.zf.mediaquery broadcast on the native layer (see _events).
+    if (this._revealMqHandler) Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
     this._revealMqHandler = function () {
       if (MediaQuery.atLeast(_this.options.revealOn)) {
         _this.reveal(true);
@@ -236,7 +239,7 @@ class OffCanvas extends Plugin {
         _this.reveal(false);
       }
     };
-    $(window).on('changed.zf.mediaquery', this._revealMqHandler);
+    Events.on(window, 'changed.zf.mediaquery', this._revealMqHandler);
   }
 
   /**
@@ -633,8 +636,8 @@ class OffCanvas extends Plugin {
     Events.off(this.$element[0], '.zf.trigger .zf.offCanvas');
     this.$overlay.off('.zf.offCanvas');
     Events.off(this.$overlay[0], '.zf.offCanvas');
-    if (this._inCanvasMqHandler) $(window).off('changed.zf.mediaquery', this._inCanvasMqHandler);
-    if (this._revealMqHandler) $(window).off('changed.zf.mediaquery', this._revealMqHandler);
+    if (this._inCanvasMqHandler) Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
+    if (this._revealMqHandler) Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
     if (this.onLoadListener) Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
   }
 }

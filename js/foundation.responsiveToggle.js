@@ -67,12 +67,12 @@ class ResponsiveToggle extends Plugin {
    * @private
    */
   _events() {
-    // Seam (S7): 'changed.zf.mediaquery' is synthesized through jQuery by
-    // the MediaQuery watcher - mediaQuery is not migrated yet and a jQuery
-    // trigger() cannot produce a real event - so this consumer stays on the
-    // jQuery side until the MediaQuery slice flips both sides in one move.
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer
+    // binds there (equalizer/tabs/responsiveMenu/responsiveAccordionTabs/
+    // offcanvas all flipped with the producer in the same move).
     this._updateMqHandler = this._update.bind(this);
-    $(window).on('changed.zf.mediaquery', this._updateMqHandler);
+    Events.on(window, 'changed.zf.mediaquery', this._updateMqHandler);
 
     // The toggler clicks are real browser events: they register on the
     // native event layer, on every element of the filtered collection like
@@ -201,13 +201,13 @@ class ResponsiveToggle extends Plugin {
   };
 
   _destroy() {
-    // jQuery side: the mediaquery seam and any legacy listeners in the
-    // plugin namespace, kept while the mixed state lasts.
+    // jQuery side: any legacy listeners in the plugin namespace, kept while
+    // the mixed state lasts.
     this.$element.off('.zf.responsiveToggle');
     this.$toggler.off('.zf.responsiveToggle');
-    $(window).off('changed.zf.mediaquery', this._updateMqHandler);
-
-    // Native side: the toggler click listeners, by bare namespace.
+    // Native side: the mq consumer (S13 flip) and the toggler click
+    // listeners, by bare namespace.
+    Events.off(window, 'changed.zf.mediaquery', this._updateMqHandler);
     this.$toggler.toArray().forEach(el => {
       Events.off(el, '.zf.responsiveToggle');
     });

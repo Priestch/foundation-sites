@@ -2,14 +2,14 @@
 // hashchange and the collapse production moved to the native
 // Registry/Events/DOM layer while the public contract stays byte-identical.
 // Known seams: the keydown binding stays on jQuery (the coarse suite feeds
-// jQuery-synthesized mock keydowns), change.zf.tabs keeps its jQuery
+// jQuery-synthesized mock keydowns) and change.zf.tabs keeps its jQuery
 // production (jQuery consumers read the forwarded collections as trailing
-// handler arguments, which real events cannot deliver) and matchHeight's
-// changed.zf.mediaquery consumer stays on jQuery (MediaQuery seam). The
-// mutateme forward joined the native layer in the S10 group flip (together
-// with its last jQuery-side consumers). These tests pin that contract from
-// the outside; the pre-existing tabs.js suite is untouched on purpose and
-// stays green.
+// handler arguments, which real events cannot deliver). matchHeight's
+// changed.zf.mediaquery consumer joined the native layer in the S13
+// MediaQuery flip and answers the real broadcast. The mutateme forward
+// joined the native layer in the S10 group flip (together with its last
+// jQuery-side consumers). These tests pin that contract from the outside;
+// the pre-existing tabs.js suite is untouched on purpose and stays green.
 describe('Tabs (native layer contract)', function() {
   var plugin;
   var $html;
@@ -232,16 +232,17 @@ describe('Tabs (native layer contract)', function() {
       sinon.assert.calledOnce(jqSpy);
     });
 
-    it('re-runs _setHeight from the jQuery-synthesized mediaquery broadcast (the MediaQuery seam stays jQuery-side)', function() {
+    it('re-runs _setHeight from the real mediaquery broadcast (the S13 MediaQuery flip)', function() {
       build({matchHeight: true});
       var panels = $html[0].querySelectorAll('.tabs-panel');
       // equalized at init: both panels carry the tallest panel's min-height
       panels[0].style.minHeight.should.not.equal('');
 
       panels.forEach((panel) => { panel.style.minHeight = ''; });
-      $(window).trigger('changed.zf.mediaquery');
+      FoundationNext.Events.trigger(window, 'changed.zf.mediaquery');
 
-      // the jQuery-synthesized broadcast re-applied the equalized heights
+      // the real broadcast re-applied the equalized heights through the
+      // native listener
       panels[0].style.minHeight.should.not.equal('');
     });
   });
