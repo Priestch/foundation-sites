@@ -124,14 +124,18 @@ class Positionable extends Plugin {
       this.alignment = this.originalAlignment;
     }
 
-    $element.offset(Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+    // S13: the Box util reads plain elements (its GetDimensions keeps the
+    // collection unwrap for un-migrated callers); the inputs here hand it
+    // the raw nodes. The `$element.offset(...)` write stays jQuery-side
+    // (wrap-up slice owns the element-write seam).
+    $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
 
     if(!this.options.allowOverlap) {
       var minOverlap = 100000000;
       // default coordinates to how we start, in case we can't figure out better
       var minCoordinates = {position: this.position, alignment: this.alignment};
       while(!this._positionsExhausted()) {
-        let overlap = Box.OverlapArea($element, $parent, false, false, this.options.allowBottomOverlap);
+        let overlap = Box.OverlapArea($element[0], $parent ? $parent[0] : null, false, false, this.options.allowBottomOverlap);
         if(overlap === 0) {
           return;
         }
@@ -143,13 +147,13 @@ class Positionable extends Plugin {
 
         this._reposition();
 
-        $element.offset(Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+        $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
       }
       // If we get through the entire loop, there was no non-overlapping
       // position available. Pick the version with least overlap.
       this.position = minCoordinates.position;
       this.alignment = minCoordinates.alignment;
-      $element.offset(Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+      $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
     }
   }
 

@@ -345,12 +345,14 @@ class DropdownMenu extends Plugin {
         parentLi.classList.add('is-active');
       }
     });
-    var clear = Box.ImNotTouchingYou($sub, null, true);
+    // S13: the Box util reads plain elements; the collision block hands it
+    // the raw submenu node.
+    var clear = Box.ImNotTouchingYou($sub[0], null, true);
     if (!clear) {
       var oldClass = this.options.alignment === 'left' ? '-right' : '-left',
           $parentLi = $sub.parent('.is-dropdown-submenu-parent');
       $parentLi.removeClass(`opens${oldClass}`).addClass(`opens-${this.options.alignment}`);
-      clear = Box.ImNotTouchingYou($sub, null, true);
+      clear = Box.ImNotTouchingYou($sub[0], null, true);
       if (!clear) {
         $parentLi.removeClass(`opens-${this.options.alignment}`).addClass('opens-inner');
       }
