@@ -22,6 +22,11 @@
         timeout: 5000,
       });
       chai.should();
+      // ?grep=<regex> narrows the run for fast iteration (S16: the Playwright
+      // runner passes the query string through in its page argument; full
+      // runs omit it).
+      var urlGrep = new URLSearchParams(location.search).get('grep');
+      if (urlGrep) { mocha.grep(new RegExp(urlGrep)); }
     </script>
     <script src="lib/keyboard-event-mock.js"></script>
     <script src="lib/utils.js"></script>
