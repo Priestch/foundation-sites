@@ -12,7 +12,7 @@
 // stays green.
 describe('Orbit (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   var template = `<div class="orbit" role="region" aria-label="Favorite Space Pictures" data-orbit>
     <ul class="orbit-container">
@@ -47,19 +47,19 @@ describe('Orbit (native layer contract)', function() {
     if (plugin.$element) {
       plugin.destroy();
     }
-    $html.remove();
+    html.remove();
   });
 
   function build(options) {
-    $html = $(template).appendTo('body');
-    plugin = new Foundation.Orbit($html, Object.assign({useMUI: false}, options));
+    html = document.body.appendChild(fixture(template));
+    plugin = new Foundation.Orbit(html, Object.assign({useMUI: false}, options));
     return plugin;
   }
 
   describe('state events', function() {
     it('fires slidechange.zf.orbit through the native event layer with the forwarded slide as parameter', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var spy = sinon.spy();
       FoundationNext.Events.on(el, 'slidechange.zf.orbit', spy);
 
@@ -68,13 +68,13 @@ describe('Orbit (native layer contract)', function() {
       sinon.assert.calledOnce(spy);
       spy.firstCall.args[0].type.should.equal('slidechange');
       spy.firstCall.args[0].namespace.should.equal('orbit.zf');
-      // the forwarded $newSlide collection rides as the event parameter
+      // the forwarded newSlide collection rides as the event parameter
       spy.firstCall.args[1][0].should.equal(el.querySelectorAll('.orbit-slide')[1]);
     });
 
     it('fires beforeslidechange.zf.orbit before the slide flip, then slidechange.zf.orbit', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var order = [];
       FoundationNext.Events.on(el, 'beforeslidechange.zf.orbit', function() {
         order.push('before');
@@ -90,9 +90,9 @@ describe('Orbit (native layer contract)', function() {
 
     it('still reaches jQuery listeners with the real event (white absorption), params in originalEvent.detail', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var spy = sinon.spy();
-      $html.on('slidechange.zf.orbit', spy);
+      $(html).on('slidechange.zf.orbit', spy);
 
       plugin.changeSlide(true);
 
@@ -100,6 +100,8 @@ describe('Orbit (native layer contract)', function() {
       spy.firstCall.args[0].type.should.equal('slidechange');
       // real events carry no jQuery namespace (jQuery leaves it undefined)
       chai.expect(spy.firstCall.args[0].namespace).to.be.undefined;
+      // the forwarded $newSlide collection rides as the event parameter:
+      // detail[0] is the collection, its [0] head the slide element
       spy.firstCall.args[0].originalEvent.detail[0][0].should.equal(el.querySelectorAll('.orbit-slide')[1]);
     });
   });
@@ -109,8 +111,11 @@ describe('Orbit (native layer contract)', function() {
       build({});
       var startSpy = sinon.spy();
       var pauseSpy = sinon.spy();
-      $html.on('timerstart.zf.orbit', startSpy);
-      $html.on('timerpaused.zf.orbit', pauseSpy);
+      // jQuery listeners on purpose: the Timer util still produces these
+      // on the jQuery side (fx-adjacent seam), and a jQuery-synthesized
+      // event never reaches a native listener
+      $(html).on('timerstart.zf.orbit', startSpy);
+      $(html).on('timerpaused.zf.orbit', pauseSpy);
 
       plugin.timer.start();
       plugin.timer.pause();
@@ -128,7 +133,7 @@ describe('Orbit (native layer contract)', function() {
   describe('resize', function() {
     it('recomputes the wrapper height through the native resizeme.zf.trigger (S4 producer, S10 consumer)', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       // the active slide is the only one with a measured box
       el.querySelectorAll('.orbit-slide')[0].style.height = '120px';
 
@@ -142,10 +147,10 @@ describe('Orbit (native layer contract)', function() {
     it('changes slides on a real nav-button click', function() {
       build({pauseOnHover: false});
 
-      $html[0].querySelector('.orbit-next').click();
+      html.querySelector('.orbit-next').click();
 
-      $html.find('.orbit-slide').eq(0).should.be.hidden;
-      $html.find('.orbit-slide').eq(1).should.be.visible;
+      FoundationNext.Dom.visible(html.querySelector('.orbit-slide')).should.be.false;
+      FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[1]).should.be.true;
     });
 
     it('changes slides on a jQuery-synthesized bullet click (the .click() native shortcut bridges the layers)', function() {
@@ -153,10 +158,10 @@ describe('Orbit (native layer contract)', function() {
 
       // the shortcut bridges for non-link elements: jQuery calls
       // button.click(), the real click reaches the native listener
-      $html.find('.orbit-bullets [data-slide]').eq(2).trigger('click');
+      FoundationNext.Events.trigger(html.querySelectorAll('.orbit-bullets [data-slide]')[2], 'click');
 
-      $html.find('.orbit-slide').eq(2).should.be.visible;
-      $html.find('.orbit-bullets [data-slide]').eq(2).should.have.class('is-active');
+      FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[2]).should.be.true;
+      html.querySelectorAll('.orbit-bullets [data-slide]')[2].classList.contains('is-active').should.be.true;
     });
 
     it('pauses and restarts the timer on real slide clicks', function() {
@@ -174,18 +179,19 @@ describe('Orbit (native layer contract)', function() {
     it('changes slides on a real synthesized swipeleft (the S13 Touch flip)', function() {
       build({pauseOnHover: false});
 
-      FoundationNext.Events.trigger($html.find('.orbit-slide')[0], 'swipeleft');
+      FoundationNext.Events.trigger(html.querySelector('.orbit-slide'), 'swipeleft');
 
-      $html.find('.orbit-slide').eq(1).should.be.visible;
+      FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[1]).should.be.true;
     });
 
     it('changes slides on the synthetic jQuery mock keydown (the keyboard seam stays jQuery-side)', function() {
       build({pauseOnHover: false});
 
-      plugin.$wrapper.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$wrapper.focus();
 
-      $html.find('.orbit-slide').eq(1).should.be.visible;
+      plugin.$wrapper[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[1]).should.be.true;
     });
   });
 
@@ -207,8 +213,8 @@ describe('Orbit (native layer contract)', function() {
           </li>
         </ul>
       </div>`;
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Orbit($html, {useMUI: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Orbit(html, {useMUI: false});
       // geoSync never ran: autoPlay requires more than one slide
       chai.expect(plugin.timer).to.be.undefined;
 
@@ -221,10 +227,10 @@ describe('Orbit (native layer contract)', function() {
 
       // a real click and a synthesized one must both find nothing: the
       // wipe covered the element and all descendants on both layers
-      $html[0].querySelector('.orbit-next').click();
-      $html.find('.orbit-bullets [data-slide]').eq(2).trigger('click');
+      html.querySelector('.orbit-next').click();
+      FoundationNext.Events.trigger(html.querySelectorAll('.orbit-bullets [data-slide]')[2], 'click');
 
-      $html.find('.orbit-slide').eq(2).should.be.hidden;
+      FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[2]).should.be.false;
     });
   });
 });

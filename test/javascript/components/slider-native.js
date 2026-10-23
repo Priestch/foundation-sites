@@ -13,7 +13,7 @@
 // stays green.
 describe('Slider (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `<div class="slider" data-slider data-initial-start="10" data-step="1">
       <span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
       <span class="slider-fill" data-slider-fill></span>
@@ -28,13 +28,13 @@ describe('Slider (native layer contract)', function() {
     if (plugin.$element) {
       plugin.destroy();
     }
-    $html.remove();
+    html.remove();
     done();
   });
 
   function build(options) {
-    $html = $(template).appendTo('body');
-    plugin = new Foundation.Slider($html, Object.assign({moveTime: 0, changedDelay: 0}, options));
+    html = document.body.appendChild(fixture(template));
+    plugin = new Foundation.Slider(html, Object.assign({moveTime: 0, changedDelay: 0}, options));
     return plugin;
   }
 
@@ -66,7 +66,7 @@ describe('Slider (native layer contract)', function() {
     it('marks disabled sliders through the native classList', function() {
       build({disabled: true});
 
-      $html[0].classList.contains('disabled').should.be.true;
+      html.classList.contains('disabled').should.be.true;
     });
   });
 
@@ -78,9 +78,11 @@ describe('Slider (native layer contract)', function() {
       // 6.x race the coarse suite's 5-calls-4-events guard pins, kept)
       plugin._setHandlePos(plugin.$handle, 10, true);
       var finishedSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'finished.zf.animate', finishedSpy);
+      FoundationNext.Events.on(html, 'finished.zf.animate', finishedSpy);
       var jqHandle;
-      $html.on('moved.zf.slider', function(e, $handle) { jqHandle = $handle; });
+      // jQuery listener on purpose: the moved production is jQuery-side, the
+      // pin is its trailing-argument signature
+      $(html).on('moved.zf.slider', function(e, handle) { jqHandle = handle; });
 
       plugin._setHandlePos(plugin.$handle, 50, true);
 
@@ -130,7 +132,7 @@ describe('Slider (native layer contract)', function() {
 
       // element.click() dispatches with clientX/pageX 0: the click lands
       // left of the bar, the value becomes the start value
-      $html[0].click();
+      html.click();
 
       plugin.$handle[0].getAttribute('aria-valuenow').should.equal('0');
     });
@@ -140,8 +142,9 @@ describe('Slider (native layer contract)', function() {
     it('moves the handle on the synthetic jQuery mock keydown (the keyboard seam stays jQuery-side)', function() {
       build({});
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$handle[0].focus();
+
+      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
       plugin.$handle[0].getAttribute('aria-valuenow').should.equal('11');
     });
@@ -167,7 +170,7 @@ describe('Slider (native layer contract)', function() {
       // a real change and a real click must both find nothing
       input.value = '60';
       input.dispatchEvent(new Event('change'));
-      $html[0].click();
+      html.click();
 
       handle.getAttribute('aria-valuenow').should.equal('10');
     });

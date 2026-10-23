@@ -29,8 +29,12 @@ class Orbit extends Plugin {
   * @param {Object} options - Overrides to the default plugin settings.
   */
   _setup(element, options){
-    this.$element = element;
-    this.options = $.extend({}, Orbit.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, Orbit.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'Orbit'; // ie9 back compat
 
     Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
@@ -355,6 +359,9 @@ class Orbit extends Plugin {
   */
   changeSlide(isLTR, chosenSlide, idx) {
     if (!this.$slides) {return; } // Don't freak out if we're in the middle of cleanup
+    // Mixed state (7.0 line A, S16): accept the native element the 7.0
+    // contract carries as well as the jQuery collection the internals use.
+    if (chosenSlide && chosenSlide.nodeType === 1) { chosenSlide = $(chosenSlide); }
     var $curSlide = this.$slides.filter('.is-active').eq(0);
 
     if (/mui/g.test($curSlide[0].className)) { return false; } //if the slide is currently animating, kick out of the function
