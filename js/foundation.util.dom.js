@@ -80,4 +80,46 @@ function datasetOptions(el) {
   return options;
 }
 
-export {q, visible, datasetOptions};
+// --- jQuery pseudo-selector stand-ins (7.0 line A, S12) ---
+// The jQuery input pseudos have no CSS equivalents. These helpers mirror the
+// exact jQuery definitions (rinputs / createInputPseudo / createButtonPseudo
+// in jquery.js); their equivalence against the jQuery selectors is pinned
+// element-by-element on a fixture form in abide-native.js.
+function isTag(el, name) {
+  return el.nodeName.toLowerCase() === name;
+}
+
+// jQuery `:input` is the tag-name prefilter rinputs
+// (/^(?:input|select|textarea|button)$/i): all four form-control tags.
+function formControls(root) {
+  return Array.from(root.querySelectorAll('input, select, textarea, button'));
+}
+
+// jQuery `:button`: an <input type="button"> or any <button>, whatever the
+// button's [type].
+function isButton(el) {
+  return (isTag(el, 'input') && el.type === 'button') || isTag(el, 'button');
+}
+
+// jQuery `:submit` / `:reset` (createButtonPseudo): an input or button whose
+// `type` property equals the name - a <button> without [type] defaults to
+// "submit".
+function isSubmit(el) {
+  return (isTag(el, 'input') || isTag(el, 'button')) && el.type === 'submit';
+}
+
+function isReset(el) {
+  return (isTag(el, 'input') || isTag(el, 'button')) && el.type === 'reset';
+}
+
+// jQuery `:radio` / `:checkbox` (createInputPseudo): an input whose `type`
+// property equals the name.
+function isRadio(el) {
+  return isTag(el, 'input') && el.type === 'radio';
+}
+
+function isCheckbox(el) {
+  return isTag(el, 'input') && el.type === 'checkbox';
+}
+
+export {q, visible, datasetOptions, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox};

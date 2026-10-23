@@ -1,11 +1,44 @@
 import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { GetYoDigits } from './foundation.core.utils';
+import { Events } from './foundation.util.events';
+import { visible, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox } from './foundation.util.dom';
 
 /**
  * Abide module.
  * @module foundation.abide
  */
+
+// jQuery `.data('abide-describedby')` stand-in (7.0 line A, S12): a module
+// side channel like jQuery's data store - the 6.x flag never surfaced in the
+// DOM either.
+const describedBy = new WeakSet();
+
+// jQuery collection / element / array acceptance for the public $el-shaped
+// parameters (core.utils toElement shape, kept local until that helper is
+// exported).
+function toEl(obj) {
+  return obj && obj[0] !== undefined ? obj[0] : obj;
+}
+
+function toEls(obj) {
+  if (obj && obj[0] !== undefined) { return Array.from(obj); }
+  return obj ? [obj] : [];
+}
+
+// jQuery addClass/removeClass equivalents: the option classes may carry
+// several whitespace-separated names.
+function addClasses(el, names) {
+  names.split(/\s+/).forEach(name => {
+    if (name) { el.classList.add(name); }
+  });
+}
+
+function removeClasses(el, names) {
+  names.split(/\s+/).forEach(name => {
+    if (name) { el.classList.remove(name); }
+  });
+}
 
 class Abide extends Plugin {
   /**
@@ -18,6 +51,11 @@ class Abide extends Plugin {
    */
   _setup(element, options = {}) {
     this.$element = element;
+    // Seam (S12): the options deep merge stays on jQuery's $.extend(true) -
+    // it is the last deep merge of the plugin layer and moves together with
+    // the wrap-up slice's shared deep-clone utility (validator functions and
+    // RegExp patterns must survive the merge by reference rules, not by
+    // JSON clone rules).
     this.options  = $.extend(true, {}, Abide.defaults, this.$element.data(), options);
     this.isEnabled = true;
     this.formnovalidate = null;
@@ -31,17 +69,21 @@ class Abide extends Plugin {
    * @private
    */
   _init() {
-    this.$inputs = $.merge(                               // Consider as input to validate:
-      this.$element.find('input').not('[type="submit"]'), // * all input fields expect submit
-      this.$element.find('textarea, select')              // * all textareas and select fields
-    );
-    this.$submits = this.$element.find('[type="submit"]');
-    const $globalErrors = this.$element.find('[data-abide-error]');
+    const form = this.$element[0];
+    // Native field sweep (7.0 line A, S12): every input except the submit
+    // ones, plus the textareas and selects. The former two-find + $.merge
+    // grouped the set by tag; the flat document order changes nothing about
+    // which fields are validated (fields are validated independently,
+    // checkbox groups are deduped by name while iterating).
+    this.inputs = Array.from(form.querySelectorAll('input:not([type="submit"]), textarea, select'));
+    this.$inputs = $(this.inputs);
+    this.$submits = $(Array.from(form.querySelectorAll('[type="submit"]')));
+    const globalErrors = Array.from(form.querySelectorAll('[data-abide-error]'));
 
     // Add a11y attributes to all fields
     if (this.options.a11yAttributes) {
-      this.$inputs.each((i, input) => this.addA11yAttributes($(input)));
-      $globalErrors.each((i, error) => this.addGlobalErrorA11yAttributes($(error)));
+      this.inputs.forEach(input => this.addA11yAttributes($(input)));
+      globalErrors.forEach(error => this.addGlobalErrorA11yAttributes($(error)));
     }
 
     this._events();
@@ -52,47 +94,70 @@ class Abide extends Plugin {
    * @private
    */
   _events() {
-    this.$element.off('.abide')
-      .on('reset.zf.abide', () => {
-        this.resetForm();
-      })
-      .on('submit.zf.abide', () => {
-        return this.validateForm();
-      });
+    const form = this.$element[0];
 
-    this.$submits
-      .off('click.zf.abide keydown.zf.abide')
-      .on('click.zf.abide keydown.zf.abide', (e) => {
+    // S12: the form-level and per-field consumers flip to the native event
+    // layer. Their producers are the real DOM reset/submit/change/input/
+    // blur events (which reach both listener layers during the mixed state)
+    // and this plugin's own native triggers, so every seam here closes on
+    // the consumer side alone.
+    Events.off(form, '.abide');
+    Events.on(form, 'reset.zf.abide', () => {
+      this.resetForm();
+    });
+    Events.on(form, 'submit.zf.abide', () => {
+      return this.validateForm();
+    });
+
+    this.$submits.toArray().forEach(submit => {
+      Events.off(submit, 'click.zf.abide keydown.zf.abide');
+      Events.on(submit, 'click.zf.abide keydown.zf.abide', (e) => {
         if (!e.key || (e.key === ' ' || e.key === 'Enter')) {
           e.preventDefault();
           this.formnovalidate = e.target.getAttribute('formnovalidate') !== null;
-          this.$element.submit();
+          this._submitForm();
         }
       });
+    });
 
     if (this.options.validateOn === 'fieldChange') {
-      this.$inputs
-        .off('change.zf.abide')
-        .on('change.zf.abide', (e) => {
+      this.inputs.forEach(input => {
+        Events.off(input, 'change.zf.abide');
+        Events.on(input, 'change.zf.abide', (e) => {
           this.validateInput($(e.target));
         });
+      });
     }
 
     if (this.options.liveValidate) {
-      this.$inputs
-        .off('input.zf.abide')
-        .on('input.zf.abide', (e) => {
+      this.inputs.forEach(input => {
+        Events.off(input, 'input.zf.abide');
+        Events.on(input, 'input.zf.abide', (e) => {
           this.validateInput($(e.target));
         });
+      });
     }
 
     if (this.options.validateOnBlur) {
-      this.$inputs
-        .off('blur.zf.abide')
-        .on('blur.zf.abide', (e) => {
+      this.inputs.forEach(input => {
+        Events.off(input, 'blur.zf.abide');
+        Events.on(input, 'blur.zf.abide', (e) => {
           this.validateInput($(e.target));
         });
+      });
     }
+  }
+
+  /**
+   * Formerly `this.$element.submit()` (7.0 line A, S12): jQuery's synthetic
+   * submit trigger ran the submit handlers and handed over to the native
+   * form.submit() only when no handler cancelled - Events.trigger implements
+   * exactly that shape. The native submit() fires no submit event of its
+   * own, so nothing recurses.
+   * @private
+   */
+  _submitForm() {
+    Events.trigger(this.$element[0], 'submit');
   }
 
   /**
@@ -138,24 +203,25 @@ class Abide extends Plugin {
    * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
    */
   requiredCheck($el) {
-    if (!$el.attr('required')) return true;
+    const el = toEl($el);
+    if (!el.hasAttribute('required')) return true;
 
     var isGood = true;
 
-    switch ($el[0].type) {
+    switch (el.type) {
       case 'checkbox':
-        isGood = $el[0].checked;
+        isGood = el.checked;
         break;
 
       case 'select':
       case 'select-one':
       case 'select-multiple':
-        var opt = $el.find('option:selected');
-        if (!opt.length || !opt.val()) isGood = false;
+        var opt = el.querySelectorAll('option:checked');
+        if (!opt.length || !opt[0].value) isGood = false;
         break;
 
       default:
-        if (!$el.val() || !$el.val().length) isGood = false;
+        if (!el.value || !el.value.length) isGood = false;
     }
 
     return isGood;
@@ -175,27 +241,45 @@ class Abide extends Plugin {
    * @returns {Object} jQuery object with the selector.
    */
   findFormError($el, failedValidators) {
-    var id = $el.length ? $el[0].id : '';
-    var $error = $el.siblings(this.options.formErrorSelector);
+    const els = toEls($el);
+    const id = els.length ? els[0].id : '';
+    const form = this.$element[0];
+    let errors = [];
+    const addUnique = (candidates) => {
+      candidates.forEach(candidate => {
+        if (candidate && errors.indexOf(candidate) === -1) { errors.push(candidate); }
+      });
+    };
 
-    if (!$error.length) {
-      $error = $el.parent().find(this.options.formErrorSelector);
-    }
+    // 1. The direct siblings matching the selector (jQuery unions the
+    // per-element sibling lists of the whole collection, in order).
+    els.forEach(el => {
+      addUnique(Array.from(el.parentNode.children).filter(child => child !== el && child.matches(this.options.formErrorSelector)));
+    });
 
-    if (id) {
-      $error = $error.add(this.$element.find(`[data-form-error-for="${id}"]`));
-    }
-
-    if (!!failedValidators) {
-      $error = $error.not('[data-form-error-on]')
-
-      failedValidators.forEach((v) => {
-        $error = $error.add($el.siblings(`[data-form-error-on="${v}"]`));
-        $error = $error.add(this.$element.find(`[data-form-error-for="${id}"][data-form-error-on="${v}"]`));
+    // 2. The parent's matching children, when no sibling matched.
+    if (!errors.length) {
+      els.forEach(el => {
+        addUnique(Array.from(el.parentNode.querySelectorAll(this.options.formErrorSelector)));
       });
     }
 
-    return $error;
+    if (id) {
+      addUnique(Array.from(form.querySelectorAll(`[data-form-error-for="${id}"]`)));
+    }
+
+    if (!!failedValidators) {
+      errors = errors.filter(error => !error.hasAttribute('data-form-error-on'));
+
+      failedValidators.forEach(v => {
+        els.forEach(el => {
+          addUnique(Array.from(el.parentNode.children).filter(child => child !== el && child.matches(`[data-form-error-on="${v}"]`)));
+        });
+        addUnique(Array.from(form.querySelectorAll(`[data-form-error-for="${id}"][data-form-error-on="${v}"]`)));
+      });
+    }
+
+    return $(errors);
   }
 
   /**
@@ -204,17 +288,18 @@ class Abide extends Plugin {
    * 3. The `.closest()` <label>
    *
    * @param {Object} $el - jQuery object to check for required attribute
-   * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+   * @returns {Object} jQuery object with the label.
    */
   findLabel($el) {
-    var id = $el[0].id;
-    var $label = this.$element.find(`label[for="${id}"]`);
+    const el = toEl($el);
+    const label = this.$element[0].querySelector(`label[for="${el.id}"]`);
 
-    if (!$label.length) {
-      return $el.closest('label');
+    if (!label) {
+      const closest = el.closest('label');
+      return closest ? $(closest) : $();
     }
 
-    return $label;
+    return $(label);
   }
 
   /**
@@ -223,20 +308,10 @@ class Abide extends Plugin {
    * 3. The `.closest()` <label>
    *
    * @param {Object} $el - jQuery object to check for required attribute
-   * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+   * @returns {Object} jQuery object with the labels.
    */
   findRadioLabels($els) {
-    var labels = $els.map((i, el) => {
-      var id = el.id;
-      var $label = this.$element.find(`label[for="${id}"]`);
-
-      if (!$label.length) {
-        $label = $(el).closest('label');
-      }
-      return $label[0];
-    });
-
-    return $(labels);
+    return this._labelsForGroup($els);
   }
 
   /**
@@ -245,17 +320,23 @@ class Abide extends Plugin {
    * 3. The `.closest()` <label>
    *
    * @param {Object} $el - jQuery object to check for required attribute
-   * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+   * @returns {Object} jQuery object with the labels.
    */
   findCheckboxLabels($els) {
-    var labels = $els.map((i, el) => {
-      var id = el.id;
-      var $label = this.$element.find(`label[for="${id}"]`);
+    return this._labelsForGroup($els);
+  }
 
-      if (!$label.length) {
-        $label = $(el).closest('label');
+  _labelsForGroup($els) {
+    const labels = [];
+    toEls($els).forEach(el => {
+      let label = el.id ? this.$element[0].querySelector(`label[for="${el.id}"]`) : null;
+
+      if (!label) {
+        label = el.closest('label');
       }
-      return $label[0];
+      if (label) {
+        labels.push(label);
+      }
     });
 
     return $(labels);
@@ -267,23 +348,19 @@ class Abide extends Plugin {
    * @param {String[]} [failedValidators] - List of failed validators.
    */
   addErrorClasses($el, failedValidators) {
-    var $label = this.findLabel($el);
-    var $formError = this.findFormError($el, failedValidators);
+    const el = toEl($el);
+    const $label = this.findLabel($el);
+    const $formError = this.findFormError($el, failedValidators);
 
-    if ($label.length) {
-      $label.addClass(this.options.labelErrorClass);
-    }
+    $label.toArray().forEach(label => addClasses(label, this.options.labelErrorClass));
 
-    if ($formError.length) {
-      $formError.addClass(this.options.formErrorClass);
-    }
+    $formError.toArray().forEach(error => addClasses(error, this.options.formErrorClass));
 
-    $el.addClass(this.options.inputErrorClass).attr({
-      'data-invalid': '',
-      'aria-invalid': true
-    });
+    addClasses(el, this.options.inputErrorClass);
+    el.setAttribute('data-invalid', '');
+    el.setAttribute('aria-invalid', 'true');
 
-    if ($formError.filter(':visible').length) {
+    if ($formError.toArray().some(visible)) {
       this.addA11yErrorDescribe($el, $formError);
     }
   }
@@ -294,52 +371,58 @@ class Abide extends Plugin {
    * @param {Object} $el - jQuery object
    */
   addA11yAttributes($el) {
-    let $errors = this.findFormError($el);
-    let $labels = $errors.filter('label');
-    if (!$errors.length) return;
+    const el = toEl($el);
+    const errors = this.findFormError($el);
+    const labels = errors.toArray().filter(error => error.matches('label'));
+    if (!errors.length) return;
 
-    let $error = $errors.filter(':visible').first();
-    if ($error.length) {
-      this.addA11yErrorDescribe($el, $error);
+    // The former `:visible` filter, narrowed to the display rule (Dom's
+    // `visible` - see the PENDING DECISION note there).
+    const firstError = errors.toArray().find(visible);
+    if (firstError) {
+      this.addA11yErrorDescribe($el, $(firstError));
     }
 
-    if ($labels.filter('[for]').length < $labels.length) {
+    if (labels.filter(label => label.hasAttribute('for')).length < labels.length) {
       // Get the input ID or create one
-      let elemId = $el.attr('id');
-      if (typeof elemId === 'undefined') {
+      let elemId = el.getAttribute('id');
+      if (elemId == null) {
         elemId = GetYoDigits(6, 'abide-input');
-        $el.attr('id', elemId);
+        el.setAttribute('id', elemId);
       }
 
       // For each label targeting $el, set [for] if it is not set.
-      $labels.each((i, label) => {
-        const $label = $(label);
-        if (typeof $label.attr('for') === 'undefined')
-          $label.attr('for', elemId);
+      labels.forEach(label => {
+        if (!label.hasAttribute('for')) {
+          label.setAttribute('for', elemId);
+        }
       });
     }
 
     // For each error targeting $el, set [role=alert] if it is not set.
-    $errors.each((i, label) => {
-      const $label = $(label);
-      if (typeof $label.attr('role') === 'undefined')
-        $label.attr('role', 'alert');
-    }).end();
+    errors.toArray().forEach(error => {
+      if (!error.hasAttribute('role')) {
+        error.setAttribute('role', 'alert');
+      }
+    });
   }
 
   addA11yErrorDescribe($el, $error) {
-    if ($el.attr('type') === 'hidden') return;
-    if (typeof $el.attr('aria-describedby') !== 'undefined') return;
+    const el = toEl($el);
+    const error = toEl($error);
+    if (el.getAttribute('type') === 'hidden') return;
+    if (el.hasAttribute('aria-describedby')) return;
 
     // Set [aria-describedby] on the input toward the first form error if it is not set
     // Get the first error ID or create one
-    let errorId = $error.attr('id');
-    if (typeof errorId === 'undefined') {
+    let errorId = error.getAttribute('id');
+    if (errorId == null) {
       errorId = GetYoDigits(6, 'abide-error');
-      $error.attr('id', errorId);
+      error.setAttribute('id', errorId);
     }
 
-    $el.attr('aria-describedby', errorId).data('abide-describedby', true);
+    el.setAttribute('aria-describedby', errorId);
+    describedBy.add(el);
   }
 
   /**
@@ -347,8 +430,10 @@ class Abide extends Plugin {
    * @param {Object} $el - jQuery object to add the attribute to
    */
   addGlobalErrorA11yAttributes($el) {
-    if (typeof $el.attr('aria-live') === 'undefined')
-      $el.attr('aria-live', this.options.a11yErrorLevel);
+    const el = toEl($el);
+    if (!el.hasAttribute('aria-live')) {
+      el.setAttribute('aria-live', this.options.a11yErrorLevel);
+    }
   }
 
   /**
@@ -357,21 +442,18 @@ class Abide extends Plugin {
    *
    */
   removeRadioErrorClasses(groupName) {
-    var $els = this.$element.find(`:radio[name="${groupName}"]`);
-    var $labels = this.findRadioLabels($els);
-    var $formErrors = this.findFormError($els);
+    const $els = this._groupEls('radio', groupName);
+    const $labels = this.findRadioLabels($els);
+    const $formErrors = this.findFormError($els);
 
-    if ($labels.length) {
-      $labels.removeClass(this.options.labelErrorClass);
-    }
+    $labels.toArray().forEach(label => removeClasses(label, this.options.labelErrorClass));
 
-    if ($formErrors.length) {
-      $formErrors.removeClass(this.options.formErrorClass);
-    }
+    $formErrors.toArray().forEach(error => removeClasses(error, this.options.formErrorClass));
 
-    $els.removeClass(this.options.inputErrorClass).attr({
-      'data-invalid': null,
-      'aria-invalid': null
+    $els.toArray().forEach(el => {
+      removeClasses(el, this.options.inputErrorClass);
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
     });
 
   }
@@ -382,23 +464,27 @@ class Abide extends Plugin {
    *
    */
   removeCheckboxErrorClasses(groupName) {
-    var $els = this.$element.find(`:checkbox[name="${groupName}"]`);
-    var $labels = this.findCheckboxLabels($els);
-    var $formErrors = this.findFormError($els);
+    const $els = this._groupEls('checkbox', groupName);
+    const $labels = this.findCheckboxLabels($els);
+    const $formErrors = this.findFormError($els);
 
-    if ($labels.length) {
-      $labels.removeClass(this.options.labelErrorClass);
-    }
+    $labels.toArray().forEach(label => removeClasses(label, this.options.labelErrorClass));
 
-    if ($formErrors.length) {
-      $formErrors.removeClass(this.options.formErrorClass);
-    }
+    $formErrors.toArray().forEach(error => removeClasses(error, this.options.formErrorClass));
 
-    $els.removeClass(this.options.inputErrorClass).attr({
-      'data-invalid': null,
-      'aria-invalid': null
+    $els.toArray().forEach(el => {
+      removeClasses(el, this.options.inputErrorClass);
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
     });
 
+  }
+
+  // Native stand-in for the former `:radio/:checkbox` group queries (7.0
+  // line A, S12): `input[type="..."][name="..."]`, the exact
+  // createInputPseudo set.
+  _groupEls(type, groupName) {
+    return $(Array.from(this.$element[0].querySelectorAll(`input[type="${type}"][name="${groupName}"]`)));
   }
 
   /**
@@ -406,33 +492,30 @@ class Abide extends Plugin {
    * @param {Object} $el - jQuery object to remove the class from
    */
   removeErrorClasses($el) {
+    const el = toEl($el);
     // radios need to clear all of the els
-    if ($el[0].type === 'radio') {
-      return this.removeRadioErrorClasses($el.attr('name'));
+    if (el.type === 'radio') {
+      return this.removeRadioErrorClasses(el.getAttribute('name'));
     }
     // checkboxes need to clear all of the els
-    else if ($el[0].type === 'checkbox') {
-      return this.removeCheckboxErrorClasses($el.attr('name'));
+    else if (el.type === 'checkbox') {
+      return this.removeCheckboxErrorClasses(el.getAttribute('name'));
     }
 
-    var $label = this.findLabel($el);
-    var $formError = this.findFormError($el);
+    const $label = this.findLabel($el);
+    const $formError = this.findFormError($el);
 
-    if ($label.length) {
-      $label.removeClass(this.options.labelErrorClass);
-    }
+    $label.toArray().forEach(label => removeClasses(label, this.options.labelErrorClass));
 
-    if ($formError.length) {
-      $formError.removeClass(this.options.formErrorClass);
-    }
+    $formError.toArray().forEach(error => removeClasses(error, this.options.formErrorClass));
 
-    $el.removeClass(this.options.inputErrorClass).attr({
-      'data-invalid': null,
-      'aria-invalid': null
-    });
+    removeClasses(el, this.options.inputErrorClass);
+    el.removeAttribute('data-invalid');
+    el.removeAttribute('aria-invalid');
 
-    if ($el.data('abide-describedby')) {
-      $el.removeAttr('aria-describedby').removeData('abide-describedby');
+    if (describedBy.has(el)) {
+      el.removeAttribute('aria-describedby');
+      describedBy.delete(el);
     }
   }
 
@@ -445,8 +528,9 @@ class Abide extends Plugin {
    * @returns {Boolean} goodToGo - If the input is valid or not.
    */
   validateInput($el) {
+    const el = toEl($el);
     var clearRequire = this.requiredCheck($el),
-        validator = $el.attr('data-validator'),
+        validator = el.getAttribute('data-validator'),
         failedValidators = [],
         manageErrorClasses = true;
 
@@ -456,17 +540,17 @@ class Abide extends Plugin {
     }
 
     // don't validate ignored inputs or hidden inputs or disabled inputs
-    if ($el.is('[data-abide-ignore]') || $el.is('[type="hidden"]') || $el.is('[disabled]')) {
+    if (el.hasAttribute('data-abide-ignore') || el.matches('[type="hidden"]') || el.hasAttribute('disabled')) {
       return true;
     }
 
-    switch ($el[0].type) {
+    switch (el.type) {
       case 'radio':
-        this.validateRadio($el.attr('name')) || failedValidators.push('required');
+        this.validateRadio(el.getAttribute('name')) || failedValidators.push('required');
         break;
 
       case 'checkbox':
-        this.validateCheckbox($el.attr('name')) || failedValidators.push('required');
+        this.validateCheckbox(el.getAttribute('name')) || failedValidators.push('required');
         // validateCheckbox() adds/removes error classes
         manageErrorClasses = false;
         break;
@@ -483,14 +567,14 @@ class Abide extends Plugin {
     }
 
     if (validator) {
-      const required = $el.attr('required') ? true : false;
+      const required = el.hasAttribute('required');
 
       validator.split(' ').forEach((v) => {
         this.options.validators[v]($el, required, $el.parent()) || failedValidators.push(v);
       });
     }
 
-    if ($el.attr('data-equalto')) {
+    if (el.getAttribute('data-equalto')) {
       this.options.validators.equalTo($el) || failedValidators.push('equalTo');
     }
 
@@ -499,12 +583,11 @@ class Abide extends Plugin {
 
     if (goodToGo) {
       // Re-validate inputs that depend on this one with equalto
-      const dependentElements = this.$element.find(`[data-equalto="${$el.attr('id')}"]`);
+      const dependentElements = this.$element[0].querySelectorAll(`[data-equalto="${el.id}"]`);
       if (dependentElements.length) {
-        let _this = this;
-        dependentElements.each(function() {
-          if ($(this).val()) {
-            _this.validateInput($(this));
+        Array.from(dependentElements).forEach(dependent => {
+          if (dependent.value) {
+            this.validateInput($(dependent));
           }
         });
       }
@@ -523,7 +606,11 @@ class Abide extends Plugin {
      * @event Abide#valid
      * @event Abide#invalid
      */
-    $el.trigger(message, [$el]);
+    // S12: the production flips to the native event layer - a real, bubbling
+    // event; still-on-jQuery listeners receive it through the real-event
+    // pass-through, the forwarded $el rides in event.originalEvent.detail
+    // (the final param form is the wrap-up slice's uniform move).
+    Events.trigger(el, message, [$el]);
 
     return goodToGo;
   }
@@ -536,8 +623,8 @@ class Abide extends Plugin {
    */
   validateForm() {
     var acc = [];
-    var _this = this;
     var checkboxGroupName;
+    const form = this.$element[0];
 
     // Remember first form submission to prevent specific checkbox validation (more than one required) until form got initially submitted
     if (!this.initialized) {
@@ -550,25 +637,24 @@ class Abide extends Plugin {
       return true;
     }
 
-    this.$inputs.each(function() {
+    this.inputs.forEach(el => {
 
       // Only use one checkbox per group since validateCheckbox() iterates over all associated checkboxes
-      if ($(this)[0].type === 'checkbox') {
-        if ($(this).attr('name') === checkboxGroupName) return true;
-        checkboxGroupName = $(this).attr('name');
+      if (el.type === 'checkbox') {
+        if (el.getAttribute('name') === checkboxGroupName) return;
+        checkboxGroupName = el.getAttribute('name');
       }
 
-      acc.push(_this.validateInput($(this)));
+      acc.push(this.validateInput($(el)));
     });
 
     var noError = acc.indexOf(false) === -1;
 
-    this.$element.find('[data-abide-error]').each((i, elem) => {
-      const $elem = $(elem);
+    form.querySelectorAll('[data-abide-error]').forEach(elem => {
       // Ensure a11y attributes are set
-      if (this.options.a11yAttributes) this.addGlobalErrorA11yAttributes($elem);
+      if (this.options.a11yAttributes) this.addGlobalErrorA11yAttributes($(elem));
       // Show or hide the error
-      $elem.css('display', (noError ? 'none' : 'block'));
+      elem.style.display = (noError ? 'none' : 'block');
     });
 
     /**
@@ -577,7 +663,9 @@ class Abide extends Plugin {
      * @event Abide#formvalid
      * @event Abide#forminvalid
      */
-    this.$element.trigger((noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [this.$element]);
+    // S12: production flips to the native event layer, same shape as the
+    // input-level events above.
+    Events.trigger(form, (noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [this.$element]);
 
     return noError;
   }
@@ -589,9 +677,10 @@ class Abide extends Plugin {
    * @returns {Boolean} Boolean value depends on whether or not the input value matches the pattern specified
    */
   validateText($el, pattern) {
+    const el = toEl($el);
     // A pattern can be passed to this function, or it will be infered from the input's "pattern" attribute, or it's "type" attribute
-    pattern = (pattern || $el.attr('data-pattern') || $el.attr('pattern') || $el.attr('type'));
-    var inputText = $el.val();
+    pattern = (pattern || el.getAttribute('data-pattern') || el.getAttribute('pattern') || el.getAttribute('type'));
+    var inputText = el.value;
     var valid = true;
 
     if (inputText.length) {
@@ -600,7 +689,7 @@ class Abide extends Plugin {
         valid = this.options.patterns[pattern].test(inputText);
       }
       // If the pattern name isn't also the type attribute of the field, then test it as a regexp
-      else if (pattern !== $el.attr('type')) {
+      else if (pattern !== el.getAttribute('type')) {
         valid = new RegExp(pattern).test(inputText);
       }
     }
@@ -616,12 +705,12 @@ class Abide extends Plugin {
   validateRadio(groupName) {
     // If at least one radio in the group has the `required` attribute, the group is considered required
     // Per W3C spec, all radio buttons in a group should have `required`, but we're being nice
-    var $group = this.$element.find(`:radio[name="${groupName}"]`);
+    const $group = this._groupEls('radio', groupName);
     var valid = false, required = false;
 
     // For the group to be required, at least one radio needs to be required
-    $group.each((i, e) => {
-      if ($(e).attr('required')) {
+    $group.toArray().forEach(el => {
+      if (el.hasAttribute('required')) {
         required = true;
       }
     });
@@ -629,8 +718,8 @@ class Abide extends Plugin {
 
     if (!valid) {
       // For the group to be valid, at least one radio needs to be checked
-      $group.each((i, e) => {
-        if ($(e).prop('checked')) {
+      $group.toArray().forEach(el => {
+        if (el.checked) {
           valid = true;
         }
       });
@@ -647,12 +736,12 @@ class Abide extends Plugin {
   validateCheckbox(groupName) {
     // If at least one checkbox in the group has the `required` attribute, the group is considered required
     // Per W3C spec, all checkboxes in a group should have `required`, but we're being nice
-    var $group = this.$element.find(`:checkbox[name="${groupName}"]`);
+    const $group = this._groupEls('checkbox', groupName);
     var valid = false, required = false, minRequired = 1, checked = 0;
 
     // For the group to be required, at least one checkbox needs to be required
-    $group.each((i, e) => {
-      if ($(e).attr('required')) {
+    $group.toArray().forEach(el => {
+      if (el.hasAttribute('required')) {
         required = true;
       }
     });
@@ -661,12 +750,12 @@ class Abide extends Plugin {
     if (!valid) {
       // Count checked checkboxes within the group
       // Use data-min-required if available (default: 1)
-      $group.each((i, e) => {
-        if ($(e).prop('checked')) {
+      $group.toArray().forEach(el => {
+        if (el.checked) {
           checked++;
         }
-        if (typeof $(e).attr('data-min-required') !== 'undefined') {
-          minRequired = parseInt($(e).attr('data-min-required'), 10);
+        if (el.hasAttribute('data-min-required')) {
+          minRequired = parseInt(el.getAttribute('data-min-required'), 10);
         }
       });
 
@@ -682,11 +771,11 @@ class Abide extends Plugin {
     }
 
     // Refresh error class for all input
-    $group.each((i, e) => {
+    $group.toArray().forEach(el => {
       if (!valid) {
-        this.addErrorClasses($(e), ['required']);
+        this.addErrorClasses($(el), ['required']);
       } else {
-        this.removeErrorClasses($(e));
+        this.removeErrorClasses($(el));
       }
     });
 
@@ -714,30 +803,58 @@ class Abide extends Plugin {
    * @fires Abide#formreset
    */
   resetForm() {
-    var $form = this.$element,
+    const form = this.$element[0],
         opts = this.options;
 
-    $(`.${opts.labelErrorClass}`, $form).not('small').removeClass(opts.labelErrorClass);
-    $(`.${opts.inputErrorClass}`, $form).not('small').removeClass(opts.inputErrorClass);
-    $(`${opts.formErrorSelector}.${opts.formErrorClass}`).removeClass(opts.formErrorClass);
-    $form.find('[data-abide-error]').css('display', 'none');
-    $(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').attr({
-      'data-invalid': null,
-      'aria-invalid': null
+    form.querySelectorAll(`.${opts.labelErrorClass}`).forEach(el => {
+      if (!el.matches('small')) removeClasses(el, opts.labelErrorClass);
     });
-    $(':input:radio', $form).not('[data-abide-ignore]').prop('checked',false).attr({
-      'data-invalid': null,
-      'aria-invalid': null
+    form.querySelectorAll(`.${opts.inputErrorClass}`).forEach(el => {
+      if (!el.matches('small')) removeClasses(el, opts.inputErrorClass);
     });
-    $(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked',false).attr({
-      'data-invalid': null,
-      'aria-invalid': null
+    document.querySelectorAll(`${opts.formErrorSelector}.${opts.formErrorClass}`).forEach(el => {
+      removeClasses(el, opts.formErrorClass);
     });
+    form.querySelectorAll('[data-abide-error]').forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Native reset sweep (7.0 line A, S12) - the former pseudo-selector
+    // chain `:input :not(:button, :submit, :reset, :hidden, :radio,
+    // :checkbox, [data-abide-ignore])` with the Dom stand-in helpers; the
+    // jQuery `:hidden` zero-box sense is narrowed to input[type=hidden],
+    // which was its only effect on a rendered form.
+    formControls(form).forEach(el => {
+      if (isButton(el) || isSubmit(el) || isReset(el) ||
+          el.matches('input[type="hidden"]') ||
+          isRadio(el) || isCheckbox(el) ||
+          el.hasAttribute('data-abide-ignore')) {
+        return;
+      }
+      el.value = '';
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+    form.querySelectorAll('input[type="radio"]').forEach(el => {
+      if (el.hasAttribute('data-abide-ignore')) return;
+      el.checked = false;
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+    form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (el.hasAttribute('data-abide-ignore')) return;
+      el.checked = false;
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+
     /**
      * Fires when the form has been reset.
      * @event Abide#formreset
      */
-    $form.trigger('formreset.zf.abide', [$form]);
+    // S12: production flips to the native event layer, same shape as the
+    // other productions above.
+    Events.trigger(form, 'formreset.zf.abide', [this.$element]);
   }
 
   /**
@@ -745,20 +862,25 @@ class Abide extends Plugin {
    * Removes error styles and classes from elements, without resetting their values.
    */
   _destroy() {
-    var _this = this;
-    this.$element
-      .off('.abide')
-      .find('[data-abide-error]')
-        .css('display', 'none');
+    const form = this.$element[0];
 
-    this.$inputs
-      .off('.abide')
-      .each(function() {
-        _this.removeErrorClasses($(this));
-      });
+    // Double-layer off (S12): the form-level listeners moved to the native
+    // event layer in this slice; the legacy jQuery-side teardown stays
+    // while the mixed state lasts.
+    Events.off(form, '.abide');
+    this.$element.off('.abide');
+    form.querySelectorAll('[data-abide-error]').forEach(error => {
+      error.style.display = 'none';
+    });
 
-    this.$submits
-      .off('.abide');
+    this.inputs.forEach(input => {
+      Events.off(input, '.abide');
+      this.removeErrorClasses($(input));
+    });
+
+    this.$submits.toArray().forEach(submit => {
+      Events.off(submit, '.abide');
+    });
   }
 }
 
@@ -898,7 +1020,11 @@ Abide.defaults = {
    */
   validators: {
     equalTo: function (el) {
-      return $(`#${el.attr('data-equalto')}`).val() === el.val();
+      // Native id lookup (7.0 line A, S12): the former `$(`#${...}`).val()`
+      // compared against undefined when the source element does not exist;
+      // the guard keeps that "no source element means invalid" outcome.
+      const source = document.getElementById(toEl(el).getAttribute('data-equalto'));
+      return !!source && source.value === toEl(el).value;
     }
   }
 }
