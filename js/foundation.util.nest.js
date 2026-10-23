@@ -1,11 +1,9 @@
-import $ from 'jquery';
-
-// S13 (7.0 line A): the DOM reads/writes inside Feather and Burn moved from
-// jQuery traversal to the element's own DOM API. The `menu` parameter keeps
-// its historical shape - the jQuery collections the three menu plugins pass
-// in - and the jQuery import stays until the wrap-up slice removes the last
-// import; a plain element also works (toMenu unwraps it), because the
-// collection reads inside the callers were the only jQuery-form requirement.
+// S13 (7.0 line A): the Nest util is jQuery-free - the DOM reads/writes
+// inside Feather and Burn moved from jQuery traversal to the element's own
+// DOM API. The `menu` parameter keeps its historical shape - the jQuery
+// collections the three menu plugins pass in - and a plain element also
+// works (toMenu unwraps it), because the collection reads inside the callers
+// were the only jQuery-form requirement.
 function toMenu(menu) {
   return menu[0] !== undefined && menu[0] !== null ? menu[0] : menu;
 }
