@@ -6,7 +6,9 @@ import { Events } from './foundation.util.events';
 // Accepts both the jQuery objects un-migrated callers still pass and plain
 // elements, so the helper survives the line-A migration unchanged.
 function toElement(obj) {
-  return obj && obj[0] !== undefined ? obj[0] : obj;
+  // nodeType marks a real node: never unwrap it, even when it is itself
+  // array-like (HTMLSelectElement exposes its first option as [0]).
+  return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
 }
 
   /**

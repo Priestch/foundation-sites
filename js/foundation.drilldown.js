@@ -24,8 +24,12 @@ class Drilldown extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Drilldown.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, Drilldown.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'Drilldown'; // ie9 back compat
 
     this._init();
@@ -439,6 +443,11 @@ class Drilldown extends Plugin {
 
     var _this = this;
 
+    // Mixed state (7.0 line A, S16): accept the native element the 7.0
+    // contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in.
+    if ($elem && $elem.nodeType === 1) { $elem = $($elem); }
+
     // Reset drilldown
     var $expandedSubmenus = this.$element.find('li[aria-expanded="true"] > ul[data-submenu]');
     $expandedSubmenus.each(function() {
@@ -489,6 +498,8 @@ class Drilldown extends Plugin {
    * @param {jQuery} $elem - the current element with a submenu to open, i.e. the `li` tag.
    */
   _show($elem) {
+    // Mixed state (S16 suites): accept the native element the fixtures carry.
+    $elem = $elem.nodeType === 1 ? $($elem) : $elem;
     const $submenu = $elem.children('[data-submenu]');
 
     // S9: class/ARIA state flips natively.
@@ -526,6 +537,7 @@ class Drilldown extends Plugin {
    * @param {jQuery} $elem - the current sub-menu to hide, i.e. the `ul` tag.
    */
   _hide($elem) {
+    $elem = $elem.nodeType === 1 ? $($elem) : $elem;
     if(this.options.autoHeight) this.$wrapper.css({height:$elem.parent().closest('ul').data('calcHeight')});
     $elem.parent().closest('ul').removeClass('invisible');
     $elem.parent('li').attr('aria-expanded', false);

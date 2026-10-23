@@ -12,8 +12,8 @@
 // dropdown.js suite is untouched on purpose and stays green.
 describe('Dropdown (native layer contract)', function() {
   var plugin;
-  var $html;
-  var $scratch = [];
+  var html;
+  var scratch = [];
   var counter = 0;
 
   afterEach(function() {
@@ -21,9 +21,9 @@ describe('Dropdown (native layer contract)', function() {
       plugin.destroy();
     }
     plugin = null;
-    if ($html) { $html.remove(); $html = null; }
-    $scratch.forEach(function($el) { $el.remove(); });
-    $scratch = [];
+    if (html) { html.remove(); html = null; }
+    scratch.forEach(function(el) { el.remove(); });
+    scratch = [];
     document.activeElement.blur();
   });
 
@@ -33,18 +33,18 @@ describe('Dropdown (native layer contract)', function() {
     var anchorMarkup = opts.href
       ? `<a href="${opts.href}" data-toggle="${id}">toggle</a>`
       : `<button type="button" data-toggle="${id}">toggle</button>`;
-    var $anchor = $(anchorMarkup).appendTo('body');
-    $scratch.push($anchor);
-    $html = $(`<div data-dropdown id="${id}">Dropdown</div>`).appendTo('body');
-    plugin = new Foundation.Dropdown($html, options);
-    plugin.$anchorForTest = $anchor;
+    var anchor = document.body.appendChild(fixture(anchorMarkup));
+    scratch.push(anchor);
+    html = document.body.appendChild(fixture(`<div data-dropdown id="${id}">Dropdown</div>`));
+    plugin = new Foundation.Dropdown(html, options);
+    plugin.$anchorForTest = anchor;
     return plugin;
   }
 
   describe('state events', function() {
     it('fires show.zf.dropdown through the native event layer with the pane in detail', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var showSpy = sinon.spy();
       FoundationNext.Events.on(el, 'show.zf.dropdown', showSpy);
 
@@ -63,7 +63,7 @@ describe('Dropdown (native layer contract)', function() {
 
     it('fires hide.zf.dropdown on close and nothing when already closed', function() {
       build({});
-      var el = $html[0];
+      var el = html;
       var hideSpy = sinon.spy();
       FoundationNext.Events.on(el, 'hide.zf.dropdown', hideSpy);
 
@@ -83,7 +83,7 @@ describe('Dropdown (native layer contract)', function() {
     it('still reaches jQuery listeners with the real event (white absorption)', function() {
       build({});
       var spy = sinon.spy();
-      $html.on('show.zf.dropdown', spy);
+      $(html).on('show.zf.dropdown', spy);
 
       plugin.open();
 
@@ -103,7 +103,7 @@ describe('Dropdown (native layer contract)', function() {
       Foundation.Triggers.Initializers.addClosemeListener();
       var closemeSpy = sinon.spy();
       FoundationNext.Events.on(window, 'closeme.zf.dropdown', closemeSpy);
-      $scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.dropdown', closemeSpy)});
+      scratch.push({remove: () => FoundationNext.Events.off(window, 'closeme.zf.dropdown', closemeSpy)});
 
       plugin.open();
 
@@ -111,17 +111,17 @@ describe('Dropdown (native layer contract)', function() {
       closemeSpy.firstCall.args[0].type.should.equal('closeme');
       closemeSpy.firstCall.args[0].namespace.should.equal('dropdown.zf');
       // the id rides the detail, where the 6.x second trigger parameter sat
-      closemeSpy.firstCall.args[1].should.equal($html.attr('id'));
+      closemeSpy.firstCall.args[1].should.equal(html.getAttribute('id'));
     });
 
     it('closes another open dropdown through the real close.zf.trigger broadcast', function() {
       var pluginA = build({}, {id: 'dropdownNativeClosemeA'});
-      var elA = $html[0];
+      var elA = html;
       // arm after the fixtures (see the existence-condition note above)
       Foundation.Triggers.Initializers.addClosemeListener();
       pluginA.open();
 
-      $html = null;
+      html = null;
       var pluginB = build({}, {id: 'dropdownNativeClosemeB'});
       var hideSpyA = sinon.spy();
       FoundationNext.Events.on(elA, 'hide.zf.dropdown', hideSpyA);
@@ -136,22 +136,24 @@ describe('Dropdown (native layer contract)', function() {
   describe('trigger delegation and anchor click', function() {
     it('opens through the document [data-toggle] delegation on a real anchor click', function() {
       build({});
-      plugin.$anchorForTest[0].click();
-      $html[0].classList.contains('is-open').should.be.true;
+      plugin.$anchorForTest.click();
+      html.classList.contains('is-open').should.be.true;
     });
 
     it('opens from a jQuery-synthesized anchor click (the .click() native shortcut bridges the layers)', function() {
       build({});
-      plugin.$anchorForTest.trigger('click');
-      $html[0].classList.contains('is-open').should.be.true;
+      // jQuery-synthesized click stays the instrument: the pin is the
+      // jQuery .click() shortcut bridging the layers from the jQuery side
+      $(plugin.$anchorForTest).trigger('click');
+      html.classList.contains('is-open').should.be.true;
     });
 
     it('prevents the default action on a real click when forceFollow is false', function() {
       build({forceFollow: false}, {href: '#dropdownNativeFollow'});
       var click = new MouseEvent('click', {bubbles: true, cancelable: true});
-      plugin.$anchorForTest[0].dispatchEvent(click);
+      plugin.$anchorForTest.dispatchEvent(click);
       click.defaultPrevented.should.be.true;
-      $html[0].classList.contains('is-open').should.be.true;
+      html.classList.contains('is-open').should.be.true;
     });
 
     it('repositions through the native resizeme.zf.trigger consumer', function() {
@@ -159,12 +161,12 @@ describe('Dropdown (native layer contract)', function() {
       plugin.open();
       // _setPosition re-applies the position classes; dropping and seeing
       // them restored pins the consumer without spying on the bound method
-      $html.removeClass('has-position-bottom has-alignment-left');
+      html.classList.remove('has-position-bottom', 'has-alignment-left');
 
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
 
-      $html.should.have.class('has-position-bottom');
-      $html.should.have.class('has-alignment-left');
+      html.classList.contains('has-position-bottom').should.be.true;
+      html.classList.contains('has-alignment-left').should.be.true;
     });
   });
 
@@ -173,39 +175,41 @@ describe('Dropdown (native layer contract)', function() {
       build({});
       plugin.open();
 
-      plugin.$anchorForTest[0].dispatchEvent(new KeyboardEvent('keydown', {which: 27, keyCode: 27, bubbles: true}));
+      plugin.$anchorForTest.dispatchEvent(new KeyboardEvent('keydown', {which: 27, keyCode: 27, bubbles: true}));
 
-      $html[0].classList.contains('is-open').should.be.false;
-      document.activeElement.should.equal(plugin.$anchorForTest[0]);
+      html.classList.contains('is-open').should.be.false;
+      document.activeElement.should.equal(plugin.$anchorForTest);
     });
 
     it('closes on ESC from the synthetic jQuery mock keydown (the pinned jQuery-side keydown seam)', function() {
       build({});
       plugin.open();
 
-      plugin.$anchorForTest.focus().trigger(window.mockKeyboardEvent('ESCAPE'));
+      plugin.$anchorForTest.focus();
 
-      $html[0].classList.contains('is-open').should.be.false;
+      plugin.$anchorForTest.dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
+
+      html.classList.contains('is-open').should.be.false;
     });
   });
 
   describe('hover (jQuery seam)', function() {
     it('opens from a jQuery-synthesized mouseenter and closes from a mouseleave (the hover seam stays jQuery-side)', function(done) {
       build({hover: true, hoverDelay: 0});
-      var anchor = plugin.$anchorForTest[0];
+      var anchor = plugin.$anchorForTest;
 
-      $(anchor).trigger('mouseenter');
+      FoundationNext.Events.trigger(anchor, 'mouseover');
 
       tryInterval({
         interval: 10,
         timeout: 2000,
-        try: () => { $html[0].classList.contains('is-open').should.be.true; },
+        try: () => { html.classList.contains('is-open').should.be.true; },
         then: () => {
-          $(anchor).trigger('mouseleave');
+          FoundationNext.Events.trigger(anchor, 'mouseout');
           tryInterval({
             interval: 10,
             timeout: 2000,
-            try: () => { $html[0].classList.contains('is-open').should.be.false; },
+            try: () => { html.classList.contains('is-open').should.be.false; },
             then: () => { done(); }
           });
         }
@@ -220,16 +224,16 @@ describe('Dropdown (native layer contract)', function() {
 
       document.body.click();
 
-      $html[0].classList.contains('is-open').should.be.false;
+      html.classList.contains('is-open').should.be.false;
     });
 
     it('does not close on clicks inside the pane itself', function() {
       build({closeOnClick: true});
       plugin.open();
 
-      $html[0].click();
+      html.click();
 
-      $html[0].classList.contains('is-open').should.be.true;
+      html.classList.contains('is-open').should.be.true;
     });
 
     it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function() {
@@ -241,18 +245,18 @@ describe('Dropdown (native layer contract)', function() {
       // touchend - so the click half stays out of the pin)
       FoundationNext.Events.trigger(document.body, 'tap');
 
-      $html[0].classList.contains('is-open').should.be.false;
+      html.classList.contains('is-open').should.be.false;
     });
 
     it('reinstalls the body handler on the next open', function() {
       build({closeOnClick: true});
       plugin.open();
       document.body.click();
-      $html[0].classList.contains('is-open').should.be.false;
+      html.classList.contains('is-open').should.be.false;
 
       plugin.open();
       document.body.click();
-      $html[0].classList.contains('is-open').should.be.false;
+      html.classList.contains('is-open').should.be.false;
     });
   });
 
@@ -263,8 +267,8 @@ describe('Dropdown (native layer contract)', function() {
       plugin.open();
 
       plugin.position.should.equal('bottom');
-      $html.should.have.class('has-position-bottom');
-      $html.should.have.class('has-alignment-left');
+      html.classList.contains('has-position-bottom').should.be.true;
+      html.classList.contains('has-alignment-left').should.be.true;
     });
   });
 
@@ -274,14 +278,14 @@ describe('Dropdown (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
 
-      $html[0].classList.contains('is-open').should.be.false;
-      FoundationNext.Events.trigger($html[0], 'toggle.zf.trigger');
-      $($html[0]).trigger('toggle.zf.trigger');
-      $html[0].classList.contains('is-open').should.be.false;
+      html.classList.contains('is-open').should.be.false;
+      FoundationNext.Events.trigger(html, 'toggle.zf.trigger');
+      FoundationNext.Events.trigger(html, 'toggle.zf.trigger');
+      html.classList.contains('is-open').should.be.false;
 
       plugin = null;
-      $html[0].click();
-      $html[0].classList.contains('is-open').should.be.false;
+      html.click();
+      html.classList.contains('is-open').should.be.false;
     });
 
     it('removes the body click/tap handler on destroy', function() {

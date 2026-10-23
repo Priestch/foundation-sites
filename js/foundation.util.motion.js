@@ -28,7 +28,9 @@ const Motion = {
 // Unwraps the mixed-state input (jQuery collection or plain element) to the
 // animation target, mirroring `toElement` in foundation.core.utils.
 function toElement(obj) {
-  return obj && obj[0] !== undefined ? obj[0] : obj;
+  // nodeType marks a real node: never unwrap it, even when it is itself
+  // array-like (HTMLSelectElement exposes its first option as [0]).
+  return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
 }
 
 // Native stand-ins for jQuery's `.show()`/`.hide()`, after the S6 Reveal

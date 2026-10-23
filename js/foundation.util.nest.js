@@ -5,7 +5,9 @@
 // works (toMenu unwraps it), because the collection reads inside the callers
 // were the only jQuery-form requirement.
 function toMenu(menu) {
-  return menu[0] !== undefined && menu[0] !== null ? menu[0] : menu;
+  // nodeType marks a real node: never unwrap it, even when it is itself
+  // array-like (HTMLSelectElement exposes its first option as [0]).
+  return menu && menu.nodeType === undefined && menu[0] !== undefined && menu[0] !== null ? menu[0] : menu;
 }
 
 const Nest = {
