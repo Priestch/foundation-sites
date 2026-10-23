@@ -102,7 +102,7 @@ class ResponsiveAccordionTabs extends Plugin {
 
     this._getAllOptions();
 
-    if (!$.isEmptyObject(this.rules)) {
+    if (Object.keys(this.rules).length !== 0) {
       this._checkMediaQueries();
     }
   }

@@ -159,7 +159,7 @@ var Foundation = {
     var $root = elem instanceof $ ? elem : $(typeof elem === 'string' ? elem : (elem ? [elem] : []));
 
     // Iterate through each plugin
-    $.each(plugins, function(i, name) {
+    plugins.forEach(function(name) {
       // Get the current plugin
       var plugin = _this._plugins[name];
 

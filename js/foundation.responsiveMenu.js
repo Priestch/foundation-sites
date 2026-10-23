@@ -88,7 +88,7 @@ class ResponsiveMenu extends Plugin {
       this.rules = rulesTree;
     }
 
-    if (!$.isEmptyObject(this.rules)) {
+    if (Object.keys(this.rules).length !== 0) {
       this._checkMediaQueries();
     }
     // Add data-mutate since children may need it.
