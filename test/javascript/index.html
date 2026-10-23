@@ -27,7 +27,21 @@
     <script src="lib/utils.js"></script>
     <script src="js-tests.js"></script>
     <script>
-      mocha.run();
+      // Report the run to the external test runner (Playwright, S15).
+      var runner = mocha.run();
+      var failures = [];
+      runner.on('fail', function (test, err) {
+        failures.push({
+          title: test.fullTitle(),
+          message: err && err.message,
+          stack: err && err.stack
+        });
+      });
+      runner.on('end', function () {
+        window.__mochaDone = true;
+        window.__mochaStats = runner.stats;
+        window.__mochaFailures = failures;
+      });
     </script>
   </body>
 </html>
