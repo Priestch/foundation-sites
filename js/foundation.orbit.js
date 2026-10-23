@@ -4,6 +4,8 @@ import { Motion } from './foundation.util.motion';
 import { Timer } from './foundation.util.timer';
 import { onImagesLoaded } from './foundation.util.imageLoader';
 import { GetYoDigits } from './foundation.core.utils';
+import { datasetOptions } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Plugin } from './foundation.core.plugin';
 import { Touch } from './foundation.util.touch'
 
@@ -28,7 +30,7 @@ class Orbit extends Plugin {
   */
   _setup(element, options){
     this.$element = element;
-    this.options = $.extend({}, Orbit.defaults, this.$element.data(), options);
+    this.options = $.extend({}, Orbit.defaults, datasetOptions(element[0]), options);
     this.className = 'Orbit'; // ie9 back compat
 
     Touch.init($); // Touch init is idempotent, we just need to make sure it's initialied.
@@ -63,17 +65,16 @@ class Orbit extends Plugin {
         initActive = this.$slides.filter('.is-active'),
         id = this.$element[0].id || GetYoDigits(6, 'orbit');
 
-    this.$element.attr({
-      'data-resize': id,
-      'id': id
-    });
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    this.$element[0].setAttribute('data-resize', id);
+    this.$element[0].id = id;
 
-    if (!initActive.length) {
-      this.$slides.eq(0).addClass('is-active');
+    if (!initActive.length && this.$slides.length) {
+      this.$slides[0].classList.add('is-active');
     }
 
     if (!this.options.useMUI) {
-      this.$slides.addClass('no-motionui');
+      this.$slides.toArray().forEach(slide => slide.classList.add('no-motionui'));
     }
 
     if ($images.length) {
@@ -120,7 +121,8 @@ class Orbit extends Plugin {
       },
       function() {
         _this.changeSlide(true);
-      });
+      },
+      'orbit');
     this.timer.start();
   }
 
@@ -144,7 +146,7 @@ class Orbit extends Plugin {
 
     this.$slides.each(function() {
       temp = this.getBoundingClientRect().height;
-      $(this).attr('data-slide', counter);
+      this.setAttribute('data-slide', counter);
 
       // hide all slides but the active one
       if (!/mui/g.test($(this)[0].className) && _this.$slides.filter('.is-active')[0] !== _this.$slides.eq(counter)[0]) {
@@ -184,12 +186,20 @@ class Orbit extends Plugin {
     //**      Yohai Ararat of Toronto      **
     //***************************************
     //
-    this.$element.off('.resizeme.zf.trigger').on({
-      'resizeme.zf.trigger': this._prepareForOrbit.bind(this)
-    })
+    // S10: the resizeme consumer flips to the native event layer; the
+    // producer in the Triggers util has dispatched real element-local
+    // events since S4, so this seam closes on the consumer half alone.
+    // jQuery side: the legacy bare-namespace wipe stays while the mixed
+    // state lasts.
+    this.$element.off('.resizeme.zf.trigger');
+    Events.off(this.$element[0], 'resizeme.zf.trigger');
+    Events.on(this.$element[0], 'resizeme.zf.trigger', this._prepareForOrbit.bind(this));
     if (this.$slides.length > 1) {
 
       if (this.options.swipe) {
+        // Seam (S10): swipe stays on jQuery - the Touch util synthesizes
+        // swipeleft/swiperight through jQuery trigger, which a native
+        // listener cannot hear (the Touch slice flips both sides).
         this.$slides.off('swipeleft.zf.orbit swiperight.zf.orbit')
         .on('swipeleft.zf.orbit', function(e){
           e.preventDefault();
@@ -202,12 +212,22 @@ class Orbit extends Plugin {
       //***************************************
 
       if (this.options.autoPlay) {
-        this.$slides.on('click.zf.orbit', function() {
-          _this.$element.data('clickedOn', _this.$element.data('clickedOn') ? false : true);
-          _this.timer[_this.$element.data('clickedOn') ? 'pause' : 'start']();
+        // S10: the slide click consumer flips to the native event layer -
+        // real clicks arrive directly and jQuery-synthesized clicks on
+        // slides ride the `.click()` shortcut bridge (reveal-native
+        // precedent). The clickedOn bookkeeping stays in jQuery data
+        // (Drilldown savedHref precedent).
+        this.$slides.toArray().forEach(slide => {
+          Events.off(slide, 'click.zf.orbit');
+          Events.on(slide, 'click.zf.orbit', function() {
+            _this.$element.data('clickedOn', _this.$element.data('clickedOn') ? false : true);
+            _this.timer[_this.$element.data('clickedOn') ? 'pause' : 'start']();
+          });
         });
 
         if (this.options.pauseOnHover) {
+          // Seam (S10): mouseenter/mouseleave stay on jQuery - the hover
+          // synthesis is jQuery's (Tooltip S8 hover precedent).
           this.$element.on('mouseenter.zf.orbit', function() {
             _this.timer.pause();
           }).on('mouseleave.zf.orbit', function() {
@@ -220,26 +240,42 @@ class Orbit extends Plugin {
 
       if (this.options.navButtons) {
         var $controls = this.$element.find(`.${this.options.nextClass}, .${this.options.prevClass}`);
-        $controls.attr('tabindex', 0)
-        //also need to handle enter/return and spacebar key presses
-        .on('click.zf.orbit touchend.zf.orbit', function(e){
-	  e.preventDefault();
-          _this.changeSlide($(this).hasClass(_this.options.nextClass));
+        // S10: the nav-button click consumers flip to the native event
+        // layer, on every element of the collection like jQuery's
+        // collection-wide .on() did; the tabindex write goes native with it.
+        $controls.toArray().forEach(control => {
+          control.setAttribute('tabindex', 0);
+          Events.off(control, 'click.zf.orbit touchend.zf.orbit');
+          //also need to handle enter/return and spacebar key presses
+          Events.on(control, 'click.zf.orbit touchend.zf.orbit', function(e){
+	    e.preventDefault();
+            _this.changeSlide(this.classList.contains(_this.options.nextClass));
+          });
         });
       }
 
       if (this.options.bullets) {
-        this.$bullets.on('click.zf.orbit touchend.zf.orbit', function() {
-          if (/is-active/g.test(this.className)) { return false; }//if this is active, kick out of function.
-          var idx = $(this).data('slide'),
-          ltr = idx > _this.$slides.filter('.is-active').data('slide'),
-          $slide = _this.$slides.eq(idx);
+        // S10: the bullet click consumers flip to the native event layer
+        // (real clicks; jQuery-synthesized clicks on buttons ride the
+        // `.click()` shortcut bridge).
+        this.$bullets.toArray().forEach(bullet => {
+          Events.off(bullet, 'click.zf.orbit touchend.zf.orbit');
+          Events.on(bullet, 'click.zf.orbit touchend.zf.orbit', function() {
+            if (/is-active/g.test(this.className)) { return false; }//if this is active, kick out of function.
+            var idx = $(this).data('slide'),
+            ltr = idx > _this.$slides.filter('.is-active').data('slide'),
+            $slide = _this.$slides.eq(idx);
 
-          _this.changeSlide(ltr, $slide, idx);
+            _this.changeSlide(ltr, $slide, idx);
+          });
         });
       }
 
       if (this.options.accessible) {
+        // Seam (S10): the keydown binding stays on jQuery - the coarse
+        // keyboard suite feeds jQuery-synthesized mock keydowns, which can
+        // never reach native listeners (Tabs S8 precedent); real keydowns
+        // keep arriving through jQuery's pass-through.
         this.$wrapper.add(this.$bullets).on('keydown.zf.orbit', function(e) {
           // handle keyboard event with keyboard util
           Keyboard.handleKey(e, 'Orbit', {
@@ -270,8 +306,12 @@ class Orbit extends Plugin {
     }
 
     if (this.$slides.length > 1) {
-      // Remove old events
+      // Remove old events - both layers (S10): the jQuery wipe stays for the
+      // still-jQuery swipe/keydown/hover listeners, the native wipe drops
+      // the flipped click listeners on the element and its descendants.
       this.$element.off('.zf.orbit').find('*').off('.zf.orbit')
+      Events.off(this.$element[0], '.zf.orbit');
+      Array.from(this.$element[0].querySelectorAll('*')).forEach(el => Events.off(el, '.zf.orbit'));
 
       // Restart timer if autoPlay is enabled
       if (this.options.autoPlay) {
@@ -289,7 +329,11 @@ class Orbit extends Plugin {
       this.$slides.first().addClass('is-active').show();
 
       // Triggers when the slide has finished animating
-      this.$element.trigger('slidechange.zf.orbit', [this.$slides.first()]);
+      // S10: real, bubbling CustomEvent - native listeners receive it
+      // directly, still-on-jQuery listeners through the real-event pass-
+      // through (the forwarded slide rides in event.originalEvent.detail
+      // for them).
+      Events.trigger(this.$element[0], 'slidechange.zf.orbit', [this.$slides.first()]);
 
       // Select first bullet if bullets are present
       if (this.options.bullets) {
@@ -333,7 +377,7 @@ class Orbit extends Plugin {
       * Triggers before the next slide starts animating in and only if a next slide has been found.
       * @event Orbit#beforeslidechange
       */
-      this.$element.trigger('beforeslidechange.zf.orbit', [$curSlide, $newSlide]);
+      Events.trigger(this.$element[0], 'beforeslidechange.zf.orbit', [$curSlide, $newSlide]);
 
       if (this.options.bullets) {
         idx = idx || this.$slides.index($newSlide); //grab index to update bullets
@@ -369,7 +413,7 @@ class Orbit extends Plugin {
     * Triggers when the slide has finished animating in.
     * @event Orbit#slidechange
     */
-      this.$element.trigger('slidechange.zf.orbit', [$newSlide]);
+      Events.trigger(this.$element[0], 'slidechange.zf.orbit', [$newSlide]);
     }
   }
 
@@ -417,7 +461,11 @@ class Orbit extends Plugin {
   * @function
   */
   _destroy() {
+    // Both layers, like _reset (S10): jQuery for the swipe/keydown/hover
+    // listeners, native for the flipped click listeners.
     this.$element.off('.zf.orbit').find('*').off('.zf.orbit').end().hide();
+    Events.off(this.$element[0], '.zf.orbit');
+    Array.from(this.$element[0].querySelectorAll('*')).forEach(el => Events.off(el, '.zf.orbit'));
     this.timer.pause();
   }
 }

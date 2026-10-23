@@ -2,9 +2,10 @@ function Timer(elem, options, cb, nameSpace) {
   // 7.0 line A, slice S2: the event namespace is passed explicitly. v6
   // inferred it from the element's FIRST jQuery data key, which coupled the
   // event names to jQuery data key order and would break now that core
-  // stopped writing zfPlugin there. The probe stays only as the fallback for
-  // callers that do not pass a namespace yet.
-  nameSpace = nameSpace || (elem.data && Object.keys(elem.data())[0]) || 'timer';
+  // stopped writing zfPlugin there. The probe is retired since S10 - Orbit,
+  // the only Timer consumer, passes 'orbit' explicitly - and the default is
+  // the flat 'timer' namespace.
+  nameSpace = nameSpace || 'timer';
 
   var _this = this,
       duration = options.duration,//options is an object for easily adding features later.
