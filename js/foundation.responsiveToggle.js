@@ -1,10 +1,9 @@
-import $ from 'jquery';
 
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
 import { Events } from './foundation.util.events';
-import { datasetOptions, visible } from './foundation.util.dom';
+import { datasetOptions, visible, deepMerge } from './foundation.util.dom';
 
 /**
  * ResponsiveToggle module.
@@ -23,9 +22,9 @@ class ResponsiveToggle extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    // Mixed state (7.0 line A, S16): dual-form constructor input.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options = $.extend({}, ResponsiveToggle.defaults, datasetOptions(this.$element[0]), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, ResponsiveToggle.defaults, datasetOptions(this.$element), options);
     this.className = 'ResponsiveToggle'; // ie9 back compat
 
     this._init();
@@ -44,12 +43,14 @@ class ResponsiveToggle extends Plugin {
       console.error('Your tab bar needs an ID of a Menu as the value of data-tab-bar.');
     }
 
-    this.$targetMenu = $(document.getElementById(targetID));
-    this.$toggler = this.$element.find('[data-toggle]').filter(function() {
-      var target = datasetOptions(this).toggle;
+    // A missing target stays a null element (the 6.x $(null) tolerance;
+    // the show/hide helpers below guard for it).
+    this.$targetMenu = document.getElementById(targetID);
+    this.$toggler = Array.from(this.$element.querySelectorAll('[data-toggle]')).filter(function(el) {
+      var target = datasetOptions(el).toggle;
       return (target === targetID || target === "");
     });
-    this.options = $.extend({}, this.options, datasetOptions(this.$targetMenu[0]));
+    this.options = deepMerge({}, this.options, this.$targetMenu ? datasetOptions(this.$targetMenu) : {});
 
     // If they were set, parse the animation classes
     if(this.options.animate) {
@@ -79,7 +80,7 @@ class ResponsiveToggle extends Plugin {
     // native event layer, on every element of the filtered collection like
     // jQuery's collection-wide .on() did.
     this._toggleMenuHandler = this.toggleMenu.bind(this);
-    this.$toggler.toArray().forEach(el => {
+    this.$toggler.forEach(el => {
       Events.on(el, 'click.zf.responsiveToggle', this._toggleMenuHandler);
     });
   }
@@ -118,8 +119,8 @@ class ResponsiveToggle extends Plugin {
    * @private
    */
   _update() {
-    var element = this.$element[0];
-    var targetMenu = this.$targetMenu[0];
+    var element = this.$element;
+    var targetMenu = this.$targetMenu;
 
     // Mobile
     if (!MediaQuery.atLeast(this.options.hideFor)) {
@@ -141,7 +142,7 @@ class ResponsiveToggle extends Plugin {
    */
   toggleMenu() {
     if (!MediaQuery.atLeast(this.options.hideFor)) {
-      var targetMenu = this.$targetMenu[0];
+      var targetMenu = this.$targetMenu;
 
       /**
        * Fires when the element attached to the tab bar toggles.
@@ -155,7 +156,7 @@ class ResponsiveToggle extends Plugin {
 
         if (menuHidden) {
           Motion.animateIn(this.$targetMenu, this.animationIn, () => {
-            Events.trigger(this.$element[0], 'toggled.zf.responsiveToggle');
+            Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
             // S10 group flip: the animated half of the mutateme forwarding
             // joins the native event layer. It keeps the 6.x triggerHandler
             // form - element-local and non-bubbling, the Triggers
@@ -170,7 +171,7 @@ class ResponsiveToggle extends Plugin {
         }
         else {
           Motion.animateOut(this.$targetMenu, this.animationOut, () => {
-            Events.trigger(this.$element[0], 'toggled.zf.responsiveToggle');
+            Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
           });
         }
       }
@@ -196,20 +197,16 @@ class ResponsiveToggle extends Plugin {
           }
         }
 
-        Events.trigger(this.$element[0], 'toggled.zf.responsiveToggle');
+        Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
       }
     }
   };
 
   _destroy() {
-    // jQuery side: any legacy listeners in the plugin namespace, kept while
-    // the mixed state lasts.
-    this.$element.off('.zf.responsiveToggle');
-    this.$toggler.off('.zf.responsiveToggle');
-    // Native side: the mq consumer (S13 flip) and the toggler click
-    // listeners, by bare namespace.
+    // The mq consumer (S13 flip) and the toggler click listeners, by bare
+    // namespace.
     Events.off(window, 'changed.zf.mediaquery', this._updateMqHandler);
-    this.$toggler.toArray().forEach(el => {
+    this.$toggler.forEach(el => {
       Events.off(el, '.zf.responsiveToggle');
     });
   }
