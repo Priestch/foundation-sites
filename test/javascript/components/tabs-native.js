@@ -100,22 +100,23 @@ describe('Tabs (native layer contract)', function() {
   });
 
   describe('state events', function() {
-    it('keeps change.zf.tabs on the jQuery production with trailing-argument forwarding (the pinned change seam)', function() {
+    it('fires change.zf.tabs through the native layer with the plain elements (7.0 terminal form)', function() {
       build({});
       var links = html.querySelectorAll('[role="tab"]');
-      var targetArg = null;
-      // jQuery instrument on purpose: the pin is the jQuery-synthesized
-      // change carrying trailing arguments (a real event cannot)
-      $(html.querySelector('[data-tabs]')).one('change.zf.tabs', function(e, target) {
+      var targetArg = null, contentArg = null;
+      FoundationNext.Events.on(html.querySelector('[data-tabs]'), 'change.zf.tabs', function(e, target, content) {
         targetArg = target;
+        contentArg = content;
       });
 
       plugin.selectTab(`#tabsNative${counter}-panel2`);
 
-      // the jQuery-synthesized change still carries the collections as
-      // trailing arguments - what a real CustomEvent cannot do
-      chai.expect(targetArg).to.not.be.null;
-      targetArg[0].should.equal(links[1].parentElement);
+      // the detail sweep ruling: the 6.x jQuery trigger delivered the
+      // collections as trailing arguments; the terminal form forwards the
+      // plain elements
+      chai.expect(targetArg).to.be.an.instanceof(Element);
+      targetArg.should.equal(links[1].parentElement);
+      contentArg.should.equal(html.querySelector(`#tabsNative${counter}-panel2`));
     });
 
     it('fires collapse.zf.tabs through the native event layer (activeCollapse)', function() {
@@ -134,7 +135,7 @@ describe('Tabs (native layer contract)', function() {
       sinon.assert.calledOnce(collapseSpy);
       collapseSpy.firstCall.args[0].type.should.equal('collapse');
       collapseSpy.firstCall.args[0].namespace.should.equal('tabs.zf');
-      collapseSpy.firstCall.args[1][0].should.equal(links[0].parentElement);
+      collapseSpy.firstCall.args[1].should.equal(links[0].parentElement);
     });
 
     it('still reaches jQuery listeners with the real collapse event (white absorption)', function() {

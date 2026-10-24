@@ -35,7 +35,7 @@ describe('Tabs', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -159,11 +159,11 @@ describe('Tabs', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      // jQuery instrument on purpose: the change production is the pinned
-      // jQuery seam - its synthetic event never reaches a native listener
-      $(html).one('change.zf.tabs', function(e, target) {
+      // terminal form: the change production is a real event with the
+      // plain elements as parameters
+      FoundationNext.Events.one(html, 'change.zf.tabs', function(e, target) {
         e.stopPropagation();
-        html.querySelector('[href="#panel2"]').parentElement.should.be.equal(target[0]);
+        html.querySelector('[href="#panel2"]').parentElement.should.be.equal(target);
         done();
       });
 
