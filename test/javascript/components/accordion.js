@@ -36,7 +36,7 @@ describe('Accordion', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Accordion(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });

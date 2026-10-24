@@ -52,6 +52,15 @@ const Motion = {
   stop: function(elements, clearQueue, jumpToEnd) {
     fxEach(elements, (el) => fxStop(el, clearQueue, jumpToEnd));
   },
+
+  // jQuery's `:animated` check: an element with a RUNNING fx animation
+  // (queued-but-not-started ones do not count, like jQuery's timers).
+  isAnimating: function(element) {
+    const el = toElement(element);
+    if (!el) { return false; }
+    const st = fxTable.get(el);
+    return !!(st && st.running);
+  },
   finish: function(elements) {
     fxEach(elements, (el) => fxFinish(el));
   }

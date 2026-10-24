@@ -1,7 +1,6 @@
-import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, GetYoDigits } from './foundation.core.utils';
-import { datasetOptions } from './foundation.util.dom';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { Motion } from './foundation.util.motion';
@@ -11,6 +10,14 @@ import { Motion } from './foundation.util.motion';
  * @module foundation.accordion
  * @requires foundation.util.keyboard
  */
+
+// Element | collection | NodeList | array -> element array (the 6.x
+// multi-target collection form keeps working).
+function normalizeTargets(target) {
+  if (target.nodeType === 1) { return [target]; }
+  if (!target) { return []; }
+  return Array.from(target);
+}
 
 class Accordion extends Plugin {
   /**
@@ -26,8 +33,8 @@ class Accordion extends Plugin {
     // the 7.0 contract carries as well as the jQuery collection the mixed-state
     // reflow still feeds in; internals keep the collection until this file is
     // migrated off jQuery.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options = $.extend({}, Accordion.defaults, datasetOptions(this.$element[0]), options);
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Accordion.defaults, datasetOptions(this.$element), options);
 
     this.className = 'Accordion'; // ie9 back compat
     this._init();
@@ -50,35 +57,32 @@ class Accordion extends Plugin {
     this._isInitializing = true;
     // Per-instance id for the native deep-link hashchange namespace (7.0 line
     // A, S8) - the same shape Reveal/Magellan/Tabs use.
-    this.id = this.$element[0].id || GetYoDigits(6, 'accordion');
+    this.id = this.$element.id || GetYoDigits(6, 'accordion');
 
-    this.$tabs = this.$element.children('[data-accordion-item]');
+    this.$tabs = Array.from(this.$element.children).filter(el => el.matches('[data-accordion-item]'));
 
-
-    this.$tabs.each(function(idx, el) {
-      var $el = $(el),
-          $content = $el.children('[data-tab-content]'),
-          id = $content[0].id || GetYoDigits(6, 'accordion'),
+    this.$tabs.forEach(function(el) {
+      var content = el.querySelector(':scope > [data-tab-content]'),
+          id = content.id || GetYoDigits(6, 'accordion'),
           linkId = (el.id) ? `${el.id}-label` : `${id}-label`;
 
       // State/ARIA go through the native layer (7.0 line A, S8).
-      var link = $el.find('a:first')[0];
+      var link = el.querySelector('a:first-of-type');
       link.setAttribute('aria-controls', id);
       link.setAttribute('id', linkId);
       link.setAttribute('aria-expanded', 'false');
 
-      var content = $content[0];
       content.setAttribute('role', 'region');
       content.setAttribute('aria-labelledby', linkId);
       content.setAttribute('aria-hidden', 'true');
       content.setAttribute('id', id);
     });
 
-    var $initActive = this.$element.find('.is-active').children('[data-tab-content]');
-    if ($initActive.length) {
+    var initActive = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
+    if (initActive.length) {
       // Save up the initial hash to return to it later when going back in history
-      this._initialAnchor = $initActive.prev('a').attr('href');
-      this._openSingleTab($initActive);
+      this._initialAnchor = initActive[0].previousElementSibling.matches('a') ? initActive[0].previousElementSibling.getAttribute('href') : undefined;
+      this._openSingleTab(initActive);
     }
 
     this._checkDeepLink = () => {
@@ -91,16 +95,21 @@ class Accordion extends Plugin {
         if (this._initialAnchor) anchor = this._initialAnchor;
       }
 
-      var $anchor = anchor && $(anchor);
-      var $link = anchor && this.$element.find(`[href$="${anchor}"]`);
+      // jQuery's $(weird-hash) returned an empty collection instead of
+      // throwing on invalid selectors; querySelector needs the guard.
+      var anchorEl = null;
+      if (anchor) {
+        try { anchorEl = document.querySelector(anchor); } catch (err) { anchorEl = null; }
+      }
+      var link = anchor ? this.$element.querySelector(`[href$="${anchor}"]`) : null;
       // Whether the anchor element that has been found is part of this element
-      var isOwnAnchor = !!($anchor.length && $link.length);
+      var isOwnAnchor = !!(anchorEl && link);
 
       if (isOwnAnchor) {
         // If there is an anchor for the hash, open it (if not already active)
-        if ($anchor && $link && $link.length) {
-          if (!$link.parent('[data-accordion-item]').hasClass('is-active')) {
-            this._openSingleTab($anchor);
+        if (anchorEl && link) {
+          if (!link.closest('[data-accordion-item]').classList.contains('is-active')) {
+            this._openSingleTab(anchorEl);
           }
         }
         // Otherwise, close everything
@@ -110,14 +119,14 @@ class Accordion extends Plugin {
 
         // Roll up a little to show the titles
         if (this.options.deepLinkSmudge) {
-          onLoad($(window), () => {
+          onLoad(window, () => {
             // A load callback can land after destroy() nulled the instance
             // state (the S6 slider guard pattern).
             if (!this.$element) { return; }
-            var offset = this.$element.offset();
+            var offsetTop = this.$element.getBoundingClientRect().top + window.pageYOffset;
             // fx 方案 A: the native page-scroll tween (SmoothScroll S7
             // equivalence - one viewport tween, callback once per ledger ②)
-            Motion.animate(document.documentElement, { scrollTop: offset.top - this.options.deepLinkSmudgeOffset }, this.options.deepLinkSmudgeDelay);
+            Motion.animate(document.documentElement, { scrollTop: offsetTop - this.options.deepLinkSmudgeOffset }, this.options.deepLinkSmudgeDelay);
           });
         }
 
@@ -129,7 +138,7 @@ class Accordion extends Plugin {
         // directly, still-on-jQuery listeners through the real-event
         // pass-through (the forwarded $link/$anchor ride in
         // event.originalEvent.detail for them).
-        Events.trigger(this.$element[0], 'deeplink.zf.accordion', [$link, $anchor]);
+        Events.trigger(this.$element, 'deeplink.zf.accordion', [link, anchorEl]);
       }
     }
 
@@ -150,62 +159,62 @@ class Accordion extends Plugin {
   _events() {
     var _this = this;
 
-    this.$tabs.each(function() {
-      var $elem = $(this);
-      var $tabContent = $elem.children('[data-tab-content]');
-      if ($tabContent.length) {
-        $elem.children('a').each(function() {
-          // S8: the click consumer flips to the native event layer - its only
-          // producer inside the library is the keyboard forwarding right
-          // below, which flips in the same commit to the same layer. Real
-          // user clicks reach it directly.
-          Events.off(this, 'click.zf.accordion');
-          Events.on(this, 'click.zf.accordion', function(e) {
-            e.preventDefault();
-            _this.toggle($tabContent);
-          });
+    this.$tabs.forEach(function(elem) {
+      var tabContent = elem.querySelector(':scope > [data-tab-content]');
+      if (!tabContent) { return; }
+      Array.from(elem.children).filter(el => el.matches('a')).forEach(function(anchor) {
+        // S8: the click consumer runs on the native event layer; the
+        // keyboard forwarding below dispatches real clicks on the same
+        // layer. Real user clicks reach it directly.
+        Events.off(anchor, 'click.zf.accordion');
+        Events.on(anchor, 'click.zf.accordion', function(e) {
+          e.preventDefault();
+          _this.toggle(tabContent);
+        });
 
-          // Seam (S8): the keydown binding stays on jQuery. The coarse
-          // keyboard suite feeds jQuery-synthesized mock keydowns, which can
-          // never reach native listeners; real keydowns keep arriving through
-          // jQuery's pass-through. This half flips when its synthetic
-          // producers do (Keyboard test migration).
-          $(this).off('keydown.zf.accordion').on('keydown.zf.accordion', function(e) {
-            Keyboard.handleKey(e, 'Accordion', {
-              toggle: function() {
-                _this.toggle($tabContent);
-              },
-              next: function() {
-                var $a = $elem.next().find('a').focus();
-                if (!_this.options.multiExpand) {
-                  Events.trigger($a[0], 'click.zf.accordion');
-                }
-              },
-              previous: function() {
-                var $a = $elem.prev().find('a').focus();
-                if (!_this.options.multiExpand) {
-                  Events.trigger($a[0], 'click.zf.accordion');
-                }
-              },
-              first: function() {
-                var $a = _this.$tabs.first().find('.accordion-title').focus();
-                if (!_this.options.multiExpand) {
-                   Events.trigger($a[0], 'click.zf.accordion');
-                }
-              },
-              last: function() {
-                var $a = _this.$tabs.last().find('.accordion-title').focus();
-                if (!_this.options.multiExpand) {
-                   Events.trigger($a[0], 'click.zf.accordion');
-                }
-              },
-              handled: function() {
-                e.preventDefault();
+        // 7.0 line A terminal form: the keydown listener runs on the native
+        // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+        // since the S16 migration).
+        Events.off(anchor, 'keydown.zf.accordion');
+        Events.on(anchor, 'keydown.zf.accordion', function(e) {
+          Keyboard.handleKey(e, 'Accordion', {
+            toggle: function() {
+              _this.toggle(tabContent);
+            },
+            next: function() {
+              var a = (elem.nextElementSibling || {}).querySelector && elem.nextElementSibling.querySelector('a');
+              if (a) a.focus();
+              if (!_this.options.multiExpand) {
+                Events.trigger(a, 'click.zf.accordion');
               }
-            });
+            },
+            previous: function() {
+              var a = (elem.previousElementSibling || {}).querySelector && elem.previousElementSibling.querySelector('a');
+              if (a) a.focus();
+              if (!_this.options.multiExpand) {
+                Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            first: function() {
+              var a = _this.$tabs[0].querySelector('.accordion-title');
+              a.focus();
+              if (!_this.options.multiExpand) {
+                 Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            last: function() {
+              var a = _this.$tabs[_this.$tabs.length - 1].querySelector('.accordion-title');
+              a.focus();
+              if (!_this.options.multiExpand) {
+                 Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            handled: function() {
+              e.preventDefault();
+            }
           });
         });
-      }
+      });
     });
     if (this.options.deepLink) {
       // S8: the deep-link hashchange moves to the native event layer under
@@ -221,21 +230,22 @@ class Accordion extends Plugin {
    * @param {jQuery} $target - jQuery object of the pane to toggle (`.accordion-content`).
    * @function
    */
-  toggle($target) {
-    // Mixed state (S16 suites): accept the native element the fixtures carry.
-    $target = $target.nodeType === 1 ? $($target) : $target;
-    if ($target.closest('[data-accordion]').is('[disabled]')) {
+  toggle(target) {
+    // Accepts an element, a collection, a NodeList or an array (the 6.x
+    // multi-target collection form works; state and fx iterate per element).
+    target = normalizeTargets(target);
+    if (target[0].closest('[data-accordion]').matches('[disabled]')) {
       console.info('Cannot toggle an accordion that is disabled.');
       return;
     }
-    if ($target.parent()[0].classList.contains('is-active')) {
-      this.up($target);
+    if (target[0].parentElement.classList.contains('is-active')) {
+      this.up(target);
     } else {
-      this.down($target);
+      this.down(target);
     }
     //either replace or update browser history
     if (this.options.deepLink) {
-      var anchor = $target.prev('a').attr('href');
+      var anchor = target[0].previousElementSibling.getAttribute('href');
 
       if (this.options.updateHistory) {
         history.pushState({}, '', anchor);
@@ -251,17 +261,17 @@ class Accordion extends Plugin {
    * @fires Accordion#down
    * @function
    */
-  down($target) {
-    $target = $target.nodeType === 1 ? $($target) : $target;
-    if ($target.closest('[data-accordion]').is('[disabled]'))  {
+  down(target) {
+    target = normalizeTargets(target);
+    if (target[0].closest('[data-accordion]').matches('[disabled]'))  {
       console.info('Cannot call down on an accordion that is disabled.');
       return;
     }
 
     if (this.options.multiExpand)
-      this._openTab($target);
+      this._openTab(target);
     else
-      this._openSingleTab($target);
+      this._openSingleTab(target);
   }
 
   /**
@@ -272,22 +282,22 @@ class Accordion extends Plugin {
    * @fires Accordion#up
    * @function
    */
-  up($target) {
-    $target = $target.nodeType === 1 ? $($target) : $target;
-    if (this.$element.is('[disabled]')) {
+  up(target) {
+    target = normalizeTargets(target);
+    if (this.$element.matches('[disabled]')) {
       console.info('Cannot call up on an accordion that is disabled.');
       return;
     }
 
     // Don't close the item if it is already closed
-    const $targetItem = $target.parent();
-    if (!$targetItem[0].classList.contains('is-active')) return;
+    const targetItem = target[0].parentElement;
+    if (!targetItem.classList.contains('is-active')) return;
 
     // Don't close the item if there is no other active item (unless with `allowAllClosed`)
-    const $othersItems = $targetItem.siblings();
-    if (!this.options.allowAllClosed && !$othersItems.hasClass('is-active')) return;
+    const othersItems = Array.from(targetItem.parentElement.children).filter(el => el !== targetItem);
+    if (!this.options.allowAllClosed && !othersItems.some(el => el.classList.contains('is-active'))) return;
 
-    this._closeTab($target);
+    this._closeTab(target);
   }
 
   /**
@@ -296,15 +306,16 @@ class Accordion extends Plugin {
    * @function
    * @private
    */
-  _openSingleTab($target) {
+  _openSingleTab(target) {
+    target = normalizeTargets(target);
     // Close all the others active tabs.
-    const $activeContents = this.$element.children('.is-active').children('[data-tab-content]');
-    if ($activeContents.length) {
-      this._closeTab($activeContents.not($target));
+    const activeContents = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]')).filter(el => target.indexOf(el) === -1);
+    if (activeContents.length) {
+      this._closeTab(activeContents);
     }
 
     // Then open the target.
-    this._openTab($target);
+    this._openTab(target);
   }
 
   /**
@@ -314,16 +325,16 @@ class Accordion extends Plugin {
    * @function
    * @private
    */
-  _openTab($target) {
-    // The labelledby lookup keeps jQuery's first-element read; the class and
-    // aria-hidden writes apply to every pane of the collection, like the
-    // jQuery collection calls did.
-    const targetContentId = $target.attr('aria-labelledby');
+  _openTab(targets) {
+    targets = normalizeTargets(targets);
+    // The labelledby lookup keeps the 6.x first-element read; the class and
+    // aria-hidden writes apply to every pane, like the collection calls did.
+    const targetContentId = targets[0].getAttribute('aria-labelledby');
 
     // State/ARIA go through the native layer (7.0 line A, S8).
-    $target.each(function() {
-      this.setAttribute('aria-hidden', 'false');
-      this.parentElement.classList.add('is-active');
+    targets.forEach(function(el) {
+      el.setAttribute('aria-hidden', 'false');
+      el.parentElement.classList.add('is-active');
     });
 
     const label = document.getElementById(targetContentId);
@@ -331,14 +342,16 @@ class Accordion extends Plugin {
 
     // fx 方案 A: the fold tween runs on Motion's native slide primitive
     // (jQuery fx parity: finish() jumps any in-flight fold, the down event
-    // stays timed by the completion callback).
-    Motion.finish($target);
-    Motion.slideDown($target, this.options.slideSpeed, () => {
+    // stays timed by the completion callback and fires once per pane, like
+    // the jQuery collection callback did; the terminal form forwards the
+    // element array, 6.x forwarded the collection).
+    Motion.finish(targets);
+    Motion.slideDown(targets, this.options.slideSpeed, () => {
       /**
        * Fires when the tab is done opening.
        * @event Accordion#down
        */
-      Events.trigger(this.$element[0], 'down.zf.accordion', [$target]);
+      Events.trigger(this.$element, 'down.zf.accordion', [targets]);
     });
   }
 
@@ -349,27 +362,28 @@ class Accordion extends Plugin {
    * @function
    * @private
    */
-  _closeTab($target) {
+  _closeTab(targets) {
+    targets = normalizeTargets(targets);
     // See _openTab: first-element labelledby lookup, per-element writes.
-    const targetContentId = $target.attr('aria-labelledby');
+    const targetContentId = targets[0].getAttribute('aria-labelledby');
 
     // State/ARIA go through the native layer (7.0 line A, S8).
-    $target.each(function() {
-      this.setAttribute('aria-hidden', 'true');
-      this.parentElement.classList.remove('is-active');
+    targets.forEach(function(el) {
+      el.setAttribute('aria-hidden', 'true');
+      el.parentElement.classList.remove('is-active');
     });
 
     const label = document.getElementById(targetContentId);
     if (label) label.setAttribute('aria-expanded', 'false');
 
     // fx 方案 A, see _openTab.
-    Motion.finish($target);
-    Motion.slideUp($target, this.options.slideSpeed, () => {
+    Motion.finish(targets);
+    Motion.slideUp(targets, this.options.slideSpeed, () => {
       /**
        * Fires when the tab is done collapsing up.
        * @event Accordion#up
        */
-      Events.trigger(this.$element[0], 'up.zf.accordion', [$target]);
+      Events.trigger(this.$element, 'up.zf.accordion', [targets]);
     });
   }
 
@@ -380,9 +394,9 @@ class Accordion extends Plugin {
    * @private
    */
   _closeAllTabs() {
-    var $activeTabs = this.$element.children('.is-active').children('[data-tab-content]');
-    if ($activeTabs.length) {
-      this._closeTab($activeTabs);
+    var activeTabs = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
+    if (activeTabs.length) {
+      this._closeTab(activeTabs);
     }
   }
 
@@ -394,18 +408,14 @@ class Accordion extends Plugin {
   _destroy() {
     // fx 方案 A (see _openTab): the collapse-to-zero cleanup stops any
     // in-flight fold and hides instantly.
-    this.$element.find('[data-tab-content]').each(function() {
-      Motion.stop(this, true);
-      Motion.slideUp(this, 0);
-      this.style.display = '';
+    this.$element.querySelectorAll('[data-tab-content]').forEach(function(el) {
+      Motion.stop(el, true);
+      Motion.slideUp(el, 0);
+      el.style.display = '';
     });
-    // jQuery side: legacy listeners in the plugin namespace.
-    this.$element.find('a').off('.zf.accordion');
-    // Native side: the flipped click listeners.
-    this.$tabs.each(function() {
-      $(this).children('a').each(function() {
-        Events.off(this, 'click.zf.accordion');
-      });
+    // The click and keydown listeners, by bare plugin namespace.
+    this.$element.querySelectorAll('a').forEach(function(anchor) {
+      Events.off(anchor, '.zf.accordion');
     });
     if (this.options.deepLink) {
       Events.off(window, `hashchange.zf.accordion:${this.id}`);
