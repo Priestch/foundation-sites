@@ -55,7 +55,7 @@ describe('Dropdown (native layer contract)', function() {
       showSpy.firstCall.args[0].namespace.should.equal('dropdown.zf');
       // the forwarded pane collection rides as the event parameter (final
       // native-element form is the wrap-up slice's uniform move)
-      showSpy.firstCall.args[1][0].should.equal(el);
+      showSpy.firstCall.args[1].should.equal(el);
       // the class/ARIA state flipped synchronously, before the event
       el.classList.contains('is-open').should.be.true;
       el.getAttribute('aria-hidden').should.equal('false');
@@ -135,6 +135,9 @@ describe('Dropdown (native layer contract)', function() {
 
   describe('trigger delegation and anchor click', function() {
     it('opens through the document [data-toggle] delegation on a real anchor click', function() {
+      // arm the document delegation explicitly: a fast grep-scoped run can
+      // finish before window load armed it (triggers-suite precedent)
+      Foundation.Triggers.Initializers.addSimpleListeners();
       build({});
       plugin.$anchorForTest.click();
       html.classList.contains('is-open').should.be.true;

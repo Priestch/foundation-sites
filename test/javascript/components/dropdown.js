@@ -28,7 +28,7 @@ describe('Dropdown', function() {
       dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
       plugin = new Foundation.Dropdown(dropdownContainer, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -134,7 +134,7 @@ describe('Dropdown', function() {
       plugin.open();
 
       let spy = sinon.spy(plugin, 'close');
-      FoundationNext.Events.trigger(plugin.$element[0], "click");
+      plugin.$element.dispatchEvent(new MouseEvent('click', {bubbles: true}));
 
       setTimeout(() => {
         sinon.assert.notCalled(spy);
