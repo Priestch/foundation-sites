@@ -1,4 +1,3 @@
-import $ from 'jquery';
 
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Events } from './foundation.util.events';
@@ -49,9 +48,10 @@ class ResponsiveMenu extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element) {
-    // Mixed state (7.0 line A, S16): dual-form constructor input.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.rules = this.$element.data('responsive-menu');
+    // 7.0 line A terminal form: the element (constructor contracts hand in
+    // either shape during the mixed state).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.rules = this.$element.getAttribute('data-responsive-menu');
     this.currentMq = null;
     this.currentPlugin = null;
     this.className = 'ResponsiveMenu'; // ie9 back compat
@@ -93,8 +93,8 @@ class ResponsiveMenu extends Plugin {
       this._checkMediaQueries();
     }
     // Add data-mutate since children may need it.
-    if (!this.$element[0].getAttribute('data-mutate')) {
-      this.$element[0].setAttribute('data-mutate', GetYoDigits(6, 'responsive-menu'));
+    if (!this.$element.getAttribute('data-mutate')) {
+      this.$element.setAttribute('data-mutate', GetYoDigits(6, 'responsive-menu'));
     }
   }
 
@@ -119,7 +119,7 @@ class ResponsiveMenu extends Plugin {
    */
   _checkMediaQueries() {
     var matchedMq = null;
-    var element = this.$element[0];
+    var element = this.$element;
 
     // Iterate through each rule and find the last matching rule
     Object.keys(this.rules).forEach(function(key) {

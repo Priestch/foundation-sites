@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { Events } from './foundation.util.events';
 
 // Core Foundation Utilities, utilized in a number of places.
@@ -15,7 +14,7 @@ function toElement(obj) {
    * Returns a boolean for RTL support
    */
 function rtl() {
-  return $('html').attr('dir') === 'rtl';
+  return document.documentElement.getAttribute('dir') === 'rtl';
 }
 
 /**
@@ -73,7 +72,6 @@ function transitionend($elem){
     let el = toElement($elem);
     setTimeout(function(){
       Events.triggerHandler(el, 'transitionend', [el]);
-      $(el).triggerHandler('transitionend', [el]);
     }, 1);
     return 'transitionend';
   }
@@ -150,8 +148,8 @@ function ignoreMousedisappear(handler, { ignoreLeaveWindow = false, ignoreReappe
 
       // Otherwise, wait for the mouse to reeapear outside of the element,
       if (!ignoreReappear) {
-        $(document).one('mouseenter', function reenterEventHandler(eReenter) {
-          if (!$(eLeave.currentTarget).has(eReenter.target).length) {
+        Events.one(document, 'mouseenter', function reenterEventHandler(eReenter) {
+          if (!eLeave.currentTarget.contains(eReenter.target)) {
             // Fill where the mouse finally entered.
             eLeave.relatedTarget = eReenter.target;
             callback();

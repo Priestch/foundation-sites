@@ -243,12 +243,12 @@ describe('Keyboard util', function() {
 
       let focusable = Foundation.Keyboard.findFocusable(html);
 
-      focusable.eq(2)[0].should.be.equal(html.querySelectorAll("a")[1]);
+      focusable[2].should.be.equal(html.querySelectorAll("a")[1]);
 
       html.remove();
     });
 
-    it('returns a jQuery collection with DOM order and accessors intact', function() {
+    it('returns the sorted native element array (7.0 terminal form)', function() {
       let html = document.body.appendChild(fixture(`<div>
             <button>First</button>
             <a href="#" tabindex="1">Link1</a>
@@ -257,13 +257,14 @@ describe('Keyboard util', function() {
 
       let focusable = Foundation.Keyboard.findFocusable(html);
 
-      // Mixed state: callers consume .length, .eq() and [0] on the result.
-      focusable.should.have.property('jquery');
+      // Terminal form: callers consume .length and [i] on the native array
+      // (the S5 mixed state returned a jQuery collection for `.eq()`).
+      Array.isArray(focusable).should.be.true;
       focusable.length.should.be.equal(3);
       // tabindex=1 jumps the queue, plain elements keep DOM order behind it
-      focusable.eq(0)[0].should.be.equal(html.querySelector('a'));
-      focusable.eq(1)[0].should.be.equal(html.querySelector('button'));
-      focusable.eq(2)[0].should.be.equal(html.querySelectorAll('a')[1]);
+      focusable[0].should.be.equal(html.querySelector('a'));
+      focusable[1].should.be.equal(html.querySelector('button'));
+      focusable[2].should.be.equal(html.querySelectorAll('a')[1]);
 
       html.remove();
     });

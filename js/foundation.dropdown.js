@@ -304,9 +304,9 @@ class Dropdown extends Positionable {
     this.$element[0].setAttribute('aria-hidden', 'false');
 
     if(this.options.autoFocus){
-      var $focusable = Keyboard.findFocusable(this.$element);
-      if($focusable.length){
-        $focusable.eq(0).focus();
+      const focusable = Keyboard.findFocusable(this.$element[0]);
+      if(focusable.length){
+        focusable[0].focus();
       }
     }
 

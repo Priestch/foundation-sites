@@ -6,7 +6,6 @@
  *                                         *
  ******************************************/
 
-import $ from 'jquery';
 import { rtl as Rtl } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
 import { visible } from './foundation.util.dom';
@@ -47,12 +46,12 @@ var commands = {}
 const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]';
 
 // Functions pulled out to be referenceable from internals
-function findFocusable($element) {
-  if(!$element) {return false; }
-  // Mixed state: the outside shape stays a jQuery collection (callers use
-  // `.eq()`, `[0]`, `.length`, `.focus()`), the scan and the sort run on
-  // plain arrays.
-  const roots = Array.from($element.nodeType === 1 ? [$element] : $element);
+// 7.0 line A terminal form: the return is the sorted native element array
+// (the S5 mixed-state shape was a jQuery collection for `.eq()` callers).
+function findFocusable(element) {
+  if(!element) {return false; }
+  // Accepts an element, a NodeList, an array or a jQuery collection.
+  const roots = Array.from(element.nodeType === 1 ? [element] : element);
 
   const candidates = [];
   roots.forEach(root => {
@@ -67,7 +66,7 @@ function findFocusable($element) {
     return true;
   });
 
-  return $(focusable.sort(function( a, b ) {
+  return focusable.sort(function( a, b ) {
     if (a.getAttribute('tabindex') === b.getAttribute('tabindex')) {
       return 0;
     }
@@ -92,7 +91,7 @@ function findFocusable($element) {
     if (aTabIndex > bTabIndex) {
       return 1;
     }
-  }));
+  });
 }
 
 function parseKey(event) {
@@ -198,21 +197,22 @@ var Keyboard = {
    * handing in the jQuery object.
    * @param  {jQuery} $element  jQuery object to trap the foucs into.
    */
-  trapFocus($element) {
-    // Mixed state (S16 suites): the fixtures hand in the native element.
-    $element = $element.nodeType === 1 ? $($element) : $element;
-    var $focusable = findFocusable($element),
-        $firstFocusable = $focusable.eq(0),
-        $lastFocusable = $focusable.eq(-1);
+  trapFocus(element) {
+    // Accepts an element or a collection (mixed state callers); the
+    // focusable list is the native array terminal form.
+    const el = element.nodeType === 1 ? element : element[0];
+    const focusable = findFocusable(el),
+        firstFocusable = focusable[0],
+        lastFocusable = focusable[focusable.length - 1];
 
-    Events.on($element[0], 'keydown.zf.trapfocus', function(event) {
-      if (event.target === $lastFocusable[0] && parseKey(event) === 'TAB') {
+    Events.on(el, 'keydown.zf.trapfocus', function(event) {
+      if (event.target === lastFocusable && parseKey(event) === 'TAB') {
         event.preventDefault();
-        $firstFocusable.focus();
+        firstFocusable.focus();
       }
-      else if (event.target === $firstFocusable[0] && parseKey(event) === 'SHIFT_TAB') {
+      else if (event.target === firstFocusable && parseKey(event) === 'SHIFT_TAB') {
         event.preventDefault();
-        $lastFocusable.focus();
+        lastFocusable.focus();
       }
     });
   },
@@ -220,9 +220,9 @@ var Keyboard = {
    * Releases the trapped focus from the given element.
    * @param  {jQuery} $element  jQuery object to release the focus for.
    */
-  releaseFocus($element) {
-    $element = $element.nodeType === 1 ? $($element) : $element;
-    Events.off($element[0], "keydown.zf.trapfocus");
+  releaseFocus(element) {
+    const el = element.nodeType === 1 ? element : element[0];
+    Events.off(el, "keydown.zf.trapfocus");
   }
 }
 
