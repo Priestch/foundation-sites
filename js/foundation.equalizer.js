@@ -1,8 +1,7 @@
-import $ from 'jquery';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { onImagesLoaded } from './foundation.util.imageLoader';
 import { GetYoDigits } from './foundation.core.utils';
-import { datasetOptions } from './foundation.util.dom';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Plugin } from './foundation.core.plugin';
 
@@ -23,12 +22,9 @@ class Equalizer extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options){
-    // Mixed state (7.0 line A, S16): the constructor takes the native element
-    // the 7.0 contract carries as well as the jQuery collection the mixed-state
-    // reflow still feeds in; internals keep the collection until this file is
-    // migrated off jQuery.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options  = $.extend({}, Equalizer.defaults, datasetOptions(this.$element[0]), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options  = deepMerge({}, Equalizer.defaults, datasetOptions(this.$element), options);
     this.className = 'Equalizer'; // ie9 back compat
 
     this._init();
@@ -39,18 +35,27 @@ class Equalizer extends Plugin {
    * @private
    */
   _init() {
-    var eqId = this.$element.attr('data-equalizer') || '';
-    var $watched = this.$element.find(`[data-equalizer-watch="${eqId}"]`);
+    var eqId = this.$element.getAttribute('data-equalizer') || '';
+    var watched = Array.from(this.$element.querySelectorAll(`[data-equalizer-watch="${eqId}"]`));
 
     MediaQuery._init();
 
-    this.$watched = $watched.length ? $watched : this.$element.find('[data-equalizer-watch]');
+    this.$watched = watched.length ? watched : Array.from(this.$element.querySelectorAll('[data-equalizer-watch]'));
     // State attributes go through the native layer (7.0 line A, S8).
-    this.$element[0].setAttribute('data-resize', (eqId || GetYoDigits(6, 'eq')));
-    this.$element[0].setAttribute('data-mutate', (eqId || GetYoDigits(6, 'eq')));
+    this.$element.setAttribute('data-resize', (eqId || GetYoDigits(6, 'eq')));
+    this.$element.setAttribute('data-mutate', (eqId || GetYoDigits(6, 'eq')));
 
-    this.hasNested = this.$element.find('[data-equalizer]').length > 0;
-    this.isNested = this.$element.parentsUntil(document.body, '[data-equalizer]').length > 0;
+    this.hasNested = this.$element.querySelectorAll('[data-equalizer]').length > 0;
+    // jQuery parentsUntil(document.body, sel): the ancestors strictly below
+    // body matching the selector
+    this.isNested = (function() {
+      var p = this.$element.parentElement;
+      while (p && p !== document.body) {
+        if (p.matches('[data-equalizer]')) { return true; }
+        p = p.parentElement;
+      }
+      return false;
+    }).call(this);
     this.isOn = false;
     this._bindHandler = {
       onResizeMeBound: this._onResizeMe.bind(this),
@@ -58,7 +63,7 @@ class Equalizer extends Plugin {
       onCheckMQBound: this._checkMQ.bind(this)
     };
 
-    var imgs = this.$element.find('img');
+    var imgs = this.$element.querySelectorAll('img');
     var tooSmall;
     if(this.options.equalizeOn){
       tooSmall = this._checkMQ();
@@ -92,7 +97,7 @@ class Equalizer extends Plugin {
     // together with its last producers in the S10 group flip (Tabs forward,
     // ResponsiveToggle animated half).
     Events.off(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
-    Events.off(this.$element[0], 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
+    Events.off(this.$element, 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
   }
 
   /**
@@ -108,7 +113,7 @@ class Equalizer extends Plugin {
    * @private
    */
   _onPostEqualized(e) {
-    if(e.target !== this.$element[0]){ this._reflow(); }
+    if(e.target !== this.$element){ this._reflow(); }
   }
 
   /**
@@ -121,18 +126,18 @@ class Equalizer extends Plugin {
       // S8: the postequalized consumer flips together with its producer
       // (applyHeight below) in the same commit - both sides of the nested
       // equalizer chain live on the native event layer now.
-      Events.on(this.$element[0], 'postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
+      Events.on(this.$element, 'postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
     }else{
       // S8: the resizeme consumer flips to the native event layer; the
       // producer in the Triggers util has dispatched real element-local
       // events since S4, so this seam closes on the consumer half alone.
-      Events.on(this.$element[0], 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
+      Events.on(this.$element, 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
       // S10 group flip: the mutateme consumer joins the native event layer
       // together with its last jQuery-synthesized producers - the Tabs
       // forward and the ResponsiveToggle animated half flip in the same
       // commit, so every element listens on exactly one side and nothing
       // double-fires.
-      Events.on(this.$element[0], 'mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
+      Events.on(this.$element, 'mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
     }
     this.isOn = true;
   }
@@ -146,7 +151,7 @@ class Equalizer extends Plugin {
     if(tooSmall){
       if(this.isOn){
         this._pauseEvents();
-        this.$watched.css('height', 'auto');
+        this.$watched.forEach(el => { el.style.height = 'auto'; });
       }
     }else{
       if(!this.isOn){
@@ -171,7 +176,7 @@ class Equalizer extends Plugin {
   _reflow() {
     if(!this.options.equalizeOnStack){
       if(this._isStacked()){
-        this.$watched.css('height', 'auto');
+        this.$watched.forEach(el => { el.style.height = 'auto'; });
         return false;
       }
     }
@@ -213,7 +218,8 @@ class Equalizer extends Plugin {
    * @returns {Array} groups - An array of heights of children within Equalizer container grouped by row with element,height and max as last child
    */
   getHeightsByRow(cb) {
-    var lastElTopOffset = (this.$watched.length ? this.$watched.first().offset().top : 0),
+    // jQuery offset(): document-coordinates top of the first watched item
+    var lastElTopOffset = (this.$watched.length ? this.$watched[0].getBoundingClientRect().top + window.pageYOffset : 0),
         groups = [],
         group = 0;
     //group by Row
@@ -221,7 +227,7 @@ class Equalizer extends Plugin {
     for(var i = 0, len = this.$watched.length; i < len; i++){
       this.$watched[i].style.height = 'auto';
       //maybe could use this.$watched[i].offsetTop
-      var elOffsetTop = $(this.$watched[i]).offset().top;
+      var elOffsetTop = this.$watched[i].getBoundingClientRect().top + window.pageYOffset;
       if (elOffsetTop !== lastElTopOffset) {
         group++;
         groups[group] = [];
@@ -231,7 +237,7 @@ class Equalizer extends Plugin {
     }
 
     for (var j = 0, ln = groups.length; j < ln; j++) {
-      var heights = $(groups[j]).map(function(){ return this[1]; }).get();
+      var heights = groups[j].map(function(item){ return item[1]; });
       var max         = Math.max.apply(null, heights);
       groups[j].push(max);
     }
@@ -250,15 +256,15 @@ class Equalizer extends Plugin {
      * Fires before the heights are applied
      * @event Equalizer#preequalized
      */
-    Events.trigger(this.$element[0], 'preequalized.zf.equalizer');
+    Events.trigger(this.$element, 'preequalized.zf.equalizer');
 
-    this.$watched.css('height', max);
+    this.$watched.forEach(el => { el.style.height = max + 'px'; });
 
     /**
      * Fires when the heights have been applied
      * @event Equalizer#postequalized
      */
-     Events.trigger(this.$element[0], 'postequalized.zf.equalizer');
+     Events.trigger(this.$element, 'postequalized.zf.equalizer');
   }
 
   /**
@@ -273,32 +279,32 @@ class Equalizer extends Plugin {
     /**
      * Fires before the heights are applied
      */
-    Events.trigger(this.$element[0], 'preequalized.zf.equalizer');
+    Events.trigger(this.$element, 'preequalized.zf.equalizer');
     for (var i = 0, len = groups.length; i < len ; i++) {
       var groupsILength = groups[i].length,
           max = groups[i][groupsILength - 1];
       if (groupsILength<=2) {
-        $(groups[i][0][0]).css({'height':'auto'});
+        groups[i][0][0].style.height = 'auto';
         continue;
       }
       /**
         * Fires before the heights per row are applied
         * @event Equalizer#preequalizedrow
         */
-      Events.trigger(this.$element[0], 'preequalizedrow.zf.equalizer');
+      Events.trigger(this.$element, 'preequalizedrow.zf.equalizer');
       for (var j = 0, lenJ = (groupsILength-1); j < lenJ ; j++) {
-        $(groups[i][j][0]).css({'height':max});
+        groups[i][j][0].style.height = max + 'px';
       }
       /**
         * Fires when the heights per row have been applied
         * @event Equalizer#postequalizedrow
         */
-      Events.trigger(this.$element[0], 'postequalizedrow.zf.equalizer');
+      Events.trigger(this.$element, 'postequalizedrow.zf.equalizer');
     }
     /**
      * Fires when the heights have been applied
      */
-     Events.trigger(this.$element[0], 'postequalized.zf.equalizer');
+     Events.trigger(this.$element, 'postequalized.zf.equalizer');
   }
 
   /**
@@ -307,7 +313,7 @@ class Equalizer extends Plugin {
    */
   _destroy() {
     this._pauseEvents();
-    this.$watched.css('height', 'auto');
+    this.$watched.forEach(el => { el.style.height = 'auto'; });
   }
 }
 

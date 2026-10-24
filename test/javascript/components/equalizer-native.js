@@ -213,6 +213,11 @@ describe('Equalizer (native layer contract)', function() {
       var eq = new Foundation.Equalizer(eqEl, {});
       var tog = new Foundation.Toggler(wrap.querySelector('[data-toggler]'), {});
 
+      // The document-level [data-toggle] delegation arms on window load
+      // (Triggers.init); a fast grep-scoped run can finish before that, so
+      // arm it explicitly - the triggers-suite determinism precedent.
+      Foundation.Triggers.Initializers.addSimpleListeners();
+
       var nativeCount = 0;
       var jqCount = 0;
       FoundationNext.Events.on(wrap, 'mutateme.zf.trigger', function() { nativeCount++; });
