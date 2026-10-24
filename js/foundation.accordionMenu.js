@@ -4,6 +4,7 @@ import { Nest } from './foundation.util.nest';
 import { GetYoDigits } from './foundation.core.utils';
 import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
+import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
 
 /**
@@ -55,7 +56,10 @@ class AccordionMenu extends Plugin {
 
     var _this = this;
 
-    this.$element.find('[data-submenu]').not('.is-active').slideUp(0);//.find('a').css('padding-left', '1rem');
+    // fx 方案 A: the instant-collapse init hide on the native primitive
+    this.$element.find('[data-submenu]').not('.is-active').each(function() {
+      Motion.slideUp(this, 0);
+    });
     this.$element.attr({
       'aria-multiselectable': this.options.multiOpen
     });
@@ -283,9 +287,9 @@ class AccordionMenu extends Plugin {
       });
     }
 
-    // Seam (S9): the slide tween stays on jQuery fx - the down event keeps
-    // its after-the-tween timing (Accordion precedent).
-    $target.slideDown(this.options.slideSpeed, () => {
+    // fx 方案 A: the fold tween runs on Motion's native slide primitive -
+    // the down event keeps its after-the-tween timing.
+    Motion.slideDown($target, this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done opening.
        * @event AccordionMenu#down
@@ -306,7 +310,7 @@ class AccordionMenu extends Plugin {
     const $submenus = $target.find('[data-submenu]');
     const $allmenus = $target.add($submenus);
 
-    $submenus.slideUp(0);
+    $submenus.toArray().forEach(el => Motion.slideUp(el, 0));
     // S9: class/ARIA state flips natively.
     $allmenus.toArray().forEach(el => {
       el.classList.remove('is-active');
@@ -330,9 +334,8 @@ class AccordionMenu extends Plugin {
       });
     }
 
-    // Seam (S9): the slide tween stays on jQuery fx - the up event keeps
-    // its after-the-tween timing (Accordion precedent).
-    $target.slideUp(this.options.slideSpeed, () => {
+    // fx 方案 A, see down(): the fold tween on the native primitive.
+    Motion.slideUp($target, this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done collapsing up.
        * @event AccordionMenu#up
@@ -346,7 +349,12 @@ class AccordionMenu extends Plugin {
    * @fires AccordionMenu#destroyed
    */
   _destroy() {
-    this.$element.find('[data-submenu]').slideDown(0).css('display', '');
+    // fx 方案 A: the instant-show destroy cleanup (inline display cleared
+    // so the stylesheet rules own the resting state again)
+    this.$element.find('[data-submenu]').each(function() {
+      Motion.slideDown(this, 0);
+      this.style.display = '';
+    });
     // S9 double-off discipline: each layer wipes only its own listeners.
     this.$element.find('a').off('click.zf.accordionMenu');
     this.$element.find('a, .submenu-toggle').toArray().forEach(el => {

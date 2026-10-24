@@ -5,6 +5,7 @@ import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { onImagesLoaded } from './foundation.util.imageLoader';
+import { Motion } from './foundation.util.motion';
 /**
  * Tabs module.
  * @module foundation.tabs
@@ -93,7 +94,9 @@ class Tabs extends Plugin {
           // A load callback can land after destroy() nulled the instance
           // state (the S6 slider guard pattern).
           if (!_this.$element) { return; }
-          $('html, body').animate({ scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, () => {
+          // fx 方案 A: the native page-scroll tween (SmoothScroll S7
+          // equivalence - one viewport tween, the callback once, ledger ②)
+          Motion.animate(document.documentElement, { scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, null, () => {
             $link.focus();
           });
         });
@@ -140,7 +143,7 @@ class Tabs extends Plugin {
         // Roll up a little to show the titles
         if (this.options.deepLinkSmudge) {
           var offset = this.$element.offset();
-          $('html, body').animate({ scrollTop: offset.top - this.options.deepLinkSmudgeOffset}, this.options.deepLinkSmudgeDelay);
+          Motion.animate(document.documentElement, { scrollTop: offset.top - this.options.deepLinkSmudgeOffset}, this.options.deepLinkSmudgeDelay);
         }
 
         /**

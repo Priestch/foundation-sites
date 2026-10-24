@@ -4,6 +4,7 @@ import { onLoad, GetYoDigits } from './foundation.core.utils';
 import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
+import { Motion } from './foundation.util.motion';
 
 /**
  * Accordion module.
@@ -114,7 +115,9 @@ class Accordion extends Plugin {
             // state (the S6 slider guard pattern).
             if (!this.$element) { return; }
             var offset = this.$element.offset();
-            $('html, body').animate({ scrollTop: offset.top - this.options.deepLinkSmudgeOffset }, this.options.deepLinkSmudgeDelay);
+            // fx 方案 A: the native page-scroll tween (SmoothScroll S7
+            // equivalence - one viewport tween, callback once per ledger ②)
+            Motion.animate(document.documentElement, { scrollTop: offset.top - this.options.deepLinkSmudgeOffset }, this.options.deepLinkSmudgeDelay);
           });
         }
 
@@ -326,12 +329,11 @@ class Accordion extends Plugin {
     const label = document.getElementById(targetContentId);
     if (label) label.setAttribute('aria-expanded', 'true');
 
-    // Seam (S8): the height tween stays on jQuery fx. Wrap-up design
-    // decision pending there: a native height transition vs. dropping the
-    // tween (S6 dropped the dead reveal show-delay tween, a live pane
-    // animation is a different contract - the down/up events stay timed by
-    // the fx callback for now).
-    $target.finish().slideDown(this.options.slideSpeed, () => {
+    // fx 方案 A: the fold tween runs on Motion's native slide primitive
+    // (jQuery fx parity: finish() jumps any in-flight fold, the down event
+    // stays timed by the completion callback).
+    Motion.finish($target);
+    Motion.slideDown($target, this.options.slideSpeed, () => {
       /**
        * Fires when the tab is done opening.
        * @event Accordion#down
@@ -360,8 +362,9 @@ class Accordion extends Plugin {
     const label = document.getElementById(targetContentId);
     if (label) label.setAttribute('aria-expanded', 'false');
 
-    // fx seam, see _openTab.
-    $target.finish().slideUp(this.options.slideSpeed, () => {
+    // fx 方案 A, see _openTab.
+    Motion.finish($target);
+    Motion.slideUp($target, this.options.slideSpeed, () => {
       /**
        * Fires when the tab is done collapsing up.
        * @event Accordion#up
@@ -389,8 +392,13 @@ class Accordion extends Plugin {
    * @function
    */
   _destroy() {
-    // fx seam (see _openTab): the collapse-to-zero cleanup stays jQuery.
-    this.$element.find('[data-tab-content]').stop(true).slideUp(0).css('display', '');
+    // fx 方案 A (see _openTab): the collapse-to-zero cleanup stops any
+    // in-flight fold and hides instantly.
+    this.$element.find('[data-tab-content]').each(function() {
+      Motion.stop(this, true);
+      Motion.slideUp(this, 0);
+      this.style.display = '';
+    });
     // jQuery side: legacy listeners in the plugin namespace.
     this.$element.find('a').off('.zf.accordion');
     // Native side: the flipped click listeners.

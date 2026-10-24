@@ -22,6 +22,38 @@ const Motion = {
 
   animateOut: function(element, animation, cb) {
     animate(false, element, animation, cb);
+  },
+
+  // jQuery fx-compatible primitives (fx 方案 A): slideUp/slideDown,
+  // fadeIn/fadeOut, generic per-property animate, stop/finish. Reproduces
+  // the jQuery 3.7 semantics the plugin seams relied on - per-element queue
+  // serialization, swing easing by default ('linear' and function easings
+  // pass through, unknown names fall back to swing), duration-0 completing
+  // synchronously, stop/finish jump-to-end with complete callbacks. The
+  // methods take an element, a jQuery collection, a NodeList or an array
+  // and animate every element in it, the complete firing once per element
+  // (the collection semantics the multi-target accordion/menu calls rely
+  // on).
+  slideUp: function(elements, duration, complete) {
+    fxEach(elements, (el) => fxSlide('up', el, duration, complete));
+  },
+  slideDown: function(elements, duration, complete) {
+    fxEach(elements, (el) => fxSlide('down', el, duration, complete));
+  },
+  fadeIn: function(elements, duration, complete) {
+    fxEach(elements, (el) => fxFade('in', el, duration, complete));
+  },
+  fadeOut: function(elements, duration, complete) {
+    fxEach(elements, (el) => fxFade('out', el, duration, complete));
+  },
+  animate: function(elements, props, duration, easing, complete) {
+    fxEach(elements, (el) => fxAnimate(el, props, duration, easing, complete));
+  },
+  stop: function(elements, clearQueue, jumpToEnd) {
+    fxEach(elements, (el) => fxStop(el, clearQueue, jumpToEnd));
+  },
+  finish: function(elements) {
+    fxEach(elements, (el) => fxFinish(el));
   }
 }
 
@@ -159,6 +191,368 @@ function animate(isIn, element, animation, cb) {
   function removeClass(target, ...tokens) {
     tokens.forEach(token => { if (token) { target.classList.remove(token); } });
   }
+}
+
+
+// ---------------------------------------------------------------------------
+// jQuery fx-compatible tween engine (7.0 line A, fx 方案 A).
+//
+// Replaces the jQuery fx calls on the plugin seams. What is reproduced:
+// - one fx queue per element: animations serialize, complete callbacks run
+//   in queue order, finish()/stop(true) can jump them;
+// - swing easing 0.5 - cos(p*PI)/2 as the default (`linear` and function
+//   easings pass through, unknown names animate as swing - jQuery's
+//   `_default`);
+// - duration 0 completes synchronously in the calling tick (the coarse
+//   suites' slideSpeed 0 contract);
+// - slideUp/slideDown tween the six properties jQuery's genFx builds for
+//   slide (height, padding/margin top and bottom, opacity) with
+//   border-box aware height writes, and leave the same inline residue:
+//   slideUp ends on inline display:none with the tweened props cleared,
+//   slideDown ends shown with them cleared;
+// - fadeOut remembers the display for the next fadeIn (jQuery's
+//   data-priv display save), fadeIn ends with the opacity inline removed;
+// - scrollTop on html/body tweens the page through window.scrollTo (the
+//   S7 SmoothScroll equivalence: one viewport tween, callback once - the
+//   6.x collection form animated html AND body, firing the callback twice,
+//   ledger ②).
+// ---------------------------------------------------------------------------
+
+const SLIDE_PROPS = ['height', 'paddingTop', 'paddingBottom', 'marginTop', 'marginBottom', 'opacity'];
+
+// Element / jQuery collection / NodeList / array -> element list (jQuery
+// collection semantics: an fx call animates every element it was given).
+function fxEach(obj, fn) {
+  if (!obj) { return; }
+  const list = (obj.nodeType === undefined && obj.length !== undefined)
+    ? Array.from(obj)
+    : [obj];
+  list.forEach(fn);
+}
+
+function resolveFxEasing(easing) {
+  if (typeof easing === 'function') { return easing; }
+  if (easing === 'linear') { return (p) => p; }
+  return (p) => 0.5 - Math.cos(p * Math.PI) / 2;
+}
+
+// getDefaultDisplay, jQuery shape: a detached probe of the same tag measured
+// in the document, cached. Falls back to 'block' for display:none by UA
+// stylesheet (e.g. <script>), which is what jQuery's own fallback did.
+const defaultDisplayCache = {};
+function defaultDisplay(tag) {
+  if (defaultDisplayCache[tag]) { return defaultDisplayCache[tag]; }
+  const probe = document.createElement(tag);
+  document.body.appendChild(probe);
+  let display = window.getComputedStyle(probe).display;
+  document.body.removeChild(probe);
+  if (!display || display === 'none') { display = 'block'; }
+  defaultDisplayCache[tag] = display;
+  return display;
+}
+
+// The inline display jQuery saved in its data-priv when hiding, so a later
+// show restores it (WeakMap: cleared with the element, like data-priv).
+const savedDisplay = new WeakMap();
+
+// Per-element fx state: the running animation plus the queued ones.
+const fxTable = new WeakMap();
+
+function fxState(el) {
+  let st = fxTable.get(el);
+  if (!st) {
+    st = {queue: [], running: null};
+    fxTable.set(el, st);
+  }
+  return st;
+}
+
+// One animation: prepare() runs once when the animation starts (jQuery
+// measured and set overflow there, not at enqueue time), paint() renders an
+// eased progress (0..1), complete() runs the end-of-animation state
+// (hide/show residue) and then the caller's callback. `jump` prepares,
+// paints 1 and completes (stop/finish semantics).
+function enqueueFx(el, duration, easing, prepare, paint, complete) {
+  const st = fxState(el);
+  const ease = resolveFxEasing(easing);
+
+  const anim = {
+    rafId: null,
+    origin: null,
+    prepare: prepare || null,
+    complete: complete || null,
+    cancel() {
+      if (anim.rafId !== null) {
+        window.cancelAnimationFrame(anim.rafId);
+        anim.rafId = null;
+      }
+    },
+    jump() {
+      anim.cancel();
+      if (anim.prepare) { anim.prepare(); }
+      paint(1);
+      anim.finish();
+    },
+    finish() {
+      st.running = null;
+      anim.rafId = null;
+      // jQuery called the complete with the element as `this`
+      if (anim.complete) { anim.complete.call(el); }
+      runNextFx(el);
+    },
+    start() {
+      // prepare() may signal `true`: animating toward the element's current
+      // state completes synchronously (jQuery's showHide skip), no timer.
+      const skip = anim.prepare ? anim.prepare() : false;
+      if (duration === 0 || skip) {
+        // jQuery's duration-0 dequeue: end state + complete, same tick.
+        paint(1);
+        anim.finish();
+        return;
+      }
+      const step = function(ts) {
+        if (anim.origin === null) { anim.origin = ts; }
+        const progress = Math.min((ts - anim.origin) / duration, 1);
+        paint(ease(progress));
+        if (progress < 1) {
+          anim.rafId = window.requestAnimationFrame(step);
+        } else {
+          anim.rafId = null;
+          anim.finish();
+        }
+      };
+      anim.rafId = window.requestAnimationFrame(step);
+    }
+  };
+
+  st.queue.push(anim);
+  runNextFx(el);
+}
+
+function runNextFx(el) {
+  const st = fxState(el);
+  if (st.running || !st.queue.length) { return; }
+  st.running = st.queue.shift();
+  st.running.start();
+}
+
+// jQuery .stop([clearQueue][, jumpToEnd]): the running animation stops where
+// it stands (jumpToEnd paints the end first), its complete fires only when
+// jumping; clearQueue drops the pending ones.
+function fxStop(el, clearQueue, jumpToEnd) {
+  const st = fxState(el);
+  if (st.queue.length && clearQueue) { st.queue.length = 0; }
+  const anim = st.running;
+  if (!anim) { return; }
+  anim.cancel();
+  if (jumpToEnd) {
+    anim.jump();
+  } else {
+    st.running = null;
+    runNextFx(el);
+  }
+}
+
+// jQuery .finish(): everything queued and running jumps to its end state,
+// each complete fires, the queue empties. jump() fires completes
+// synchronously, which starts the next queued animation (runNextFx), so the
+// queue is snapshotted first and whatever finish() left queued (animations
+// that just started) is dropped from the pending set - they already jumped.
+function fxFinish(el) {
+  const st = fxState(el);
+  const pending = st.queue.slice();
+  st.queue.length = 0;
+  if (st.running) {
+    st.running.jump();
+  }
+  // jump()'s completion may have started one of the pending ones (it now
+  // runs for real) - only jump the rest.
+  pending.forEach(function(anim) {
+    if (st.queue.indexOf(anim) === -1) { anim.jump(); }
+  });
+}
+
+// Page-scroll tween target: html/body scrollTop goes through the viewport.
+function isScrollRoot(el) {
+  return el === document.documentElement || el === document.body;
+}
+
+function fxAnimate(el, props, duration, easing, complete) {
+  el = toElement(el);
+  const entries = Object.keys(props).map((key) => {
+    const camel = key === 'scrolltop' ? 'scrollTop' : key.replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+    const to = Number(props[key]);
+    const from = camel === 'scrollTop'
+      ? (isScrollRoot(el) ? window.pageYOffset : el.scrollTop)
+      : parseFloat(window.getComputedStyle(el)[camel]);
+    return {camel, from, to};
+  });
+
+  const paint = function(p) {
+    entries.forEach((entry) => {
+      const value = entry.from + (entry.to - entry.from) * p;
+      if (entry.camel === 'scrollTop') {
+        if (isScrollRoot(el)) {
+          window.scrollTo(0, Math.round(value));
+        } else {
+          el.scrollTop = value;
+        }
+      } else if (entry.camel === 'opacity') {
+        el.style.opacity = value;
+      } else {
+        el.style[entry.camel] = value + 'px';
+      }
+    });
+  };
+
+  enqueueFx(el, duration, easing, null, paint, complete);
+}
+
+function measureSlide(el) {
+  const cs = window.getComputedStyle(el);
+  const values = {};
+  SLIDE_PROPS.forEach((prop) => {
+    values[prop] = parseFloat(cs[prop]);
+    if (isNaN(values[prop])) { values[prop] = prop === 'opacity' ? 1 : 0; }
+  });
+  return values;
+}
+
+function paintSlide(el, values) {
+  // Foundation sets border-box globally: an inline height must include the
+  // tweened paddings or the pane would shrink by them twice.
+  const borderBox = window.getComputedStyle(el).boxSizing !== 'content-box';
+  el.style.height = (borderBox ? values.height + values.paddingTop + values.paddingBottom : values.height) + 'px';
+  el.style.paddingTop = values.paddingTop + 'px';
+  el.style.paddingBottom = values.paddingBottom + 'px';
+  el.style.marginTop = values.marginTop + 'px';
+  el.style.marginBottom = values.marginBottom + 'px';
+  el.style.opacity = values.opacity;
+}
+
+function clearSlideInline(el, overflowInline) {
+  SLIDE_PROPS.forEach((prop) => { el.style[prop] = ''; });
+  el.style.overflow = overflowInline || '';
+}
+
+function fxSlide(direction, element, duration, complete) {
+  const el = toElement(element);
+
+  if (!el || !el.isConnected) {
+    // jQuery animations on detached elements measured 0 and completed; the
+    // call sites never pass one, complete keeps firing for queue order.
+    enqueueFx(el, 0, null, null, function() {}, complete);
+    return;
+  }
+
+  const overflowInline = el.style.overflow;
+  // jQuery evaluated the hidden/visible branch when the animation STARTED,
+  // not when it was enqueued - a queued slideUp hides the element a later
+  // slideDown was enqueued against. prepare() is that start point.
+  let mode; // 'up' | 'down' | 'noop'
+  let from, to;
+
+  const prepare = function() {
+    const hidden = window.getComputedStyle(el).display === 'none';
+    if (direction === 'down') {
+      mode = hidden ? 'down' : 'noop';
+      if (mode === 'noop') { return true; }
+      if (mode === 'down') {
+        el.style.display = savedDisplay.get(el) || defaultDisplay(el.tagName);
+        el.style.overflow = 'hidden';
+        clearSlideInline(el, overflowInline);
+        to = measureSlide(el);
+        from = Object.assign({}, to, {height: 0, paddingTop: 0, paddingBottom: 0, marginTop: 0, marginBottom: 0, opacity: 0});
+      }
+    } else {
+      mode = hidden ? 'noop' : 'up';
+      if (mode === 'noop') { return true; }
+      from = measureSlide(el);
+      el.style.overflow = 'hidden';
+    }
+  };
+
+  const paint = function(p) {
+    if (mode === 'noop') { return; }
+    const values = {};
+    SLIDE_PROPS.forEach((prop) => {
+      if (mode === 'up') {
+        values[prop] = from[prop] * (1 - p);
+      } else {
+        values[prop] = from[prop] + (to[prop] - from[prop]) * p;
+      }
+    });
+    paintSlide(el, values);
+  };
+
+  const done = function() {
+    if (mode === 'noop') {
+      // animating toward the current state: nothing touched, complete still
+      // fires (jQuery ran and completed the animation).
+      if (complete) { complete(); }
+      return;
+    }
+    if (mode === 'up') {
+      savedDisplay.set(el, el.style.display);
+      el.style.display = 'none';
+    }
+    clearSlideInline(el, overflowInline);
+    if (complete) { complete(); }
+  };
+
+  enqueueFx(el, duration, null, prepare, paint, done);
+}
+
+function fxFade(direction, element, duration, complete) {
+  const el = toElement(element);
+
+  if (!el || !el.isConnected) {
+    enqueueFx(el, 0, null, null, function() {}, complete);
+    return;
+  }
+
+  let mode; // 'in' | 'out' | 'noop'
+  let from, to;
+
+  const prepare = function() {
+    const hidden = window.getComputedStyle(el).display === 'none';
+    if (direction === 'in') {
+      mode = hidden ? 'in' : 'noop';
+      if (mode === 'noop') { return true; }
+      if (mode === 'in') {
+        el.style.display = savedDisplay.get(el) || defaultDisplay(el.tagName);
+        const inlineOpacity = el.style.opacity;
+        from = 0;
+        to = inlineOpacity !== '' ? parseFloat(inlineOpacity) : 1;
+      }
+    } else {
+      mode = hidden ? 'noop' : 'out';
+      if (mode === 'noop') { return true; }
+      from = parseFloat(window.getComputedStyle(el).opacity);
+      if (isNaN(from)) { from = 1; }
+      to = 0;
+    }
+  };
+
+  const paint = function(p) {
+    if (mode === 'noop') { return; }
+    el.style.opacity = from + (to - from) * p;
+  };
+
+  const done = function() {
+    if (mode === 'noop') {
+      if (complete) { complete(); }
+      return;
+    }
+    if (mode === 'out') {
+      savedDisplay.set(el, el.style.display);
+      el.style.display = 'none';
+    }
+    el.style.opacity = '';
+    if (complete) { complete(); }
+  };
+
+  enqueueFx(el, duration, null, prepare, paint, done);
 }
 
 export { Move, Motion };

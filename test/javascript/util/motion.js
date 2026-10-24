@@ -17,18 +17,30 @@ describe('Motion util', function() {
     realCancel = window.cancelAnimationFrame;
     window.mFrames = [];
     window.mTs = 1000;
+    window.mFrameId = 0;
     window.requestAnimationFrame = function(fn) {
-      window.mFrames.push(fn);
-      return window.mFrames.length - 1;
+      // token ids + real removal: a cancelled frame must not linger in the
+      // queue and swallow later ticks (the fx stop/finish tests depend on
+      // cancels actually cancelling).
+      var entry = {id: ++window.mFrameId, fn: fn};
+      window.mFrames.push(entry);
+      return entry.id;
     };
-    window.cancelAnimationFrame = function() {};
+    window.cancelAnimationFrame = function(id) {
+      for (var i = 0; i < window.mFrames.length; i++) {
+        if (window.mFrames[i].id === id) {
+          window.mFrames.splice(i, 1);
+          return;
+        }
+      }
+    };
   }
 
   function tick() {
-    var fn = window.mFrames.shift();
-    if (!fn) { return false; }
+    var entry = window.mFrames.shift();
+    if (!entry) { return false; }
     window.mTs += 50;
-    fn(window.mTs);
+    entry.fn(window.mTs);
     return true;
   }
 
@@ -290,6 +302,219 @@ describe('Motion util', function() {
       fnRuns.should.equal(6);
       finished.should.equal(1);
       fnThis.should.equal(el);
+    });
+  });
+
+  describe('fx primitives (fx 方案 A: jQuery fx parity)', function() {
+    var el;
+
+    beforeEach(function() {
+      el = document.body.appendChild(document.createElement('div'));
+      el.textContent = 'TEXT';
+      el.style.padding = '10px';
+      el.style.margin = '4px';
+    });
+    afterEach(function() {
+      el.remove();
+      el = null;
+    });
+
+    it('slideUp(0) completes synchronously leaving only display:none inline', function() {
+      var called = 0;
+      Foundation.Motion.slideUp(el, 0, function() { called++; });
+
+      called.should.equal(1);
+      el.style.display.should.equal('none');
+      // the six tweened props are cleaned back to no inline residue
+      el.style.height.should.equal('');
+      el.style.paddingTop.should.equal('');
+      el.style.paddingBottom.should.equal('');
+      el.style.marginTop.should.equal('');
+      el.style.marginBottom.should.equal('');
+      el.style.opacity.should.equal('');
+      el.style.overflow.should.equal('');
+    });
+
+    it('slideDown(0) shows a hidden element synchronously and clears the inline props', function() {
+      el.style.display = 'none';
+      var called = 0;
+      Foundation.Motion.slideDown(el, 0, function() { called++; });
+
+      called.should.equal(1);
+      // a div's default display (the getDefaultDisplay fallback)
+      el.style.display.should.equal('block');
+      el.style.height.should.equal('');
+      el.style.opacity.should.equal('');
+    });
+
+    it('restores a saved inline display across the hide/show cycle', function() {
+      el.style.display = 'flex';
+      Foundation.Motion.slideUp(el, 0);
+      el.style.display.should.equal('none');
+
+      Foundation.Motion.slideDown(el, 0);
+      el.style.display.should.equal('flex');
+    });
+
+    it('slides through the frames with overflow hidden and completes on the last one', function() {
+      var heights = [];
+      Foundation.Motion.slideUp(el, 100, function() {
+        el.style.display.should.equal('none');
+      });
+      el.style.overflow.should.equal('hidden');
+
+      tick(); // origin frame: progress 0
+      heights.push(el.offsetHeight);
+      tick(); // progress 0.5
+      heights.push(el.offsetHeight);
+      heights[1].should.be.below(heights[0]);
+      tick(); // progress 1: completion
+
+      el.style.display.should.equal('none');
+      el.style.overflow.should.equal('');
+    });
+
+    it('serializes two animations on one element, completing them in order', function() {
+      var order = [];
+      Foundation.Motion.slideUp(el, 100, function() { order.push('up'); });
+      Foundation.Motion.slideDown(el, 100, function() { order.push('down'); });
+
+      // the second animation only starts once the first completed
+      drain();
+      order.should.deep.equal(['up', 'down']);
+      el.style.display.should.equal('block');
+    });
+
+    it('finish() jumps the running and queued animations to their ends', function() {
+      var order = [];
+      Foundation.Motion.slideUp(el, 100, function() { order.push('up'); });
+      Foundation.Motion.slideDown(el, 100, function() { order.push('down'); });
+
+      Foundation.Motion.finish(el);
+
+      order.should.deep.equal(['up', 'down']);
+      el.style.display.should.equal('block');
+      el.style.height.should.equal('');
+    });
+
+    it('stop(el, clearQueue) drops the pending animation without its complete', function() {
+      var order = [];
+      Foundation.Motion.slideUp(el, 100, function() { order.push('up'); });
+      Foundation.Motion.slideDown(el, 100, function() { order.push('down'); });
+
+      Foundation.Motion.stop(el, true, false); // .stop(true) shape
+      drain();
+
+      // .stop(true) clears the queue and halts the running animation where
+      // it stands - neither complete fires
+      order.should.deep.equal([]);
+    });
+
+    it('stop(el, false, true) jumps the running animation to its end and completes it', function() {
+      var order = [];
+      Foundation.Motion.slideUp(el, 100, function() { order.push('up'); });
+      tick();
+
+      Foundation.Motion.stop(el, false, true); // .stop(false, true) shape
+
+      order.should.deep.equal(['up']);
+      el.style.display.should.equal('none');
+    });
+
+    it('completes without touching anything when animating toward the current state', function() {
+      var called = 0;
+      el.style.display = 'flex';
+      Foundation.Motion.slideDown(el, 50, function() { called++; });
+
+      called.should.equal(1);
+      el.style.display.should.equal('flex');
+      el.style.height.should.equal('');
+    });
+
+    it('fadeOut(0) hides and clears the opacity; fadeIn(0) brings it back visible', function() {
+      var called = 0;
+      Foundation.Motion.fadeOut(el, 0, function() { called++; });
+
+      called.should.equal(1);
+      el.style.display.should.equal('none');
+      el.style.opacity.should.equal('');
+
+      var shown = 0;
+      Foundation.Motion.fadeIn(el, 0, function() { shown++; });
+
+      shown.should.equal(1);
+      el.style.display.should.equal('block');
+      el.style.opacity.should.equal('');
+    });
+
+    it('fadeOut on a hidden element completes instantly without breaking the queue', function() {
+      var order = [];
+      el.style.display = 'none';
+      Foundation.Motion.fadeOut(el, 100, function() { order.push('out'); });
+      Foundation.Motion.fadeIn(el, 0, function() { order.push('in'); });
+
+      order.should.deep.equal(['out', 'in']);
+      el.style.display.should.equal('block');
+    });
+
+    it('animates scrollTop on a scrollable element and fires the callback once', function() {
+      var scroller = document.body.appendChild(document.createElement('div'));
+      try {
+        scroller.style.height = '50px';
+        scroller.style.overflow = 'auto';
+        var inner = document.createElement('div');
+        inner.style.height = '500px';
+        scroller.appendChild(inner);
+
+        var called = 0;
+        Foundation.Motion.animate(scroller, {scrollTop: 200}, 0, null, function() { called++; });
+
+        called.should.equal(1);
+        scroller.scrollTop.should.equal(200);
+      } finally {
+        scroller.remove();
+      }
+    });
+
+    it('animates scrollTop on the scroll root through the page viewport', function() {
+      var spacer = document.body.appendChild(document.createElement('div'));
+      try {
+        spacer.style.height = '5000px';
+        var called = 0;
+        Foundation.Motion.animate(document.documentElement, {scrollTop: 1200}, 0, null, function() { called++; });
+
+        called.should.equal(1);
+        window.pageYOffset.should.equal(1200);
+        // restore the runner viewport position
+        window.scrollTo(0, 0);
+      } finally {
+        spacer.remove();
+      }
+    });
+
+    it('resolves linear to the identity easing and unknown names to swing', function() {
+      // at progress 0.25 (duration 200, second 50ms frame): linear paints
+      // from + 0.25 * delta; swing paints from + delta * swing(0.25) where
+      // swing(p) = 0.5 - cos(p*PI)/2. The swing run's from is 0 (setting
+      // the marginTop longhand expanded the margin shorthand, clearing it
+      // left the UA margin - the CSSOM behavior jQuery read too).
+      var linearMid, swingMid;
+      Foundation.Motion.animate(el, {marginTop: 104}, 200, 'linear');
+      tick(); // origin frame (progress 0)
+      tick(); // progress 0.25
+      linearMid = parseFloat(el.style.marginTop);
+      Foundation.Motion.stop(el, false, true);
+      el.style.marginTop = '';
+
+      Foundation.Motion.animate(el, {marginTop: 104}, 200, 'definitely-not-a-name');
+      tick();
+      tick();
+      swingMid = parseFloat(el.style.marginTop);
+      Foundation.Motion.stop(el, false, true);
+      el.style.marginTop = '';
+
+      linearMid.should.equal(29);
+      swingMid.should.be.approximately(104 * (0.5 - Math.cos(0.25 * Math.PI) / 2), 1e-4);
     });
   });
 });

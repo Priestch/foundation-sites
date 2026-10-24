@@ -6,6 +6,7 @@ import { MediaQuery } from './foundation.util.mediaQuery';
 import { Touch } from './foundation.util.touch';
 import { Triggers } from './foundation.util.triggers';
 import { Positionable } from './foundation.positionable';
+import { Motion } from './foundation.util.motion';
 
 /**
  * Tooltip module.
@@ -168,10 +169,14 @@ class Tooltip extends Positionable {
     this.template[0].setAttribute('data-is-active', 'true');
     this.template[0].setAttribute('aria-hidden', 'false');
     _this.isActive = true;
-    // Seam (S8): the fade-in tween stays on jQuery fx - same wrap-up design
-    // decision as the Accordion height tween (native opacity transition vs.
-    // dropping the tween).
-    this.template.stop().hide().css('visibility', '').fadeIn(this.options.fadeInDuration, function() {
+    // fx 方案 A: the fade tween runs on Motion's native primitive (the
+    // stop-in-place, the hide reset and the visibility clear keep the 6.x
+    // ordering).
+    const templateEl = this.template[0];
+    Motion.stop(templateEl);
+    templateEl.style.display = 'none';
+    templateEl.style.visibility = '';
+    Motion.fadeIn(templateEl, this.options.fadeInDuration, function() {
       //maybe do stuff?
     });
     /**
@@ -188,10 +193,11 @@ class Tooltip extends Positionable {
    */
   hide() {
     var _this = this;
-    // State/ARIA native + fx seam, see show().
+    // State/ARIA native; fx 方案 A, see show().
     this.template[0].setAttribute('aria-hidden', 'true');
     this.template[0].setAttribute('data-is-active', 'false');
-    this.template.stop().fadeOut(this.options.fadeOutDuration, function() {
+    Motion.stop(this.template[0]);
+    Motion.fadeOut(this.template[0], this.options.fadeOutDuration, function() {
       _this.isActive = false;
       _this.isClick = false;
     });

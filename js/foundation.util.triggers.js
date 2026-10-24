@@ -88,7 +88,11 @@ Triggers.Listeners.Basic  = {
         $(this).trigger('closed.zf');
       });
     }else{
-      $(this).fadeOut().trigger('closed.zf');
+      // fx 方案 A: the plain fadeOut on the native primitive (jQuery's fx
+      // default duration, 400ms). The closed.zf production keeps its jQuery
+      // transport (the S4 dual-transport seam owns it).
+      Motion.fadeOut(this, 400);
+      $(this).trigger('closed.zf');
     }
   },
   toggleFocusListener: function() {

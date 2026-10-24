@@ -5,6 +5,7 @@ import { GetYoDigits, transitionend } from './foundation.core.utils';
 import { datasetOptions } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { Box } from './foundation.util.box';
+import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
 
 /**
@@ -209,14 +210,18 @@ class Drilldown extends Plugin {
     var _this = this;
     var $scrollTopElement = _this.options.scrollTopElement !== ''?$(_this.options.scrollTopElement):_this.$element,
         scrollPos = parseInt($scrollTopElement.offset().top+_this.options.scrollTopOffset, 10);
-    // Seam (S9): the scroll tween stays on jQuery fx - the stop(true)
-    // debounce semantics ride along (Accordion deepLinkSmudge precedent).
-    $('html, body').stop(true).animate({ scrollTop: scrollPos }, _this.options.animationDuration, _this.options.animationEasing,function(){
+    // fx 方案 A: the scroll tween runs on Motion's native primitive with
+    // the stop(true) debounce (clearQueue) semantics riding along. 6.x
+    // animated html AND body (two callbacks) and fired scrollme only on the
+    // html one; the native single viewport tween delivers the callback once,
+    // so the guard collapses to an unconditional trigger (ledger ②).
+    Motion.stop(document.documentElement, true);
+    Motion.animate(document.documentElement, { scrollTop: scrollPos }, _this.options.animationDuration, _this.options.animationEasing, function(){
       /**
         * Fires after the menu has scrolled
         * @event Drilldown#scrollme
         */
-      if(this===$('html')[0])Events.trigger(_this.$element[0], 'scrollme.zf.drilldown');
+      Events.trigger(_this.$element[0], 'scrollme.zf.drilldown');
     });
   }
 
