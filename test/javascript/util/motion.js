@@ -53,15 +53,14 @@ describe('Motion util', function() {
 
   describe('class lifecycle (motion-ui parity)', function() {
     it('runs the motion-ui class sequence for animateIn', function() {
-      var $el = $('<div></div>').appendTo('body');
-      var el = $el[0];
+      var el = document.body.appendChild(fixture('<div></div>'));
       var cb = sinon.spy(function() {
         // S15: the callback is applied with the animation target element
         // (the jQuery convention died with Motion's jQuery import)
         this.should.be.equal(el);
       });
 
-      Foundation.Motion.animateIn($el, 'fade-in', cb);
+      Foundation.Motion.animateIn(el, 'fade-in', cb);
 
       // setup: animation class on, transitions off, transition duration zeroed
       classesOf(el).should.deep.equal(['fade-in']);
@@ -95,48 +94,47 @@ describe('Motion util', function() {
       el.dispatchEvent(new Event('transitionend', { bubbles: true }));
       sinon.assert.calledOnce(cb);
 
-      $el.remove();
+      el.remove();
     });
 
     it('completes on the prefixed webkitTransitionEnd too', function() {
-      var $el = $('<div></div>').appendTo('body');
+      var el = document.body.appendChild(fixture('<div></div>'));
       var cb = sinon.spy();
 
-      Foundation.Motion.animateIn($el, 'fade-in', cb);
+      Foundation.Motion.animateIn(el, 'fade-in', cb);
       drain();
 
       // headless Chrome resolves the transitionend() probe to the prefixed
       // name (util/triggers.js pins that), so both spellings must complete
-      $el[0].dispatchEvent(new Event('webkitTransitionEnd', { bubbles: true }));
+      el.dispatchEvent(new Event('webkitTransitionEnd', { bubbles: true }));
       sinon.assert.calledOnce(cb);
-      classesOf($el[0]).should.deep.equal([]);
+      classesOf(el).should.deep.equal([]);
 
-      $el.remove();
+      el.remove();
     });
 
     it('completes at most once when both end events fire', function() {
-      var $el = $('<div></div>').appendTo('body');
+      var el = document.body.appendChild(fixture('<div></div>'));
       var cb = sinon.spy();
 
-      Foundation.Motion.animateIn($el, 'fade-in', cb);
+      Foundation.Motion.animateIn(el, 'fade-in', cb);
       drain();
 
-      $el[0].dispatchEvent(new Event('transitionend', { bubbles: true }));
-      $el[0].dispatchEvent(new Event('webkitTransitionEnd', { bubbles: true }));
+      el.dispatchEvent(new Event('transitionend', { bubbles: true }));
+      el.dispatchEvent(new Event('webkitTransitionEnd', { bubbles: true }));
 
       sinon.assert.calledOnce(cb);
 
-      $el.remove();
+      el.remove();
     });
 
     it('runs the motion-ui class sequence for animateOut and hides on finish', function() {
-      var $el = $('<div></div>').appendTo('body');
-      var el = $el[0];
+      var el = document.body.appendChild(fixture('<div></div>'));
       var cb = sinon.spy(function() {
         this.should.be.equal(el);
       });
 
-      Foundation.Motion.animateOut($el, 'fade-out', cb);
+      Foundation.Motion.animateOut(el, 'fade-out', cb);
 
       classesOf(el).should.deep.equal(['fade-out']);
       tick();
@@ -151,14 +149,13 @@ describe('Motion util', function() {
       el.style.display.should.equal('none');
       sinon.assert.calledOnce(cb);
 
-      $el.remove();
+      el.remove();
     });
 
     it('shows an inline-hidden element for in animations', function() {
-      var $el = $('<div style="display: none;"></div>').appendTo('body');
-      var el = $el[0];
+      var el = document.body.appendChild(fixture('<div style="display: none;"></div>'));
 
-      Foundation.Motion.animateIn($el, 'fade-in', function() {});
+      Foundation.Motion.animateIn(el, 'fade-in', function() {});
       tick();
 
       el.style.display.should.equal('');
@@ -166,30 +163,29 @@ describe('Motion util', function() {
       // finish cleanly so the armed listener does not leak
       drain();
       el.dispatchEvent(new Event('transitionend', { bubbles: true }));
-      $el.remove();
+      el.remove();
     });
 
     it('resets only its own classes', function() {
       // multi-class coexistence edge: a foreign mui token on the element is
       // not ours to remove - same as motion-ui/v6, whose reset drops exactly
       // the init, active and animation classes it applied
-      var $el = $('<div class="mui-enter is-open"></div>').appendTo('body');
-      var el = $el[0];
+      var el = document.body.appendChild(fixture('<div class="mui-enter is-open"></div>'));
 
-      Foundation.Motion.animateOut($el, 'fade-out', function() {});
+      Foundation.Motion.animateOut(el, 'fade-out', function() {});
       drain();
       el.dispatchEvent(new Event('transitionend', { bubbles: true }));
 
       classesOf(el).sort().should.deep.equal(['is-open', 'mui-enter']);
 
-      $el.remove();
+      el.remove();
     });
 
     it('ignores empty collections', function() {
       var cb = sinon.spy();
 
-      Foundation.Motion.animateIn($(), 'fade-in', cb);
-      Foundation.Motion.animateOut($(), 'fade-out', cb);
+      Foundation.Motion.animateIn([], "fade-in", cb);
+      Foundation.Motion.animateOut([], "fade-out", cb);
 
       drain();
       sinon.assert.notCalled(cb);
@@ -197,17 +193,16 @@ describe('Motion util', function() {
   });
 
   describe('Move()', function() {
-    var $wrap, el, $el, wrapEl;
+    var wrap, el, el, wrapEl;
 
     beforeEach(function() {
-      $wrap = $('<div id="move-wrap"><div id="move-el"></div></div>').appendTo('body');
+      wrap = document.body.appendChild(fixture('<div id="move-wrap"><div id="move-el"></div></div>'));
       el = document.getElementById('move-el');
-      $el = $(el);
-      wrapEl = $wrap[0];
+      wrapEl = wrap;
     });
 
     afterEach(function() {
-      $wrap.remove();
+      wrap.remove();
     });
 
     // The slider chain: Move() runs on the handle, the container listens
@@ -219,21 +214,21 @@ describe('Motion util', function() {
       var moved = 0;
       var seen = [];
 
-      $wrap.one('finished.zf.animate', function(e, $param) {
+      jQuery(wrap).one('finished.zf.animate', function(e, param) {
         moved++;
         seen.push({
           type: e.type,
           hasOriginalEvent: !!(e.originalEvent),
           detail: e.originalEvent && e.originalEvent.detail,
-          paramUndefined: $param === undefined
+          paramUndefined: param === undefined
         });
         // the exact downstream shape of slider: re-fire from the container
-        $wrap.trigger('moved.zf.slider-marker');
+        FoundationNext.Events.trigger(wrap, 'moved.zf.slider-marker');
       });
 
-      $wrap.one('moved.zf.slider-marker', function() { moved++; });
+      FoundationNext.Events.one(wrap, 'moved.zf.slider-marker', function() { moved++; });
 
-      Foundation.Move(0, $el, function() {});
+      Foundation.Move(0, el, function() {});
 
       moved.should.equal(2);
       seen[0].type.should.equal('finished');
@@ -251,12 +246,12 @@ describe('Motion util', function() {
     it('delivers the event once per listener while bubbling', function() {
       var counts = { jqOnEl: 0, jqOnParent: 0, nativeEl: 0, nativeParent: 0 };
 
-      $el.on('finished.zf.animate', function() { counts.jqOnEl++; });
-      $wrap.on('finished.zf.animate', function() { counts.jqOnParent++; });
+      FoundationNext.Events.on(el, 'finished.zf.animate', function() { counts.jqOnEl++; });
+      FoundationNext.Events.on(wrap, 'finished.zf.animate', function() { counts.jqOnParent++; });
       el.addEventListener('finished', function() { counts.nativeEl++; });
       wrapEl.addEventListener('finished', function() { counts.nativeParent++; });
 
-      Foundation.Move(0, $el, function() {});
+      Foundation.Move(0, el, function() {});
 
       counts.should.deep.equal({ jqOnEl: 1, jqOnParent: 1, nativeEl: 1, nativeParent: 1 });
     });
@@ -266,13 +261,13 @@ describe('Motion util', function() {
 
       // round 1: the container registers .one AFTER Move returned - the
       // synchronous event is gone, exactly like v6
-      Foundation.Move(0, $el, function() { order.push('fn1'); });
-      $wrap.one('finished.zf.animate', function() { order.push('one-round1'); });
+      Foundation.Move(0, el, function() { order.push('fn1'); });
+      FoundationNext.Events.one(wrap, 'finished.zf.animate', function() { order.push('one-round1'); });
 
       order.should.deep.equal(['fn1']);
 
       // round 2: round 1's pending .one catches this event once
-      Foundation.Move(0, $el, function() { order.push('fn2'); });
+      Foundation.Move(0, el, function() { order.push('fn2'); });
 
       order.should.deep.equal(['fn1', 'fn2', 'one-round1']);
     });
@@ -282,9 +277,9 @@ describe('Motion util', function() {
       var fnRuns = 0;
       var finished = 0;
 
-      $wrap.on('finished.zf.animate', function() { finished++; });
+      FoundationNext.Events.on(wrap, 'finished.zf.animate', function() { finished++; });
 
-      Foundation.Move(250, $el, function() {
+      Foundation.Move(250, el, function() {
         fnRuns++;
         if (!fnThis) { fnThis = this; }
       });
@@ -294,7 +289,7 @@ describe('Motion util', function() {
 
       fnRuns.should.equal(6);
       finished.should.equal(1);
-      fnThis.should.equal($el);
+      fnThis.should.equal(el);
     });
   });
 });

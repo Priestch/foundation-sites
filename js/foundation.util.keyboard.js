@@ -52,7 +52,7 @@ function findFocusable($element) {
   // Mixed state: the outside shape stays a jQuery collection (callers use
   // `.eq()`, `[0]`, `.length`, `.focus()`), the scan and the sort run on
   // plain arrays.
-  const roots = Array.from($element.length !== undefined ? $element : [$element]);
+  const roots = Array.from($element.nodeType === 1 ? [$element] : $element);
 
   const candidates = [];
   roots.forEach(root => {
@@ -199,6 +199,8 @@ var Keyboard = {
    * @param  {jQuery} $element  jQuery object to trap the foucs into.
    */
   trapFocus($element) {
+    // Mixed state (S16 suites): the fixtures hand in the native element.
+    $element = $element.nodeType === 1 ? $($element) : $element;
     var $focusable = findFocusable($element),
         $firstFocusable = $focusable.eq(0),
         $lastFocusable = $focusable.eq(-1);
@@ -219,7 +221,8 @@ var Keyboard = {
    * @param  {jQuery} $element  jQuery object to release the focus for.
    */
   releaseFocus($element) {
-    Events.off($element[0], 'keydown.zf.trapfocus');
+    $element = $element.nodeType === 1 ? $($element) : $element;
+    Events.off($element[0], "keydown.zf.trapfocus");
   }
 }
 

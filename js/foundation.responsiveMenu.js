@@ -49,7 +49,8 @@ class ResponsiveMenu extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element) {
-    this.$element = $(element);
+    // Mixed state (7.0 line A, S16): dual-form constructor input.
+    this.$element = element.nodeType === 1 ? $(element) : element;
     this.rules = this.$element.data('responsive-menu');
     this.currentMq = null;
     this.currentPlugin = null;

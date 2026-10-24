@@ -4,12 +4,12 @@
 // along with the tooltip/dropdown positioning regression (position classes
 // and inline offsets must not move).
 describe('Foundation box', function () {
-  var $html;
+  var html;
   var plugin;
 
   afterEach(function () {
-    if ($html) {
-      $html.remove();
+    if (html) {
+      html.remove();
     }
     if (plugin && plugin.$element) {
       plugin.destroy();
@@ -20,7 +20,7 @@ describe('Foundation box', function () {
   describe('GetDimensions()', function () {
     it('should be unable to get dimensions for window', function(done) {
       try {
-        Foundation.Box.GetDimensions($("window"));
+        Foundation.Box.GetDimensions(document.querySelector("window"));
 
         should.fail();
       } catch (err) {
@@ -30,7 +30,7 @@ describe('Foundation box', function () {
 
     it('should be unable to get dimensions for document', function(done) {
       try {
-        Foundation.Box.GetDimensions($("document"));
+        Foundation.Box.GetDimensions(document.querySelector("document"));
 
         should.fail();
       } catch (err) {
@@ -39,18 +39,18 @@ describe('Foundation box', function () {
     });
 
     it('height and width of element', function () {
-      $html = $('<div id="rect-test" style="height: 100px;width:200px;"></div>').appendTo('body');
+      html = document.body.appendChild(fixture('<div id="rect-test" style="height: 100px;width:200px;"></div>'));
 
-      var dims = Foundation.Box.GetDimensions($("#rect-test"));
+      var dims = Foundation.Box.GetDimensions(document.querySelector("#rect-test"));
 
       dims.width.should.equal(200);
       dims.height.should.equal(100);
     });
 
     it('parent height of element', function () {
-      $html = $('<div style="height: 200px;"><div id="rect-test-parent" style="height: 100px;width:200px;"></div></div>').appendTo('body');
+      html = document.body.appendChild(fixture('<div style="height: 200px;"><div id="rect-test-parent" style="height: 100px;width:200px;"></div></div>'));
 
-      var dims = Foundation.Box.GetDimensions($("#rect-test-parent"));
+      var dims = Foundation.Box.GetDimensions(document.querySelector("#rect-test-parent"));
 
       dims.width.should.equal(200);
       dims.height.should.equal(100);
@@ -59,9 +59,9 @@ describe('Foundation box', function () {
     });
 
     it('reads the same dimensions from a plain element as from the jQuery collection (S13 input form)', function () {
-      $html = $('<div id="rect-test-both" style="height: 100px;width:200px;"></div>').appendTo('body');
+      html = document.body.appendChild(fixture('<div id="rect-test-both" style="height: 100px;width:200px;"></div>'));
 
-      var fromCollection = Foundation.Box.GetDimensions($("#rect-test-both"));
+      var fromCollection = Foundation.Box.GetDimensions(document.querySelector("#rect-test-both"));
       var fromElement = Foundation.Box.GetDimensions(document.getElementById('rect-test-both'));
 
       fromElement.width.should.equal(fromCollection.width);
@@ -75,7 +75,7 @@ describe('Foundation box', function () {
     it('detects collisions against the window for a plain element', function () {
       // position: fixed pins the rect to the viewport, so the window-based
       // check is independent of the runner page's body size
-      $html = $('<div id="box-inside" style="position: fixed; top: 10px; left: 10px; width: 50px; height: 50px;"></div>').appendTo('body');
+      html = document.body.appendChild(fixture('<div id="box-inside" style="position: fixed; top: 10px; left: 10px; width: 50px; height: 50px;"></div>'));
       var el = document.getElementById('box-inside');
 
       Foundation.Box.ImNotTouchingYou(el, null, true).should.be.true;
@@ -87,7 +87,7 @@ describe('Foundation box', function () {
     });
 
     it('detects collisions against a parent element passed as a plain node', function () {
-      $html = $('<div id="box-parent" style="position: relative; width: 100px; height: 100px; overflow: visible;"><div id="box-child" style="position: absolute; top: 0; left: 0; width: 50px; height: 50px;"></div></div>').appendTo('body');
+      html = document.body.appendChild(fixture('<div id="box-parent" style="position: relative; width: 100px; height: 100px; overflow: visible;"><div id="box-child" style="position: absolute; top: 0; left: 0; width: 50px; height: 50px;"></div></div>'));
       var parent = document.getElementById('box-parent');
       var child = document.getElementById('box-child');
 
@@ -105,8 +105,9 @@ describe('Foundation box', function () {
 
   describe('GetExplicitOffsets (native inputs, S13)', function () {
     it('computes bottom/center offsets for plain elements', function () {
-      $html = $('<div id="box-anchor" style="position: absolute; top: 100px; left: 100px; width: 40px; height: 40px;"></div>' +
-        '<div id="box-pane" style="position: absolute; width: 30px; height: 30px;"></div>').appendTo('body');
+
+      html = document.body.appendChild(fixture("<div><div id='box-anchor' style='position: absolute; top: 100px; left: 100px; width: 40px; height: 40px;'></div><div id='box-pane' style='position: absolute; width: 30px; height: 30px;'></div></div>"));
+
       var anchor = document.getElementById('box-anchor');
       var pane = document.getElementById('box-pane');
 
@@ -121,22 +122,23 @@ describe('Foundation box', function () {
 
   describe('positioning regression (tooltip/dropdown, S13 param flip)', function () {
     it('keeps the dropdown position classes and inline offsets intact', function () {
-      $html = $('<button type="button" data-toggle="box-dd">toggle</button>' +
-        '<div class="dropdown-pane" data-dropdown id="box-dd">Pane</div>').appendTo('body');
-      plugin = new Foundation.Dropdown($('#box-dd'), {});
+
+      html = document.body.appendChild(fixture("<div><button type='button' data-toggle='box-dd'>toggle</button><div class='dropdown-pane' data-dropdown id='box-dd'>Pane</div></div>"));
+
+      plugin = new Foundation.Dropdown(document.querySelector('#box-dd'), {});
       plugin.open();
 
       var pane = document.getElementById('box-dd');
       pane.classList.contains('has-position-bottom').should.be.true;
       pane.classList.contains('has-alignment-left').should.be.true;
       // the position landed as an inline offset (the write stays on
-      // $element.offset(), reading back through the style)
+      // element.offset(), reading back through the style)
       pane.style.top.should.not.equal('');
     });
 
     it('keeps the tooltip position classes and inline offsets intact', function () {
-      $html = $('<span id="box-tip-anchor" class="has-tip" data-tooltip aria-describedby="box-tip" data-is-focus>anchor</span>').appendTo('body');
-      plugin = new Foundation.Tooltip($('#box-tip-anchor'), {});
+      html = document.body.appendChild(fixture('<span id="box-tip-anchor" class="has-tip" data-tooltip aria-describedby="box-tip" data-is-focus>anchor</span>'));
+      plugin = new Foundation.Tooltip(document.querySelector('#box-tip-anchor'), {});
       plugin.show();
 
       var template = plugin.template[0];

@@ -23,8 +23,12 @@ class AccordionMenu extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, AccordionMenu.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, AccordionMenu.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'AccordionMenu'; // ie9 back compat
 
     this._init();
@@ -223,6 +227,8 @@ class AccordionMenu extends Plugin {
    * @param {jQuery} $target - the submenu to toggle
    */
   toggle($target) {
+    // Mixed state (S16 suites): accept the native element the fixtures carry.
+    $target = $target.nodeType === 1 ? $($target) : $target;
     if (!$target.is(':animated')) {
       if (!$target.is(':hidden')) {
         this.up($target);
@@ -239,6 +245,7 @@ class AccordionMenu extends Plugin {
    * @fires AccordionMenu#down
    */
   down($target) {
+    $target = $target.nodeType === 1 ? $($target) : $target;
     // If having multiple submenus active is disabled, close all the submenus
     // that are not parents or children of the targeted submenu.
     if (!this.options.multiOpen) {
@@ -295,6 +302,7 @@ class AccordionMenu extends Plugin {
    * @fires AccordionMenu#up
    */
   up($target) {
+    $target = $target.nodeType === 1 ? $($target) : $target;
     const $submenus = $target.find('[data-submenu]');
     const $allmenus = $target.add($submenus);
 

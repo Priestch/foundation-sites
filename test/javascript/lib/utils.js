@@ -68,9 +68,12 @@
   * Native fixture builder (S15): parses an HTML string into a DETACHED
   * element, like `$(html)[0]` did for single-root fixtures. Suites append
   * it to `document.body` themselves and remove it in `afterEach`.
+  * S16: multi-root markup (the former `$('<a/><b/>')` appends-all shape) is
+  * wrapped in an anonymous container div and the CONTAINER is returned, so
+  * every root ends up attached exactly like the jQuery form.
   *
-  * @param  {string} html - the fixture markup (single root element).
-  * @returns {HTMLElement} the detached root element.
+  * @param  {string} html - the fixture markup.
+  * @returns {HTMLElement} the detached root element (or container).
   */
   global.fixture = function (html) {
     var template = document.createElement('template');
@@ -78,6 +81,11 @@
     var root = template.content.firstElementChild;
     if (!root) {
       throw new Error('fixture() requires a single root element, got: ' + html);
+    }
+    if (template.content.children.length > 1) {
+      var container = document.createElement('div');
+      container.appendChild(template.content);
+      return container;
     }
     return root;
   };

@@ -21,8 +21,12 @@ class Accordion extends Plugin {
    * @param {Object} options - a plain object with settings to override the default options.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Accordion.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, Accordion.defaults, datasetOptions(this.$element[0]), options);
 
     this.className = 'Accordion'; // ie9 back compat
     this._init();
@@ -215,6 +219,8 @@ class Accordion extends Plugin {
    * @function
    */
   toggle($target) {
+    // Mixed state (S16 suites): accept the native element the fixtures carry.
+    $target = $target.nodeType === 1 ? $($target) : $target;
     if ($target.closest('[data-accordion]').is('[disabled]')) {
       console.info('Cannot toggle an accordion that is disabled.');
       return;
@@ -243,6 +249,7 @@ class Accordion extends Plugin {
    * @function
    */
   down($target) {
+    $target = $target.nodeType === 1 ? $($target) : $target;
     if ($target.closest('[data-accordion]').is('[disabled]'))  {
       console.info('Cannot call down on an accordion that is disabled.');
       return;
@@ -263,6 +270,7 @@ class Accordion extends Plugin {
    * @function
    */
   up($target) {
+    $target = $target.nodeType === 1 ? $($target) : $target;
     if (this.$element.is('[disabled]')) {
       console.info('Cannot call up on an accordion that is disabled.');
       return;

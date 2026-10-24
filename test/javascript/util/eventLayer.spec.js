@@ -20,21 +20,21 @@
 
   function spec(backendName, makeBackend) {
     describe('Event layer semantics — ' + backendName + ' backend', function() {
-      var backend, $container, el;
+      var backend, container, el;
 
       beforeEach(function() {
         backend = makeBackend();
-        $container = $('<div id="diff-container"></div>').appendTo('body');
+        container = document.body.appendChild(fixture("<div id=\"diff-container\"></div>"));
         el = document.createElement('button');
-        $container[0].appendChild(el);
+        container.appendChild(el);
       });
 
       afterEach(function() {
         // off() on the suite's own fixture elements only — never on shared
         // roots like document.
         backend.off(el);
-        backend.off($container[0]);
-        $container.remove();
+        backend.off(container);
+        container.remove();
       });
 
       describe('off() — the four forms', function() {
@@ -133,7 +133,7 @@
         it('bubbles to the parent element', function() {
           var parentSpy = sinon.spy();
 
-          backend.on($container[0], 'open.zf.toggler', parentSpy);
+          backend.on(container, 'open.zf.toggler', parentSpy);
           backend.trigger(el, 'open.zf.toggler');
 
           sinon.assert.calledOnce(parentSpy);
@@ -173,7 +173,7 @@
 
         it('calls the same-named native method for trigger("focus")', function() {
           var input = document.createElement('input');
-          $container[0].appendChild(input);
+          container.appendChild(input);
           var focusSpy = sinon.spy(input, 'focus');
           var handler = sinon.spy();
 
@@ -201,7 +201,7 @@
         it('does not bubble', function() {
           var parentSpy = sinon.spy();
 
-          backend.on($container[0], 'toggle.zf.trigger', parentSpy);
+          backend.on(container, 'toggle.zf.trigger', parentSpy);
           backend.triggerHandler(el, 'toggle.zf.trigger');
 
           sinon.assert.notCalled(parentSpy);
@@ -224,7 +224,7 @@
           var delegated = sinon.spy();
           el.setAttribute('data-open', 'x');
 
-          backend.delegate($container[0], 'click.zf.trigger', '[data-open]', delegated);
+          backend.delegate(container, 'click.zf.trigger', '[data-open]', delegated);
           click(el);
 
           sinon.assert.calledOnce(delegated);
@@ -235,9 +235,9 @@
           var delegated = sinon.spy();
           var target = document.createElement('a');
           target.setAttribute('data-open', 'x');
-          $container[0].appendChild(target);
+          container.appendChild(target);
 
-          backend.delegate($container[0], 'click.zf.trigger', '[data-open]', delegated);
+          backend.delegate(container, 'click.zf.trigger', '[data-open]', delegated);
           click(target);
 
           sinon.assert.calledOnce(delegated);
@@ -250,9 +250,9 @@
           button.setAttribute('data-toggle', 'y');
           var span = document.createElement('span');
           button.appendChild(span);
-          $container[0].appendChild(button);
+          container.appendChild(button);
 
-          backend.delegate($container[0], 'click.zf.trigger', '[data-toggle]', delegated);
+          backend.delegate(container, 'click.zf.trigger', '[data-toggle]', delegated);
           click(span);
 
           sinon.assert.calledOnce(delegated);
@@ -343,7 +343,7 @@
         });
 
         it('is false when an ancestor is display:none', function() {
-          $container.css('display', 'none');
+          container.style.display = "none";
 
           backend.helpers.visible(el).should.be.false;
         });
@@ -351,13 +351,13 @@
 
       describe('q()', function() {
         it('finds the first match inside the context', function() {
-          $container.append('<span id="diff-q-a"></span><span id="diff-q-b"></span>');
+          container.insertAdjacentHTML('beforeend', '<span id="diff-q-a"></span><span id="diff-q-b"></span>');
 
-          backend.helpers.q('span', $container[0]).id.should.equal('diff-q-a');
+          backend.helpers.q('span', container).id.should.equal('diff-q-a');
         });
 
         it('returns null when nothing matches', function() {
-          chai.expect(backend.helpers.q('span', $container[0])).to.not.exist;
+          chai.expect(backend.helpers.q('span', container)).to.not.exist;
         });
       });
     });

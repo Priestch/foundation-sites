@@ -1,16 +1,16 @@
 describe('FoundationNext.Events', function() {
-  var $container, el;
+  var container, el;
 
   beforeEach(function() {
-    $container = $('<div id="events-test-container"></div>').appendTo('body');
+    container = document.body.appendChild(fixture('<div id="events-test-container"></div>'));
     el = document.createElement('button');
-    $container[0].appendChild(el);
+    container.appendChild(el);
   });
 
   afterEach(function() {
     FoundationNext.Events.off(el);
-    FoundationNext.Events.off($container[0]);
-    $container.remove();
+    FoundationNext.Events.off(container);
+    container.remove();
   });
 
   function click(el) {
@@ -148,7 +148,7 @@ describe('FoundationNext.Events', function() {
     it('bubbles to ancestors', function() {
       var parentSpy = sinon.spy();
 
-      FoundationNext.Events.on($container[0], 'open.zf.toggler', parentSpy);
+      FoundationNext.Events.on(container, 'open.zf.toggler', parentSpy);
       FoundationNext.Events.trigger(el, 'open.zf.toggler');
 
       sinon.assert.calledOnce(parentSpy);
@@ -203,7 +203,7 @@ describe('FoundationNext.Events', function() {
       FoundationNext.Events.on(el, 'open.zf.test', function(e) {
         e.stopPropagation();
       });
-      FoundationNext.Events.on($container[0], 'open.zf.test', parentSpy);
+      FoundationNext.Events.on(container, 'open.zf.test', parentSpy);
       FoundationNext.Events.trigger(el, 'open.zf.test');
 
       sinon.assert.notCalled(parentSpy);
@@ -211,7 +211,7 @@ describe('FoundationNext.Events', function() {
 
     it('calls the same-named native method, e.g. trigger("focus")', function() {
       var input = document.createElement('input');
-      $container[0].appendChild(input);
+      container.appendChild(input);
       var focusSpy = sinon.spy(input, 'focus');
       var handlerSpy = sinon.spy();
 
@@ -251,7 +251,7 @@ describe('FoundationNext.Events', function() {
     it('does not bubble', function() {
       var parentSpy = sinon.spy();
 
-      FoundationNext.Events.on($container[0], 'toggle.zf.trigger', parentSpy);
+      FoundationNext.Events.on(container, 'toggle.zf.trigger', parentSpy);
       FoundationNext.Events.triggerHandler(el, 'toggle.zf.trigger');
 
       sinon.assert.notCalled(parentSpy);
@@ -259,7 +259,7 @@ describe('FoundationNext.Events', function() {
 
     it('does not call the same-named native method', function() {
       var input = document.createElement('input');
-      $container[0].appendChild(input);
+      container.appendChild(input);
       var focusSpy = sinon.spy(input, 'focus');
 
       try {
@@ -285,7 +285,7 @@ describe('FoundationNext.Events', function() {
     var root, delegated;
 
     beforeEach(function() {
-      root = $container[0];
+      root = container;
       delegated = sinon.spy();
     });
 

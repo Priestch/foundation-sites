@@ -26,7 +26,7 @@ class Toggler extends Plugin {
   _setup(element, options) {
     // 7.0 line A, slice S15: the plugin works on the native element; the
     // jQuery collection the mixed-state reflow still feeds in is unwrapped.
-    this.$element = element.length !== undefined ? element[0] : element;
+    this.$element = element.nodeType === 1 ? element : element[0];
     this.options = Object.assign({}, Toggler.defaults, datasetOptions(this.$element), options);
     this.className = '';
     this.className = 'Toggler'; // ie9 back compat

@@ -7,7 +7,7 @@
 // pre-existing accordion.js suite is untouched on purpose and stays green.
 describe('Accordion (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   var template = (id) => `<ul class="accordion" data-accordion id="${id}">
   <li class="accordion-item" data-accordion-item>
@@ -29,7 +29,7 @@ describe('Accordion (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) { $html.remove(); $html = null; }
+    if (html) { html.remove(); html = null; }
     if (window.location.hash) {
       window.history.replaceState('', document.title, window.location.pathname + window.location.search);
     }
@@ -37,20 +37,20 @@ describe('Accordion (native layer contract)', function() {
   });
 
   function build(id, options) {
-    $html = $(template(id)).appendTo('body');
-    plugin = new Foundation.Accordion($html, options);
+    html = document.body.appendChild(fixture(template(id)));
+    plugin = new Foundation.Accordion(html, options);
     return plugin;
   }
 
   describe('state events', function() {
     it('fires down.zf.accordion through the native event layer with the forwarded pane in detail', function(done) {
       build('accN1', {});
-      var el = $html[0];
+      var el = html;
       var contents = el.querySelectorAll('.accordion-content');
       var downSpy = sinon.spy();
       FoundationNext.Events.on(el, 'down.zf.accordion', downSpy);
 
-      plugin.down($(contents[1]));
+      plugin.down(contents[1]);
 
       tryInterval({
         interval: 10,
@@ -59,7 +59,7 @@ describe('Accordion (native layer contract)', function() {
         then: () => {
           downSpy.firstCall.args[0].type.should.equal('down');
           downSpy.firstCall.args[0].namespace.should.equal('accordion.zf');
-          // the forwarded $target collection rides as the event parameter
+          // the forwarded target collection rides as the event parameter
           // (its final native-element form is the wrap-up slice's uniform move)
           downSpy.firstCall.args[1][0].should.equal(contents[1]);
           done();
@@ -69,15 +69,15 @@ describe('Accordion (native layer contract)', function() {
 
     it('fires up.zf.accordion through the native event layer once the fx tween finished', function(done) {
       build('accN2', {allowAllClosed: true});
-      var el = $html[0];
+      var el = html;
       var contents = el.querySelectorAll('.accordion-content');
       var upSpy = sinon.spy();
       FoundationNext.Events.on(el, 'up.zf.accordion', upSpy);
-      plugin.down($(contents[0]));
+      plugin.down(contents[0]);
 
       // fx seam: aria/class state flips synchronously, the up event waits
       // for the jQuery fx callback
-      plugin.up($(contents[0]));
+      plugin.up(contents[0]);
       contents[0].getAttribute('aria-hidden').should.equal('true');
       sinon.assert.notCalled(upSpy);
 
@@ -95,11 +95,11 @@ describe('Accordion (native layer contract)', function() {
 
     it('still reaches jQuery listeners with the real event (white absorption)', function(done) {
       build('accN3', {});
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var contents = html.querySelectorAll('.accordion-content');
       var spy = sinon.spy();
-      $html.on('down.zf.accordion', spy);
+      $(html).on('down.zf.accordion', spy);
 
-      plugin.down($(contents[0]));
+      plugin.down(contents[0]);
 
       tryInterval({
         interval: 10,
@@ -117,11 +117,11 @@ describe('Accordion (native layer contract)', function() {
   describe('state and ARIA', function() {
     it('flips is-active, aria-hidden and aria-expanded natively on down', function(done) {
       build('accN4', {});
-      var items = $html[0].querySelectorAll('[data-accordion-item]');
-      var contents = $html[0].querySelectorAll('.accordion-content');
-      var labels = $html[0].querySelectorAll('.accordion-title');
+      var items = html.querySelectorAll('[data-accordion-item]');
+      var contents = html.querySelectorAll('.accordion-content');
+      var labels = html.querySelectorAll('.accordion-title');
 
-      plugin.down($(contents[1]));
+      plugin.down(contents[1]);
 
       items[1].classList.contains('is-active').should.be.true;
       contents[1].getAttribute('aria-hidden').should.equal('false');
@@ -137,18 +137,20 @@ describe('Accordion (native layer contract)', function() {
 
     it('closes every active pane natively when allowAllClosed lets up() run on all of them', function(done) {
       build('accN5', {multiExpand: true, allowAllClosed: true});
-      var items = $html[0].querySelectorAll('[data-accordion-item]');
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var items = html.querySelectorAll('[data-accordion-item]');
+      var contents = html.querySelectorAll('.accordion-content');
 
-      plugin.down($(contents[0]));
-      plugin.down($(contents[1]));
-      plugin.down($(contents[2]));
+      plugin.down(contents[0]);
+      plugin.down(contents[1]);
+      plugin.down(contents[2]);
 
       var upCount = 0;
-      FoundationNext.Events.on($html[0], 'up.zf.accordion', function() {
+      FoundationNext.Events.on(html, 'up.zf.accordion', function() {
         upCount++;
       });
-      plugin.up($(contents));
+      // the multi-target form is a 6.x jQuery-collection capability; the fixtures
+      // themselves are native elements
+      plugin.up(window.jQuery(contents));
 
       items.forEach((item) => { item.classList.contains('is-active').should.be.false; });
       contents.forEach((content) => { content.getAttribute('aria-hidden').should.equal('true'); });
@@ -165,8 +167,8 @@ describe('Accordion (native layer contract)', function() {
   describe('keyboard', function() {
     it('opens the next panel from a real keydown (ARROW_DOWN) and moves focus', function(done) {
       build('accN6', {});
-      var titles = $html[0].querySelectorAll('.accordion-title');
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var titles = html.querySelectorAll('.accordion-title');
+      var contents = html.querySelectorAll('.accordion-content');
 
       titles[0].focus();
       titles[0].dispatchEvent(new KeyboardEvent('keydown', {which: 40, keyCode: 40, bubbles: true, cancelable: true}));
@@ -182,8 +184,8 @@ describe('Accordion (native layer contract)', function() {
 
     it('opens the previous panel from a real keydown (ARROW_UP)', function(done) {
       build('accN7', {});
-      var titles = $html[0].querySelectorAll('.accordion-title');
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var titles = html.querySelectorAll('.accordion-title');
+      var contents = html.querySelectorAll('.accordion-content');
 
       titles[2].focus();
       titles[2].dispatchEvent(new KeyboardEvent('keydown', {which: 38, keyCode: 38, bubbles: true, cancelable: true}));
@@ -199,8 +201,8 @@ describe('Accordion (native layer contract)', function() {
 
     it('toggles the related panel from a real keydown (ENTER)', function(done) {
       build('accN8', {});
-      var titles = $html[0].querySelectorAll('.accordion-title');
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var titles = html.querySelectorAll('.accordion-title');
+      var contents = html.querySelectorAll('.accordion-content');
 
       titles[1].focus();
       titles[1].dispatchEvent(new KeyboardEvent('keydown', {which: 13, keyCode: 13, bubbles: true, cancelable: true}));
@@ -215,10 +217,12 @@ describe('Accordion (native layer contract)', function() {
 
     it('keeps answering jQuery-synthesized mock keydowns (the keydown seam stays jQuery-side)', function(done) {
       build('accN9', {});
-      var titles = $html[0].querySelectorAll('.accordion-title');
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var titles = html.querySelectorAll('.accordion-title');
+      var contents = html.querySelectorAll('.accordion-content');
 
-      $html.find('.accordion-title').eq(0).focus().trigger(window.mockKeyboardEvent('ARROW_DOWN'));
+      html.querySelector('.accordion-title').focus();
+
+      html.querySelector('.accordion-title').dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
 
       document.activeElement.should.equal(titles[1]);
       tryInterval({
@@ -233,7 +237,7 @@ describe('Accordion (native layer contract)', function() {
   describe('deep link', function() {
     it('opens the pane for the hash through a real hashchange', function(done) {
       build('accN10', {deepLink: true});
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var contents = html.querySelectorAll('.accordion-content');
 
       window.history.replaceState('', document.title, '#accN10-c1');
       window.dispatchEvent(new Event('hashchange'));
@@ -247,7 +251,7 @@ describe('Accordion (native layer contract)', function() {
         then: () => {
           contents[1].getAttribute('aria-hidden').should.equal('false');
           var deeplinkSpy = sinon.spy();
-          FoundationNext.Events.on($html[0], 'deeplink.zf.accordion', deeplinkSpy);
+          FoundationNext.Events.on(html, 'deeplink.zf.accordion', deeplinkSpy);
 
           window.history.replaceState('', document.title, '#accN10-c2');
           window.dispatchEvent(new Event('hashchange'));
@@ -267,7 +271,7 @@ describe('Accordion (native layer contract)', function() {
 
     it('stops following the hash after destroy', function(done) {
       build('accN11', {deepLink: true});
-      var contents = $html[0].querySelectorAll('.accordion-content');
+      var contents = html.querySelectorAll('.accordion-content');
 
       setTimeout(function() {
         plugin.destroy();

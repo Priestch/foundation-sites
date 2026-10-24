@@ -5,8 +5,8 @@
 describe('Reveal (native layer contract)', function() {
 
   var plugin;
-  var $html;
-  var $scratch = []; // appended elements every test must leave behind
+  var html;
+  var scratch = []; // appended elements every test must leave behind
   var template = `<div class="reveal" id="revealNative1" data-reveal>
     Modal content
     <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -20,12 +20,12 @@ describe('Reveal (native layer contract)', function() {
       plugin.destroy();
     }
     plugin = null;
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
-    $scratch.forEach(function($el) { $el.remove(); });
-    $scratch = [];
+    scratch.forEach(function(el) { el.remove(); });
+    scratch = [];
     document.activeElement.blur();
     document.documentElement.style.top = '';
     document.documentElement.classList.remove('is-reveal-open');
@@ -38,9 +38,9 @@ describe('Reveal (native layer contract)', function() {
 
   describe('state events', function() {
     it('fires open.zf.reveal through the native event layer with the zf.reveal namespace and no extra parameters', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
-      var el = $html[0];
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
+      var el = html;
       var openSpy = sinon.spy();
       FoundationNext.Events.on(el, 'open.zf.reveal', openSpy);
 
@@ -50,19 +50,19 @@ describe('Reveal (native layer contract)', function() {
       openSpy.firstCall.args.length.should.equal(1);
       openSpy.firstCall.args[0].type.should.equal('open');
       openSpy.firstCall.args[0].namespace.should.equal('reveal.zf');
-      $html.should.be.visible;
+      FoundationNext.Dom.visible(html).should.be.true;
     });
 
     it('fires closed.zf.reveal once the modal finished hiding', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
-      var el = $html[0];
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
+      var el = html;
       plugin.open();
 
       FoundationNext.Events.on(el, 'closed.zf.reveal', function(event) {
         event.type.should.equal('closed');
         event.namespace.should.equal('reveal.zf');
-        $html.should.be.hidden;
+        FoundationNext.Dom.visible(html).should.be.false;
         done();
       });
 
@@ -70,10 +70,10 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('still reaches jQuery listeners on the element with the real event (white absorption)', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
       var spy = sinon.spy();
-      $html.on('open.zf.reveal', spy);
+      $(html).on('open.zf.reveal', spy);
 
       plugin.open();
 
@@ -85,30 +85,30 @@ describe('Reveal (native layer contract)', function() {
   });
 
   describe('overlay', function() {
-    it('creates the overlay natively and keeps the jQuery $overlay surface', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+    it('creates the overlay natively and keeps the jQuery overlay surface', function() {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
       plugin.$overlay.should.be.an('object');
-      plugin.$overlay.should.have.class('reveal-overlay');
+      plugin.$overlay[0].classList.contains('reveal-overlay').should.be.true;
       plugin.$overlay[0].tagName.should.equal('DIV');
       document.body.contains(plugin.$overlay[0]).should.be.true;
     });
 
     it('moves the modal element into the overlay with appendChild', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
-      plugin.$overlay[0].contains($html[0]).should.be.true;
+      plugin.$overlay[0].contains(html).should.be.true;
     });
 
     it('closes on a real overlay click', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
         done();
       });
 
@@ -116,25 +116,25 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('closes when jQuery synthetically clicks the overlay (the .click() native shortcut bridges the layers)', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
         done();
       });
 
-      plugin.$overlay.trigger('click');
+      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
     });
 
     it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
         done();
       });
 
@@ -142,17 +142,17 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('does not close on clicks inside the modal itself', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
       plugin.open();
       var closedSpy = sinon.spy();
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', closedSpy);
+      FoundationNext.Events.on(html, 'closed.zf.reveal', closedSpy);
 
-      $html[0].click();
+      html.click();
 
       setTimeout(function() {
         sinon.assert.notCalled(closedSpy);
-        $html.should.be.visible;
+        FoundationNext.Dom.visible(html).should.be.true;
         done();
       }, 20);
     });
@@ -160,11 +160,11 @@ describe('Reveal (native layer contract)', function() {
 
   describe('keyboard', function() {
     it('closes on ESC from a real keydown on window', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         plugin.isActive.should.be.false;
         done();
       });
@@ -174,22 +174,22 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('closes on ESC from the synthetic jQuery mock event (the pinned jQuery-side keydown seam)', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         plugin.isActive.should.be.false;
         done();
       });
 
-      $(window).trigger(mockKeyboardEvent('ESCAPE'));
+      window.dispatchEvent(mockKeyboardEvent('ESCAPE'));
     });
 
     it('traps TAB cycles inside the modal and releases the trap on close', function(done) {
-      $html = $('<div class="reveal" id="revealTrap1"><a href="#">first</a> text <a href="#">last</a></div>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
-      var el = $html[0];
+      html = document.body.appendChild(fixture('<div class="reveal" id="revealTrap1"><a href="#">first</a> text <a href="#">last</a></div>'));
+      plugin = new Foundation.Reveal(html, {});
+      var el = html;
       var links = el.querySelectorAll('a');
       plugin.open();
 
@@ -220,15 +220,15 @@ describe('Reveal (native layer contract)', function() {
 
   describe('body scroll lock', function() {
     it('locks the html offset with an explicit px unit and restores scroll on close', function(done) {
-      $html = $(template).appendTo('body');
-      $scratch.push($('<div style="height: 4000px"></div>').appendTo('body'));
+      html = document.body.appendChild(fixture(template));
+      scratch.push(document.body.appendChild(fixture('<div style="height: 4000px"></div>')));
       window.scrollTo(0, 120);
-      plugin = new Foundation.Reveal($html, {});
+      plugin = new Foundation.Reveal(html, {});
 
       plugin.open();
       document.documentElement.style.top.should.equal('-120px');
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         document.documentElement.style.top.should.equal('');
         window.scrollY.should.equal(120);
         window.scrollTo(0, 0);
@@ -241,10 +241,10 @@ describe('Reveal (native layer contract)', function() {
 
   describe('deepLink', function() {
     it('opens through a real hashchange', function(done) {
-      $html = $('<div class="reveal" id="revealDeepLink1" data-reveal>content</div>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {deepLink: true});
+      html = document.body.appendChild(fixture('<div class="reveal" id="revealDeepLink1" data-reveal>content</div>'));
+      plugin = new Foundation.Reveal(html, {deepLink: true});
       var opens = 0;
-      FoundationNext.Events.on($html[0], 'open.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
         opens++;
       });
 
@@ -252,7 +252,7 @@ describe('Reveal (native layer contract)', function() {
 
       setTimeout(function() {
         opens.should.equal(1);
-        $html.should.be.visible;
+        FoundationNext.Dom.visible(html).should.be.true;
         window.location.hash.should.equal('#revealDeepLink1');
         removeHash();
         done();
@@ -260,13 +260,13 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('writes the hash on open and strips it on close', function(done) {
-      $html = $('<div class="reveal" id="revealDeepLink2" data-reveal>content</div>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {deepLink: true});
+      html = document.body.appendChild(fixture('<div class="reveal" id="revealDeepLink2" data-reveal>content</div>'));
+      plugin = new Foundation.Reveal(html, {deepLink: true});
 
       plugin.open();
       window.location.hash.should.equal('#revealDeepLink2');
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         window.location.hash.should.equal('');
         removeHash();
         done();
@@ -277,15 +277,15 @@ describe('Reveal (native layer contract)', function() {
 
   describe('trigger delegation', function() {
     it('opens through the document [data-open] delegation on a real click', function(done) {
-      $html = $(template.replace('revealNative1', 'revealNative2')).appendTo('body');
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative2')));
       var anchor = document.createElement('button');
       anchor.setAttribute('data-open', 'revealNative2');
       document.body.appendChild(anchor);
-      $scratch.push($(anchor));
-      plugin = new Foundation.Reveal($html, {});
+      scratch.push(anchor);
+      plugin = new Foundation.Reveal(html, {});
 
-      FoundationNext.Events.on($html[0], 'open.zf.reveal', function() {
-        $html.should.be.visible;
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.true;
         done();
       });
 
@@ -293,41 +293,41 @@ describe('Reveal (native layer contract)', function() {
     });
 
     it('closes through the [data-close] control inside the modal (bubbling close.zf.trigger)', function(done) {
-      $html = $(template.replace('revealNative1', 'revealNative3')).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative3')));
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
 
-      FoundationNext.Events.on($html[0], 'closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
         done();
       });
 
-      $html.find('[data-close]')[0].click();
+      html.querySelector('[data-close]').click();
     });
 
     it('keeps the scrollbar class updated through the native resizeme listener', function() {
-      $html = $(template.replace('revealNative1', 'revealNative4')).appendTo('body');
-      $scratch.push($('<div style="height: 4000px"></div>').appendTo('body'));
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative4')));
+      scratch.push(document.body.appendChild(fixture('<div style="height: 4000px"></div>')));
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
       document.documentElement.classList.contains('zf-has-scroll').should.be.true;
 
       document.documentElement.classList.remove('zf-has-scroll');
-      FoundationNext.Events.trigger($html[0], 'resizeme.zf.trigger');
+      FoundationNext.Events.trigger(html, 'resizeme.zf.trigger');
       document.documentElement.classList.contains('zf-has-scroll').should.be.true;
     });
   });
 
   describe('closeme chain', function() {
     it('closes other open reveals when a reveal opens (closeme producer seam)', function(done) {
-      $html = $(template.replace('revealNative1', 'revealNative5')).appendTo('body');
-      var $html2 = $(template.replace('revealNative1', 'revealNative6')).appendTo('body');
-      $scratch.push($html2);
-      var plugin2 = new Foundation.Reveal($html2, {});
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative5')));
+      var html2 = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative6')));
+      scratch.push(html2);
+      var plugin2 = new Foundation.Reveal(html2, {});
       plugin2.open();
 
-      FoundationNext.Events.on($html2[0], 'closed.zf.reveal', function() {
-        $html2.should.be.hidden;
+      FoundationNext.Events.on(html2, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html2).should.be.false;
         plugin2.destroy();
         done();
       });
@@ -338,20 +338,20 @@ describe('Reveal (native layer contract)', function() {
       Foundation.Triggers.Initializers.addClosemeListener();
 
       // multipleOpened defaults to false: opening must close the other modal
-      plugin = new Foundation.Reveal($html, {});
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
     });
 
     it('S4 ledger: the closeme broadcast is a real bubbling event, so a [data-closable] ancestor of a broadcast reveal closes along (6.x triggerHandler did not bubble)', function(done) {
-      var $wrap = $('<div id="closableWrap" data-closable="fade-out"></div>').appendTo('body');
-      $scratch.push($wrap);
-      var $inner = $('<div class="reveal" id="revealInClosable" data-reveal>content</div>').appendTo('body');
-      $scratch.push($inner);
-      var plugin2 = new Foundation.Reveal($inner, {appendTo: '#closableWrap'});
+      var wrap = document.body.appendChild(fixture('<div id="closableWrap" data-closable="fade-out"></div>'));
+      scratch.push(wrap);
+      var inner = document.body.appendChild(fixture('<div class="reveal" id="revealInClosable" data-reveal>content</div>'));
+      scratch.push(inner);
+      var plugin2 = new Foundation.Reveal(inner, {appendTo: '#closableWrap'});
       plugin2.open();
 
       var animateOut = sinon.spy(Foundation.Motion, 'animateOut');
-      FoundationNext.Events.on($inner[0], 'closed.zf.reveal', function() {
+      FoundationNext.Events.on(inner, 'closed.zf.reveal', function() {
         // the broadcast bubbled through the [data-closable] wrap and the
         // document closable delegation closed it along with the reveal
         sinon.assert.called(animateOut);
@@ -361,19 +361,19 @@ describe('Reveal (native layer contract)', function() {
       });
 
       // exactly what the Triggers closeMeListener does per broadcast element
-      FoundationNext.Events.trigger($inner[0], 'close.zf.trigger', [$inner[0]]);
+      FoundationNext.Events.trigger(inner, 'close.zf.trigger', [inner]);
     });
   });
 
   describe('destroy', function() {
     it('drops the whole multi-segment zf.reveal:<id> namespace on window, on both layers', function() {
-      $html = $(template.replace('revealNative1', 'revealNative7')).appendTo('body');
-      plugin = new Foundation.Reveal($html, {deepLink: true, closeOnEsc: true});
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative7')));
+      plugin = new Foundation.Reveal(html, {deepLink: true, closeOnEsc: true});
       var id = plugin.id;
       var escSpy = sinon.spy();
       // same-table (jQuery) probes for the namespace wipe
-      $(window).on(`keydown.zf.reveal:${id}`, escSpy);
-      $(window).on(`hashchange.zf.reveal:${id}`, escSpy);
+      jQuery(window).on(`keydown.zf.reveal:${id}`, escSpy);
+      jQuery(window).on(`hashchange.zf.reveal:${id}`, escSpy);
 
       plugin.open();
       plugin.destroy();
@@ -381,23 +381,23 @@ describe('Reveal (native layer contract)', function() {
       removeHash();
 
       window.dispatchEvent(new KeyboardEvent('keydown', {which: 27, keyCode: 27, bubbles: true}));
-      $(window).trigger(mockKeyboardEvent('ESCAPE'));
+      window.dispatchEvent(mockKeyboardEvent('ESCAPE'));
       sinon.assert.notCalled(escSpy);
     });
 
     it('drops every element listener on destroy, against both transports', function() {
-      $html = $(template.replace('revealNative1', 'revealNative8')).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative8')));
+      plugin = new Foundation.Reveal(html, {});
       var jqSpy = sinon.spy();
-      $html.on('mutateme.zf.reveal', jqSpy);
+      jQuery(html).on('mutateme.zf.reveal', jqSpy);
 
       plugin.destroy();
       plugin = null;
 
       // a real event (white-absorbed by jQuery listeners) and a synthetic one
       // must both find nothing: destroy wiped the element listeners
-      FoundationNext.Events.trigger($html[0], 'mutateme.zf.reveal');
-      $html.trigger('mutateme.zf.reveal');
+      FoundationNext.Events.trigger(html, 'mutateme.zf.reveal');
+      FoundationNext.Events.trigger(html, 'mutateme.zf.reveal');
       sinon.assert.notCalled(jqSpy);
     });
   });

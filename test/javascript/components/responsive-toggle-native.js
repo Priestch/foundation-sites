@@ -8,7 +8,7 @@
 // pre-existing responsiveToggle.js suite is untouched on purpose.
 describe('ResponsiveToggle (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
 
   // The main test page loads its stylesheets AFTER the foundation bundle,
   // so the bundle's eager MediaQuery._init() parsed the UA default font
@@ -24,18 +24,18 @@ describe('ResponsiveToggle (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
   });
 
   function build(markup) {
-    $html = $(markup || `<div id="rt-bar" data-responsive-toggle="rt-menu">
+    html = document.body.appendChild(fixture(markup || `<div id="rt-bar" data-responsive-toggle="rt-menu">
         <button data-toggle="rt-menu" type="button">menu</button>
       </div>
-      <ul id="rt-menu"><li><a href="#">item</a></li><li data-mutate>mutable</li></ul>`).appendTo('body');
-    return $html;
+      <ul id="rt-menu"><li><a href="#">item</a></li><li data-mutate>mutable</li></ul>`));
+    return html;
   }
 
   // The headless viewport sits between 'small' and 'xxlarge', so these two
@@ -50,7 +50,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
   describe('mediaquery update', function() {
     it('follows the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), mobileOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), mobileOptions());
       var bar = document.getElementById('rt-bar');
       var menu = document.getElementById('rt-menu');
 
@@ -67,7 +67,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
 
     it('hides the bar and shows the menu at or above the hideFor breakpoint', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), desktopOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), desktopOptions());
       var bar = document.getElementById('rt-bar');
       var menu = document.getElementById('rt-menu');
 
@@ -79,7 +79,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
   describe('toggleMenu()', function() {
     it('toggles through a real click on the toggler and fires toggled.zf.responsiveToggle on the native layer', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), mobileOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), mobileOptions());
       var bar = document.getElementById('rt-bar');
       var menu = document.getElementById('rt-menu');
       var mutateEl = menu.querySelector('[data-mutate]');
@@ -105,11 +105,11 @@ describe('ResponsiveToggle (native layer contract)', function() {
 
     it('still reaches jQuery listeners through the real toggled event (white absorption)', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), mobileOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), mobileOptions());
       var menu = document.getElementById('rt-menu');
 
       var spy = sinon.spy();
-      $('#rt-bar').on('toggled.zf.responsiveToggle', spy);
+      jQuery(document.querySelector('#rt-bar')).on('toggled.zf.responsiveToggle', spy);
 
       plugin.toggleMenu();
 
@@ -124,7 +124,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
         <button data-toggle="rt-menu" type="button">menu</button>
       </div>
       <ul id="rt-menu"><li><a href="#">item</a></li><li data-mutate data-equalizer><div data-equalizer-watch style="min-height: 10px">mutable</div></li></ul>`);
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), Object.assign(mobileOptions(), {animate: 'fade-in fade-out'}));
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), Object.assign(mobileOptions(), {animate: 'fade-in fade-out'}));
       var menu = document.getElementById('rt-menu');
 
       var toggledSpy = sinon.spy();
@@ -136,7 +136,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
       // Events module instance the plugin dispatches on. (FoundationNext in
       // this page is a separate bundle instance - its trigger/on pair can
       // only exchange real events.)
-      var eq = new Foundation.Equalizer($('[data-equalizer]', menu), {});
+      var eq = new Foundation.Equalizer(menu.querySelector('[data-equalizer]'), {});
       var reflow = sinon.spy(eq, '_reflow');
 
       // hidden menu -> the animateIn branch runs the motion-ui class
@@ -163,7 +163,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
 
     it('does nothing at or above the hideFor breakpoint', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), desktopOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), desktopOptions());
       var bar = document.getElementById('rt-bar');
       var menu = document.getElementById('rt-menu');
 
@@ -181,7 +181,7 @@ describe('ResponsiveToggle (native layer contract)', function() {
   describe('destroy', function() {
     it('drops the mediaquery seam listener and the native click listeners', function() {
       build();
-      plugin = new Foundation.ResponsiveToggle($('#rt-bar'), mobileOptions());
+      plugin = new Foundation.ResponsiveToggle(document.querySelector('#rt-bar'), mobileOptions());
       var bar = document.getElementById('rt-bar');
       var menu = document.getElementById('rt-menu');
       plugin.destroy();

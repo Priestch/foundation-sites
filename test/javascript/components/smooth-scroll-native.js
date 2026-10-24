@@ -6,15 +6,15 @@
 // smoothScroll suite exists.
 describe('SmoothScroll (native layer contract)', function() {
   var plugin;
-  var $scratch = [];
+  var scratch = [];
 
   afterEach(function() {
     if (plugin) {
       plugin.destroy();
       plugin = null;
     }
-    $scratch.forEach(function($el) { $el.remove(); });
-    $scratch = [];
+    scratch.forEach(function(el) { el.remove(); });
+    scratch = [];
     window.scrollTo(0, 0);
     if (window.location.hash) {
       window.history.replaceState('', document.title, window.location.pathname + window.location.search);
@@ -22,14 +22,14 @@ describe('SmoothScroll (native layer contract)', function() {
   });
 
   function appendContent() {
-    var $content = $(`<div>
+    var content = document.body.appendChild(fixture(`<div>
       <div id="ss-start">start</div>
       <div style="height: 1500px">spacer</div>
       <div id="ss-target" style="height: 100px">target</div>
       <div style="height: 1500px">tail</div>
-    </div>`).appendTo('body');
-    $scratch.push($content);
-    return $content;
+    </div>`));
+    scratch.push(content);
+    return content;
   }
 
   // The absolute page position of an element, whatever the current scroll
@@ -108,15 +108,15 @@ describe('SmoothScroll (native layer contract)', function() {
   describe('click consumption', function() {
     function buildNav(options) {
       appendContent();
-      var $nav = $('<ul id="ss-nav"><li><a href="#ss-target">go</a></li></ul>').appendTo('body');
-      $scratch.push($nav);
-      plugin = new Foundation.SmoothScroll($nav, options);
-      return $nav;
+      var nav = document.body.appendChild(fixture('<ul id="ss-nav"><li><a href="#ss-target">go</a></li></ul>'));
+      scratch.push(nav);
+      plugin = new Foundation.SmoothScroll(nav, options);
+      return nav;
     }
 
     it('scrolls and prevents the default hash jump on a real click through the delegation', function(done) {
-      var $nav = buildNav(shortOptions());
-      var link = $nav.find('a')[0];
+      var nav = buildNav(shortOptions());
+      var link = nav.querySelector('a');
 
       var click = new MouseEvent('click', {bubbles: true, cancelable: true});
       link.dispatchEvent(click);
@@ -132,8 +132,8 @@ describe('SmoothScroll (native layer contract)', function() {
     });
 
     it('still scrolls on a programmatic click (the element\'s native .click() drives the layers)', function(done) {
-      var $nav = buildNav(shortOptions());
-      var link = $nav.find('a')[0];
+      var nav = buildNav(shortOptions());
+      var link = nav.querySelector('a');
 
       // jQuery's `.trigger('click')` cannot drive this input anymore:
       // since jQuery 3.6.3 its special.click._default suppresses the native
@@ -153,10 +153,10 @@ describe('SmoothScroll (native layer contract)', function() {
     });
 
     it('does not scroll when the click lands on the container itself', function(done) {
-      var $nav = buildNav(shortOptions());
+      var nav = buildNav(shortOptions());
       var before = window.pageYOffset;
 
-      $nav[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+      nav.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
 
       setTimeout(function() {
         window.pageYOffset.should.equal(before);
@@ -165,7 +165,7 @@ describe('SmoothScroll (native layer contract)', function() {
     });
 
     it('unbinds the click listeners on destroy: the browser default takes over', function(done) {
-      var $nav = buildNav(shortOptions());
+      var nav = buildNav(shortOptions());
       plugin.destroy();
       plugin = null;
 
@@ -176,7 +176,7 @@ describe('SmoothScroll (native layer contract)', function() {
         // default anchor action (hash + jump onto the anchor); a live plugin
         // would have prevented both and landed threshold/2+offset pixels
         // high instead
-        $nav.find('a')[0].click();
+        nav.querySelector('a').click();
 
         setTimeout(function() {
           try {

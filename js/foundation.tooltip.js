@@ -25,8 +25,12 @@ class Tooltip extends Positionable {
    * @param {Object} options - object to extend the default configuration.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Tooltip.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, Tooltip.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'Tooltip'; // ie9 back compat
 
     this.isActive = false;

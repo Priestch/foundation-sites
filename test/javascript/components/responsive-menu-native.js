@@ -9,7 +9,7 @@
 // green.
 describe('ResponsiveMenu (native layer contract)', function() {
   var plugin;
-  var $html;
+  var html;
   var atLeastStub;
 
   beforeEach(function() {
@@ -25,9 +25,9 @@ describe('ResponsiveMenu (native layer contract)', function() {
       plugin.destroy();
       plugin = null;
     }
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
   });
 
@@ -57,8 +57,8 @@ describe('ResponsiveMenu (native layer contract)', function() {
   </ul>`;
 
   function build(markup, options) {
-    $html = $(markup || template).appendTo('body');
-    plugin = new Foundation.ResponsiveMenu($html, options || {});
+    html = document.body.appendChild(fixture(markup || template));
+    plugin = new Foundation.ResponsiveMenu(html, options || {});
     return plugin;
   }
 

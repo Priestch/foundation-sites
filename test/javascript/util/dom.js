@@ -1,29 +1,29 @@
 describe('FoundationNext.Dom', function() {
-  var $container;
+  var container;
 
   beforeEach(function() {
-    $container = $('<div id="dom-test-container"></div>').appendTo('body');
+    container = document.body.appendChild(fixture('<div id="dom-test-container"></div>'));
   });
 
   afterEach(function() {
-    $container.remove();
+    container.remove();
   });
 
   describe('q()', function() {
     it('finds the first match inside the context', function() {
-      $container.append('<span id="dom-q-a"></span><span id="dom-q-b"></span>');
+      container.insertAdjacentHTML('beforeend', '<span id="dom-q-a"></span><span id="dom-q-b"></span>');
 
-      var found = FoundationNext.Dom.q('span', $container[0]);
+      var found = FoundationNext.Dom.q('span', container);
 
       found.id.should.equal('dom-q-a');
     });
 
     it('returns null when nothing matches', function() {
-      chai.expect(FoundationNext.Dom.q('span', $container[0])).to.not.exist;
+      chai.expect(FoundationNext.Dom.q('span', container)).to.not.exist;
     });
 
     it('defaults the context to the document', function() {
-      $container.append('<span id="dom-q-doc"></span>');
+      document.querySelector('#dom-test-container').insertAdjacentHTML('beforeend', '<span id="dom-q-doc"></span>');
 
       (FoundationNext.Dom.q('#dom-q-doc')).should.exist;
     });
@@ -35,20 +35,20 @@ describe('FoundationNext.Dom', function() {
   // see the differential suite report.
   describe('visible()', function() {
     it('is true for a rendered element', function() {
-      var el = $('<div></div>').appendTo($container)[0];
+      var el = container.appendChild(fixture("<div></div>"));
 
       (FoundationNext.Dom.visible(el)).should.be.true;
     });
 
     it('is false for an element with display:none', function() {
-      var el = $('<div style="display: none;"></div>').appendTo($container)[0];
+      var el = container.appendChild(fixture("<div style='display: none;'></div>"));
 
       (FoundationNext.Dom.visible(el)).should.be.false;
     });
 
     it('is false when an ancestor is display:none', function() {
-      var $hidden = $('<div style="display: none;"></div>').appendTo($container);
-      var el = $('<div></div>').appendTo($hidden)[0];
+      var hidden = container.appendChild(fixture("<div style='display: none;'></div>"));
+      var el = hidden.appendChild(fixture("<div></div>"));
 
       (FoundationNext.Dom.visible(el)).should.be.false;
     });
@@ -60,7 +60,7 @@ describe('FoundationNext.Dom', function() {
   // pins the same rule against jQuery itself.
   describe('datasetOptions()', function() {
     it('collects data-* attributes as a camelCased object', function() {
-      var el = $('<div data-foo-bar="hello" data-simple="world"></div>')[0];
+      var el = fixture("<div data-foo-bar='hello' data-simple='world'></div>");
 
       var options = FoundationNext.Dom.datasetOptions(el);
 
@@ -68,7 +68,7 @@ describe('FoundationNext.Dom', function() {
     });
 
     it('converts values like jQuery .data() does', function() {
-      var el = $('<div data-flag="true" data-off="false" data-none="null" data-num="42" data-empty data-text="hello"></div>')[0];
+      var el = fixture("<div data-flag='true' data-off='false' data-none='null' data-num='42' data-empty data-text='hello'></div>");
 
       var options = FoundationNext.Dom.datasetOptions(el);
 
@@ -82,7 +82,7 @@ describe('FoundationNext.Dom', function() {
     });
 
     it('ignores non-data attributes', function() {
-      var el = $('<div id="x" class="y" data-real="yes"></div>')[0];
+      var el = fixture("<div id='x' class='y' data-real='yes'></div>");
 
       var options = FoundationNext.Dom.datasetOptions(el);
 
@@ -90,7 +90,7 @@ describe('FoundationNext.Dom', function() {
     });
 
     it('returns an empty object for elements without data attributes', function() {
-      var el = $('<div id="plain"></div>')[0];
+      var el = fixture("<div id='plain'></div>");
 
       (FoundationNext.Dom.datasetOptions(el)).should.deep.equal({});
     });

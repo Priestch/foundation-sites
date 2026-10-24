@@ -1,6 +1,6 @@
 describe('Accordion Menu', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `
     <ul class="vertical menu">
       <li>
@@ -31,13 +31,13 @@ describe('Accordion Menu', function() {
 
   afterEach(function() {
     plugin.destroy();
-    $html.remove();
+    html.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
       plugin.$element.should.be.an('object');
       plugin.options.should.be.an('object');
@@ -46,142 +46,142 @@ describe('Accordion Menu', function() {
 
   describe('up()', function() {
     it('closes the targeted submenu', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html);
-      const $submenu = $html.find('.is-accordion-submenu').eq(0);
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html);
+      const submenu = html.querySelector('.is-accordion-submenu');
 
       // Open it first
-      plugin.down($submenu);
+      plugin.down(submenu);
 
-      $html.on('up.zf.accordionMenu', function () {
+      FoundationNext.Events.on(html, 'up.zf.accordionMenu', function () {
         // Should be hidden
-        $submenu.should.be.hidden; // Should have attributes updated and without active classe
+        FoundationNext.Dom.visible(submenu).should.be.false; // Should have attributes updated and without active classe
 
-        $submenu.should.have.attr('aria-hidden', 'true');
-        $submenu.should.not.have.class('is-active');
+        submenu.getAttribute('aria-hidden').should.equal('true');
+        submenu.classList.contains('is-active').should.be.false;
         done();
       });
-      plugin.up($submenu);
+      plugin.up(submenu);
     });
 
     it('toggles attributes of title of the targeted container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
       // Open it first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
 
-      plugin.up($html.find('.is-accordion-submenu').eq(0));
-      $html.find('.is-accordion-submenu-parent').eq(0).should.have.attr('aria-expanded', 'false');
+      plugin.up(html.querySelector('.is-accordion-submenu'));
+      html.querySelector('.is-accordion-submenu-parent').getAttribute('aria-expanded').should.equal('false');
     });
 
     it('fires up.zf.accordionMenu event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {slideSpeed: 200});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {slideSpeed: 200});
 
       // Open it first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
 
-      $html.on('up.zf.accordionMenu', function() {
-        $html.find('.is-accordion-submenu').eq(0).should.be.hidden;
+      FoundationNext.Events.on(html, 'up.zf.accordionMenu', function() {
+        FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.false;
         done();
       });
-      plugin.up($html.find('.is-accordion-submenu').eq(0));
+      plugin.up(html.querySelector('.is-accordion-submenu'));
     });
   });
 
   describe('down()', function() {
     it('opens the targeted submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
-      const $submenu = $html.find('.is-accordion-submenu').eq(0);
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
+      const submenu = html.querySelector('.is-accordion-submenu');
 
-      plugin.down($submenu);
+      plugin.down(submenu);
 
       // Should be visible
-      $submenu.should.be.visible;
+      FoundationNext.Dom.visible(submenu).should.be.true;
       // Should have attributes updated and with an active classe
-      $submenu.should.have.attr('aria-hidden', 'false');
-      $submenu.should.have.class('is-active');
+      submenu.getAttribute('aria-hidden').should.equal('false');
+      submenu.classList.contains('is-active').should.be.true;
     });
 
     it('toggles attributes of title of the targeted submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
-      $html.find('.is-accordion-submenu-parent').eq(0).should.have.attr('aria-expanded', 'true');
+      plugin.down(html.querySelector('.is-accordion-submenu'));
+      html.querySelector('.is-accordion-submenu-parent').getAttribute('aria-expanded').should.equal('true');
     });
 
     it('closes open submenu if multiOpen is false', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {multiOpen: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {multiOpen: false});
 
       // Open another one first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
 
-      plugin.down($html.find('.is-accordion-submenu').eq(2));
-      $html.find('.is-accordion-submenu').eq(0).should.be.hidden;
+      plugin.down(html.querySelectorAll('.is-accordion-submenu')[2]);
+      FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.false;
     });
 
     it('not closes open submenu if multiOpen is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {multiOpen: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {multiOpen: true});
 
       // Open another one first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
 
-      plugin.down($html.find('.is-accordion-submenu').eq(2));
-      $html.find('.is-accordion-submenu').eq(0).should.be.visible;
+      plugin.down(html.querySelectorAll('.is-accordion-submenu')[2]);
+      FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.true;
     });
 
     it('fires down.zf.accordionMenu event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {slideSpeed: 200});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {slideSpeed: 200});
 
-      $html.on('down.zf.accordionMenu', function() {
-        $html.find('.is-accordion-submenu').eq(0).should.be.visible;
+      FoundationNext.Events.on(html, 'down.zf.accordionMenu', function() {
+        FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.true;
         done();
       });
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
     });
   });
 
   describe('toggle()', function() {
     it('opens a closed container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
-      plugin.toggle($html.find('.is-accordion-submenu').eq(0));
-      $html.find('.is-accordion-submenu').eq(0).should.be.visible;
+      plugin.toggle(html.querySelector('.is-accordion-submenu'));
+      FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.true;
     });
 
     it('closes an open container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
       // Open first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
 
-      plugin.toggle($html.find('.is-accordion-submenu').eq(0));
-      $html.find('.is-accordion-submenu').eq(0).should.be.hidden;
+      plugin.toggle(html.querySelector('.is-accordion-submenu'));
+      FoundationNext.Dom.visible(html.querySelector('.is-accordion-submenu')).should.be.false;
     });
   });
 
   describe('hideAll()', function() {
     it('closes all accordions', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.AccordionMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.AccordionMenu(html, {});
 
       // Open some first
-      plugin.down($html.find('.is-accordion-submenu').eq(0));
-      plugin.down($html.find('.is-accordion-submenu').eq(1));
-      plugin.down($html.find('.is-accordion-submenu').eq(2));
+      plugin.down(html.querySelector('.is-accordion-submenu'));
+      plugin.down(html.querySelectorAll('.is-accordion-submenu')[1]);
+      plugin.down(html.querySelectorAll('.is-accordion-submenu')[2]);
 
       plugin.hideAll();
 
-      $html.find('[data-submenu]').each(function() {
-        $(this).should.be.hidden;
+      html.querySelectorAll('[data-submenu]').forEach(function(el) {
+        FoundationNext.Dom.visible(el).should.be.false;
       });
     });
   });

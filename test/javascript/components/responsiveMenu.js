@@ -1,6 +1,6 @@
 describe('Responsive Menu', function() {
 	var plugin;
-	var $html;
+	var html;
 	var atLeastStub;
 	var template = `<ul data-responsive-menu="dropdown">
 	  <li><a href="#">Item 1</a>
@@ -16,7 +16,7 @@ describe('Responsive Menu', function() {
     if (plugin && plugin.$element) {
       plugin.destroy();
     }
-    $html.remove();
+    html.remove();
     if (atLeastStub) {
       atLeastStub.restore();
       atLeastStub = null;
@@ -25,8 +25,8 @@ describe('Responsive Menu', function() {
 
   describe('destroy()', function() {
     it('removes its media query handler from window', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.ResponsiveMenu($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.ResponsiveMenu(html, {});
 
       // S13 flip: the mq consumer listens on the native event layer now.
       // MediaQuery.atLeast is what _checkMediaQueries calls: count its

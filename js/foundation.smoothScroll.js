@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { GetYoDigits } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
 import { datasetOptions } from './foundation.util.dom';
@@ -76,8 +75,10 @@ class SmoothScroll extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
     _setup(element, options) {
-        this.$element = element;
-        this.options = $.extend({}, SmoothScroll.defaults, datasetOptions(element[0]), options);
+        // 7.0 line A, slice S16: the plugin works on the native element; the
+        // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+        this.$element = element.nodeType === 1 ? element : element[0];
+        this.options = Object.assign({}, SmoothScroll.defaults, datasetOptions(this.$element), options);
         this.className = 'SmoothScroll'; // ie9 back compat
 
         this._init();
@@ -88,7 +89,7 @@ class SmoothScroll extends Plugin {
      * @private
      */
     _init() {
-        const element = this.$element[0];
+        const element = this.$element;
         const id = element.id || GetYoDigits(6, 'smooth-scroll');
         element.id = id;
 
@@ -106,7 +107,7 @@ class SmoothScroll extends Plugin {
         // delegated binding mirrors the jQuery delegate walk (closest match,
         // never escaping the root) and hands the match to the handler, since
         // a real event's currentTarget stays the listener element.
-        const element = this.$element[0];
+        const element = this.$element;
         const _this = this;
         this._linkClickListener = function(e) {
             _this._handleLinkClick(e, e.currentTarget);
@@ -165,12 +166,12 @@ class SmoothScroll extends Plugin {
      * @function
      */
     _destroy() {
-        // jQuery side: legacy listeners in the plugin namespace, kept while
-        // the mixed state lasts.
-        this.$element.off('.zf.smoothScroll');
         // Native side: the direct and delegated click listeners share the
         // zf.smoothScroll namespace and go in one bare-namespace call.
-        Events.off(this.$element[0], '.zf.smoothScroll');
+        // (The 6.x jQuery-side `off('.zf.smoothScroll')` line died with this
+        // file's jQuery import: the plugin registers nothing on the jQuery
+        // side anymore.)
+        Events.off(this.$element, '.zf.smoothScroll');
     }
 }
 

@@ -55,7 +55,8 @@ class ResponsiveAccordionTabs extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = $(element);
+    // Mixed state (7.0 line A, S16): dual-form constructor input.
+    this.$element = element.nodeType === 1 ? $(element) : element;
     this.options = $.extend({}, ResponsiveAccordionTabs.defaults, datasetOptions(this.$element[0]), options);
 
     this.rules = this.$element.data('responsive-accordion-tabs');

@@ -161,213 +161,213 @@ describe('Keyboard util', function() {
         'ESCAPE': 'close'
       });
 
-      let $html = $('<div></div>').appendTo('body');
+      let html = document.body.appendChild(fixture('<div></div>'));
 
       // A consumer on the native event layer routes the real keydown into
       // handleKey - the shape every migrated consumer will use.
-      FoundationNext.Events.on($html[0], 'keydown', function(e) {
+      FoundationNext.Events.on(html, 'keydown', function(e) {
         Foundation.Keyboard.handleKey(e, 'MyRealComponent', {
           close: spy,
           handled: handledSpy
         });
       });
 
-      $html[0].dispatchEvent(new KeyboardEvent('keydown', {
+      html.dispatchEvent(new KeyboardEvent('keydown', {
         key: 'Escape', keyCode: 27, which: 27, bubbles: true, cancelable: true
       }));
 
       spy.called.should.be.true;
       handledSpy.called.should.be.true;
 
-      $html.remove();
+      html.remove();
     });
   });
 
   describe('findFocusable()', function() {
     it('finds focusable elements inside a container', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link</a>
             <button>Button</button>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
-      $focusable.length.should.be.equal(2);
+      focusable.length.should.be.equal(2);
 
-      $html.remove();
+      html.remove();
     });
 
     it('does not find hidden focusable elements', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a style="display: none;" href="#">Link</a>
             <button style="display: none;">Button</button>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
-      $focusable.length.should.be.equal(0);
+      focusable.length.should.be.equal(0);
 
-      $html.remove();
+      html.remove();
     });
 
     it('does not find disabled focusable elements', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <button disabled>Button</button>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
-      $focusable.length.should.be.equal(0);
+      focusable.length.should.be.equal(0);
 
-      $html.remove();
+      html.remove();
     });
 
     it('does not find focusable elements with negative tabindex', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <button tabindex="-1">Button</button>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
-      $focusable.length.should.be.equal(0);
+      focusable.length.should.be.equal(0);
 
-      $html.remove();
+      html.remove();
     });
 
     it('does sort by tabindex', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#" tabindex="1">Link1</a>
             <a href="#">Link3</a>
             <a href="#" tabindex="2">Link2</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
-      $focusable.eq(2)[0].should.be.equal($html.find('a').eq(1)[0]);
+      focusable.eq(2)[0].should.be.equal(html.querySelectorAll("a")[1]);
 
-      $html.remove();
+      html.remove();
     });
 
     it('returns a jQuery collection with DOM order and accessors intact', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <button>First</button>
             <a href="#" tabindex="1">Link1</a>
             <a href="#">Link2</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      let $focusable = Foundation.Keyboard.findFocusable($html);
+      let focusable = Foundation.Keyboard.findFocusable(html);
 
       // Mixed state: callers consume .length, .eq() and [0] on the result.
-      $focusable.should.have.property('jquery');
-      $focusable.length.should.be.equal(3);
+      focusable.should.have.property('jquery');
+      focusable.length.should.be.equal(3);
       // tabindex=1 jumps the queue, plain elements keep DOM order behind it
-      $focusable.eq(0)[0].should.be.equal($html.find('a')[0]);
-      $focusable.eq(1)[0].should.be.equal($html.find('button')[0]);
-      $focusable.eq(2)[0].should.be.equal($html.find('a')[1]);
+      focusable.eq(0)[0].should.be.equal(html.querySelector('a'));
+      focusable.eq(1)[0].should.be.equal(html.querySelector('button'));
+      focusable.eq(2)[0].should.be.equal(html.querySelectorAll('a')[1]);
 
-      $html.remove();
+      html.remove();
     });
   });
 
   describe('trapFocus()', function() {
     it('moves the focus to the first focusable element', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link1</a>
             <a href="#">Link2</a>
             <a href="#">Link3</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      Foundation.Keyboard.trapFocus($html);
-      $html.find('a').last().focus();
+      Foundation.Keyboard.trapFocus(html);
+      (html.querySelectorAll('a')[html.querySelectorAll('a').length - 1]).focus();
 
       pressTab();
 
-      document.activeElement.should.be.equal($html.find('a').eq(0)[0]);
+      document.activeElement.should.be.equal(html.querySelector('a'));
 
-      $html.remove();
+      html.remove();
     });
 
     it('moves the focus to the last focusable element', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link1</a>
             <a href="#">Link2</a>
             <a href="#">Link3</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      Foundation.Keyboard.trapFocus($html);
-      $html.find('a').first().focus();
+      Foundation.Keyboard.trapFocus(html);
+      html.querySelectorAll('a')[0].focus();
 
       pressTab(true);
 
-      document.activeElement.should.be.equal($html.find('a').eq(2)[0]);
+      document.activeElement.should.be.equal(html.querySelectorAll("a")[2]);
 
-      $html.remove();
+      html.remove();
     });
 
     it('keeps cycling inside the element', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link1</a>
             <a href="#">Link2</a>
             <a href="#">Link3</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      Foundation.Keyboard.trapFocus($html);
-      $html.find('a').last().focus();
+      Foundation.Keyboard.trapFocus(html);
+      (html.querySelectorAll('a')[html.querySelectorAll('a').length - 1]).focus();
 
       // last -> first wraps around ...
       pressTab();
-      document.activeElement.should.be.equal($html.find('a').eq(0)[0]);
+      document.activeElement.should.be.equal(html.querySelector('a'));
 
       // ... and a further TAB out of the first element stays in the trap
       // (the container handler only intercepts the boundary keys).
       pressTab();
-      document.activeElement.should.be.equal($html.find('a').eq(0)[0]);
+      document.activeElement.should.be.equal(html.querySelector('a'));
 
       // SHIFT_TAB on the first element wraps back to the last one
       pressTab(true);
-      document.activeElement.should.be.equal($html.find('a').eq(2)[0]);
+      document.activeElement.should.be.equal(html.querySelectorAll("a")[2]);
 
-      $html.remove();
+      html.remove();
     });
   });
 
   describe('releaseFocus()', function() {
     it('stops trapping the focus at the end', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link1</a>
             <a href="#">Link2</a>
             <a href="#">Link3</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      Foundation.Keyboard.trapFocus($html);
-      $html.find('a').last().focus();
+      Foundation.Keyboard.trapFocus(html);
+      (html.querySelectorAll('a')[html.querySelectorAll('a').length - 1]).focus();
 
-      Foundation.Keyboard.releaseFocus($html);
+      Foundation.Keyboard.releaseFocus(html);
 
       pressTab();
 
-      document.activeElement.should.not.be.equal($html.find('a').eq(0)[0]);
+      document.activeElement.should.not.be.equal(html.querySelector('a'));
 
-      $html.remove();
+      html.remove();
     });
 
     it('stops trapping the focus at the top', function() {
-      let $html = $(`<div>
+      let html = document.body.appendChild(fixture(`<div>
             <a href="#">Link1</a>
             <a href="#">Link2</a>
             <a href="#">Link3</a>
-          </div>`).appendTo('body');
+          </div>`));
 
-      Foundation.Keyboard.trapFocus($html);
-      $html.find('a').first().focus();
+      Foundation.Keyboard.trapFocus(html);
+      html.querySelectorAll('a')[0].focus();
 
-      Foundation.Keyboard.releaseFocus($html);
+      Foundation.Keyboard.releaseFocus(html);
 
       pressTab(true);
 
-      document.activeElement.should.not.be.equal($html.find('a').eq(2)[0]);
+      document.activeElement.should.not.be.equal(html.querySelectorAll('a')[2][0]);
 
-      $html.remove();
+      html.remove();
     });
   });
 });

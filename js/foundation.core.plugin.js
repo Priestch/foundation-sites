@@ -21,7 +21,7 @@ class Plugin {
     var pluginName = getPluginName(this);
     this.uuid = GetYoDigits(6, pluginName);
 
-    var el = this.$element.length !== undefined ? this.$element[0] : this.$element;
+    var el = this.$element.nodeType === 1 ? this.$element : this.$element[0];
     if(!el.getAttribute(`data-${pluginName}`)){ el.setAttribute(`data-${pluginName}`, this.uuid); }
     if(el && !Registry.has(el)){ Registry.setInstance(el, this); }
     /**
@@ -34,7 +34,7 @@ class Plugin {
   destroy() {
     this._destroy();
     var pluginName = getPluginName(this);
-    var el = this.$element.length !== undefined ? this.$element[0] : this.$element;
+    var el = this.$element.nodeType === 1 ? this.$element : this.$element[0];
     el.removeAttribute(`data-${pluginName}`);
     if(el){ Registry.removeInstance(el); }
     /**

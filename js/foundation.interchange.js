@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { Foundation } from './foundation.core';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Plugin } from './foundation.core.plugin';
@@ -23,14 +22,16 @@ class Interchange extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Interchange.defaults, datasetOptions(element[0]), options);
+    // 7.0 line A, slice S16: the plugin works on the native element; the
+    // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = Object.assign({}, Interchange.defaults, datasetOptions(this.$element), options);
     this.rules = [];
     this.currentPath = '';
     this.className = 'Interchange'; // ie9 back compat
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init();
 
     this._init();
     this._events();
@@ -44,7 +45,7 @@ class Interchange extends Plugin {
   _init() {
     MediaQuery._init();
 
-    var element = this.$element[0];
+    var element = this.$element;
     var id = element.id || GetYoDigits(6, 'interchange');
     // State attributes go through the native layer (7.0 line A, S12).
     element.setAttribute('data-resize', id);
@@ -65,7 +66,7 @@ class Interchange extends Plugin {
     // S12: the resizeme consumer flips to the native event layer; the
     // producer in the Triggers util has dispatched real element-local
     // events since S4, so this seam closes on the consumer half alone.
-    const element = this.$element[0];
+    const element = this.$element;
     Events.off(element, 'resizeme.zf.trigger');
     Events.on(element, 'resizeme.zf.trigger', () => this._reflow());
   }
@@ -140,7 +141,7 @@ class Interchange extends Plugin {
       // Read the attribute directly: identical to the former
       // `.data('interchange')` for every string rule list (the value is not
       // valid JSON, so jQuery's data parsing never converted it either).
-      rules = this.$element[0].getAttribute('data-interchange');
+      rules = this.$element.getAttribute('data-interchange');
     }
 
     rules =  typeof rules === 'string' ? rules.match(/\[.*?, .*?\]/g) : rules;
@@ -175,7 +176,7 @@ class Interchange extends Plugin {
     if (this.currentPath === path) return;
 
     var trigger = 'replaced.zf.interchange';
-    var element = this.$element[0];
+    var element = this.$element;
 
     var type = this.options.type;
     if (type === 'auto') {
@@ -242,7 +243,7 @@ class Interchange extends Plugin {
   _destroy() {
     // The resizeme consumer lives on the native event layer only now
     // (Equalizer S8 precedent for fully flipped consumers).
-    Events.off(this.$element[0], 'resizeme.zf.trigger')
+    Events.off(this.$element, 'resizeme.zf.trigger')
   }
 }
 

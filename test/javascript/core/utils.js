@@ -3,10 +3,10 @@ describe('Foundation core utils', function() {
   describe('rtl()', function() {
     it('detects the text direction on the document', function() {
       (Foundation.rtl()).should.be.false;
-      $('html').attr('dir', 'rtl');
+      document.querySelector('html').setAttribute('dir', 'rtl');
 
       (Foundation.rtl()).should.be.true;
-      $('html').attr('dir', 'ltr');
+      document.querySelector('html').setAttribute('dir', 'ltr');
     });
   });
 

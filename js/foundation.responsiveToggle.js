@@ -23,8 +23,9 @@ class ResponsiveToggle extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = $(element);
-    this.options = $.extend({}, ResponsiveToggle.defaults, datasetOptions(element[0]), options);
+    // Mixed state (7.0 line A, S16): dual-form constructor input.
+    this.$element = element.nodeType === 1 ? $(element) : element;
+    this.options = $.extend({}, ResponsiveToggle.defaults, datasetOptions(this.$element[0]), options);
     this.className = 'ResponsiveToggle'; // ie9 back compat
 
     this._init();

@@ -4,25 +4,25 @@
 // roles/classes/ARIA and Burn's class/attr/style reset on the real menu
 // markup each plugin owns.
 describe('Nest consumption (menu plugins)', function() {
-  var $html;
+  var html;
 
   afterEach(function() {
-    if ($html) {
-      $html.remove();
-      $html = null;
+    if (html) {
+      html.remove();
+      html = null;
     }
   });
 
   it('AccordionMenu feathers and burns its menu around the native layer', function() {
-    $html = $(`<ul id="nest-acc-menu" data-accordion-menu>
+    html = document.body.appendChild(fixture(`<ul id="nest-acc-menu" data-accordion-menu>
         <li class="is-accordion-submenu-parent"><a href="#">Item 1</a>
           <ul class="menu vertical is-accordion-submenu" data-submenu>
             <li class="is-accordion-submenu-item is-submenu-item"><a href="#">Subitem 1</a></li>
           </ul>
         </li>
-      </ul>`).appendTo('body');
-    var menu = $html[0];
-    var plugin = new Foundation.AccordionMenu($html, {});
+      </ul>`));
+    var menu = html;
+    var plugin = new Foundation.AccordionMenu(html, {});
 
     // Feather's chain is visible on the submenu (accordion type skips the
     // haspopup ARIA; AccordionMenu itself rewrites the submenu role to
@@ -42,13 +42,13 @@ describe('Nest consumption (menu plugins)', function() {
   });
 
   it('DropdownMenu feathers its menu and Burn resets it on destroy', function() {
-    $html = $(`<ul id="nest-ddm" data-dropdown-menu>
+    html = document.body.appendChild(fixture(`<ul id="nest-ddm" data-dropdown-menu>
         <li><a href="#">Item 1</a>
           <ul class="menu"><li><a href="#">Subitem 1</a></li></ul>
         </li>
-      </ul>`).appendTo('body');
-    var menu = $html[0];
-    var plugin = new Foundation.DropdownMenu($html, {});
+      </ul>`));
+    var menu = html;
+    var plugin = new Foundation.DropdownMenu(html, {});
 
     menu.getAttribute('role').should.equal('menubar');
     menu.querySelector('ul').classList.contains('is-dropdown-submenu').should.be.true;
@@ -61,13 +61,13 @@ describe('Nest consumption (menu plugins)', function() {
   });
 
   it('Drilldown feathers its menu with the drilldown ARIA and Burn resets it', function() {
-    $html = $(`<div id="nest-dd-wrap"><ul id="nest-dd" data-drilldown>
+    html = document.body.appendChild(fixture(`<div id="nest-dd-wrap"><ul id="nest-dd" data-drilldown>
         <li><a href="#">Item 1</a>
           <ul class="menu"><li><a href="#">Subitem 1</a></li></ul>
         </li>
-      </ul></div>`).appendTo('body');
-    var menu = $html.find('#nest-dd')[0];
-    var plugin = new Foundation.Drilldown($html.find('#nest-dd'), {});
+      </ul></div>`));
+    var menu = html.querySelector('#nest-dd');
+    var plugin = new Foundation.Drilldown(html.querySelector('#nest-dd'), {});
 
     var parentLi = menu.querySelector('li');
     parentLi.classList.contains('is-drilldown-submenu-parent').should.be.true;
