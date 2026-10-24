@@ -47,9 +47,9 @@ describe('Tooltip (native layer contract)', function() {
   describe('template', function() {
     it('creates the tip element natively and keeps the jQuery template surface', function() {
       build({});
-      var tip = plugin.template[0];
+      var tip = plugin.template;
 
-      plugin.template[0].classList.contains('tooltip').should.be.true; // jQuery collection surface // jQuery collection surface
+      plugin.template.classList.contains('tooltip').should.be.true; // jQuery collection surface // jQuery collection surface
       tip.tagName.should.equal('DIV');
       tip.getAttribute('role').should.equal('tooltip');
       tip.getAttribute('aria-hidden').should.equal('true');
@@ -72,14 +72,14 @@ describe('Tooltip (native layer contract)', function() {
       sinon.assert.calledOnce(showSpy);
       showSpy.firstCall.args[0].type.should.equal('show');
       showSpy.firstCall.args[0].namespace.should.equal('tooltip.zf');
-      plugin.template[0].getAttribute('aria-hidden').should.equal('false');
-      plugin.template[0].getAttribute('data-is-active').should.equal('true');
+      plugin.template.getAttribute('aria-hidden').should.equal('false');
+      plugin.template.getAttribute('data-is-active').should.equal('true');
 
       plugin.hide();
       sinon.assert.calledOnce(hideSpy);
       hideSpy.firstCall.args[0].type.should.equal('hide');
       hideSpy.firstCall.args[0].namespace.should.equal('tooltip.zf');
-      plugin.template[0].getAttribute('aria-hidden').should.equal('true');
+      plugin.template.getAttribute('aria-hidden').should.equal('true');
     });
 
     it('still reaches jQuery listeners with the real events (white absorption)', function() {
@@ -101,9 +101,9 @@ describe('Tooltip (native layer contract)', function() {
 
       // Positionable._setPosition ran through Box on jQuery objects and
       // applied the collision-resolved position class plus an inline offset
-      plugin.template[0].classList.contains('top').should.be.true;
-      plugin.template[0].style.top.should.not.equal('');
-      plugin.template[0].style.left.should.not.equal('');
+      plugin.template.classList.contains('top').should.be.true;
+      plugin.template.style.top.should.not.equal('');
+      plugin.template.style.left.should.not.equal('');
     });
   });
 
@@ -124,7 +124,7 @@ describe('Tooltip (native layer contract)', function() {
       closemeSpy.firstCall.args[0].type.should.equal('closeme');
       closemeSpy.firstCall.args[0].namespace.should.equal('tooltip.zf');
       // the id rides the detail, where the 6.x second trigger parameter sat
-      closemeSpy.firstCall.args[1].should.equal(plugin.template[0].getAttribute('id'));
+      closemeSpy.firstCall.args[1].should.equal(plugin.template.getAttribute('id'));
     });
 
     it('closes other open tooltips through the real close.zf.trigger broadcast', function() {
@@ -220,10 +220,10 @@ describe('Tooltip (native layer contract)', function() {
         var el = html;
 
         FoundationNext.Events.trigger(el, 'tap');
-        plugin.template[0].getAttribute('data-is-active').should.equal('true');
+        plugin.template.getAttribute('data-is-active').should.equal('true');
 
         FoundationNext.Events.trigger(el, 'tap');
-        plugin.template[0].getAttribute('data-is-active').should.equal('false');
+        plugin.template.getAttribute('data-is-active').should.equal('false');
       } finally {
         delete window.ontouchstart;
       }
@@ -234,7 +234,7 @@ describe('Tooltip (native layer contract)', function() {
     it('drops the native listeners, the anchor attributes and the template', function() {
       build({});
       var el = html;
-      var tip = plugin.template[0];
+      var tip = plugin.template;
       plugin.destroy();
       plugin = null;
 

@@ -19,7 +19,7 @@ describe('Tooltip', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -30,37 +30,37 @@ describe('Tooltip', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {});
 
-      plugin.template[0].textContent.should.equal('TOOLTIP_CONTENT');
+      plugin.template.textContent.should.equal('TOOLTIP_CONTENT');
     });
 
     it('has value of tipText option as content', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {tipText: 'TOOLTIP_CONTENT_OPTION'});
 
-      plugin.template[0].textContent.should.equal('TOOLTIP_CONTENT_OPTION');
+      plugin.template.textContent.should.equal('TOOLTIP_CONTENT_OPTION');
     });
 
     it('uses value of template option as template', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {template: '<div class="TEMPLATE_OPTION"></div>'});
 
-      plugin.template[0].classList.contains('TEMPLATE_OPTION').should.be.true;
+      plugin.template.classList.contains('TEMPLATE_OPTION').should.be.true;
     });
 
     it('uses value of triggerClass option as trigger class', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {triggerClass: 'TRIGGER_CLASS_OPTION'});
 
-      plugin.$element[0].classList.contains('TRIGGER_CLASS_OPTION').should.be.true;
+      plugin.$element.classList.contains('TRIGGER_CLASS_OPTION').should.be.true;
     });
 
     it('sets ARIA attributes', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {});
 
-      plugin.$element[0].getAttribute('aria-describedby').should.equal(plugin.template[0].getAttribute('id'));
-      plugin.template[0].getAttribute('aria-hidden').should.equal('true');
-      plugin.template[0].getAttribute('role').should.equal('tooltip');
+      plugin.$element.getAttribute('aria-describedby').should.equal(plugin.template.getAttribute('id'));
+      plugin.template.getAttribute('aria-hidden').should.equal('true');
+      plugin.template.getAttribute('role').should.equal('tooltip');
     });
 
   });
@@ -70,7 +70,7 @@ describe('Tooltip', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Tooltip(html, {templateClasses: 'TOOLTIP_CLASS_OPTION'});
 
-      plugin.template[0].classList.contains('TOOLTIP_CLASS_OPTION').should.be.true;
+      plugin.template.classList.contains('TOOLTIP_CLASS_OPTION').should.be.true;
     });
   });
 
@@ -81,8 +81,8 @@ describe('Tooltip', function() {
 
       plugin.show();
 
-      FoundationNext.Dom.visible(plugin.template[0]).should.be.true;
-      plugin.template[0].getAttribute('aria-hidden').should.equal('false');
+      FoundationNext.Dom.visible(plugin.template).should.be.true;
+      plugin.template.getAttribute('aria-hidden').should.equal('false');
     });
 
     it('fires show.zf.tooltip event', function(done) {
@@ -90,7 +90,7 @@ describe('Tooltip', function() {
       plugin = new Foundation.Tooltip(html, {});
 
       FoundationNext.Events.on(html, 'show.zf.tooltip', function() {
-        FoundationNext.Dom.visible(plugin.template[0]).should.be.true;
+        FoundationNext.Dom.visible(plugin.template).should.be.true;
         done();
       });
 
@@ -108,8 +108,8 @@ describe('Tooltip', function() {
 
       plugin.hide();
 
-      FoundationNext.Dom.visible(plugin.template[0]).should.be.false;
-      plugin.template[0].getAttribute('aria-hidden').should.equal('true');
+      FoundationNext.Dom.visible(plugin.template).should.be.false;
+      plugin.template.getAttribute('aria-hidden').should.equal('true');
     });
 
     it('fires hide.zf.tooltip event', function(done) {
@@ -120,7 +120,7 @@ describe('Tooltip', function() {
       plugin.show();
 
       FoundationNext.Events.on(html, 'hide.zf.tooltip', function() {
-        FoundationNext.Dom.visible(plugin.template[0]).should.be.false;
+        FoundationNext.Dom.visible(plugin.template).should.be.false;
         done();
       });
 
@@ -134,8 +134,8 @@ describe('Tooltip', function() {
       plugin = new Foundation.Tooltip(html, {});
 
       plugin.toggle();
-      FoundationNext.Dom.visible(plugin.template[0]).should.be.true;
-      plugin.template[0].getAttribute('aria-hidden').should.equal('false');
+      FoundationNext.Dom.visible(plugin.template).should.be.true;
+      plugin.template.getAttribute('aria-hidden').should.equal('false');
     });
     it('hides a visible tooltip', function() {
       html = document.body.appendChild(fixture(template));
@@ -145,8 +145,8 @@ describe('Tooltip', function() {
       plugin.show();
 
       plugin.toggle();
-      FoundationNext.Dom.visible(plugin.template[0]).should.be.false;
-      plugin.template[0].getAttribute('aria-hidden').should.equal('true');
+      FoundationNext.Dom.visible(plugin.template).should.be.false;
+      plugin.template.getAttribute('aria-hidden').should.equal('true');
     });
   });
 

@@ -141,7 +141,7 @@ describe('Foundation box', function () {
       plugin = new Foundation.Tooltip(document.querySelector('#box-tip-anchor'), {});
       plugin.show();
 
-      var template = plugin.template[0];
+      var template = plugin.template;
       template.classList.contains('top').should.be.true;
       template.style.top.should.not.equal('');
       template.style.left.should.not.equal('');

@@ -1,11 +1,17 @@
-import $ from 'jquery';
 import { GetYoDigits, ignoreMousedisappear } from './foundation.core.utils';
-import { datasetOptions } from './foundation.util.dom';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
 import { Events } from './foundation.util.events';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Touch } from './foundation.util.touch';
 import { Triggers } from './foundation.util.triggers';
 import { Positionable } from './foundation.positionable';
+
+// jQuery's $(htmlString): parsed to the single root element.
+function parseTemplate(html) {
+  var probe = document.createElement('template');
+  probe.innerHTML = html.trim();
+  return probe.content.firstElementChild;
+}
 import { Motion } from './foundation.util.motion';
 
 /**
@@ -30,8 +36,9 @@ class Tooltip extends Positionable {
     // the 7.0 contract carries as well as the jQuery collection the mixed-state
     // reflow still feeds in; internals keep the collection until this file is
     // migrated off jQuery.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options = $.extend({}, Tooltip.defaults, datasetOptions(this.$element[0]), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Tooltip.defaults, datasetOptions(this.$element), options);
     this.className = 'Tooltip'; // ie9 back compat
 
     this.isActive = false;
@@ -49,28 +56,26 @@ class Tooltip extends Positionable {
    */
   _init() {
     MediaQuery._init();
-    var elemId = this.$element.attr('aria-describedby') || GetYoDigits(6, 'tooltip');
+    var elemId = this.$element.getAttribute('aria-describedby') || GetYoDigits(6, 'tooltip');
 
-    this.options.tipText = this.options.tipText || this.$element.attr('title');
-    this.template = this.options.template ? $(this.options.template) : this._buildTemplate(elemId);
+    this.options.tipText = this.options.tipText || this.$element.getAttribute('title');
+    this.template = this.options.template ? parseTemplate(this.options.template) : this._buildTemplate(elemId);
 
+    // The element-local hide before positioning (the 6.x appendTo/hide).
+    document.body.appendChild(this.template);
     if (this.options.allowHtml) {
-      this.template.appendTo(document.body)
-        .html(this.options.tipText)
-        .hide();
+      this.template.innerHTML = this.options.tipText;
     } else {
-      this.template.appendTo(document.body)
-        .text(this.options.tipText)
-        .hide();
+      this.template.textContent = this.options.tipText;
     }
+    this.template.style.display = 'none';
 
-    this.$element.attr({
-      'title': '',
-      'aria-describedby': elemId,
-      'data-yeti-box': elemId,
-      'data-toggle': elemId,
-      'data-resize': elemId
-    }).addClass(this.options.triggerClass);
+    this.$element.setAttribute('title', '');
+    this.$element.setAttribute('aria-describedby', elemId);
+    this.$element.setAttribute('data-yeti-box', elemId);
+    this.$element.setAttribute('data-toggle', elemId);
+    this.$element.setAttribute('data-resize', elemId);
+    this.$element.classList.add(this.options.triggerClass);
 
     super._init();
     this._events();
@@ -78,8 +83,8 @@ class Tooltip extends Positionable {
 
   _getDefaultPosition() {
     // handle legacy classnames
-    var elementClassName = this.$element[0].className;
-    if (this.$element[0] instanceof SVGElement) {
+    var elementClassName = this.$element.className;
+    if (this.$element instanceof SVGElement) {
         elementClassName = elementClassName.baseVal;
     }
     var position = elementClassName.match(/\b(top|left|right|bottom)\b/g);
@@ -108,9 +113,8 @@ class Tooltip extends Positionable {
 
   /**
    * builds the tooltip element, adds attributes, and returns the template.
-   * The element is created natively (7.0 line A, S8) and returned as a jQuery
-   * collection because the public `plugin.template` surface stays jQuery in
-   * the mixed state.
+   * The element is created natively (7.0 line A, S8); the terminal form
+   * returns the element (the mixed state returned a jQuery collection).
    * @private
    */
   _buildTemplate(id) {
@@ -122,7 +126,7 @@ class Tooltip extends Positionable {
     template.setAttribute('data-is-active', 'false');
     template.setAttribute('data-is-focus', 'false');
     template.setAttribute('id', id);
-    return $(template);
+    return template;
   }
 
   /**
@@ -151,10 +155,17 @@ class Tooltip extends Positionable {
     }
 
     var _this = this;
-    this.template.css('visibility', 'hidden').show();
+    this.template.style.visibility = 'hidden';
+    // .show() native form: clear the inline none, fall back to block
+    this.template.style.display = '';
+    if (window.getComputedStyle(this.template).display === 'none') {
+      this.template.style.display = 'block';
+    }
     this._setPosition();
-    this.template.removeClass('top bottom left right').addClass(this.position)
-    this.template.removeClass('align-top align-bottom align-left align-right align-center').addClass('align-' + this.alignment);
+    this.template.classList.remove('top', 'bottom', 'left', 'right');
+    this.template.classList.add(this.position);
+    this.template.classList.remove('align-top', 'align-bottom', 'align-left', 'align-right', 'align-center');
+    this.template.classList.add('align-' + this.alignment);
 
     /**
      * Fires to close all other open tooltips on the page
@@ -162,17 +173,17 @@ class Tooltip extends Positionable {
      */
     // S13: the closeme production flipped with the Triggers listener -
     // a real, bubbling event whose detail carries the plugin id.
-    Events.trigger(this.$element[0], 'closeme.zf.tooltip', [this.template.attr('id')]);
+    Events.trigger(this.$element, 'closeme.zf.tooltip', [this.template.id]);
 
 
     // State/ARIA go through the native layer (7.0 line A, S8).
-    this.template[0].setAttribute('data-is-active', 'true');
-    this.template[0].setAttribute('aria-hidden', 'false');
+    this.template.setAttribute('data-is-active', 'true');
+    this.template.setAttribute('aria-hidden', 'false');
     _this.isActive = true;
     // fx 方案 A: the fade tween runs on Motion's native primitive (the
     // stop-in-place, the hide reset and the visibility clear keep the 6.x
     // ordering).
-    const templateEl = this.template[0];
+    const templateEl = this.template;
     Motion.stop(templateEl);
     templateEl.style.display = 'none';
     templateEl.style.visibility = '';
@@ -183,7 +194,7 @@ class Tooltip extends Positionable {
      * Fires when the tooltip is shown
      * @event Tooltip#show
      */
-    Events.trigger(this.$element[0], 'show.zf.tooltip');
+    Events.trigger(this.$element, 'show.zf.tooltip');
   }
 
   /**
@@ -194,10 +205,10 @@ class Tooltip extends Positionable {
   hide() {
     var _this = this;
     // State/ARIA native; fx 方案 A, see show().
-    this.template[0].setAttribute('aria-hidden', 'true');
-    this.template[0].setAttribute('data-is-active', 'false');
-    Motion.stop(this.template[0]);
-    Motion.fadeOut(this.template[0], this.options.fadeOutDuration, function() {
+    this.template.setAttribute('aria-hidden', 'true');
+    this.template.setAttribute('data-is-active', 'false');
+    Motion.stop(this.template);
+    Motion.fadeOut(this.template, this.options.fadeOutDuration, function() {
       _this.isActive = false;
       _this.isClick = false;
     });
@@ -205,7 +216,7 @@ class Tooltip extends Positionable {
      * fires when the tooltip is hidden
      * @event Tooltip#hide
      */
-    Events.trigger(this.$element[0], 'hide.zf.tooltip');
+    Events.trigger(this.$element, 'hide.zf.tooltip');
   }
 
   /**
@@ -215,7 +226,7 @@ class Tooltip extends Positionable {
    */
   _events() {
     const _this = this;
-    const element = this.$element[0];
+    const element = this.$element;
     const hasTouch = 'ontouchstart' in window || (typeof window.ontouchstart !== 'undefined');
     var isFocus = false;
 
@@ -260,7 +271,7 @@ class Tooltip extends Positionable {
           // _this.isClick = false;
         } else {
           _this.isClick = true;
-          if ((_this.options.disableHover || !_this.$element.attr('tabindex')) && !_this.isActive) {
+          if ((_this.options.disableHover || !_this.$element.getAttribute('tabindex')) && !_this.isActive) {
             _this.show();
           }
         }
@@ -320,14 +331,14 @@ class Tooltip extends Positionable {
    * @function
    */
   _destroy() {
-    this.$element.attr('title', this.template.text())
-                 .off('.zf.trigger .zf.tooltip')
-                 .removeClass(this.options.triggerClass)
-                 .removeClass('top right left bottom')
-                 .removeAttr('aria-describedby data-disable-hover data-resize data-toggle data-tooltip data-yeti-box');
+    this.$element.setAttribute('title', this.template.textContent);
+    this.$element.classList.remove(this.options.triggerClass, 'top', 'right', 'left', 'bottom');
+    ['aria-describedby', 'data-disable-hover', 'data-resize', 'data-toggle', 'data-tooltip', 'data-yeti-box'].forEach(function(name) {
+      this.$element.removeAttribute(name);
+    }, this);
 
-    // Native side: the flipped hover/focus/click/close/resizeme listeners.
-    Events.off(this.$element[0], '.zf.trigger .zf.tooltip');
+    // The flipped hover/focus/click/close/resizeme listeners.
+    Events.off(this.$element, '.zf.trigger .zf.tooltip');
 
     this.template.remove();
   }

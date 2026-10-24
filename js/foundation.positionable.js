@@ -23,6 +23,20 @@ function nextItem(item, array) {
 }
 
 
+// jQuery's `.offset({top,left})` setter, for absolutely positioned
+// elements: top/left = target page coordinates - the element's current
+// page offset + its current computed top/left (robust to any offsetParent;
+// static elements get position:relative first, exactly like jQuery).
+function setOffset(el, coords) {
+  const cs = window.getComputedStyle(el);
+  if (cs.position === 'static') { el.style.position = 'relative'; }
+  const curTop = parseFloat(cs.top) || 0;
+  const curLeft = parseFloat(cs.left) || 0;
+  const rect = el.getBoundingClientRect();
+  el.style.top = (coords.top - (rect.top + window.pageYOffset) + curTop) + 'px';
+  el.style.left = (coords.left - (rect.left + window.pageXOffset) + curLeft) + 'px';
+}
+
 class Positionable extends Plugin {
   /**
    * Abstract class encapsulating the tether-like explicit positioning logic
@@ -115,8 +129,13 @@ class Positionable extends Plugin {
     return this.options.hOffset;
   }
 
-  _setPosition($anchor, $element, $parent) {
-    if($anchor.attr('aria-expanded') === 'false'){ return false; }
+  // 7.0 line A terminal form: plain elements (un-migrated callers hand in
+  // jQuery collections, unwrapped here).
+  _setPosition(anchor, element, parent) {
+    anchor = anchor.nodeType === 1 ? anchor : anchor[0];
+    element = element.nodeType === 1 ? element : element[0];
+    if (parent) { parent = parent.nodeType === 1 ? parent : parent[0]; }
+    if(anchor.getAttribute('aria-expanded') === 'false'){ return false; }
 
     if (!this.options.allowOverlap) {
       // restore original position & alignment before checking overlap
@@ -124,18 +143,16 @@ class Positionable extends Plugin {
       this.alignment = this.originalAlignment;
     }
 
-    // S13: the Box util reads plain elements (its GetDimensions keeps the
-    // collection unwrap for un-migrated callers); the inputs here hand it
-    // the raw nodes. The `$element.offset(...)` write stays jQuery-side
-    // (wrap-up slice owns the element-write seam).
-    $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+    // S13: the Box util reads plain elements; the offset write below is
+    // the native port of jQuery's `.offset({top,left})` setter.
+    setOffset(element, Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
 
     if(!this.options.allowOverlap) {
       var minOverlap = 100000000;
       // default coordinates to how we start, in case we can't figure out better
       var minCoordinates = {position: this.position, alignment: this.alignment};
       while(!this._positionsExhausted()) {
-        let overlap = Box.OverlapArea($element[0], $parent ? $parent[0] : null, false, false, this.options.allowBottomOverlap);
+        let overlap = Box.OverlapArea(element, parent || null, false, false, this.options.allowBottomOverlap);
         if(overlap === 0) {
           return;
         }
@@ -147,13 +164,13 @@ class Positionable extends Plugin {
 
         this._reposition();
 
-        $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+        setOffset(element, Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
       }
       // If we get through the entire loop, there was no non-overlapping
       // position available. Pick the version with least overlap.
       this.position = minCoordinates.position;
       this.alignment = minCoordinates.alignment;
-      $element.offset(Box.GetExplicitOffsets($element[0], $anchor[0], this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+      setOffset(element, Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
     }
   }
 
