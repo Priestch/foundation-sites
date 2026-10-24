@@ -55,7 +55,7 @@ describe('DropdownMenu (native layer contract)', function() {
       sinon.assert.calledOnce(showSpy);
       showSpy.firstCall.args[0].type.should.equal('show');
       showSpy.firstCall.args[0].namespace.should.equal('dropdownMenu.zf');
-      showSpy.firstCall.args[1][0].should.equal(sub);
+      showSpy.firstCall.args[1].should.equal(sub);
       // the class state flipped synchronously, before the event
       sub.classList.contains('js-dropdown-active').should.be.true;
       sub.parentElement.classList.contains('is-active').should.be.true;
