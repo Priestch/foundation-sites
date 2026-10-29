@@ -103,7 +103,12 @@ function installDispatcher(el, type, bucket) {
       nativeEcho = null;
       return;
     }
-    runHandlers(el, bucket.recs, event, nsOf(event), event.detail || []);
+    const result = runHandlers(el, bucket.recs, event, nsOf(event), event.detail || []);
+    // The dispatch is synchronous, so the triggerHandler caller can read
+    // the run's result back off the event object (jQuery's event.result).
+    if (result !== undefined) {
+      event.zfResult = result;
+    }
   };
   bucket.dispatcher = dispatcher;
   el.addEventListener(type, dispatcher);
@@ -306,12 +311,17 @@ function triggerHandler(el, types, params) {
   splitTypes(types).forEach(namespaced => {
     const parsed = parseType(namespaced);
     if (!parsed.type) { return; }
-    const byType = listenerTable.get(el);
-    const bucket = byType && byType.get(parsed.type);
-    if (!bucket) { return; }
+    // A real NON-BUBBLING event: jQuery's triggerHandler was local to its
+    // single shared table; the native world carries one Events table per
+    // bundle (foundation.js beside foundation-next.js), so the shared
+    // transport between them is the DOM itself. Same-element listeners on
+    // every table hear it, ancestors and other elements do not - the rest
+    // of the jQuery semantics (no bubbling, no native-method shortcut,
+    // handler `false` still prevents the default).
     const event = new CustomEvent(parsed.type, { bubbles: false, cancelable: true, detail: args });
     event.namespace = nsString(parsed.ns);
-    result = runHandlers(el, bucket.recs, event, parsed.ns, args);
+    el.dispatchEvent(event);
+    result = event.zfResult;
   });
   return result;
 }

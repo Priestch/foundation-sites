@@ -45,7 +45,7 @@ describe('Drilldown Menu', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -55,9 +55,9 @@ describe('Drilldown Menu', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$submenuAnchors.should.be.an('object');
-      plugin.$submenus.should.be.an('object');
-      plugin.$menuItems.should.be.an('object');
+      Array.isArray(plugin.$submenuAnchors).should.be.true;
+      Array.isArray(plugin.$submenus).should.be.true;
+      Array.isArray(plugin.$menuItems).should.be.true;
     });
   });
 
@@ -71,12 +71,12 @@ describe('Drilldown Menu', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$element[0].querySelectorAll('[data-submenu]').forEach(function(el) {
+      plugin.$element.querySelectorAll('[data-submenu]').forEach(function(el) {
         el.getAttribute('role').should.equal('group');
         el.getAttribute('aria-hidden').should.equal('true');
       });
 
-      plugin.$element[0].querySelectorAll('.is-drilldown-submenu-parent').forEach(function(el) {
+      plugin.$element.querySelectorAll('.is-drilldown-submenu-parent').forEach(function(el) {
         el.getAttribute('aria-expanded').should.equal('false');
         el.querySelectorAll(':scope > a')[0].getAttribute('aria-haspopup').should.equal('true');
         el.querySelectorAll(':scope > a')[0].getAttribute('aria-label').should.equal(el.querySelectorAll(':scope > a')[0].textContent);
@@ -201,7 +201,7 @@ describe('Drilldown Menu', function() {
 
       const submenus = html.querySelectorAll('ul[data-submenu]');
 
-      FoundationNext.Events.one(plugin.$element[0], Foundation.transitionend(plugin.$element[0]), function () {
+      FoundationNext.Events.one(plugin.$element, Foundation.transitionend(plugin.$element), function () {
         FoundationNext.Events.one(html, 'closed.zf.drilldown', function () {
           submenus[0].classList.contains('is-closing').should.be.false;
           submenus[0].classList.contains('is-active').should.be.false;
@@ -211,7 +211,7 @@ describe('Drilldown Menu', function() {
 
       plugin._hideAll();
 	    // fake transitionend for console tests
-      FoundationNext.Events.triggerHandler(plugin.$element[0], Foundation.transitionend(plugin.$element[0]));
+      FoundationNext.Events.triggerHandler(plugin.$element, Foundation.transitionend(plugin.$element));
     });
   });
 

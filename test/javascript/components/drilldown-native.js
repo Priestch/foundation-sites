@@ -64,7 +64,7 @@ describe('Drilldown (native layer contract)', function() {
       sinon.assert.calledOnce(openSpy);
       openSpy.firstCall.args[0].type.should.equal('open');
       openSpy.firstCall.args[0].namespace.should.equal('drilldown.zf');
-      openSpy.firstCall.args[1][0].should.equal(li);
+      openSpy.firstCall.args[1].should.equal(li);
       // class/ARIA state flipped synchronously, before the event
       li.querySelector(':scope > ul').classList.contains('is-active').should.be.true;
       li.getAttribute('aria-expanded').should.equal('true');
@@ -87,7 +87,7 @@ describe('Drilldown (native layer contract)', function() {
 
       sinon.assert.calledOnce(hideSpy);
       hideSpy.firstCall.args[0].type.should.equal('hide');
-      hideSpy.firstCall.args[1][0].should.equal(sub);
+      hideSpy.firstCall.args[1].should.equal(sub);
       sub.classList.contains('is-closing').should.be.true;
       sub.getAttribute('aria-hidden').should.equal('true');
 
@@ -106,13 +106,11 @@ describe('Drilldown (native layer contract)', function() {
       plugin._hideAll();
       sinon.assert.notCalled(closedSpy);
 
-      // the .one(transitionend) wait sits on the active submenu, jQuery
-      // side; drive it through the same helper the coarse suite uses (the
-      // helper resolves to 'webkitTransitionEnd' in Chrome). The jQuery
-      // triggerHandler stays the instrument: the native one never reaches
-      // the jQuery .one listener.
-      $(html.querySelector('#drilldownNativeMenu-1'))
-        .triggerHandler(Foundation.transitionend($(html.querySelector('#drilldownNativeMenu-1'))));
+      // 7.0 terminal form: the .one(transitionend) wait sits on the active
+      // submenu through the native Events layer; drive it through the
+      // native triggerHandler (the helper resolves to 'webkitTransitionEnd'
+      // in Chrome).
+      FoundationNext.Events.triggerHandler(html.querySelector('#drilldownNativeMenu-1'), Foundation.transitionend(html.querySelector('#drilldownNativeMenu-1')));
 
       sinon.assert.calledOnce(closedSpy);
       closedSpy.firstCall.args[0].type.should.equal('closed');
@@ -204,7 +202,7 @@ describe('Drilldown (native layer contract)', function() {
       build({});
       var getDimensions = sinon.spy(Foundation.Box, 'GetDimensions');
 
-      FoundationNext.Events.trigger(plugin.$element[0], 'mutateme.zf.trigger');
+      FoundationNext.Events.trigger(plugin.$element, 'mutateme.zf.trigger');
       sinon.assert.called(getDimensions);
       var count = getDimensions.callCount;
 

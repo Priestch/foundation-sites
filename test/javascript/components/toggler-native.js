@@ -98,16 +98,26 @@ describe('Toggler (native layer contract)', function() {
       html.classList.contains('is-visible').should.be.false;
     });
 
-    it('does not consume a purely synthetic toggle.zf.trigger dispatch', function() {
+    it('triggerHandler deliveries are real but never bubble (7.0 transport)', function() {
       html = fixture('<div id="toggler" data-toggler="is-visible"></div>');
-      document.body.appendChild(html);
+      var wrap = document.createElement('div');
+      wrap.appendChild(html);
+      document.body.appendChild(wrap);
       plugin = new Foundation.Toggler(html, {});
 
-      // A synthetic dispatch that never becomes a real DOM event cannot
-      // reach the native listener (Events.triggerHandler is non-bubbling
-      // AND synthetic; the consumer listens through the real dispatcher).
+      // 7.0 semantics: triggerHandler dispatches a real NON-BUBBLING event
+      // (the shared transport between the per-bundle Events tables). The
+      // same-element consumer receives it...
       FoundationNext.Events.triggerHandler(html, 'toggle.zf.trigger');
-      html.classList.contains('is-visible').should.be.false;
+      html.classList.contains('is-visible').should.be.true;
+
+      // ...and an ancestor listener never does (the jQuery no-bubble form).
+      var ancestorHeard = 0;
+      FoundationNext.Events.one(wrap, 'toggle.zf.trigger', function() { ancestorHeard++; });
+      FoundationNext.Events.triggerHandler(html, 'toggle.zf.trigger');
+      ancestorHeard.should.equal(0);
+
+      wrap.remove();
     });
   });
 
