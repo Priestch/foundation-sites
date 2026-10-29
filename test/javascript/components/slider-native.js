@@ -41,8 +41,8 @@ describe('Slider (native layer contract)', function() {
   describe('init()', function() {
     it('writes the input and handle state attributes through the native layer', function() {
       build({});
-      var input = plugin.$input[0];
-      var handle = plugin.$handle[0];
+      var input = plugin.$input;
+      var handle = plugin.$handle;
 
       input.getAttribute('max').should.equal('100');
       input.getAttribute('min').should.equal('0');
@@ -60,7 +60,7 @@ describe('Slider (native layer contract)', function() {
 
       plugin.options.initialStart.should.equal(10);
       plugin.options.step.should.equal(1);
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('10');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('10');
     });
 
     it('marks disabled sliders through the native classList', function() {
@@ -79,18 +79,18 @@ describe('Slider (native layer contract)', function() {
       plugin._setHandlePos(plugin.$handle, 10, true);
       var finishedSpy = sinon.spy();
       FoundationNext.Events.on(html, 'finished.zf.animate', finishedSpy);
-      var jqHandle;
-      // jQuery listener on purpose: the moved production is jQuery-side, the
-      // pin is its trailing-argument signature
-      $(html).on('moved.zf.slider', function(e, handle) { jqHandle = handle; });
+      var movedHandle;
+      // Terminal form: the moved production is a real bubbling event with
+      // the plain handle element
+      FoundationNext.Events.on(html, 'moved.zf.slider', function(e, handle) { movedHandle = handle; });
 
       plugin._setHandlePos(plugin.$handle, 50, true);
 
       // the real Move completion event reaches the flipped native consumer
       sinon.assert.calledOnce(finishedSpy);
-      // the jQuery production keeps its trailing-argument signature
-      jqHandle[0].should.equal(plugin.$handle[0]);
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('50');
+      // the terminal form forwards the plain handle element
+      movedHandle.should.equal(plugin.$handle);
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('50');
     });
 
     it('updates the aria state natively in _setValues', function() {
@@ -98,31 +98,31 @@ describe('Slider (native layer contract)', function() {
 
       plugin._setValues(plugin.$handle, 42);
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('42');
-      plugin.$input[0].value.should.equal('42');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('42');
+      plugin.$input.value.should.equal('42');
     });
   });
 
   describe('input consumers (native layer)', function() {
     it('moves the handle on a real change event on the input', function() {
       build({});
-      var input = plugin.$input[0];
+      var input = plugin.$input;
 
       input.value = '40';
       input.dispatchEvent(new Event('change'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('40');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('40');
     });
 
     it('moves the handle on a real ENTER keyup on the input', function() {
       build({});
-      var input = plugin.$input[0];
+      var input = plugin.$input;
 
       input.value = '30';
       // keyCode: this headless Chrome ignores "which" in KeyboardEventInit
       input.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 13}));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('30');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('30');
     });
   });
 
@@ -134,7 +134,7 @@ describe('Slider (native layer contract)', function() {
       // left of the bar, the value becomes the start value
       html.click();
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('0');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('0');
     });
   });
 
@@ -142,29 +142,29 @@ describe('Slider (native layer contract)', function() {
     it('moves the handle on the synthetic jQuery mock keydown (the keyboard seam stays jQuery-side)', function() {
       build({});
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('11');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('11');
     });
 
     it('runs the drag chain from real mouse events (the S13 Touch/drag flip)', function() {
       build({});
 
-      plugin.$handle[0].dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
-      plugin.$element.data('dragging').should.be.true;
+      plugin.$handle.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+      plugin.$element.zfSliderDragging.should.be.true;
 
       document.body.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true, clientX: 5, clientY: 5}));
-      plugin.$element.data('dragging').should.be.false;
+      plugin.$element.zfSliderDragging.should.be.false;
     });
   });
 
   describe('destroy', function() {
     it('drops the native input/click listeners alongside the jQuery ones', function() {
       build({});
-      var input = plugin.$input[0];
-      var handle = plugin.$handle[0];
+      var input = plugin.$input;
+      var handle = plugin.$handle;
       plugin.destroy();
 
       // a real change and a real click must both find nothing

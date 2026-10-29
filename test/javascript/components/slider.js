@@ -22,7 +22,7 @@ describe('Slider', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Slider(html, {});
 
-      (plugin.$element[0] instanceof Element).should.be.true;
+      (plugin.$element instanceof Element).should.be.true;
       plugin.options.should.be.an('object');
     });
   });
@@ -32,17 +32,17 @@ describe('Slider', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Slider(html, {});
 
-      (plugin.$handle[0] instanceof Element).should.be.true;
-      plugin.$input.should.be.an('object');
-      plugin.$fill.should.be.an('object');
+      chai.expect(plugin.$handle).to.be.an.instanceof(Element);
+      chai.expect(plugin.$input).to.be.an.instanceof(Element);
+      chai.expect(plugin.$fill).to.be.an.instanceof(Element);
     });
     it('stores two handle and input elements for two sided slider', function() {
       html = document.body.appendChild(fixture(template));
       html.insertAdjacentHTML('beforeend', '<span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span><input type="hidden">');
       plugin = new Foundation.Slider(html, {doubleSided: true});
 
-      plugin.$handle2.should.be.an('object');
-      plugin.$input2.should.be.an('object');
+      chai.expect(plugin.$handle2).to.be.an.instanceof(Element);
+      chai.expect(plugin.$input2).to.be.an.instanceof(Element);
     });
     it('is disabled when disable option is true', function() {
       html = document.body.appendChild(fixture(template));
@@ -59,7 +59,7 @@ describe('Slider', function() {
 
       plugin._setHandlePos(plugin.$handle, 10, true);
 
-      plugin.$handle[0].style.left.should.not.be.equal('');
+      plugin.$handle.style.left.should.not.be.equal('');
     });
     it('does nothing if disabled option is true', function() {
       html = document.body.appendChild(fixture(template));
@@ -67,16 +67,17 @@ describe('Slider', function() {
 
       plugin._setHandlePos(plugin.$handle, 10, true);
 
-      plugin.$handle[0].style.left.should.be.equal('');
+      plugin.$handle.style.left.should.be.equal('');
     });
     it('fires changed.zf.slider event', function(done) {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Slider(html, {changedDelay: 50});
       var slider = plugin;
 
-      // jQuery listener on purpose: the changed production is jQuery-side
-      $(html).on('changed.zf.slider', function(e, handle) {
-        handle[0].should.be.equal(slider.$handle[0]);
+      // Terminal form: the changed production is a real bubbling event
+      // with the plain handle element
+      FoundationNext.Events.on(html, 'changed.zf.slider', function(e, handle) {
+        handle.should.be.equal(slider.$handle);
         done();
       });
 
@@ -96,10 +97,11 @@ describe('Slider', function() {
       var slider = plugin;
 
       let timesCallbackCalled = 0;
-      // jQuery listener on purpose: the moved production is jQuery-side
-      $(html).on('moved.zf.slider', function(e, handle) {
+      // Terminal form: the moved production is a real bubbling event with
+      // the plain handle element
+      FoundationNext.Events.on(html, 'moved.zf.slider', function(e, handle) {
         if (++timesCallbackCalled === 4) {
-          handle[0].should.be.equal(slider.$handle[0]);
+          handle.should.be.equal(slider.$handle);
           done();
         }
       });
@@ -122,7 +124,7 @@ describe('Slider', function() {
 
       plugin._setValues(plugin.$handle, 10);
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('10');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('10');
     });
     it('updates input value', function() {
       html = document.body.appendChild(fixture(template));
@@ -130,7 +132,7 @@ describe('Slider', function() {
 
       plugin._setValues(plugin.$handle, 10);
 
-      plugin.$input[0].value.should.equal('10');
+      plugin.$input.value.should.equal('10');
     });
   });
 
@@ -144,21 +146,21 @@ describe('Slider', function() {
         vertical: true
       });
 
-      plugin.$handle[0].getAttribute('role').should.equal('slider');
-      plugin.$handle[0].getAttribute('aria-controls').should.equal(plugin.$input[0].getAttribute('id'));
-      plugin.$handle[0].getAttribute('aria-valuemax').should.equal('70');
-      plugin.$handle[0].getAttribute('aria-valuemin').should.equal('20');
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal('50');
-      plugin.$handle[0].getAttribute('aria-orientation').should.equal('vertical');
-      plugin.$handle[0].getAttribute('tabindex').should.equal('0');
+      plugin.$handle.getAttribute('role').should.equal('slider');
+      plugin.$handle.getAttribute('aria-controls').should.equal(plugin.$input.getAttribute('id'));
+      plugin.$handle.getAttribute('aria-valuemax').should.equal('70');
+      plugin.$handle.getAttribute('aria-valuemin').should.equal('20');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('50');
+      plugin.$handle.getAttribute('aria-orientation').should.equal('vertical');
+      plugin.$handle.getAttribute('tabindex').should.equal('0');
     });
     it('adds attributes to input', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Slider(html, {});
 
-      plugin.$input[0].getAttribute('max').should.equal('100');
-      plugin.$input[0].getAttribute('min').should.equal('0');
-      plugin.$input[0].getAttribute('step').should.equal('1');
+      plugin.$input.getAttribute('max').should.equal('100');
+      plugin.$input.getAttribute('min').should.equal('0');
+      plugin.$input.getAttribute('step').should.equal('1');
     });
   });
 
@@ -225,11 +227,11 @@ describe('Slider', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Slider(html, {});
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('HOME'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('HOME'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal(plugin.$handle[0].getAttribute('aria-valuemin'));
+      plugin.$handle.getAttribute('aria-valuenow').should.equal(plugin.$handle.getAttribute('aria-valuemin'));
     });
     it('increases value by step size on ARROW_RIGHT', function() {
       html = document.body.appendChild(fixture(template));
@@ -238,11 +240,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 + 1).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1).toString());
     });
     it('increases value by step size on ARROW_UP', function() {
       html = document.body.appendChild(fixture(template));
@@ -251,11 +253,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 + 1).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1).toString());
     });
     it('decreases value by step size on ARROW_LEFT', function() {
       html = document.body.appendChild(fixture(template));
@@ -264,11 +266,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 - 1).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1).toString());
     });
     it('decreases value by step size on ARROW_DOWN', function() {
       html = document.body.appendChild(fixture(template));
@@ -277,11 +279,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 - 1).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1).toString());
     });
     it('decreases value by step size times 10 on SHIFT_ARROW_RIGHT', function() {
       html = document.body.appendChild(fixture(template));
@@ -290,11 +292,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT', {shift: true}));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT', {shift: true}));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 + 1 * 10).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1 * 10).toString());
     });
     it('decreases value by step size times 10 on SHIFT_ARROW_LEFT', function() {
       html = document.body.appendChild(fixture(template));
@@ -303,11 +305,11 @@ describe('Slider', function() {
         step: 1
       });
 
-      plugin.$handle[0].focus();
+      plugin.$handle.focus();
 
-      plugin.$handle[0].dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT', {shift: true}));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT', {shift: true}));
 
-      plugin.$handle[0].getAttribute('aria-valuenow').should.equal((10 - 1 * 10).toString());
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1 * 10).toString());
     });
   });
 });
