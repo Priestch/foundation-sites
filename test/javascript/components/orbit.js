@@ -40,9 +40,9 @@ describe('Orbit', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Orbit(html, {});
 
-      plugin.$element.should.be.an('object');
-      plugin.$wrapper.should.be.an('object');
-      plugin.$slides.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
+      chai.expect(plugin.$wrapper).to.be.an.instanceof(Element);
+      Array.isArray(plugin.$slides).should.be.true;
       plugin.options.should.be.an('object');
     });
   });
@@ -78,7 +78,7 @@ describe('Orbit', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Orbit(html, {});
 
-      plugin.$bullets.should.be.an('object');
+      Array.isArray(plugin.$bullets).should.be.true;
     });
   });
 
@@ -271,7 +271,7 @@ describe('Orbit', function() {
 
       plugin.$wrapper.focus();
 
-      plugin.$wrapper[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$wrapper.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
       sinon.assert.calledWith(spy, true);
     });
@@ -282,7 +282,7 @@ describe('Orbit', function() {
 
       plugin.$wrapper.focus();
 
-      plugin.$wrapper[0].dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
+      plugin.$wrapper.dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
 
       sinon.assert.calledWith(spy, false);
     });

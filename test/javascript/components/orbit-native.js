@@ -69,7 +69,7 @@ describe('Orbit (native layer contract)', function() {
       spy.firstCall.args[0].type.should.equal('slidechange');
       spy.firstCall.args[0].namespace.should.equal('orbit.zf');
       // the forwarded newSlide collection rides as the event parameter
-      spy.firstCall.args[1][0].should.equal(el.querySelectorAll('.orbit-slide')[1]);
+      spy.firstCall.args[1].should.equal(el.querySelectorAll('.orbit-slide')[1]);
     });
 
     it('fires beforeslidechange.zf.orbit before the slide flip, then slidechange.zf.orbit', function() {
@@ -102,7 +102,7 @@ describe('Orbit (native layer contract)', function() {
       chai.expect(spy.firstCall.args[0].namespace).to.be.undefined;
       // the forwarded $newSlide collection rides as the event parameter:
       // detail[0] is the collection, its [0] head the slide element
-      spy.firstCall.args[0].originalEvent.detail[0][0].should.equal(el.querySelectorAll('.orbit-slide')[1]);
+      spy.firstCall.args[0].originalEvent.detail[0].should.equal(el.querySelectorAll('.orbit-slide')[1]);
     });
   });
 
@@ -111,9 +111,9 @@ describe('Orbit (native layer contract)', function() {
       build({});
       var startSpy = sinon.spy();
       var pauseSpy = sinon.spy();
-      // jQuery listeners on purpose: the Timer util still produces these
-      // on the jQuery side (fx-adjacent seam), and a jQuery-synthesized
-      // event never reaches a native listener
+      // Terminal form: the Timer util dispatches real bubbling events
+      // through the native layer; a jQuery listener still hears them
+      // through the white absorption
       $(html).on('timerstart.zf.orbit', startSpy);
       $(html).on('timerpaused.zf.orbit', pauseSpy);
 
@@ -123,10 +123,10 @@ describe('Orbit (native layer contract)', function() {
       sinon.assert.calledOnce(startSpy);
       sinon.assert.calledOnce(pauseSpy);
       startSpy.firstCall.args[0].type.should.equal('timerstart');
-      // jQuery sorts the namespace segments of triggered events
-      startSpy.firstCall.args[0].namespace.should.equal('orbit.zf');
+      // real events carry no jQuery namespace (jQuery leaves it undefined)
+      chai.expect(startSpy.firstCall.args[0].namespace).to.be.undefined;
       pauseSpy.firstCall.args[0].type.should.equal('timerpaused');
-      pauseSpy.firstCall.args[0].namespace.should.equal('orbit.zf');
+      chai.expect(pauseSpy.firstCall.args[0].namespace).to.be.undefined;
     });
   });
 
@@ -139,7 +139,7 @@ describe('Orbit (native layer contract)', function() {
 
       FoundationNext.Events.trigger(el, 'resizeme.zf.trigger');
 
-      plugin.$wrapper[0].style.height.should.equal('120px');
+      plugin.$wrapper.style.height.should.equal('120px');
     });
   });
 
@@ -189,7 +189,7 @@ describe('Orbit (native layer contract)', function() {
 
       plugin.$wrapper.focus();
 
-      plugin.$wrapper[0].dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$wrapper.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
       FoundationNext.Dom.visible(html.querySelectorAll('.orbit-slide')[1]).should.be.true;
     });
