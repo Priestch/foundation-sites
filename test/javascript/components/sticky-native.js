@@ -58,7 +58,7 @@ describe('Sticky (native layer contract)', function() {
       build({});
 
       waitReady(() => {
-        var el = plugin.$element[0];
+        var el = plugin.$element;
         el.getAttribute('data-resize').should.be.a('string');
         el.getAttribute('data-mutate').should.equal(el.getAttribute('data-resize'));
         el.classList.contains('sticky').should.be.true;
@@ -99,7 +99,7 @@ describe('Sticky (native layer contract)', function() {
       waitReady(() => {
         var setSizes = sinon.spy(plugin, '_setSizes');
 
-        FoundationNext.Events.trigger(plugin.$element[0], 'resizeme.zf.trigger');
+        FoundationNext.Events.trigger(plugin.$element, 'resizeme.zf.trigger');
 
         tryInterval({
           interval: 10,
@@ -122,7 +122,7 @@ describe('Sticky (native layer contract)', function() {
 
         // one real end event: exactly one _setSizes pass (the Events.off
         // wipe before the on prevents stacking, like the M1 fix)
-        plugin.$element[0].dispatchEvent(new Event('transitionend'));
+        plugin.$element.dispatchEvent(new Event('transitionend'));
 
         tryInterval({
           interval: 10,
@@ -145,7 +145,7 @@ describe('Sticky (native layer contract)', function() {
         var setSizes = sinon.spy(plugin, '_setSizes');
 
         // the element and the anchor each deliver once (two listeners)
-        FoundationNext.Events.trigger(plugin.$element[0], 'mutateme.zf.trigger');
+        FoundationNext.Events.trigger(plugin.$element, 'mutateme.zf.trigger');
         FoundationNext.Events.trigger(document.getElementById('stickyNativeAnchor'), 'mutateme.zf.trigger');
         setSizes.callCount.should.equal(2);
 
@@ -165,7 +165,7 @@ describe('Sticky (native layer contract)', function() {
   describe('state events', function() {
     it('fires sticky.zf.stuckto:<side> and sticky.zf.unstuckfrom:<side> through the native layer with the class flips', function() {
       build({});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       var stuckSpy = sinon.spy();
       var unstuckSpy = sinon.spy();
       FoundationNext.Events.on(el, 'sticky.zf.stuckto:top', stuckSpy);
@@ -186,7 +186,7 @@ describe('Sticky (native layer contract)', function() {
 
     it('fires pause.zf.sticky through the native layer and drops the scroll listener', function() {
       build({});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       var pauseSpy = sinon.spy();
       FoundationNext.Events.on(el, 'pause.zf.sticky', pauseSpy);
 
@@ -204,7 +204,7 @@ describe('Sticky (native layer contract)', function() {
 
       waitReady(() => {
         var setSizes = sinon.spy(plugin, '_setSizes');
-        var el = plugin.$element[0];
+        var el = plugin.$element;
         plugin.destroy();
         plugin = null;
 

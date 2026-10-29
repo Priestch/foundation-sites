@@ -1,8 +1,7 @@
-import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
 import { onLoad, GetYoDigits } from './foundation.core.utils';
 import { Events } from './foundation.util.events';
-import { datasetOptions } from './foundation.util.dom';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Triggers } from './foundation.util.triggers';
 
@@ -26,12 +25,12 @@ class Sticky extends Plugin {
     // the 7.0 contract carries as well as the jQuery collection the mixed-state
     // reflow still feeds in; internals keep the collection until this file is
     // migrated off jQuery.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options = $.extend({}, Sticky.defaults, datasetOptions(this.$element[0]), options);
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Sticky.defaults, datasetOptions(this.$element), options);
     this.className = 'Sticky'; // ie9 back compat
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init();
 
     this._init();
   }
@@ -44,41 +43,46 @@ class Sticky extends Plugin {
   _init() {
     MediaQuery._init();
 
-    var $parent = this.$element.parent('[data-sticky-container]'),
-        id = this.$element[0].id || GetYoDigits(6, 'sticky'),
+    var parentContainer = (this.$element.parentElement && this.$element.parentElement.matches('[data-sticky-container]')) ? this.$element.parentElement : null,
+        id = this.$element.id || GetYoDigits(6, 'sticky'),
         _this = this;
 
-    if($parent.length){
-      this.$container = $parent;
+    if(parentContainer){
+      this.$container = parentContainer;
     } else {
       this.wasWrapped = true;
-      this.$element.wrap(this.options.container);
-      this.$container = this.$element.parent();
+      // .wrap(htmlString): a container built from the option markup
+      var probe = document.createElement('template');
+      probe.innerHTML = this.options.container.trim();
+      var wrapper = probe.content.firstElementChild;
+      this.$element.parentElement.insertBefore(wrapper, this.$element);
+      wrapper.appendChild(this.$element);
+      this.$container = this.$element.parentElement;
     }
-    this.$container.addClass(this.options.containerClass);
+    this.$container.classList.add(this.options.containerClass);
 
     // State attributes go through the native layer (7.0 line A, S10).
-    this.$element[0].classList.add(this.options.stickyClass);
-    this.$element[0].setAttribute('data-resize', id);
-    this.$element[0].setAttribute('data-mutate', id);
+    this.$element.classList.add(this.options.stickyClass);
+    this.$element.setAttribute('data-resize', id);
+    this.$element.setAttribute('data-mutate', id);
     if (this.options.anchor !== '') {
-        var anchorInit = $('#' + _this.options.anchor);
-        if (anchorInit.length) { anchorInit[0].setAttribute('data-mutate', id); }
+        var anchorInit = document.getElementById(_this.options.anchor);
+        if (anchorInit) { anchorInit.setAttribute('data-mutate', id); }
     }
 
     this.scrollCount = this.options.checkEvery;
     this.isStuck = false;
-    this.onLoadListener = onLoad($(window), function () {
+    this.onLoadListener = onLoad(window, function () {
       // A load callback can land after destroy() nulled the instance state
       // (Magellan S7 precedent).
       if (!_this.$element) { return; }
 
       //We calculate the container height to have correct values for anchor points offset calculation.
-      _this.containerHeight = _this.$element.css("display") === "none" ? 0 : _this.$element[0].getBoundingClientRect().height;
-      _this.$container.css('height', _this.containerHeight);
+      _this.containerHeight = window.getComputedStyle(_this.$element).display === "none" ? 0 : _this.$element.getBoundingClientRect().height;
+      _this.$container.style.height = _this.containerHeight + 'px';
       _this.elemHeight = _this.containerHeight;
       if (_this.options.anchor !== '') {
-        _this.$anchor = $('#' + _this.options.anchor);
+        _this.$anchor = document.getElementById(_this.options.anchor);
       } else {
         _this._parsePoints();
       }
@@ -111,13 +115,13 @@ class Sticky extends Plugin {
         pt = pts[i];
       } else {
         var place = pts[i].split(':'),
-            anchor = $(`#${place[0]}`);
+            anchor = document.getElementById(place[0]);
 
         // offset().top equivalent (7.0 line A, S10): viewport-relative rect
         // plus the current scroll, the S7 SmoothScroll precedent.
-        pt = anchor[0].getBoundingClientRect().top + window.pageYOffset;
+        pt = anchor.getBoundingClientRect().top + window.pageYOffset;
         if (place[1] && place[1].toLowerCase() === 'bottom') {
-          pt += anchor[0].getBoundingClientRect().height;
+          pt += anchor.getBoundingClientRect().height;
         }
       }
       breaks[i] = pt;
@@ -158,8 +162,8 @@ class Sticky extends Plugin {
 
     // S10: the resizeme consumer flips to the native event layer (S4
     // producer), like Equalizer S8.
-    Events.off(this.$element[0], 'resizeme.zf.trigger');
-    Events.on(this.$element[0], 'resizeme.zf.trigger', function() {
+    Events.off(this.$element, 'resizeme.zf.trigger');
+    Events.on(this.$element, 'resizeme.zf.trigger', function() {
         _this._eventsHandler(id);
     });
 
@@ -167,12 +171,12 @@ class Sticky extends Plugin {
     // native event layer together with the last jQuery-synthesized
     // producers (Tabs forward, ResponsiveToggle animated half), so every
     // listener receives each dispatch exactly once.
-    Events.on(this.$element[0], 'mutateme.zf.trigger', function () {
+    Events.on(this.$element, 'mutateme.zf.trigger', function () {
         _this._eventsHandler(id);
     });
 
     if(this.$anchor) {
-      Events.on(this.$anchor[0], 'mutateme.zf.trigger', function () {
+      Events.on(this.$anchor, 'mutateme.zf.trigger', function () {
           _this._eventsHandler(id);
       });
     }
@@ -216,7 +220,7 @@ class Sticky extends Plugin {
      // S10: real, bubbling CustomEvent - native listeners receive it
      // directly, still-on-jQuery listeners through the real-event pass-
      // through (white absorption).
-     Events.trigger(this.$element[0], 'pause.zf.sticky');
+     Events.trigger(this.$element, 'pause.zf.sticky');
   }
 
   /**
@@ -274,20 +278,22 @@ class Sticky extends Plugin {
     this.isStuck = true;
     // State classes go through the native layer (7.0 line A, S10); the css
     // writes stay on jQuery (css seam).
-    this.$element[0].classList.remove('is-anchored', `is-at-${notStuckTo}`);
-    this.$element[0].classList.add('is-stuck', `is-at-${stickTo}`);
-    this.$element.css(css)
+    this.$element.classList.remove('is-anchored', `is-at-${notStuckTo}`);
+    this.$element.classList.add('is-stuck', `is-at-${stickTo}`);
+    Object.keys(css).forEach(function(prop) {
+      this.$element.style[prop] = css[prop];
+    }, this);
     /**
      * Fires when the $element has become `position: fixed;`
      * Namespaced to `top` or `bottom`, e.g. `sticky.zf.stuckto:top`
      * @event Sticky#stuckto
      */
-    Events.trigger(this.$element[0], `sticky.zf.stuckto:${stickTo}`);
+    Events.trigger(this.$element, `sticky.zf.stuckto:${stickTo}`);
     // S10: the transitionend-family consumer flips to the native event
     // layer - real browser events reach it directly. M1's off-then-on wipe
     // carries over as the Events.off form.
-    Events.off(this.$element[0], 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky')
-    Events.on(this.$element[0], 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function() {
+    Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky')
+    Events.on(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function() {
       _this._setSizes();
     });
   }
@@ -319,15 +325,17 @@ class Sticky extends Plugin {
 
     this.isStuck = false;
     // State classes go through the native layer (7.0 line A, S10).
-    this.$element[0].classList.remove('is-stuck', `is-at-${stickTo}`);
-    this.$element[0].classList.add('is-anchored', `is-at-${topOrBottom}`);
-    this.$element.css(css)
+    this.$element.classList.remove('is-stuck', `is-at-${stickTo}`);
+    this.$element.classList.add('is-anchored', `is-at-${topOrBottom}`);
+    Object.keys(css).forEach(function(prop) {
+      this.$element.style[prop] = css[prop];
+    }, this);
     /**
      * Fires when the $element has become anchored.
      * Namespaced to `top` or `bottom`, e.g. `sticky.zf.unstuckfrom:bottom`
      * @event Sticky#unstuckfrom
      */
-    Events.trigger(this.$element[0], `sticky.zf.unstuckfrom:${topOrBottom}`);
+    Events.trigger(this.$element, `sticky.zf.unstuckfrom:${topOrBottom}`);
   }
 
   /**
@@ -343,35 +351,33 @@ class Sticky extends Plugin {
       return;
     }
 
-    var newElemWidth = this.$container[0].getBoundingClientRect().width,
-      comp = window.getComputedStyle(this.$container[0]),
+    var newElemWidth = this.$container.getBoundingClientRect().width,
+      comp = window.getComputedStyle(this.$container),
       pdngl = parseInt(comp['padding-left'], 10),
       pdngr = parseInt(comp['padding-right'], 10);
 
-    if (this.$anchor && this.$anchor.length) {
-      this.anchorHeight = this.$anchor[0].getBoundingClientRect().height;
+    if (this.$anchor) {
+      this.anchorHeight = this.$anchor.getBoundingClientRect().height;
     } else {
       this._parsePoints();
     }
 
-    this.$element.css({
-      'max-width': `${newElemWidth - pdngl - pdngr}px`
-    });
+    this.$element.style.maxWidth = `${newElemWidth - pdngl - pdngr}px`;
 
     // Recalculate the height only if it is "dynamic"
     if (this.options.dynamicHeight || !this.containerHeight) {
       // Get the sticked element height and apply it to the container to "hold the place"
-      var newContainerHeight = this.$element[0].getBoundingClientRect().height || this.containerHeight;
-      newContainerHeight = this.$element.css("display") === "none" ? 0 : newContainerHeight;
-      this.$container.css('height', newContainerHeight);
+      var newContainerHeight = this.$element.getBoundingClientRect().height || this.containerHeight;
+      newContainerHeight = window.getComputedStyle(this.$element).display === "none" ? 0 : newContainerHeight;
+      this.$container.style.height = newContainerHeight + 'px';
       this.containerHeight = newContainerHeight;
     }
     this.elemHeight = this.containerHeight;
 
     if (!this.isStuck) {
-      if (this.$element.hasClass('is-at-bottom')) {
-        var anchorPt = (this.points ? this.points[1] - (this.$container[0].getBoundingClientRect().top + window.pageYOffset) : this.anchorHeight) - this.elemHeight;
-        this.$element.css('top', anchorPt);
+      if (this.$element.classList.contains('is-at-bottom')) {
+        var anchorPt = (this.points ? this.points[1] - (this.$container.getBoundingClientRect().top + window.pageYOffset) : this.anchorHeight) - this.elemHeight;
+        this.$element.style.top = anchorPt + 'px';
       }
     }
 
@@ -395,7 +401,7 @@ class Sticky extends Plugin {
         mBtm = emCalc(this.options.marginBottom),
         // offset().top equivalent (7.0 line A, S10, S7 SmoothScroll
         // precedent).
-        topPoint = this.points ? this.points[0] : this.$anchor[0].getBoundingClientRect().top + window.pageYOffset,
+        topPoint = this.points ? this.points[0] : this.$anchor.getBoundingClientRect().top + window.pageYOffset,
         bottomPoint = this.points ? this.points[1] : topPoint + this.anchorHeight,
         winHeight = window.innerHeight;
 
@@ -424,40 +430,37 @@ class Sticky extends Plugin {
   _destroy() {
     this._removeSticky(true);
 
-    // jQuery side: the css resets and the legacy wipes (S10 keeps the
-    // double-off discipline - each layer wipes only its own listeners).
-    this.$element.removeClass(`${this.options.stickyClass} is-anchored is-at-top`)
-                 .css({
-                   height: '',
-                   top: '',
-                   bottom: '',
-                   'max-width': ''
-                 })
-                 .off('resizeme.zf.trigger')
-                 .off('mutateme.zf.trigger')
-                 .off('transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
+    // The css resets and the state classes.
+    this.$element.classList.remove(`${this.options.stickyClass}`, 'is-anchored', 'is-at-top');
+    this.$element.style.height = '';
+    this.$element.style.top = '';
+    this.$element.style.bottom = '';
+    this.$element.style.maxWidth = '';
     // Native side: the flipped resizeme/mutateme/transitionend listeners and
     // the per-instance window scroll listener drop precisely. The mutateme
     // listeners live on the native layer since the S10 group flip.
-    Events.off(this.$element[0], 'resizeme.zf.trigger mutateme.zf.trigger');
-    Events.off(this.$element[0], 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
-    if (this.$anchor && this.$anchor.length) {
+    Events.off(this.$element, 'resizeme.zf.trigger mutateme.zf.trigger');
+    Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
+    if (this.$anchor) {
       // The 'change.zf.sticky' off below is removed (S14): 6.x never bound a
       // change listener on the anchor (grep master confirms - only this off
       // existed), so the wipe always matched nothing, and on the native
       // layer it could never unregister anything either. Dead code.
-      Events.off(this.$anchor[0], 'mutateme.zf.trigger');
+      Events.off(this.$anchor, 'mutateme.zf.trigger');
     }
     if (this.scrollListener) Events.off(window, this.scrollListener)
     if (this.onLoadListener) Events.off(window, this.onLoadListener) // S4: onLoad registers on the native event layer
 
     if (this.wasWrapped) {
-      this.$element.unwrap();
+      // .unwrap(): the wrapper is replaced by its children
+      const wrapper = this.$element.parentElement;
+      while (wrapper.firstChild) {
+        wrapper.parentElement.insertBefore(wrapper.firstChild, wrapper);
+      }
+      wrapper.remove();
     } else {
-      this.$container.removeClass(this.options.containerClass)
-                     .css({
-                       height: ''
-                     });
+      this.$container.classList.remove(this.options.containerClass);
+      this.$container.style.height = '';
     }
   }
 }
