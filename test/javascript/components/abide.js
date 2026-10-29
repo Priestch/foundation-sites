@@ -15,7 +15,7 @@ describe('Abide', function() {
       html = document.body.appendChild(fixture('<form data-abide novalidate></form>'));
       plugin = new Foundation.Abide(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
 

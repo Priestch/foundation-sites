@@ -132,7 +132,7 @@ describe('Abide (native layer contract)', function() {
 
       sinon.assert.calledOnce(invalidSpy);
       invalidSpy.firstCall.args[0].namespace.should.equal('abide.zf');
-      invalidSpy.firstCall.args[1][0].should.equal(input);
+      invalidSpy.firstCall.args[1].should.equal(input);
       input.classList.contains('is-invalid-input').should.be.true;
       input.hasAttribute('data-invalid').should.be.true;
       input.getAttribute('aria-invalid').should.equal('true');
@@ -188,7 +188,7 @@ describe('Abide (native layer contract)', function() {
       disabled.classList.contains('is-invalid-input').should.be.false;
     });
 
-    it('runs custom validators with the jQuery collection, required flag and parent', function() {
+    it('runs custom validators with the field element, required flag and parent element (7.0 terminal form)', function() {
       var calls = [];
       html = document.body.appendChild(fixture('<form data-abide novalidate><input type="text" required data-validator="yes"></form>'));
       plugin = new Foundation.Abide(html, {
@@ -204,9 +204,9 @@ describe('Abide (native layer contract)', function() {
       input.dispatchEvent(new Event('change', {bubbles: true}));
 
       calls.length.should.equal(1);
-      calls[0][0][0].should.equal(input);
+      calls[0][0].should.equal(input);
       calls[0][1].should.be.true;
-      calls[0][2][0].should.equal(input.parentNode);
+      calls[0][2].should.equal(input.parentNode);
       // the failed validator name lands in the error targeting
       html.querySelector('input').getAttribute('aria-invalid').should.equal('true');
     });
@@ -224,7 +224,7 @@ describe('Abide (native layer contract)', function() {
       form.dispatchEvent(event);
 
       sinon.assert.calledOnce(invalidSpy);
-      invalidSpy.firstCall.args[1][0].should.equal(form);
+      invalidSpy.firstCall.args[1].should.equal(form);
       event.defaultPrevented.should.be.true;
       form.querySelector('input[type="text"]').classList.contains('is-invalid-input').should.be.true;
     });
