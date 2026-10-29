@@ -1,9 +1,8 @@
-import $ from 'jquery';
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Events } from './foundation.util.events';
 import { GetYoDigits } from './foundation.core.utils';
 import { Plugin }from './foundation.core.plugin';
-import { datasetOptions } from './foundation.util.dom';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
 
 import { Accordion } from './foundation.accordion';
 import { Tabs } from './foundation.tabs';
@@ -20,9 +19,9 @@ var MenuPlugins = {
   accordion: {
     cssClass: 'accordion',
     plugin:   Accordion,
-    open:     (plugin, target) => plugin.down($(target)),
-    close:    (plugin, target) => plugin.up($(target)),
-    toggle:   (plugin, target) => plugin.toggle($(target)),
+    open:     (plugin, target) => plugin.down(target),
+    close:    (plugin, target) => plugin.up(target),
+    toggle:   (plugin, target) => plugin.toggle(target),
   }
 };
 
@@ -55,17 +54,17 @@ class ResponsiveAccordionTabs extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    // Mixed state (7.0 line A, S16): dual-form constructor input.
-    this.$element = element.nodeType === 1 ? $(element) : element;
-    this.options = $.extend({}, ResponsiveAccordionTabs.defaults, datasetOptions(this.$element[0]), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, ResponsiveAccordionTabs.defaults, datasetOptions(this.$element), options);
 
-    this.rules = this.$element.data('responsive-accordion-tabs');
+    this.rules = this.$element.getAttribute('data-responsive-accordion-tabs');
     this.currentMq = null;
     this.currentRule = null;
     this.currentPlugin = null;
     this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
-    if (!this.$element[0].getAttribute('id')) {
-      this.$element[0].setAttribute('id', GetYoDigits(6, 'responsiveaccordiontabs'));
+    if (!this.$element.getAttribute('id')) {
+      this.$element.setAttribute('id', GetYoDigits(6, 'responsiveaccordiontabs'));
     }
 
     this._init();
@@ -116,7 +115,9 @@ class ResponsiveAccordionTabs extends Plugin {
       if (MenuPlugins.hasOwnProperty(key)) {
         var obj = MenuPlugins[key];
         try {
-          var dummyPlugin = $('<ul></ul>');
+          // a detached probe element (the 6.x $('<ul></ul>') was detached
+          // too - the inner plugins tolerate it through their guards)
+          var dummyPlugin = document.createElement('ul');
           var tmpPlugin = new obj.plugin(dummyPlugin,_this.options);
           for (var keyKey in tmpPlugin.options) {
             if (tmpPlugin.options.hasOwnProperty(keyKey) && keyKey !== 'zfPlugin') {
@@ -154,7 +155,7 @@ class ResponsiveAccordionTabs extends Plugin {
    */
   _checkMediaQueries() {
     var matchedMq = null;
-    var element = this.$element[0];
+    var element = this.$element;
 
     // Iterate through each rule and find the last matching rule
     Object.keys(this.rules).forEach(function(key) {
@@ -188,10 +189,13 @@ class ResponsiveAccordionTabs extends Plugin {
     this.currentPlugin = new this.currentRule.plugin(this.$element, this.options);
   }
 
+  // 7.0 terminal form: the 6.x markup conversion moved nodes through
+  // jQuery collection ops; each step is the same move on plain elements.
   _handleMarkup(toSet){
     var _this = this, fromString = 'accordion';
-    var $panels = $('[data-tabs-content='+this.$element.attr('id')+']');
-    if ($panels.length) fromString = 'tabs';
+    var elementId = this.$element.getAttribute('id');
+    var panelsContainer = document.querySelector(`[data-tabs-content=${elementId}]`);
+    if (panelsContainer) fromString = 'tabs';
     if (fromString === toSet) {
       return;
     }
@@ -199,54 +203,100 @@ class ResponsiveAccordionTabs extends Plugin {
     var tabsTitle = _this.allOptions.linkClass?_this.allOptions.linkClass:'tabs-title';
     var tabsPanel = _this.allOptions.panelClass?_this.allOptions.panelClass:'tabs-panel';
 
-    this.$element.removeAttr('role');
-    var $liHeads = this.$element.children('.'+tabsTitle+',[data-accordion-item]').removeClass(tabsTitle).removeClass('accordion-item').removeAttr('data-accordion-item');
-    var $liHeadsA = $liHeads.children('a').removeClass('accordion-title');
+    this.$element.removeAttribute('role');
+    var liHeads = Array.from(this.$element.children).filter(el => el.matches(`.${tabsTitle},[data-accordion-item]`));
+    liHeads.forEach(li => {
+      li.classList.remove(tabsTitle, 'accordion-item');
+      li.removeAttribute('data-accordion-item');
+    });
+    var liHeadsA = liHeads.map(li => li.querySelector(':scope > a'));
+    liHeadsA.forEach(a => a && a.classList.remove('accordion-title'));
 
+    var panels;
     if (fromString === 'tabs') {
-      $panels = $panels.children('.'+tabsPanel).removeClass(tabsPanel).removeAttr('role').removeAttr('aria-hidden').removeAttr('aria-labelledby');
-      $panels.children('a').removeAttr('role').removeAttr('aria-controls').removeAttr('aria-selected');
+      panels = Array.from(panelsContainer.querySelectorAll(`:scope > .${tabsPanel}`));
+      panels.forEach(panel => {
+        panel.classList.remove(tabsPanel);
+        panel.removeAttribute('role');
+        panel.removeAttribute('aria-hidden');
+        panel.removeAttribute('aria-labelledby');
+        var link = panel.querySelector(':scope > a');
+        if (link) {
+          link.removeAttribute('role');
+          link.removeAttribute('aria-controls');
+          link.removeAttribute('aria-selected');
+        }
+      });
     } else {
-      $panels = $liHeads.children('[data-tab-content]').removeClass('accordion-content');
+      panels = liHeads.map(li => li.querySelector(':scope > [data-tab-content]')).filter(Boolean);
+      panels.forEach(panel => panel.classList.remove('accordion-content'));
     }
 
-    $panels.css({display:'',visibility:''});
-    $liHeads.css({display:'',visibility:''});
+    panels.forEach(panel => {
+      panel.style.display = '';
+      panel.style.visibility = '';
+    });
+    liHeads.forEach(li => {
+      li.style.display = '';
+      li.style.visibility = '';
+    });
     if (toSet === 'accordion') {
-      $panels.each(function(key,value){
-        $(value).appendTo($liHeads.get(key)).addClass('accordion-content').attr('data-tab-content','').removeClass('is-active').css({height:''});
-        $('[data-tabs-content='+_this.$element.attr('id')+']').after('<div id="tabs-placeholder-'+_this.$element.attr('id')+'"></div>').detach();
-        $liHeads.addClass('accordion-item').attr('data-accordion-item','');
-        $liHeadsA.addClass('accordion-title');
+      panels.forEach(function(panel, key){
+        var head = liHeads[key];
+        head.appendChild(panel);
+        panel.classList.add('accordion-content');
+        panel.setAttribute('data-tab-content', '');
+        panel.classList.remove('is-active');
+        panel.style.height = '';
+        head.classList.add('accordion-item');
+        head.setAttribute('data-accordion-item', '');
+        var link = liHeadsA[key];
+        if (link) { link.classList.add('accordion-title'); }
       });
+      // .after(placeholder).detach(): a marker div takes the tabs-content
+      // container's place for the trip back to tabs. The 6.x form ran this
+      // inside the loop, but the first detach left the later .after() calls
+      // silent no-ops - one placeholder, once.
+      var placeholder = document.createElement('div');
+      placeholder.id = 'tabs-placeholder-' + elementId;
+      panelsContainer.parentElement.insertBefore(placeholder, panelsContainer.nextSibling);
+      panelsContainer.remove();
     } else if (toSet === 'tabs') {
-      var $tabsContent = $('[data-tabs-content='+_this.$element.attr('id')+']');
-      var $placeholder = $('#tabs-placeholder-'+_this.$element.attr('id'));
-      if ($placeholder.length) {
-        $tabsContent = $('<div class="tabs-content"></div>').insertAfter($placeholder).attr('data-tabs-content',_this.$element.attr('id'));
-        $placeholder.remove();
+      var tabsContent = document.querySelector(`[data-tabs-content=${elementId}]`);
+      var placeholder = document.getElementById('tabs-placeholder-' + elementId);
+      if (placeholder) {
+        tabsContent = document.createElement('div');
+        tabsContent.className = 'tabs-content';
+        placeholder.parentElement.insertBefore(tabsContent, placeholder.nextSibling);
+        tabsContent.setAttribute('data-tabs-content', elementId);
+        placeholder.remove();
       } else {
-        $tabsContent = $('<div class="tabs-content"></div>').insertAfter(_this.$element).attr('data-tabs-content',_this.$element.attr('id'));
+        tabsContent = document.createElement('div');
+        tabsContent.className = 'tabs-content';
+        this.$element.parentElement.insertBefore(tabsContent, this.$element.nextSibling);
+        tabsContent.setAttribute('data-tabs-content', elementId);
       }
-      $panels.each(function(key,value){
-        var tempValue = $(value).appendTo($tabsContent).addClass(tabsPanel);
-        var hash = $liHeadsA.get(key).hash.slice(1);
-        var id = $(value).attr('id') || GetYoDigits(6, 'accordion');
+      panels.forEach(function(panel, key){
+        var link = liHeadsA[key];
+        tabsContent.appendChild(panel);
+        panel.classList.add(tabsPanel);
+        var hash = link.hash.slice(1);
+        var id = panel.getAttribute('id') || GetYoDigits(6, 'accordion');
         if (hash !== id) {
           if (hash !== '') {
-            $(value).attr('id',hash);
+            panel.setAttribute('id', hash);
           } else {
             hash = id;
-            $(value).attr('id',hash);
-            $($liHeadsA.get(key)).attr('href',$($liHeadsA.get(key)).attr('href').replace('#','')+'#'+hash);
+            panel.setAttribute('id', hash);
+            link.setAttribute('href', link.getAttribute('href').replace('#','') + '#' + hash);
           }
         }
-        var isActive = $($liHeads.get(key)).hasClass('is-active');
+        var isActive = liHeads[key].classList.contains('is-active');
         if (isActive) {
-          tempValue.addClass('is-active');
+          panel.classList.add('is-active');
         }
       });
-      $liHeads.addClass(tabsTitle);
+      liHeads.forEach(li => li.classList.add(tabsTitle));
     };
   }
 
