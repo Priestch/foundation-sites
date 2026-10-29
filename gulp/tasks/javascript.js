@@ -30,10 +30,6 @@ var CONFIG = require('../config.js');
 // See https://webpack.js.org/configuration/externals/#externals
 //
 var webpackExternalPlugins = Object.assign(
-  // | Module import path             | External source names and paths
-  utils.umdExternals({
-    'jquery': { root: 'jQuery' },
-  }),
   utils.umdExternals({
     './foundation.core':              { root: 'foundation.core', default: './foundation.core' },
     './foundation.core.utils':        { root: 'foundation.core', default: './foundation.core' },
@@ -75,10 +71,7 @@ var webpackConfig = {
   // ".browserslistrc" by default) does not emit modern runtime syntax now that
   // the browserslist file carries the CSS-only baseline.
   target: ['web', 'es5'],
-  externals: utils.umdExternals({
-    // Use the global jQuery object "jQuery" in module-less environments.
-    'jquery': { root: 'jQuery' },
-  }),
+  externals: utils.umdExternals({}),
   module: {
     rules: [
       {

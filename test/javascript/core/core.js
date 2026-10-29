@@ -3,8 +3,51 @@ describe('Foundation core', function() {
     (window.Foundation).should.be.an('object');
   });
 
-  it('is a jQuery prototype function', function() {
-    ($.fn.foundation).should.to.be.a('function');
+  it('exposes Foundation.init as the 7.0 initialization entry (plan B)', function() {
+    (Foundation.init).should.to.be.a('function');
+    // the jQuery prototype function is gone with addToJquery
+    chai.expect($.fn.foundation).to.be.undefined;
+  });
+
+  describe('init()', function() {
+    var added;
+    beforeEach(function() { added = []; });
+    afterEach(function() { added.forEach(function(el) { el.remove(); }); });
+
+    it('initializes plugins under a root, primes MediaQuery and drops .no-js', function() {
+      var noJs = document.body.appendChild(document.createElement('div'));
+      noJs.className = 'no-js';
+
+      var el = document.body.appendChild(document.createElement('div'));
+      el.setAttribute('data-toggler', 'probe-init-class');
+      added.push(el, noJs);
+
+      var root = document.body.appendChild(document.createElement('div'));
+      root.appendChild(el);
+      added.push(root);
+
+      Foundation.init(root);
+
+      // the plugin under the root was constructed and registered
+      chai.expect(Foundation.Registry.getInstance(el)).to.exist;
+      // the no-js class was dropped (document-wide, like 6.x)
+      noJs.classList.contains('no-js').should.be.false;
+      // MediaQuery is primed
+      (typeof Foundation.MediaQuery.current).should.be.a('string');
+
+      Foundation.Registry.getInstance(el).destroy();
+    });
+
+    it('defaults to the whole document', function() {
+      var el = document.body.appendChild(document.createElement('div'));
+      el.setAttribute('data-toggler', 'probe-init-doc');
+      added.push(el);
+
+      Foundation.init();
+
+      chai.expect(Foundation.Registry.getInstance(el)).to.exist;
+      Foundation.Registry.getInstance(el).destroy();
+    });
   });
 
   describe('plugin()', function() {
@@ -59,14 +102,13 @@ describe('Foundation core', function() {
 
     it('registers a new instance of a plugin', function() {
       var instance = new Probe($el, {});
-      var methodSpy = sinon.spy(instance, 'probeMethod');
 
       Foundation.registerPlugin(instance);
 
       (instance.uuid).should.be.a('string');
-      $el.foundation('probeMethod');
-      sinon.assert.calledOnce(methodSpy);
-      methodSpy.firstCall.thisValue.should.equal(instance);
+      // 7.0: the method-dispatch surface ($.fn.foundation) is gone; the
+      // Registry is the lookup
+      Foundation.Registry.getInstance($el[0]).should.equal(instance);
       ($el.attr('data-probe')).should.equal(instance.uuid);
     });
 
@@ -125,7 +167,7 @@ describe('Foundation core', function() {
       Foundation.unregisterPlugin(instance);
 
       chai.expect($el.attr('data-probe')).to.not.exist;
-      chai.expect(function() { $el.foundation('probeMethod'); }).to.throw(ReferenceError);
+      chai.expect(Foundation.Registry.getInstance($el[0])).to.be.undefined;
     });
 
     it('removes the instance uuid from Foundation._uuids', function() {
@@ -143,14 +185,12 @@ describe('Foundation core', function() {
     it('removes only the destroyed instance (round trip)', function() {
       var $other = $('<div id="probe-el-other"></div>').appendTo('body');
       var other = new Probe($other, {});
-      var otherSpy = sinon.spy(other, 'probeMethod');
       Foundation.registerPlugin(other);
 
       Foundation.unregisterPlugin(instance);
 
-      $other.foundation('probeMethod');
-      sinon.assert.calledOnce(otherSpy);
-      chai.expect(function() { $el.foundation('probeMethod'); }).to.throw(ReferenceError);
+      Foundation.Registry.getInstance($other[0]).should.equal(other);
+      chai.expect(Foundation.Registry.getInstance($el[0])).to.be.undefined;
       $other.removeAttr('data-probe');
       $other.remove();
     });
@@ -255,8 +295,8 @@ describe('Foundation core', function() {
       Foundation.reflow(document.body, 'probe');
 
       constructed.should.equal(2);
-      instances[0].$element[0].should.equal($a[0]);
-      instances[1].$element[0].should.equal($b[0]);
+      instances[0].$element.should.equal($a[0]);
+      instances[1].$element.should.equal($b[0]);
     });
 
     it('does not re-initialize elements that already carry an instance', function() {
@@ -276,7 +316,7 @@ describe('Foundation core', function() {
 
       Foundation.reflow($('body'), 'probe');
 
-      (instances[0].$element[0]).should.equal($a[0]);
+      (instances[0].$element).should.equal($a[0]);
       (instances[0].options.reflow).should.be.true;
       (instances[0].options.foo).should.equal(2);
       (instances[0].options.bar).should.be.true;
@@ -290,7 +330,7 @@ describe('Foundation core', function() {
       Foundation.reflow($container[0], 'probe');
 
       constructed.should.equal(1);
-      (instances[0].$element[0].id).should.equal('probe-el-inside');
+      (instances[0].$element.id).should.equal('probe-el-inside');
       $container.remove();
     });
 
@@ -302,7 +342,7 @@ describe('Foundation core', function() {
       Foundation.reflow('#probe-el-container-b', 'probe');
 
       constructed.should.equal(1);
-      (instances[0].$element[0].id).should.equal('probe-el-inside-b');
+      (instances[0].$element.id).should.equal('probe-el-inside-b');
       $container.remove();
     });
   });
@@ -330,7 +370,7 @@ describe('Foundation core', function() {
       $container.remove();
     });
 
-    it('fires init.zf.<name> through jQuery with the sorted namespace', function() {
+    it('fires init.zf.<name> as a real event the jQuery listener absorbs (white absorption)', function() {
       var spy = sinon.spy();
 
       $el.on('init.zf.probe', spy);
@@ -338,11 +378,11 @@ describe('Foundation core', function() {
       $el.off('init.zf.probe');
 
       sinon.assert.calledOnce(spy);
-      // jQuery splits the type from its namespaces: type carries the bare
-      // type, .namespace the sorted remainder — the signature of the jQuery
-      // trigger channel (a native CustomEvent would carry the full type).
+      // 7.0 terminal form: registerPlugin dispatches a real bubbling event;
+      // the jQuery listener hears it through white absorption with the bare
+      // type and NO jQuery namespace (like every real event).
       spy.firstCall.args[0].type.should.equal('init');
-      spy.firstCall.args[0].namespace.should.equal('probe.zf');
+      chai.expect(spy.firstCall.args[0].namespace).to.be.undefined;
     });
 
     it('fires init.zf.<name> only after the data-<name> attribute is written', function() {

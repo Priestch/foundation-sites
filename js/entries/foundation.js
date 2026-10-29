@@ -1,4 +1,3 @@
-import $ from 'jquery';
 
 import { Foundation } from '../foundation.core';
 import * as CoreUtils from '../foundation.core.utils';
@@ -6,6 +5,7 @@ import { Box } from '../foundation.util.box'
 import { onImagesLoaded } from '../foundation.util.imageLoader';
 import { Keyboard } from '../foundation.util.keyboard';
 import { MediaQuery } from '../foundation.util.mediaQuery';
+import { Registry } from '../foundation.util.registry';
 import { Motion, Move } from '../foundation.util.motion';
 import { Nest } from '../foundation.util.nest';
 import { Timer } from '../foundation.util.timer';
@@ -33,7 +33,6 @@ import { Toggler } from '../foundation.toggler';
 import { Tooltip } from '../foundation.tooltip';
 import { ResponsiveAccordionTabs } from '../foundation.responsiveAccordionTabs';
 
-Foundation.addToJquery($);
 
 // Add Foundation Utils to Foundation global namespace for backwards
 // compatibility.
@@ -44,6 +43,9 @@ Foundation.RegExpEscape = CoreUtils.RegExpEscape;
 Foundation.onLoad = CoreUtils.onLoad;
 
 Foundation.Box = Box;
+// 7.0 plan B: the Registry is the public instance-lookup surface (the
+// $.fn.foundation dispatch is gone).
+Foundation.Registry = Registry;
 Foundation.onImagesLoaded = onImagesLoaded;
 Foundation.Keyboard = Keyboard;
 Foundation.MediaQuery = MediaQuery;
