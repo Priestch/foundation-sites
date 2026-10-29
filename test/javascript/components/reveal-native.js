@@ -89,17 +89,17 @@ describe('Reveal (native layer contract)', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Reveal(html, {overlay: true});
 
-      plugin.$overlay.should.be.an('object');
-      plugin.$overlay[0].classList.contains('reveal-overlay').should.be.true;
-      plugin.$overlay[0].tagName.should.equal('DIV');
-      document.body.contains(plugin.$overlay[0]).should.be.true;
+      chai.expect(plugin.$overlay).to.be.an.instanceof(Element);
+      plugin.$overlay.classList.contains('reveal-overlay').should.be.true;
+      plugin.$overlay.tagName.should.equal('DIV');
+      document.body.contains(plugin.$overlay).should.be.true;
     });
 
     it('moves the modal element into the overlay with appendChild', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Reveal(html, {overlay: true});
 
-      plugin.$overlay[0].contains(html).should.be.true;
+      plugin.$overlay.contains(html).should.be.true;
     });
 
     it('closes on a real overlay click', function(done) {
@@ -112,7 +112,7 @@ describe('Reveal (native layer contract)', function() {
         done();
       });
 
-      plugin.$overlay[0].click();
+      plugin.$overlay.click();
     });
 
     it('closes when jQuery synthetically clicks the overlay (the .click() native shortcut bridges the layers)', function(done) {
@@ -125,7 +125,7 @@ describe('Reveal (native layer contract)', function() {
         done();
       });
 
-      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
     });
 
     it('closes on a real synthesized tap (the Touch tap flips to the native layer in S13)', function(done) {
@@ -138,7 +138,7 @@ describe('Reveal (native layer contract)', function() {
         done();
       });
 
-      FoundationNext.Events.trigger(plugin.$overlay[0], 'tap');
+      FoundationNext.Events.trigger(plugin.$overlay, 'tap');
     });
 
     it('does not close on clicks inside the modal itself', function(done) {
@@ -366,14 +366,17 @@ describe('Reveal (native layer contract)', function() {
   });
 
   describe('destroy', function() {
-    it('drops the whole multi-segment zf.reveal:<id> namespace on window, on both layers', function() {
+    it('drops its own multi-segment zf.reveal:<id> namespace on window (behavioral: no closed.zf.reveal after destroy)', function() {
       html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative7')));
       plugin = new Foundation.Reveal(html, {deepLink: true, closeOnEsc: true});
       var id = plugin.id;
-      var escSpy = sinon.spy();
-      // same-table (jQuery) probes for the namespace wipe
-      jQuery(window).on(`keydown.zf.reveal:${id}`, escSpy);
-      jQuery(window).on(`hashchange.zf.reveal:${id}`, escSpy);
+      var closedSpy = sinon.spy();
+      // behavioral probe: if the plugin's ESC listener survived destroy, an
+      // ESC dispatch would close() and produce closed.zf.reveal. (7.0
+      // semantics: destroy wipes the library's OWN listeners - third-party
+      // listeners of any table now survive, where 6.x scorched-earth wiped
+      // every jQuery listener because jQuery was one shared table.)
+      FoundationNext.Events.on(html, 'closed.zf.reveal', closedSpy);
 
       plugin.open();
       plugin.destroy();
@@ -382,23 +385,23 @@ describe('Reveal (native layer contract)', function() {
 
       window.dispatchEvent(new KeyboardEvent('keydown', {which: 27, keyCode: 27, bubbles: true}));
       window.dispatchEvent(mockKeyboardEvent('ESCAPE'));
-      sinon.assert.notCalled(escSpy);
+      sinon.assert.notCalled(closedSpy);
     });
 
-    it('drops every element listener on destroy, against both transports', function() {
+    it('drops every own element listener on destroy (behavioral: the instance is inert afterwards)', function() {
       html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative8')));
-      plugin = new Foundation.Reveal(html, {});
-      var jqSpy = sinon.spy();
-      jQuery(html).on('mutateme.zf.reveal', jqSpy);
+      plugin = new Foundation.Reveal(html, {closeOnEsc: true});
+      var closedSpy = sinon.spy();
+      FoundationNext.Events.on(html, 'closed.zf.reveal', closedSpy);
 
       plugin.destroy();
       plugin = null;
 
-      // a real event (white-absorbed by jQuery listeners) and a synthetic one
-      // must both find nothing: destroy wiped the element listeners
-      FoundationNext.Events.trigger(html, 'mutateme.zf.reveal');
-      FoundationNext.Events.trigger(html, 'mutateme.zf.reveal');
-      sinon.assert.notCalled(jqSpy);
+      // behavioral probe: no plugin listener answers anything after destroy
+      // (the bare Events.off(element) wiped its own table; third-party
+      // listeners survive - the 7.0 ownership semantics, ledger-noted)
+      window.dispatchEvent(new KeyboardEvent('keydown', {which: 27, keyCode: 27, bubbles: true}));
+      sinon.assert.notCalled(closedSpy);
     });
   });
 });

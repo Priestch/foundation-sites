@@ -22,7 +22,7 @@ describe('Reveal', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Reveal(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -41,7 +41,7 @@ describe('Reveal', function() {
       var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
       plugin = new Foundation.Reveal(html, {});
 
-      plugin.$anchor[0].should.be.equal(anchor);
+      plugin.$anchor.should.deep.equal([anchor]);
 
       anchor.remove();
     });
@@ -63,9 +63,9 @@ describe('Reveal', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.Reveal(html, {overlay: true});
 
-      plugin.$overlay.should.be.an('object');
-      plugin.$overlay[0].classList.contains('reveal-overlay').should.be.true;
-      $.contains(document.body, plugin.$overlay[0]).should.be.true;
+      chai.expect(plugin.$overlay).to.be.an.instanceof(Element);
+      plugin.$overlay.classList.contains('reveal-overlay').should.be.true;
+      $.contains(document.body, plugin.$overlay).should.be.true;
     });
   });
 
@@ -86,7 +86,7 @@ describe('Reveal', function() {
       plugin = new Foundation.Reveal(html, {overlay: true});
 
       FoundationNext.Events.on(html, 'open.zf.reveal', function() {
-        FoundationNext.Dom.visible(plugin.$overlay[0]).should.be.true;
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
         done();
       });
 
@@ -195,7 +195,7 @@ describe('Reveal', function() {
       plugin.open();
 
       FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
-        FoundationNext.Dom.visible(plugin.$overlay[0]).should.be.false;
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.false;
       	done();
       });
 
@@ -332,7 +332,7 @@ describe('Reveal', function() {
       plugin = new Foundation.Reveal(html, {overlay: true});
 
       FoundationNext.Events.on(html, 'open.zf.reveal', function() {
-        FoundationNext.Dom.visible(plugin.$overlay[0]).should.be.true;
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
         done();
       });
 
@@ -362,7 +362,7 @@ describe('Reveal', function() {
 
 
       FoundationNext.Events.on(html, 'open.zf.reveal', function() {
-        FoundationNext.Dom.visible(plugin.$overlay[0]).should.be.true;
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
         anchor.remove();
       	done();
       });
@@ -381,7 +381,7 @@ describe('Reveal', function() {
       	done();
       });
 
-      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
     });
     it('not closes a modal on overlay click if closeOnClick option is true', function(done) {
       html = document.body.appendChild(fixture(template));
@@ -390,7 +390,7 @@ describe('Reveal', function() {
       // Open it first
       plugin.open();
 
-      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
 
       // Add timeout to make sure it does not close
       // Timeout is required because closed event will not be fired
