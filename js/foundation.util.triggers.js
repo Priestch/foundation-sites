@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { onLoad } from './foundation.core.utils';
 import { Motion } from './foundation.util.motion';
 import { Events } from './foundation.util.events';
@@ -33,15 +32,14 @@ const triggers = (el, type) => {
   });
 };
 
-// Mixed-state element-local dispatch (S4): the native call carries the
-// migrated consumers; the jQuery call carries the still-unmigrated ones with
-// exact 6.x semantics (synthetic, namespace-filtered, element-local). Neither
-// call can reach the other layer, so nothing double-fires while every element
-// listens on exactly one side. The jQuery half disappears when the last
-// consumer migrates.
+// Element-local dispatch (S4 ruling, terminal form): the last mixed-state
+// consumers are gone, so the dual transport collapses to the native
+// triggerHandler alone - a real NON-BUBBLING event (the shared transport
+// between the per-bundle Events tables; same-element listeners only, the
+// 6.x no-bubble shape). Still-on-jQuery third-party listeners no longer
+// receive the element-local zf.trigger dispatches - 7.0 change, ledger.
 const dispatchLocal = (target, type, param) => {
   Events.triggerHandler(target, type, [param]);
-  $(target).triggerHandler(type, [param]);
 };
 
 var Triggers = {
@@ -78,21 +76,24 @@ Triggers.Listeners.Basic  = {
     }
   },
   closeableListener: function(e) {
-    let animation = $(this).data('closable');
+    let animation = this.getAttribute('data-closable');
 
     // Only close the first closable element. See https://git.io/zf-7833
     e.stopPropagation();
 
     if(animation !== ''){
-      Motion.animateOut($(this), animation, function() {
-        $(this).trigger('closed.zf');
+      Motion.animateOut(this, animation, () => {
+        Events.trigger(this, 'closed.zf');
       });
     }else{
       // fx 方案 A: the plain fadeOut on the native primitive (jQuery's fx
       // default duration, 400ms). The closed.zf production keeps its jQuery
       // transport (the S4 dual-transport seam owns it).
       Motion.fadeOut(this, 400);
-      $(this).trigger('closed.zf');
+      // 7.0: the closed production joins the native layer - a real,
+      // bubbling event (6.x delivered a jQuery-synthetic one to jQuery
+      // listeners only; both shapes reach jQuery listeners now).
+      Events.trigger(this, 'closed.zf');
     }
   },
   toggleFocusListener: function() {
