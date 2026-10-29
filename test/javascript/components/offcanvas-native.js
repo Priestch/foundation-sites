@@ -79,7 +79,7 @@ describe('OffCanvas (native layer contract)', function() {
 
     it('fires openedEnd.zf.offCanvas once the open transition finished', function(done) {
       build({});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       FoundationNext.Events.on(el, 'openedEnd.zf.offCanvas', function(event) {
         event.type.should.equal('openedEnd');
         event.namespace.should.equal('offCanvas.zf');
@@ -95,7 +95,7 @@ describe('OffCanvas (native layer contract)', function() {
 
     it('fires close.zf.offCanvas and closed.zf.offCanvas through the native event layer', function() {
       build({});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       var closeSpy = sinon.spy();
       var closedSpy = sinon.spy();
       FoundationNext.Events.on(el, 'close.zf.offCanvas', closeSpy);
@@ -105,9 +105,9 @@ describe('OffCanvas (native layer contract)', function() {
       sinon.assert.notCalled(closeSpy); // only the close flow produces it
 
       plugin.close();
-      // the transitionend waits are a jQuery seam: drive them through the
-      // jQuery triggerHandler (the native one never reaches the .one wait)
-      $(el).triggerHandler(Foundation.transitionend($(el)));
+      // 7.0 terminal form: the transitionend wait is an Events.one - drive
+      // it through the native triggerHandler (a non-bubbling real event)
+      FoundationNext.Events.triggerHandler(el, Foundation.transitionend(el));
 
       sinon.assert.calledOnce(closeSpy);
       sinon.assert.calledOnce(closedSpy);
@@ -131,7 +131,10 @@ describe('OffCanvas (native layer contract)', function() {
   describe('trigger consumers (native layer)', function() {
     it('opens through a real click on the [data-toggle] trigger', function() {
       build({autoFocus: false});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
+      // arm the document [data-toggle] delegation explicitly: a fast
+      // grep-scoped run can finish before window load armed it
+      Foundation.Triggers.Initializers.addSimpleListeners();
 
       plugin.$triggers[0].click();
 
@@ -141,8 +144,10 @@ describe('OffCanvas (native layer contract)', function() {
 
     it('closes through a real click on the [data-close] control inside', function() {
       build({autoFocus: false});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       plugin.open();
+      // same document-delegation arm as above (the [data-close] consumer)
+      Foundation.Triggers.Initializers.addSimpleListeners();
 
       el.querySelector('[data-close]').click();
 
@@ -155,13 +160,13 @@ describe('OffCanvas (native layer contract)', function() {
 
       // jQuery-synthesized click on the overlay div: the shortcut calls
       // overlay.click(), the real click reaches the native consumer
-      FoundationNext.Events.trigger(plugin.$overlay[0], "click");
-      plugin.$element[0].classList.contains('is-open').should.be.false;
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
+      plugin.$element.classList.contains('is-open').should.be.false;
 
       // a real click closes the re-opened canvas the same way
       plugin.open();
-      plugin.$overlay[0].click();
-      plugin.$element[0].classList.contains('is-open').should.be.false;
+      plugin.$overlay.click();
+      plugin.$element.classList.contains('is-open').should.be.false;
     });
   });
 
@@ -170,11 +175,11 @@ describe('OffCanvas (native layer contract)', function() {
       build({autoFocus: false});
       plugin.open();
 
-      plugin.$element[0].focus();
+      plugin.$element.focus();
 
-      plugin.$element[0].dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
+      plugin.$element.dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
 
-      plugin.$element[0].classList.contains('is-open').should.be.false;
+      plugin.$element.classList.contains('is-open').should.be.false;
     });
 
     it('answers the real changed.zf.mediaquery broadcast on the native layer (the S13 MediaQuery flip)', function(done) {
@@ -184,7 +189,7 @@ describe('OffCanvas (native layer contract)', function() {
       Foundation.MediaQuery._reInit();
       var wrapEl = document.body.appendChild(fixture('<div><div class="off-canvas position-left reveal-for-small" id="offCanvasNativeMq" data-off-canvas></div><div class="off-canvas-content" data-off-canvas-content></div></div>'));
       plugin = new Foundation.OffCanvas(wrapEl.querySelector('[data-off-canvas]'), {autoFocus: false});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
 
       // 'small' is the active breakpoint in this runner: revealed on load
       tryInterval({
@@ -218,7 +223,7 @@ describe('OffCanvas (native layer contract)', function() {
   describe('destroy', function() {
     it('drops the native trigger/click consumers alongside the jQuery ones', function() {
       build({autoFocus: false});
-      var el = plugin.$element[0];
+      var el = plugin.$element;
       var openSpy = sinon.spy();
       FoundationNext.Events.on(el, 'open.zf.trigger', openSpy);
       plugin.destroy();

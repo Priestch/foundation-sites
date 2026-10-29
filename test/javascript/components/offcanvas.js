@@ -43,7 +43,7 @@ describe('Off Canvas', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
@@ -60,8 +60,8 @@ describe('Off Canvas', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
-      plugin.$element[0].getAttribute('aria-hidden').should.equal('true');
-      plugin.$triggers[0].getAttribute('aria-controls').should.equal(plugin.$element[0].getAttribute('id'));
+      plugin.$element.getAttribute('aria-hidden').should.equal('true');
+      plugin.$triggers[0].getAttribute('aria-controls').should.equal(plugin.$element.getAttribute('id'));
       plugin.$triggers[0].getAttribute('aria-expanded').should.equal('false');
     });
 
@@ -69,11 +69,11 @@ describe('Off Canvas', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {closeOnClick: true});
 
-      plugin.$overlay.should.be.an('object');
+      chai.expect(plugin.$overlay).to.be.an.instanceof(Element);
 
       FoundationNext.Events.one(html, 'opened.zf.offCanvas', function() {
-        FoundationNext.Events.trigger(plugin.$overlay[0], "click");
-        plugin.$element[0].classList.contains('is-open').should.be.false;
+        FoundationNext.Events.trigger(plugin.$overlay, "click");
+        plugin.$element.classList.contains('is-open').should.be.false;
         done();
       });
 
@@ -88,7 +88,7 @@ describe('Off Canvas', function() {
 
       FoundationNext.Events.one(html, 'opened.zf.offCanvas', function() {
         plugin.$triggers[0].getAttribute('aria-expanded').should.equal('true');
-        plugin.$element[0].getAttribute('aria-hidden').should.equal('false');
+        plugin.$element.getAttribute('aria-hidden').should.equal('false');
         done();
       });
 
@@ -100,7 +100,7 @@ describe('Off Canvas', function() {
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
       FoundationNext.Events.one(html, 'openedEnd.zf.offCanvas', function() {
-        plugin.$element[0].classList.contains('is-open').should.be.true;
+        plugin.$element.classList.contains('is-open').should.be.true;
         document.querySelector('body').classList.contains('is-off-canvas-open').should.be.true;
         done();
       });
@@ -113,7 +113,7 @@ describe('Off Canvas', function() {
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {autoFocus: true});
 
       FoundationNext.Events.one(html, 'openedEnd.zf.offCanvas', function() {
-        plugin.$element[0].querySelector('a, button').should.be.equal(document.activeElement);
+        plugin.$element.querySelector('a, button').should.be.equal(document.activeElement);
         done();
       });
 
@@ -170,7 +170,7 @@ describe('Off Canvas', function() {
         plugin.close();
 
         plugin.$triggers[0].getAttribute('aria-expanded').should.equal('false');
-        plugin.$element[0].getAttribute('aria-hidden').should.equal('true');
+        plugin.$element.getAttribute('aria-hidden').should.equal('true');
         done();
       });
 
@@ -183,7 +183,7 @@ describe('Off Canvas', function() {
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
       FoundationNext.Events.one(html, 'closed.zf.offCanvas', function() {
-        plugin.$element[0].classList.contains('is-open').should.be.false;
+        plugin.$element.classList.contains('is-open').should.be.false;
         document.querySelector('body').classList.contains('is-off-canvas-open').should.be.false;
         done();
       });
@@ -212,22 +212,20 @@ describe('Off Canvas', function() {
       html = document.body.appendChild(fixture(template));
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
-      // jQuery instruments on purpose: the plugin's transitionend wait is
-      // the jQuery fx seam - only jQuery triggerHandler/one reach it
-      $(html).one('opened.zf.offCanvas', function() {
-        $(html).one('close.zf.offCanvas', function() {
-          $(plugin.$element).one(Foundation.transitionend(plugin.$element), function() {
-            $(html).one('closed.zf.offCanvas', function () {
-              done();
-            });
-          });
-        });
-
-        plugin.close();
-        // fake transitionend for console tests
-        $(plugin.$element).triggerHandler(Foundation.transitionend(plugin.$element));
+      // 7.0 terminal form: native instruments - the wait is an Events.one
+      // driven by the native triggerHandler (a non-bubbling real event)
+      // 7.0 terminal form: flat native instruments - the closed production
+      // follows the transitionend wait, which the native triggerHandler
+      // (a non-bubbling real event) drives.
+      FoundationNext.Events.on(html, 'closed.zf.offCanvas', function () {
+        done();
       });
 
+      // Open it first
+      plugin.open();
+      plugin.close();
+      // fake transitionend for console tests
+      FoundationNext.Events.triggerHandler(plugin.$element, Foundation.transitionend(plugin.$element));
       // Open it first
       plugin.open();
     });
@@ -275,7 +273,7 @@ describe('Off Canvas', function() {
       plugin = new Foundation.OffCanvas(html.querySelector('[data-off-canvas]'), {});
 
       FoundationNext.Events.one(html, 'opened.zf.offCanvas', function() {
-        plugin.$element[0].classList.contains('is-open').should.be.true;
+        plugin.$element.classList.contains('is-open').should.be.true;
         done();
       });
 
@@ -288,7 +286,7 @@ describe('Off Canvas', function() {
 
       FoundationNext.Events.one(html, 'openedEnd.zf.offCanvas', function() {
         FoundationNext.Events.one(html, 'closed.zf.offCanvas', function () {
-          plugin.$element[0].classList.contains('is-open').should.be.false;
+          plugin.$element.classList.contains('is-open').should.be.false;
           done();
         });
         plugin.toggle();
@@ -306,13 +304,13 @@ describe('Off Canvas', function() {
 
       FoundationNext.Events.one(html, 'openedEnd.zf.offCanvas', function() {
         FoundationNext.Events.one(html, 'closed.zf.offCanvas', function () {
-          plugin.$element[0].classList.contains('is-open').should.be.false;
+          plugin.$element.classList.contains('is-open').should.be.false;
           done();
         });
 
-        plugin.$element[0].focus();
+        plugin.$element.focus();
 
-        plugin.$element[0].dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
+        plugin.$element.dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
       });
 
       // Open it first
