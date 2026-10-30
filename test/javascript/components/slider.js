@@ -1,6 +1,6 @@
 describe('Slider', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `<div class="slider" data-slider>
       <span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
       <span class="slider-fill" data-slider-fill></span>
@@ -13,94 +13,105 @@ describe('Slider', function() {
   afterEach(function(done) {
     // Timeout needed because even with changeDelay = 0 the changed.zf.slider event may be fired after this hook
     plugin.destroy();
-    $html.remove();
+    html.remove();
     done();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
-      plugin.$element.should.be.an('object');
+      (plugin.$element instanceof Element).should.be.true;
       plugin.options.should.be.an('object');
     });
   });
 
   describe('init()', function() {
     it('stores handle, inout and fill elements', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
-      plugin.$handle.should.be.an('object');
-      plugin.$input.should.be.an('object');
-      plugin.$fill.should.be.an('object');
+      chai.expect(plugin.$handle).to.be.an.instanceof(Element);
+      chai.expect(plugin.$input).to.be.an.instanceof(Element);
+      chai.expect(plugin.$fill).to.be.an.instanceof(Element);
     });
     it('stores two handle and input elements for two sided slider', function() {
-      $html = $(template).append('<span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span><input type="hidden">')
-          .appendTo('body');
-      plugin = new Foundation.Slider($html, {doubleSided: true});
+      html = document.body.appendChild(fixture(template));
+      html.insertAdjacentHTML('beforeend', '<span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span><input type="hidden">');
+      plugin = new Foundation.Slider(html, {doubleSided: true});
 
-      plugin.$handle2.should.be.an('object');
-      plugin.$input2.should.be.an('object');
+      chai.expect(plugin.$handle2).to.be.an.instanceof(Element);
+      chai.expect(plugin.$input2).to.be.an.instanceof(Element);
     });
     it('is disabled when disable option is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {disabled: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {disabled: true});
 
-      $html.should.have.class('disabled');
+      html.classList.contains('disabled').should.be.true;
     });
   });
 
   describe('setHandlePos()', function() {
     it('positions the handle', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
       plugin._setHandlePos(plugin.$handle, 10, true);
 
-      plugin.$handle[0].style.left.should.not.be.equal('');
+      plugin.$handle.style.left.should.not.be.equal('');
     });
     it('does nothing if disabled option is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {disabled: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {disabled: true});
 
       plugin._setHandlePos(plugin.$handle, 10, true);
 
-      plugin.$handle[0].style.left.should.be.equal('');
+      plugin.$handle.style.left.should.be.equal('');
     });
     it('fires changed.zf.slider event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {changedDelay: 50});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {changedDelay: 50});
+      var slider = plugin;
 
-      $html.on('changed.zf.slider', function(e, $handle) {
-        $handle[0].should.be.equal(plugin.$handle[0]);
+      // Terminal form: the changed production is a real bubbling event
+      // with the plain handle element
+      FoundationNext.Events.on(html, 'changed.zf.slider', function(e, handle) {
+        handle.should.be.equal(slider.$handle);
         done();
       });
 
-      // Rapidly change to see if event fires only once
+      // Rapidly change to see if event fires only once. Timer jitter can
+      // outlast the test (afterEach destroys the plugin), so each tick bails
+      // once its instance is torn down instead of throwing uncaught.
       for (let i = 0; i < 5; i++) {
         setTimeout(function() {
-          plugin._setHandlePos(plugin.$handle, i * 10, true);
+          if (!slider.$element) { return; }
+          slider._setHandlePos(slider.$handle, i * 10, true);
         }, i * 20);
       }
     });
     it('fires moved.zf.slider event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
+      var slider = plugin;
 
       let timesCallbackCalled = 0;
-      $html.on('moved.zf.slider', function(e, $handle) {
+      // Terminal form: the moved production is a real bubbling event with
+      // the plain handle element
+      FoundationNext.Events.on(html, 'moved.zf.slider', function(e, handle) {
         if (++timesCallbackCalled === 4) {
-          $handle[0].should.be.equal(plugin.$handle[0]);
+          handle.should.be.equal(slider.$handle);
           done();
         }
       });
 
-      // Rapidly change to see if event fires multiple times
+      // Rapidly change to see if event fires multiple times. Same teardown
+      // guard as the changed.zf.slider test above.
       for (let i = 0; i < 5; i++) {
         setTimeout(function() {
-          plugin._setHandlePos(plugin.$handle, i * 10, true);
+          if (!slider.$element) { return; }
+          slider._setHandlePos(slider.$handle, i * 10, true);
         }, i * 20);
       }
     });
@@ -108,55 +119,55 @@ describe('Slider', function() {
 
   describe('setValues()', function() {
     it('updates ARIA attributes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
       plugin._setValues(plugin.$handle, 10);
 
-      plugin.$handle.should.have.attr('aria-valuenow', '10');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('10');
     });
     it('updates input value', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
       plugin._setValues(plugin.$handle, 10);
 
-      plugin.$input.val().should.have.be.equal('10');
+      plugin.$input.value.should.equal('10');
     });
   });
 
   describe('setInitAttr()', function() {
     it('adds ARIA attributes to handle', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 50,
         end: 70,
         start: 20,
         vertical: true
       });
 
-      plugin.$handle.should.have.attr('role', 'slider');
-      plugin.$handle.should.have.attr('aria-controls', plugin.$handle.attr('id'));
-      plugin.$handle.should.have.attr('aria-valuemax', '70');
-      plugin.$handle.should.have.attr('aria-valuemin', '20');
-      plugin.$handle.should.have.attr('aria-valuenow', '50');
-      plugin.$handle.should.have.attr('aria-orientation', 'vertical');
-      plugin.$handle.should.have.attr('tabindex', '0');
+      plugin.$handle.getAttribute('role').should.equal('slider');
+      plugin.$handle.getAttribute('aria-controls').should.equal(plugin.$input.getAttribute('id'));
+      plugin.$handle.getAttribute('aria-valuemax').should.equal('70');
+      plugin.$handle.getAttribute('aria-valuemin').should.equal('20');
+      plugin.$handle.getAttribute('aria-valuenow').should.equal('50');
+      plugin.$handle.getAttribute('aria-orientation').should.equal('vertical');
+      plugin.$handle.getAttribute('tabindex').should.equal('0');
     });
     it('adds attributes to input', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
-      plugin.$input.should.have.attr('max', '100');
-      plugin.$input.should.have.attr('min', '0');
-      plugin.$input.should.have.attr('step', '1');
+      plugin.$input.getAttribute('max').should.equal('100');
+      plugin.$input.getAttribute('min').should.equal('0');
+      plugin.$input.getAttribute('step').should.equal('1');
     });
   });
 
   describe('_value()', function() {
     it('handles positive values', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 0,
         end: 10,
         start: 0,
@@ -171,8 +182,8 @@ describe('Slider', function() {
     });
 
     it('handles negative values', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 0,
         end: 5,
         start: -5,
@@ -189,8 +200,8 @@ describe('Slider', function() {
 
   describe('adjustValue()', function() {
     it('handles positive values', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
       plugin._adjustValue(null, 1).should.equal(1);
       plugin._adjustValue(null, 2).should.equal(2);
@@ -200,8 +211,8 @@ describe('Slider', function() {
     });
 
     it('handles negative values', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
       plugin._adjustValue(null, -1).should.equal(-1);
       plugin._adjustValue(null, -2).should.equal(-2);
@@ -213,85 +224,92 @@ describe('Slider', function() {
 
   describe('keyboard events', function() {
     it('sets value to minimum using HOME', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {});
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('HOME'));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', plugin.$handle.attr('aria-valuemin'));
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('HOME'));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal(plugin.$handle.getAttribute('aria-valuemin'));
     });
     it('increases value by step size on ARROW_RIGHT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 + 1).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1).toString());
     });
     it('increases value by step size on ARROW_UP', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_UP'));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 + 1).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1).toString());
     });
     it('decreases value by step size on ARROW_LEFT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_LEFT'));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 - 1).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1).toString());
     });
     it('decreases value by step size on ARROW_DOWN', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_DOWN'));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 - 1).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1).toString());
     });
     it('decreases value by step size times 10 on SHIFT_ARROW_RIGHT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT', {shift: true}));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 + 1 * 10).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT', {shift: true}));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 + 1 * 10).toString());
     });
     it('decreases value by step size times 10 on SHIFT_ARROW_LEFT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Slider($html, {
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Slider(html, {
         initialStart: 10,
         step: 1
       });
 
-      plugin.$handle.focus()
-        .trigger(window.mockKeyboardEvent('ARROW_LEFT', {shift: true}));
+      plugin.$handle.focus();
 
-      plugin.$handle.should.have.attr('aria-valuenow', (10 - 1 * 10).toString());
+      plugin.$handle.dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT', {shift: true}));
+
+      plugin.$handle.getAttribute('aria-valuenow').should.equal((10 - 1 * 10).toString());
     });
   });
 });

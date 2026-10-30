@@ -1,6 +1,6 @@
 describe('Reveal', function() {
 	var plugin;
-	var $html;
+	var html;
 	var template = `<div class="reveal" id="exampleModal1" data-reveal>
 	  Modal content
 	  <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -14,113 +14,113 @@ describe('Reveal', function() {
       plugin.destroy();
     }
     document.activeElement.blur();
-    $html.remove();
+    html.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
 
   describe('init()', function() {
     it('sets ARIA attributes for modal', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      $html.should.have.attr('aria-hidden', 'true');
-      $html.should.have.attr('role', 'dialog');
+      html.getAttribute('aria-hidden').should.equal('true');
+      html.getAttribute('role').should.equal('dialog');
     });
 
     it('detects anchor if one exists', function() {
-      $html = $(template).appendTo('body');
-      var $anchor = $('<button data-open="exampleModal1">Open</button>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
+      plugin = new Foundation.Reveal(html, {});
 
-      plugin.$anchor[0].should.be.equal($anchor[0]);
+      plugin.$anchor.should.deep.equal([anchor]);
 
-      $anchor.remove();
+      anchor.remove();
     });
 
     it('sets ARIA attributes for anchor if one exists', function() {
-      $html = $(template).appendTo('body');
-      var $anchor = $('<button data-open="exampleModal1">Open</button>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
+      plugin = new Foundation.Reveal(html, {});
 
-      $anchor.should.have.attr('aria-haspopup', 'dialog');
-      $anchor.should.have.attr('aria-controls', $html.attr('id'));
+      anchor.getAttribute('aria-haspopup').should.equal('dialog');
+      anchor.getAttribute('aria-controls').should.equal(html.getAttribute('id'));
 
-      $anchor.remove();
+      anchor.remove();
     });
   });
 
   describe('makeOverlay()', function() {
 		it('creates an overlay if overlay option is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
-      plugin.$overlay.should.be.an('object');
-      plugin.$overlay.should.have.class('reveal-overlay');
-      $.contains(document.body, plugin.$overlay[0]).should.be.true;
+      chai.expect(plugin.$overlay).to.be.an.instanceof(Element);
+      plugin.$overlay.classList.contains('reveal-overlay').should.be.true;
+      $.contains(document.body, plugin.$overlay).should.be.true;
     });
   });
 
   describe('open()', function() {
 		it('opens the modal', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      $html.on('open.zf.reveal', function() {
-        $html.should.be.visible;
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.true;
         done();
       });
 
       plugin.open();
     });
     it('opens the overlay', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
-      $html.on('open.zf.reveal', function() {
-        plugin.$overlay.should.be.visible;
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
         done();
       });
 
       plugin.open();
     });
     it('toggles ARIA attributes', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      $html.on('open.zf.reveal', function() {
-        $html.should.have.attr('aria-hidden', 'false');
-        $html.should.have.attr('tabindex', '-1');
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        html.getAttribute('aria-hidden').should.equal('false');
+        html.getAttribute('tabindex').should.equal('-1');
         done();
       });
 
       plugin.open();
     });
     it('adds class to body', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      $html.on('open.zf.reveal', function() {
-        $('html').should.have.class('is-reveal-open');
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        document.querySelector('html').classList.contains('is-reveal-open').should.be.true;
         done();
       });
 
       plugin.open();
     });
     it('adds optional overlay classes overlay element', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {additionalOverlayClasses: 'default'});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {additionalOverlayClasses: 'default'});
 
-      $html.on('open.zf.reveal', function() {
-        $('.reveal-overlay').should.have.class('default');
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        document.querySelector('.reveal-overlay').classList.contains('default').should.be.true;
         done();
       });
 
@@ -129,27 +129,27 @@ describe('Reveal', function() {
     // TODO: Check if  this.$element.trigger('closeme.zf.reveal', this.id) is correctly used.
 
     // it('closes previously opened modal if multipleOpened option is false', function(done) {
-    //   $html = $(template).appendTo('body');
-    //   $html2 = $(template).attr('id', 'exampleModal2').appendTo('body');
+    //   html = $(template).appendTo('body');
+    //   html2 = $(template).attr('id', 'exampleModal2').appendTo('body');
 
-    //   plugin = new Foundation.Reveal($html, {multipleOpened: false});
-    //   plugin2 = new Foundation.Reveal($html2, {multipleOpened: false});
+    //   plugin = new Foundation.Reveal(html, {multipleOpened: false});
+    //   plugin2 = new Foundation.Reveal(html2, {multipleOpened: false});
 
     //   plugin.open();
 
     //   plugin2.open();
 
-    //   $html.should.be.hidden;
+    //   html.should.be.hidden;
 
     //   plugin2.destroy();
-    //   $html2.remove();
+    //   html2.remove();
     // });
     it('fires open.zf.reveal event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
-      $html.on('open.zf.reveal', function() {
-      	$html.should.be.visible;
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+      	FoundationNext.Dom.visible(html).should.be.true;
       	done();
       });
 
@@ -157,12 +157,12 @@ describe('Reveal', function() {
     });
 
     it('traps focus if trapFocus option is true', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {trapFocus: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {trapFocus: true});
 
       let spy = sinon.spy(Foundation.Keyboard, 'trapFocus');
 
-      $html.on('open.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
         sinon.assert.called(spy);
         Foundation.Keyboard.trapFocus.restore();
       	done();
@@ -174,93 +174,94 @@ describe('Reveal', function() {
 
 	describe('close()', function() {
 		it('closes the modal', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
       	done();
       });
 
       plugin.close();
     });
     it('closes the overlay', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        plugin.$overlay.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.false;
       	done();
       });
 
       plugin.close();
     });
     it('toggles ARIA attributes', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        $html.should.have.attr('aria-hidden', 'true');
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        html.getAttribute('aria-hidden').should.equal('true');
       	done();
       });
 
       plugin.close();
     });
     it('removes class from body', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
 
-      $html.on('closed.zf.reveal', function() {
-        $('html').should.not.have.class('is-reveal-open');
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        document.querySelector('html').classList.contains('is-reveal-open').should.be.false;
         done();
       });
 
       plugin.close();
     });
     it('does not remove class from body if another reveal is open', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {multipleOpened: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {multipleOpened: true});
 
-      let $html2 = $(template).attr('id', 'exampleModal2').appendTo('body');
-      let plugin2 = new Foundation.Reveal($html2, {multipleOpened: true, vOffset: 10});
+      let html2 = document.body.appendChild(fixture(template));
+      html2.setAttribute('id', 'exampleModal2');
+      let plugin2 = new Foundation.Reveal(html2, {multipleOpened: true, vOffset: 10});
 
       // Open both first
       plugin.open();
       plugin2.open();
 
 
-      $html.on('closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
 
-        $('html').should.have.class('is-reveal-open');
+        document.querySelector('html').classList.contains('is-reveal-open').should.be.true;
         plugin2.destroy();
-        $html2.remove();
+        html2.remove();
         done();
       });
 
       plugin.close();
     });
     it('fires closed.zf.reveal event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-      	$html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+      	FoundationNext.Dom.visible(html).should.be.false;
       	done();
       });
 
@@ -268,15 +269,15 @@ describe('Reveal', function() {
     });
 
     it('releases focus if trapFocus option is true', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {trapFocus: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {trapFocus: true});
 
       // Open it first
       plugin.open();
 
       let spy = sinon.spy(Foundation.Keyboard, 'releaseFocus');
 
-      $html.on('closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         sinon.assert.called(spy);
         Foundation.Keyboard.releaseFocus.restore();
         done();
@@ -285,17 +286,17 @@ describe('Reveal', function() {
       plugin.close();
     });
     it('sets focus to anchor', function(done) {
-      $html = $(template).appendTo('body');
-      var $anchor = $('<button data-open="exampleModal1">Open</button>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         setTimeout(function() {
-          $anchor[0].should.be.equal(document.activeElement);
-          $anchor.remove();
+          anchor.should.be.equal(document.activeElement);
+          anchor.remove();
           done();
         }, 0);
       });
@@ -303,20 +304,20 @@ describe('Reveal', function() {
       plugin.close();
     });
     it('sets focus to anchor that opened it', function(done) {
-      $html = $(template).appendTo('body');
-      var $anchor = $('<button data-open="exampleModal1">Open</button>').appendTo('body');
-      var $anchor2 = $('<button data-open="exampleModal1">Open2</button>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
-      $anchor.focus();
+      html = document.body.appendChild(fixture(template));
+      var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
+      var anchor2 = document.body.appendChild(fixture('<button data-open="exampleModal1">Open2</button>'));
+      plugin = new Foundation.Reveal(html, {});
+      anchor.focus();
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
         setTimeout(function() {
-          $anchor[0].should.be.equal(document.activeElement);
-          $anchor.remove();
-          $anchor2.remove();
+          anchor.should.be.equal(document.activeElement);
+          anchor.remove();
+          anchor2.remove();
           done();
         }, 0);
       });
@@ -327,25 +328,25 @@ describe('Reveal', function() {
 
 	describe('toggle()', function() {
     it('opens a closed modal', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true});
 
-      $html.on('open.zf.reveal', function() {
-        plugin.$overlay.should.be.visible;
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
         done();
       });
 
       plugin.open();
     });
 		it('closes an open modal', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
       	done();
       });
 
@@ -355,70 +356,71 @@ describe('Reveal', function() {
 
   describe('events()', function() {
     it('opens the modal on anchor click', function(done) {
-      $html = $(template).appendTo('body');
-      var $anchor = $('<button data-open="exampleModal1">Open</button>').appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      var anchor = document.body.appendChild(fixture('<button data-open="exampleModal1">Open</button>'));
+      plugin = new Foundation.Reveal(html, {});
 
 
-      $html.on('open.zf.reveal', function() {
-        plugin.$overlay.should.be.visible;
-        $anchor.remove();
+      FoundationNext.Events.on(html, 'open.zf.reveal', function() {
+        FoundationNext.Dom.visible(plugin.$overlay).should.be.true;
+        anchor.remove();
       	done();
       });
 
-      $anchor.trigger('click');
+      FoundationNext.Events.trigger(anchor, 'click');
     });
 		it('closes a modal on overlay click if closeOnClick option is true', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true, closeOnClick: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true, closeOnClick: true});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
       	done();
       });
 
-      plugin.$overlay.trigger('click');
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
     });
     it('not closes a modal on overlay click if closeOnClick option is true', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {overlay: true, closeOnClick: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {overlay: true, closeOnClick: false});
 
       // Open it first
       plugin.open();
 
-      plugin.$overlay.trigger('click');
+      FoundationNext.Events.trigger(plugin.$overlay, "click");
 
       // Add timeout to make sure it does not close
       // Timeout is required because closed event will not be fired
       setTimeout(function() {
-        $html.should.be.visible;
+        FoundationNext.Dom.visible(html).should.be.true;
         done();
       }, 10);
     });
     it('closes Reveal with click on close button', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
 
       // Open it first
       plugin.open();
 
-      $html.on('closed.zf.reveal', function() {
-        $html.should.be.hidden;
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
       	done();
       });
 
-      $html.find('[data-close]').focus()
-        .trigger('click');
+      var closeBtn = html.querySelector('[data-close]');
+      closeBtn.focus();
+      FoundationNext.Events.trigger(closeBtn, 'click');
     });
   });
 
   describe('destroy()', function() {
     it('removes its namespaced keydown handler from window', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, {});
       plugin.open();
 
       plugin.destroy();
@@ -427,28 +429,28 @@ describe('Reveal', function() {
       var revealKeydowns = (events.keydown || []).filter(function(ev) {
         return ev.namespace === 'zf.reveal:' + plugin.id;
       });
-      revealKeydowns.should.be.empty;
+      revealKeydowns.should.have.length(0);
     });
   });
 
   describe('multipleOpened', function() {
     it('keeps ESC working for other open modals when one closes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Reveal($html, { multipleOpened: true });
-      var $html2 = $(template.replace('exampleModal1', 'exampleModal2')).appendTo('body');
-      var plugin2 = new Foundation.Reveal($html2, { multipleOpened: true });
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Reveal(html, { multipleOpened: true });
+      var html2 = document.body.appendChild(fixture(template.replace('exampleModal1', 'exampleModal2')));
+      var plugin2 = new Foundation.Reveal(html2, { multipleOpened: true });
 
       plugin.open();
       plugin2.open();
       plugin.close();
 
-      $(window).trigger(mockKeyboardEvent('ESCAPE'));
+      window.dispatchEvent(mockKeyboardEvent('ESCAPE'));
 
       try {
         plugin2.isActive.should.be.false;
       } finally {
         plugin2.destroy();
-        $html2.remove();
+        html2.remove();
       }
     });
   });

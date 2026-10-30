@@ -1,8 +1,9 @@
-import $ from 'jquery';
 
 import { MediaQuery } from './foundation.util.mediaQuery';
 import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
+import { Events } from './foundation.util.events';
+import { datasetOptions, visible, deepMerge } from './foundation.util.dom';
 
 /**
  * ResponsiveToggle module.
@@ -21,8 +22,9 @@ class ResponsiveToggle extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = $(element);
-    this.options = $.extend({}, ResponsiveToggle.defaults, this.$element.data(), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, ResponsiveToggle.defaults, datasetOptions(this.$element), options);
     this.className = 'ResponsiveToggle'; // ie9 back compat
 
     this._init();
@@ -36,17 +38,19 @@ class ResponsiveToggle extends Plugin {
    */
   _init() {
     MediaQuery._init();
-    var targetID = this.$element.data('responsive-toggle');
+    var targetID = this.options.responsiveToggle;
     if (!targetID) {
       console.error('Your tab bar needs an ID of a Menu as the value of data-tab-bar.');
     }
 
-    this.$targetMenu = $(`#${targetID}`);
-    this.$toggler = this.$element.find('[data-toggle]').filter(function() {
-      var target = $(this).data('toggle');
+    // A missing target stays a null element (the 6.x $(null) tolerance;
+    // the show/hide helpers below guard for it).
+    this.$targetMenu = document.getElementById(targetID);
+    this.$toggler = Array.from(this.$element.querySelectorAll('[data-toggle]')).filter(function(el) {
+      var target = datasetOptions(el).toggle;
       return (target === targetID || target === "");
     });
-    this.options = $.extend({}, this.options, this.$targetMenu.data());
+    this.options = deepMerge({}, this.options, this.$targetMenu ? datasetOptions(this.$targetMenu) : {});
 
     // If they were set, parse the animation classes
     if(this.options.animate) {
@@ -65,11 +69,48 @@ class ResponsiveToggle extends Plugin {
    * @private
    */
   _events() {
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer
+    // binds there (equalizer/tabs/responsiveMenu/responsiveAccordionTabs/
+    // offcanvas all flipped with the producer in the same move).
     this._updateMqHandler = this._update.bind(this);
+    Events.on(window, 'changed.zf.mediaquery', this._updateMqHandler);
 
-    $(window).on('changed.zf.mediaquery', this._updateMqHandler);
+    // The toggler clicks are real browser events: they register on the
+    // native event layer, on every element of the filtered collection like
+    // jQuery's collection-wide .on() did.
+    this._toggleMenuHandler = this.toggleMenu.bind(this);
+    this.$toggler.forEach(el => {
+      Events.on(el, 'click.zf.responsiveToggle', this._toggleMenuHandler);
+    });
+  }
 
-    this.$toggler.on('click.zf.responsiveToggle', this.toggleMenu.bind(this));
+  /**
+   * Native stand-in for jQuery's `.show()`: clears an inline display
+   * override and, when the stylesheet still hides the element, falls back to
+   * the default display of a block element - what jQuery's
+   * getDefaultDisplay resolved to for everything this plugin shows (the
+   * `.title-bar` markup carries its own `display: flex`, so the fallback is
+   * only reached for stylesheet-hidden menus).
+   * @function
+   * @private
+   */
+  _show(element) {
+    if (!element) { return; }
+    element.style.display = '';
+    if (window.getComputedStyle(element).display === 'none') {
+      element.style.display = 'block';
+    }
+  }
+
+  /**
+   * Native stand-in for jQuery's `.hide()`: an inline `display: none`.
+   * @function
+   * @private
+   */
+  _hide(element) {
+    if (!element) { return; }
+    element.style.display = 'none';
   }
 
   /**
@@ -78,16 +119,19 @@ class ResponsiveToggle extends Plugin {
    * @private
    */
   _update() {
+    var element = this.$element;
+    var targetMenu = this.$targetMenu;
+
     // Mobile
     if (!MediaQuery.atLeast(this.options.hideFor)) {
-      this.$element.show();
-      this.$targetMenu.hide();
+      this._show(element);
+      this._hide(targetMenu);
     }
 
     // Desktop
     else {
-      this.$element.hide();
-      this.$targetMenu.show();
+      this._hide(element);
+      this._show(targetMenu);
     }
   }
 
@@ -98,36 +142,73 @@ class ResponsiveToggle extends Plugin {
    */
   toggleMenu() {
     if (!MediaQuery.atLeast(this.options.hideFor)) {
+      var targetMenu = this.$targetMenu;
+
       /**
        * Fires when the element attached to the tab bar toggles.
        * @event ResponsiveToggle#toggled
        */
       if(this.options.animate) {
-        if (this.$targetMenu.is(':hidden')) {
+        // `:hidden` replacement: Dom's visible() carries the narrow
+        // display-based semantics decided for the 7.0 line (S3). An empty
+        // target counts as shown, like jQuery's `.is(':hidden')` did.
+        var menuHidden = targetMenu ? !visible(targetMenu) : false;
+
+        if (menuHidden) {
           Motion.animateIn(this.$targetMenu, this.animationIn, () => {
-            this.$element.trigger('toggled.zf.responsiveToggle');
-            this.$targetMenu.find('[data-mutate]').triggerHandler('mutateme.zf.trigger');
+            Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
+            // S10 group flip: the animated half of the mutateme forwarding
+            // joins the native event layer. It keeps the 6.x triggerHandler
+            // form - element-local and non-bubbling, the Triggers
+            // dispatchLocal ruling (a bubbling dispatch would over-deliver
+            // to ancestor listeners) - and the last jQuery-side consumers
+            // (Equalizer, Drilldown, Sticky) flip in the same commit.
+            var mutated = targetMenu.querySelectorAll('[data-mutate]');
+            for (var i = 0; i < mutated.length; i++) {
+              Events.triggerHandler(mutated[i], 'mutateme.zf.trigger');
+            }
           });
         }
         else {
           Motion.animateOut(this.$targetMenu, this.animationOut, () => {
-            this.$element.trigger('toggled.zf.responsiveToggle');
+            Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
           });
         }
       }
       else {
-        this.$targetMenu.toggle(0);
-        this.$targetMenu.find('[data-mutate]').trigger('mutateme.zf.trigger');
-        this.$element.trigger('toggled.zf.responsiveToggle');
+        // The 6.x `.toggle(0)` display flip, without the legacy fx tween
+        // (a size/opacity "grow" that completed asynchronously; the display
+        // and event contracts never depended on it - same ruling as the S6
+        // Reveal showDelay tween). The synchronous order below is kept:
+        // display flip, mutateme, toggled.
+        if (targetMenu) {
+          if (visible(targetMenu)) {
+            this._hide(targetMenu);
+          }
+          else {
+            this._show(targetMenu);
+          }
+
+          var mutated = targetMenu.querySelectorAll('[data-mutate]');
+          for (var i = 0; i < mutated.length; i++) {
+            // Bubbling production on the native event layer; the still-on-
+            // jQuery consumers receive the real event pass-through.
+            Events.trigger(mutated[i], 'mutateme.zf.trigger');
+          }
+        }
+
+        Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
       }
     }
   };
 
   _destroy() {
-    this.$element.off('.zf.responsiveToggle');
-    this.$toggler.off('.zf.responsiveToggle');
-
-    $(window).off('changed.zf.mediaquery', this._updateMqHandler);
+    // The mq consumer (S13 flip) and the toggler click listeners, by bare
+    // namespace.
+    Events.off(window, 'changed.zf.mediaquery', this._updateMqHandler);
+    this.$toggler.forEach(el => {
+      Events.off(el, '.zf.responsiveToggle');
+    });
   }
 }
 

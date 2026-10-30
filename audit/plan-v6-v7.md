@@ -113,16 +113,15 @@ M0 基建修复 ──→ M1 6.10.0 发布 ──→ M2 7.0 双线开发 ──�
 
 ## 4. M2：7.0 双线开发（与 master 的 6.10.x 并行，分支 `dev-v7`）
 
-### 线 A：移除 jQuery（XL，关键路径）🔄 Spike 首步进行中
-- 🔄 **Spike（先做）**：选 Toggler + Reveal 两个代表组件，验证新 DOM 层设计——Plugin 基类（注册/reflow/destroy 去 jQuery data 化）、事件系统（命名空间语义保留）、triggers（MutationObserver→新方案）（首步进行中，尚无提交）
-- [ ] 设计定案：公开契约冻结清单（data-attr、事件名、`Foundation.<Name>` 导出形态；`window.Foundation` 副作用去留）
-- [x] 语义项定案（2026-10-22，**等价替换优先**：与 jQuery 现状的分歧默认对齐现状，行为改进一律单独切片 + CHANGELOG"行为变化"列）：① `element.data()` → **对齐 jQuery 转换**（true/false/null/有限数字），S2 落地，parseValue 双轨保留；② `:visible` → **窄语义**（display:none 祖先链），零尺寸/detached 判定差异写入迁移指南；③ 事件 detail 参数 → **最终形态原生 Element** + 透传 + namespace 排序字符串，切换时点 = 线 A 收尾专门切片（混合期保持 jQuery 对象）；④ core init/destroyed 混合期**保持 jQuery trigger**（native 切换并入收尾切片）；⑤ registerPlugin 命名不对称 → 6.x 保持现状，7.0-beta 前单独定案；⑥ triggers off/on 防重复可观察行为 → 钉测试保持；⑦ ResponsiveAccordionTabs `storezfData`/`zfPluginBase` 黑魔法随 WeakMap 化重写（唯一已知必炸点）；⑧ [data-resize] load 时快照限制 → 等价优先保持，ResizeObserver 改进列 7.0 可感知修复单独切片
-- [ ] 双列差分测试（2026-10-22 定为线 A 验收门禁）：实现无关的行为规格套件跑两列——jQuery 适配器（golden master，钉住现状语义，仅测试侧依赖）+ 新原生层；两列全绿 = 行为等价。S2-S6 每步迁移以此验收；库代码 import 清零后 jQuery 移 `devDependencies`，S7 迁 Playwright 时 jQuery 列退役
-- [ ] util 层迁移：motion（已核实仅用 `trigger()`，换 native CustomEvent）、what-input 不动、keyboard/touch/box/nest/timer/mediaQuery 逐个重写
-- [ ] 16 组件按复杂度迁移：简单（Toggler/SmoothScroll/ResponsiveToggle）→ 中（Accordion/Tabs/Dropdown/Tooltip/Reveal/Magellan/Equalizer/Interchange）→ 复杂（OffCanvas/Drilldown/AccordionMenu/DropdownMenu/Orbit/Slider/Sticky）→ 响应式包装器最后（ResponsiveMenu/ResponsiveAccordionTabs）
-- [ ] 测试迁移：Playwright 正式替换 mocha-headless-chrome（复用 M0 的 B1 试点；B1 未做则随本项一并补）
+### 线 A：移除 jQuery（XL，关键路径）✅ 完成（2026-10-29，分支 `dev-v7-remove-jquery`，S1–S16 切片制推进）
+- [x] **Spike**：Toggler + Reveal 验证新 DOM 层——Registry（WeakMap 点查）、ns-aware Events 层、Triggers 去 MutationObserver（S1–S6）
+- [x] 设计定案：公开契约冻结（data-attr、`*.zf.*` 事件名、`Foundation.<Name>` 导出、`window.Foundation` 保留）；8 项语义项裁决（等价替换优先，2026-10-22）；fx 折叠动画保留（方案 A，Motion 原生 fx 引擎）
+- [x] util 层迁移：motion/keyboard/touch/box/nest/timer/mediaQuery/triggers/imageLoader/core.utils 全部 jQuery-free
+- [x] 组件迁移：20 组件 + 8 utils 全部终形（内部原生 + 事件尾参元素化 + 同文件测试同步）；混合态缝治理（白吸机制、dispatchLocal 双运输→原生单边、triggerHandler=真非冒泡事件）
+- [x] 测试迁移：Playwright 为默认 runner（S15）；测试套件全量原生化（745 passing）
+- [x] **方案 B（用户裁决 2026-10-29）**：`Foundation.init(root?)` 替代 `$(document).foundation()`；`Foundation.Registry` 公共查询面；`addToJquery` 删除
 - **依赖**：M1 批次 A 的行为基线 + 回归测试 ✅
-- **退出标准**：全部组件无 jQuery 运行、`test:bundle` 通过、peerDeps 只剩 what-input
+- **退出标准** ✅：js/ 无 jQuery import、`test:bundle` 通过、peerDeps 只剩 what-input、dist 重建后 0 处 jQuery require、全量测试绿
 
 ### 线 B：Sass `@use` 模块化（L，可与线 A 并行）⬜
 - [ ] settings 配置机制设计（2026-10-22 修订：推荐**用户 settings 文件模块化 + `sass:meta.module-variables()` 反射 + 配置 map**（`meta.load-css(..., $with:)`）——`@use ... with` 不适合：聚合层需 ~490 行逐变量 `@forward` 转配，且不可变原则与 off-canvas z-index 递增冲突。更正："参考 Bootstrap 5.3"不成立——Bootstrap 5.3 实际**未迁** `@use`（入口至今 `@import`，完整迁移排其 v6），可借鉴的仅"配置用 map 而非散变量"的思路；Foundation 7.0 因 Dart Sass 2.0 删 `@import` 无再拖一个大版本的余地。用户 settings 导入约定的新写法定稿并出迁移指南）

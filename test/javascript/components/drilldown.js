@@ -1,6 +1,6 @@
 describe('Drilldown Menu', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `<ul class="menu" data-drilldown style="width: 200px" id="m1">
     <li>
       <a href="#">Item 1</a>
@@ -37,49 +37,49 @@ describe('Drilldown Menu', function() {
   afterEach(function() {
     plugin.destroy();
     document.activeElement.blur();
-    $html.remove();
+    html.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
 
   describe('init()', function() {
     it('stores additional elements', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$submenuAnchors.should.be.an('object');
-      plugin.$submenus.should.be.an('object');
-      plugin.$menuItems.should.be.an('object');
+      Array.isArray(plugin.$submenuAnchors).should.be.true;
+      Array.isArray(plugin.$submenus).should.be.true;
+      Array.isArray(plugin.$menuItems).should.be.true;
     });
   });
 
   describe('prepareMenu()', function() {
     it('wraps the submenus', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
     });
     it('adds ARIA attributes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      plugin.$element.find('[data-submenu]').each(function() {
-        $(this).should.have.attr('role', 'group');
-        $(this).should.have.attr('aria-hidden', 'true');
+      plugin.$element.querySelectorAll('[data-submenu]').forEach(function(el) {
+        el.getAttribute('role').should.equal('group');
+        el.getAttribute('aria-hidden').should.equal('true');
       });
 
-      plugin.$element.find('.is-drilldown-submenu-parent').each(function() {
-        $(this).should.have.attr('aria-expanded', 'false');
-        $(this).children('a').first().should.have.attr('aria-haspopup', 'true');
-        $(this).children('a').first().should.have.attr('aria-label', $(this).children('a').first().text());
+      plugin.$element.querySelectorAll('.is-drilldown-submenu-parent').forEach(function(el) {
+        el.getAttribute('aria-expanded').should.equal('false');
+        el.querySelectorAll(':scope > a')[0].getAttribute('aria-haspopup').should.equal('true');
+        el.querySelectorAll(':scope > a')[0].getAttribute('aria-label').should.equal(el.querySelectorAll(':scope > a')[0].textContent);
       });
 
     });
@@ -87,105 +87,105 @@ describe('Drilldown Menu', function() {
 
   describe('show()', function() {
     it('shows the given submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
 
       // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-      $html.find('li.is-drilldown-submenu-parent').eq(0).find('ul').should.have.class('is-active');
+      html.querySelector('li.is-drilldown-submenu-parent').querySelector('ul').classList.contains('is-active').should.be.true;
     });
     it('toggles ARIA attributes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
 
-      $html.find('li.is-drilldown-submenu-parent').eq(0).should.have.attr('aria-expanded', 'true');
-      $html.find('li.is-drilldown-submenu-parent').eq(0).children('ul').should.have.attr('aria-hidden', 'false');
+      html.querySelector('li.is-drilldown-submenu-parent').getAttribute('aria-expanded').should.equal('true');
+      html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul').getAttribute('aria-hidden').should.equal('false');
     });
     it('fires open.zf.drilldown event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      $html.on('open.zf.drilldown', function() {
+      FoundationNext.Events.on(html, 'open.zf.drilldown', function() {
         // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-        $html.find('li.is-drilldown-submenu-parent').eq(0).find('ul').should.have.class('is-active');
+        html.querySelector('li.is-drilldown-submenu-parent').querySelector('ul').classList.contains('is-active').should.be.true;
         done();
       });
 
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
     });
   });
 
   describe('hide()', function() {
     it('hides the given submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open it first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
 
-      plugin._hide($html.find('li.is-drilldown-submenu-parent').eq(0).children('ul'));
+      plugin._hide(html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul'));
 
       // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-      $html.find('li.is-drilldown-submenu-parent').eq(0).children('ul').should.have.class('is-closing');
+      html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul').classList.contains('is-closing').should.be.true;
     });
     it('toggles ARIA attributes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open it first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
 
-      plugin._hide($html.find('li.is-drilldown-submenu-parent').eq(0).children('ul'));
+      plugin._hide(html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul'));
 
-      $html.find('li.is-drilldown-submenu-parent').eq(0).should.have.attr('aria-expanded', 'false');
-      $html.find('li.is-drilldown-submenu-parent').eq(0).children('ul').should.have.attr('aria-hidden', 'true');
+      html.querySelector('li.is-drilldown-submenu-parent').getAttribute('aria-expanded').should.equal('false');
+      html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul').getAttribute('aria-hidden').should.equal('true');
     });
     it('fires hide.zf.drilldown event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open it first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(0));
+      plugin._show(html.querySelector('li.is-drilldown-submenu-parent'));
 
-      $html.on('hide.zf.drilldown', function() {
+      FoundationNext.Events.on(html, 'hide.zf.drilldown', function() {
         // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-        $html.find('li.is-drilldown-submenu-parent').eq(0).children('ul').should.have.class('is-closing');
+        html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul').classList.contains('is-closing').should.be.true;
         done();
       });
 
-      plugin._hide($html.find('li.is-drilldown-submenu-parent').eq(0).children('ul'));
+      plugin._hide(html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul'));
     });
   });
 
   describe('hideAll()', function() {
     it('hides all submenus', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open one first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(2));
+      plugin._show(html.querySelectorAll('li.is-drilldown-submenu-parent')[2]);
 
       plugin._hideAll();
 
-      $html.find('ul[data-submenu].is-active').each(function() {
+      html.querySelectorAll('ul[data-submenu].is-active').forEach(function(el) {
         // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-        $(this).should.have.class('is-closing');
+        el.classList.contains('is-closing').should.be.true;
       });
     });
     it('fires close.zf.drilldown event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open one first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(2));
+      plugin._show(html.querySelectorAll('li.is-drilldown-submenu-parent')[2]);
 
-      $html.one('close.zf.drilldown', function() {
-        $html.find('ul[data-submenu].is-active').each(function() {
+      FoundationNext.Events.one(html, 'close.zf.drilldown', function() {
+        html.querySelectorAll('ul[data-submenu].is-active').forEach(function(el) {
           // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-          $(this).should.have.class('is-closing');
+          el.classList.contains('is-closing').should.be.true;
         });
         done();
       });
@@ -193,98 +193,104 @@ describe('Drilldown Menu', function() {
       plugin._hideAll();
     });
     it('fires closed.zf.drilldown event', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open one first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(2));
+      plugin._show(html.querySelectorAll('li.is-drilldown-submenu-parent')[2]);
 
-      const $submenus = $html.find('ul[data-submenu]');
+      const submenus = html.querySelectorAll('ul[data-submenu]');
 
-      plugin.$element.one(Foundation.transitionend(plugin.$element), function () {
-        $html.one('closed.zf.drilldown', function () {
-          $submenus.should.not.have.class('is-closing');
-          $submenus.should.not.have.class('is-active');
+      FoundationNext.Events.one(plugin.$element, Foundation.transitionend(plugin.$element), function () {
+        FoundationNext.Events.one(html, 'closed.zf.drilldown', function () {
+          submenus[0].classList.contains('is-closing').should.be.false;
+          submenus[0].classList.contains('is-active').should.be.false;
           done();
         });
       });
 
       plugin._hideAll();
 	    // fake transitionend for console tests
-      plugin.$element.triggerHandler(Foundation.transitionend(plugin.$element));
+      FoundationNext.Events.triggerHandler(plugin.$element, Foundation.transitionend(plugin.$element));
     });
   });
 
   describe('back()', function() {
     it('hides current submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open one first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(1));
+      plugin._show(html.querySelectorAll('li.is-drilldown-submenu-parent')[1]);
 
-      $html.find('li.is-drilldown-submenu-parent').eq(1).children('ul').children('.js-drilldown-back').trigger('click');
+      FoundationNext.Events.trigger(html.querySelectorAll('li.is-drilldown-submenu-parent')[1].querySelector(':scope > ul').querySelector(':scope > .js-drilldown-back'), 'click');
 
       // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-      $html.find('li.is-drilldown-submenu-parent').eq(1).children('ul').should.have.class('is-closing');
+      html.querySelectorAll('li.is-drilldown-submenu-parent')[1].querySelector(':scope > ul').classList.contains('is-closing').should.be.true;
     });
     it('shows parent submenu', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open one first
-      plugin._show($html.find('li.is-drilldown-submenu-parent').eq(1));
+      plugin._show(html.querySelectorAll('li.is-drilldown-submenu-parent')[1]);
 
-      $html.find('li.is-drilldown-submenu-parent').eq(1).children('ul').children('.js-drilldown-back').trigger('click');
+      FoundationNext.Events.trigger(html.querySelectorAll('li.is-drilldown-submenu-parent')[1].querySelector(':scope > ul').querySelector(':scope > .js-drilldown-back'), 'click');
 
       // Checking with .be.hidden is not possible because they don't have display: block but z-index: -1
-      $html.find('li.is-drilldown-submenu-parent').eq(0).children('ul').should.have.class('is-active');
+      html.querySelector('li.is-drilldown-submenu-parent').querySelector(':scope > ul').classList.contains('is-active').should.be.true;
     });
   });
 
   describe('toggle events', function () {
 
-    var $trigger, $target, $wrapper, togglerPlugin;
+    var trigger, target, wrapper, togglerPlugin;
 
     beforeEach(function () {
-      $html = $(templateWithToggler).appendTo('body');
-      $trigger = $html.find('#trigger');
-      $target = $html.find('#target');
-      $target = $html.find('#target');
+      html = document.body.appendChild(fixture(templateWithToggler));
+      trigger = html.querySelector('#trigger');
+      target = html.querySelector('#target');
+      target = html.querySelector('#target');
 
-      togglerPlugin = new Foundation.Toggler($target, {});
-      plugin = new Foundation.Drilldown($html.find('[data-drilldown]'), { autoHeight: true });
+      togglerPlugin = new Foundation.Toggler(target, {});
+      plugin = new Foundation.Drilldown(html.querySelector('[data-drilldown]'), { autoHeight: true });
 
-      $wrapper = $html.find('.is-drilldown');
+      wrapper = html.querySelector('.is-drilldown');
     });
 
     it('correctly resize when opened', function () {
       // Open the Drilldown
-      $trigger.focus().trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
 
       // 3 items (including the back button) is around 115px height
-      $wrapper.height().should.be.within(110, 120);
+      wrapper.offsetHeight.should.be.within(110, 120);
     });
 
     it('correctly resize when closed', function () {
       // Open then close the Drilldown
-      $trigger.focus().trigger('click');
-      $trigger.focus().trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
 
-      $wrapper.height().should.be.equal(0);
+      wrapper.offsetHeight.should.be.equal(0);
     });
 
     it('correctly resize when reopened on a submenu', function () {
       // Open the Drilldown
-      $trigger.focus().trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
       // Show a submenu with a smaller height
-      plugin._showMenu($html.find('#Menu-1A'));
+      plugin._showMenu(html.querySelector('#Menu-1A'));
       // Close then reopen the the Drilldown
-      $trigger.focus().trigger('click');
-      $trigger.focus().trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
+      trigger.focus();
+      $(trigger).trigger('click');
 
       // 2 items (including the back button) is around 75px height
-      $wrapper.height().should.be.within(70, 80);
+      wrapper.offsetHeight.should.be.within(70, 80);
     });
 
     afterEach(function () {
@@ -296,94 +302,100 @@ describe('Drilldown Menu', function() {
   describe('keyboard events', function() {
     // Currently not testable, as triggered event won't move on focus
     it.skip('does not trap focus on root element going down', function() {
-      $html = $(template).appendTo('body');
-      let $dummyElement = $('<a tabindex="0">Dummy</a>').appendTo('body'); // Dummy target to see if focus is not trapped
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      let dummyElement = document.body.appendChild(fixture('<a tabindex="0">Dummy</a>')); // Dummy target to see if focus is not trapped
+      plugin = new Foundation.Drilldown(html, {});
 
       // Focus last element
-      $dummyElement.focus();
-      $html.find('> li:last-child > a').trigger(window.mockKeyboardEvent('TAB'));
+      dummyElement.focus();
+      html.querySelector(':scope > li:last-child > a').dispatchEvent(window.mockKeyboardEvent('TAB'));
 
-      document.activeElement.should.not.be.equal($html.find('> li:last-child > a')[0]);
+      document.activeElement.should.not.be.equal(html.querySelector(':scope > li:last-child > a'));
 
-      $dummyElement.remove();
+      dummyElement.remove();
     });
     // Currently not testable, as triggered event won't move on focus
     it.skip('does not trap focus on root element going up', function() {
-      let $dummyElement = $('<a tabindex="0">Dummy</a>').appendTo('body'); // Dummy target to see if focus is not trapped
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      let dummyElement = document.body.appendChild(fixture('<a tabindex="0">Dummy</a>')); // Dummy target to see if focus is not trapped
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Focus first element
-      $dummyElement.focus();
-      $html.find('> li:first-child > a').trigger(window.mockKeyboardEvent('TAB', {shift: true}));
+      dummyElement.focus();
+      html.querySelector(':scope > li:first-child > a').dispatchEvent(window.mockKeyboardEvent('TAB', {shift: true}));
 
-      document.activeElement.should.not.be.equal($html.find('> li:first-child > a')[0]);
+      document.activeElement.should.not.be.equal(html.querySelector(':scope > li:first-child > a'));
 
-      $dummyElement.remove();
+      dummyElement.remove();
     });
     it('closes current sub menu using ESC', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open it first
-      plugin._show($html.find('> li:nth-child(1)'))
+      plugin._show(html.querySelector(':scope > li:nth-child(1)'))
 
-      $html.find('> li:nth-child(1) > ul > li:first-child > a').focus()
-        .trigger(window.mockKeyboardEvent('ESCAPE'));
+      html.querySelector(':scope > li:nth-child(1) > ul > li:first-child > a').focus();
 
-      $html.find('> li:nth-child(1) > ul').should.have.class('is-closing');
+      html.querySelector(':scope > li:nth-child(1) > ul > li:first-child > a').dispatchEvent(window.mockKeyboardEvent('ESCAPE'));
+
+      html.querySelector(':scope > li:nth-child(1) > ul').classList.contains('is-closing').should.be.true;
     });
     it('moves focus to next element on ARROW_DOWN', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      $html.find('> li:nth-child(1) > a').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_DOWN'));
+      html.querySelector(':scope > li:nth-child(1) > a').focus();
 
-      document.activeElement.should.be.equal($html.find('> li:nth-child(2) > a')[0]);
+      html.querySelector(':scope > li:nth-child(1) > a').dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
+
+      document.activeElement.should.be.equal(html.querySelector(':scope > li:nth-child(2) > a'));
     });
     it('moves focus to previous element on ARROW_UP', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      $html.find('> li:nth-child(2) > a').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_UP'));
+      html.querySelector(':scope > li:nth-child(2) > a').focus();
 
-      document.activeElement.should.be.equal($html.find('> li:nth-child(1) > a')[0]);
+      html.querySelector(':scope > li:nth-child(2) > a').dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
+
+      document.activeElement.should.be.equal(html.querySelector(':scope > li:nth-child(1) > a'));
     });
     it('opens child element on ARROW_RIGHT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
-      $html.find('> li:nth-child(1) > a').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      html.querySelector(':scope > li:nth-child(1) > a').focus();
 
-      $html.find('> li:nth-child(1) > ul').should.have.class('is-active');
+      html.querySelector(':scope > li:nth-child(1) > a').dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+
+      html.querySelector(':scope > li:nth-child(1) > ul').classList.contains('is-active').should.be.true;
     });
     it('focuses parent link if parentLink is true', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {parentLink: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {parentLink: true});
 
-      $html.find('> li:nth-child(1) > a').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      html.querySelector(':scope > li:nth-child(1) > a').focus();
+
+      html.querySelector(':scope > li:nth-child(1) > a').dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
 
       setTimeout(function() { // Timeout to make sure transition has ended
-        $html.find('> li:nth-child(1) > ul > li[data-is-parent-link] a')[0].should.be.equal(document.activeElement);
+        html.querySelector(':scope > li:nth-child(1) > ul > li[data-is-parent-link] a').should.be.equal(document.activeElement);
         done();
       }, 500);
     });
     it('closes child element on ARROW_LEFT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Drilldown($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Drilldown(html, {});
 
       // Open it first
-      plugin._show($html.find('> li:nth-child(1)'))
+      plugin._show(html.querySelector(':scope > li:nth-child(1)'))
 
-      $html.find('> li:nth-child(1) > ul > li:first-child > a').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_LEFT'));
+      html.querySelector(':scope > li:nth-child(1) > ul > li:first-child > a').focus();
 
-      $html.find('> li:nth-child(1) > ul').should.have.class('is-closing');
+      html.querySelector(':scope > li:nth-child(1) > ul > li:first-child > a').dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
+
+      html.querySelector(':scope > li:nth-child(1) > ul').classList.contains('is-closing').should.be.true;
     });
   });
 });

@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import { Events } from './foundation.util.events';
 
 // Default set of media queries
 // const defaultQueries = {
@@ -13,6 +13,13 @@ import $ from 'jquery';
 //     'only screen and (min-resolution: 2dppx)'
 //   };
 
+// S13 (7.0 line A): the module is jQuery-free. The breakpoint probe reads
+// the computed font-family off the meta.foundation-mq element through
+// getComputedStyle (the exact value jQuery's `.css('font-family')` returned)
+// and the breakpoint watcher runs on the native event layer: real resize
+// events reach it directly, and the 'changed.zf.mediaquery' broadcast is a
+// real bubbling window event (native consumers directly, still-jQuery
+// consumers through the real-event pass-through, parameters in the detail).
 var MediaQuery = {
   queries: [],
 
@@ -33,12 +40,16 @@ var MediaQuery = {
     }
 
     var self = this;
-    var $meta = $('meta.foundation-mq');
-    if(!$meta.length){
-      $('<meta class="foundation-mq" name="foundation-mq" content>').appendTo(document.head);
+    var meta = document.querySelector('meta.foundation-mq');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('class', 'foundation-mq');
+      meta.setAttribute('name', 'foundation-mq');
+      meta.setAttribute('content', '');
+      document.head.appendChild(meta);
     }
 
-    var extractedStyles = $('.foundation-mq').css('font-family');
+    var extractedStyles = window.getComputedStyle(meta).getPropertyValue('font-family');
     var namedQueries;
 
     namedQueries = parseStyleToObject(extractedStyles);
@@ -91,7 +102,7 @@ var MediaQuery = {
    * If smaller than the breakpoint of larger than its upper limit it returns false.
    * @function
    * @param {String} size - Name of the breakpoint to check.
-   * @returns {Boolean} `true` if the breakpoint matches, `false` otherwise.
+   * @returns {Boolean} `true` if the breakpoint matches, `false` if it's smaller.
    */
   only(size) {
     return size === this._getCurrentSize();
@@ -226,15 +237,20 @@ var MediaQuery = {
    * @private
    */
   _watcher() {
-    $(window).on('resize.zf.trigger', () => {
+    Events.on(window, 'resize.zf.mediaquery', () => {
       var newSize = this._getCurrentSize(), currentSize = this.current;
 
       if (newSize !== currentSize) {
         // Change the current media query
         this.current = newSize;
 
-        // Broadcast the media query change on the window
-        $(window).trigger('changed.zf.mediaquery', [newSize, currentSize]);
+        // Broadcast the media query change on the window as a real,
+        // bubbling event: native consumers receive it directly and
+        // still-jQuery consumers keep hearing it through the real-event
+        // pass-through, with the new and former breakpoint names on the
+        // event detail (jQuery hands them out as the handler arguments
+        // 2/3, exactly where the 6.x synthetic trigger put them).
+        Events.trigger(window, 'changed.zf.mediaquery', [newSize, currentSize]);
       }
     });
   }

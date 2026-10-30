@@ -1,7 +1,8 @@
-import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { Move } from './foundation.util.motion';
 import { GetYoDigits, rtl as Rtl } from './foundation.core.utils';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 
 import { Plugin } from './foundation.core.plugin';
 
@@ -26,14 +27,18 @@ class Slider extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Slider.defaults, this.$element.data(), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Slider.defaults, datasetOptions(this.$element), options);
     this.className = 'Slider'; // ie9 back compat
     this.initialized = false;
 
   // Touch and Triggers inits are idempotent, we just need to make sure it's initialied.
-    Touch.init($);
-    Triggers.init($);
+    Touch.init();
+    Triggers.init();
 
     this._init();
 
@@ -65,19 +70,25 @@ class Slider extends Plugin {
    * @private
    */
   _init() {
-    this.inputs = this.$element.find('input');
-    this.handles = this.$element.find('[data-slider-handle]');
+    this.inputs = Array.from(this.$element.querySelectorAll('input'));
+    this.handles = Array.from(this.$element.querySelectorAll('[data-slider-handle]'));
 
-    this.$handle = this.handles.eq(0);
-    this.$input = this.inputs.length ? this.inputs.eq(0) : $(`#${this.$handle.attr('aria-controls')}`);
-    this.$fill = this.$element.find('[data-slider-fill]').css(this.options.vertical ? 'height' : 'width', 0);
+    this.$handle = this.handles[0];
+    this.$input = this.inputs.length ? this.inputs[0] : document.getElementById(this.$handle.getAttribute('aria-controls'));
+    this.$fill = this.$element.querySelector('[data-slider-fill]');
+    // Sliders without a fill element are valid markup (the 6.x empty
+    // collection made every fill write a no-op; null keeps that contract).
+    if (this.$fill) {
+      this.$fill.style[this.options.vertical ? 'height' : 'width'] = '0';
+    }
 
-    if (this.options.disabled || this.$element.hasClass(this.options.disabledClass)) {
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    if (this.options.disabled || this.$element.classList.contains(this.options.disabledClass)) {
       this.options.disabled = true;
-      this.$element.addClass(this.options.disabledClass);
+      this.$element.classList.add(this.options.disabledClass);
     }
     if (!this.inputs.length) {
-      this.inputs = $().add(this.$input);
+      this.inputs = [this.$input];
       this.options.binding = true;
     }
 
@@ -85,11 +96,11 @@ class Slider extends Plugin {
 
     if (this.handles[1]) {
       this.options.doubleSided = true;
-      this.$handle2 = this.handles.eq(1);
-      this.$input2 = this.inputs.length > 1 ? this.inputs.eq(1) : $(`#${this.$handle2.attr('aria-controls')}`);
+      this.$handle2 = this.handles[1];
+      this.$input2 = this.inputs.length > 1 ? this.inputs[1] : document.getElementById(this.$handle2.getAttribute('aria-controls'));
 
       if (!this.inputs[1]) {
-        this.inputs = this.inputs.add(this.$input2);
+        this.inputs.push(this.$input2);
       }
 
       // this.$handle.triggerHandler('click.zf.slider');
@@ -105,11 +116,11 @@ class Slider extends Plugin {
 
   setHandles() {
     if(this.handles[1]) {
-      this._setHandlePos(this.$handle, this.inputs.eq(0).val(), () => {
-        this._setHandlePos(this.$handle2, this.inputs.eq(1).val());
+      this._setHandlePos(this.$handle, this.inputs[0].value, () => {
+        this._setHandlePos(this.$handle2, this.inputs[1].value);
       });
     } else {
-      this._setHandlePos(this.$handle, this.inputs.eq(0).val());
+      this._setHandlePos(this.$handle, this.inputs[0].value);
     }
   }
 
@@ -191,9 +202,10 @@ class Slider extends Plugin {
    * @fires Slider#moved
    * @fires Slider#changed
    */
-  _setHandlePos($hndl, location, cb) {
+  _setHandlePos(hndl, location, cb) {
+    hndl = hndl && hndl.nodeType === 1 ? hndl : (hndl ? hndl[0] : hndl);
     // don't move if the slider has been disabled since its initialization
-    if (this.$element.hasClass(this.options.disabledClass)) {
+    if (this.$element.classList.contains(this.options.disabledClass)) {
       return;
     }
     //might need to alter that slightly for bars that will have odd number selections.
@@ -206,11 +218,11 @@ class Slider extends Plugin {
     var isDbl = this.options.doubleSided;
 
     if (isDbl) { //this block is to prevent 2 handles from crossing eachother. Could/should be improved.
-      if (this.handles.index($hndl) === 0) {
-        var h2Val = parseFloat(this.$handle2.attr('aria-valuenow'));
+      if (this.handles.indexOf(hndl) === 0) {
+        var h2Val = parseFloat(this.$handle2.getAttribute('aria-valuenow'));
         location = location >= h2Val ? h2Val - this.options.step : location;
       } else {
-        var h1Val = parseFloat(this.$handle.attr('aria-valuenow'));
+        var h1Val = parseFloat(this.$handle.getAttribute('aria-valuenow'));
         location = location <= h1Val ? h1Val + this.options.step : location;
       }
     }
@@ -219,8 +231,8 @@ class Slider extends Plugin {
         vert = this.options.vertical,
         hOrW = vert ? 'height' : 'width',
         lOrT = vert ? 'top' : 'left',
-        handleDim = $hndl[0].getBoundingClientRect()[hOrW],
-        elemDim = this.$element[0].getBoundingClientRect()[hOrW],
+        handleDim = hndl.getBoundingClientRect()[hOrW],
+        elemDim = this.$element.getBoundingClientRect()[hOrW],
         //percentage of bar min/max value based on click or drag point
         pctOfBar = this._pctOfBar(location),
         //number of actual pixels to shift the handle, based on the percentage obtained above
@@ -232,11 +244,11 @@ class Slider extends Plugin {
         // declare empty object for css adjustments, only used with 2 handled-sliders
     var css = {};
 
-    this._setValues($hndl, location);
+    this._setValues(hndl, location);
 
     // TODO update to calculate based on values set to respective inputs??
     if (isDbl) {
-      var isLeftHndl = this.handles.index($hndl) === 0,
+      var isLeftHndl = this.handles.indexOf(hndl) === 0,
           //empty variable, will be used for min-height/width for fill bar
           dim,
           //percentage w/h of the handle compared to the slider bar
@@ -246,13 +258,13 @@ class Slider extends Plugin {
         //left or top percentage value to apply to the fill bar.
         css[lOrT] = `${movement}%`;
         //calculate the new min-height/width for the fill bar.
-        dim = parseFloat(this.$handle2[0].style[lOrT]) - movement + handlePct;
+        dim = parseFloat(this.$handle2.style[lOrT]) - movement + handlePct;
         //this callback is necessary to prevent errors and allow the proper placement and initialization of a 2-handled slider
         //plus, it means we don't care if 'dim' isNaN on init, it won't be in the future.
         if (cb && typeof cb === 'function') { cb(); }//this is only needed for the initialization of 2 handled sliders
       } else {
         //just caching the value of the left/bottom handle's left/top property
-        var handlePos = parseFloat(this.$handle[0].style[lOrT]);
+        var handlePos = parseFloat(this.$handle.style[lOrT]);
         //calculate the new min-height/width for the fill bar. Use isNaN to prevent false positives for numbers <= 0
         //based on the percentage of movement of the handle being manipulated, less the opposing handle's left/top position, plus the percentage w/h of the handle itself
         dim = movement - (isNaN(handlePos) ? (this.options.initialStart - this.options.start)/((this.options.end-this.options.start)/100) : handlePos) + handlePct;
@@ -262,35 +274,50 @@ class Slider extends Plugin {
     }
 
     //because we don't know exactly how the handle will be moved, check the amount of time it should take to move.
-    var moveTime = this.$element.data('dragging') ? 1000/60 : this.options.moveTime;
+    // the dragging flag rode jQuery's data cache (DOM-invisible); the
+    // expando property keeps it invisible
+    var moveTime = this.$element.zfSliderDragging ? 1000/60 : this.options.moveTime;
 
-    Move(moveTime, $hndl, function() {
+    Move(moveTime, hndl, function() {
+      // A Move chain can complete after the slider was destroyed (the
+      // completion runs off a requestAnimationFrame) and options are gone.
+      if (!_this.options) { return; }
       // adjusting the left/top property of the handle, based on the percentage calculated above
       // if movement isNaN, that is because the slider is hidden and we cannot determine handle width,
       // fall back to next best guess.
       if (isNaN(movement)) {
-        $hndl.css(lOrT, `${pctOfBar * 100}%`);
+        hndl.style[lOrT] = `${pctOfBar * 100}%`;
       }
       else {
-        $hndl.css(lOrT, `${movement}%`);
+        hndl.style[lOrT] = `${movement}%`;
       }
 
       if (!_this.options.doubleSided) {
         //if single-handled, a simple method to expand the fill bar
-        _this.$fill.css(hOrW, `${pctOfBar * 100}%`);
+        if (_this.$fill) { _this.$fill.style[hOrW] = `${pctOfBar * 100}%`; }
       } else {
         //otherwise, use the css object we created above
-        _this.$fill.css(css);
+        if (_this.$fill) {
+          Object.keys(css).forEach(function(prop) {
+            _this.$fill.style[prop] = css[prop];
+          });
+        }
       }
     });
 
     if (this.initialized) {
-      this.$element.one('finished.zf.animate', function() {
+      // S10: the finished.zf.animate consumer flips to the native event
+      // layer; the producer (Motion) has dispatched one real bubbling event
+      // per Move since S5, so this seam closes on the consumer half alone.
+      Events.one(this.$element, 'finished.zf.animate', function() {
+        // the chain can fire after destroy() (see the Move callback above)
+        if (!_this.$element) { return; }
         /**
          * Fires when the handle is done moving.
          * @event Slider#moved
          */
-        _this.$element.trigger('moved.zf.slider', [$hndl]);
+        // Terminal form: real bubbling event, the plain handle element.
+        Events.trigger(_this.$element, 'moved.zf.slider', [hndl]);
       });
       /**
        * Fires when the value has not been change for a given time.
@@ -298,7 +325,7 @@ class Slider extends Plugin {
        */
       clearTimeout(_this.timeout);
       _this.timeout = setTimeout(function(){
-        _this.$element.trigger('changed.zf.slider', [$hndl]);
+        Events.trigger(_this.$element, 'changed.zf.slider', [hndl]);
       }, _this.options.changedDelay);
     }
   }
@@ -311,23 +338,22 @@ class Slider extends Plugin {
    */
   _setInitAttr(idx) {
     var initVal = (idx === 0 ? this.options.initialStart : this.options.initialEnd)
-    var id = this.inputs.eq(idx).attr('id') || GetYoDigits(6, 'slider');
-    this.inputs.eq(idx).attr({
-      'id': id,
-      'max': this.options.end,
-      'min': this.options.start,
-      'step': this.options.step
-    });
-    this.inputs.eq(idx).val(initVal);
-    this.handles.eq(idx).attr({
-      'role': 'slider',
-      'aria-controls': id,
-      'aria-valuemax': this.options.end,
-      'aria-valuemin': this.options.start,
-      'aria-valuenow': initVal,
-      'aria-orientation': this.options.vertical ? 'vertical' : 'horizontal',
-      'tabindex': 0
-    });
+    var id = this.inputs[idx].getAttribute('id') || GetYoDigits(6, 'slider');
+    // State attributes go through the native layer (7.0 line A, S10).
+    var input = this.inputs[idx];
+    input.setAttribute('id', id);
+    input.setAttribute('max', this.options.end);
+    input.setAttribute('min', this.options.start);
+    input.setAttribute('step', this.options.step);
+    input.value = initVal;
+    var handle = this.handles[idx];
+    handle.setAttribute('role', 'slider');
+    handle.setAttribute('aria-controls', id);
+    handle.setAttribute('aria-valuemax', this.options.end);
+    handle.setAttribute('aria-valuemin', this.options.start);
+    handle.setAttribute('aria-valuenow', initVal);
+    handle.setAttribute('aria-orientation', this.options.vertical ? 'vertical' : 'horizontal');
+    handle.setAttribute('tabindex', 0);
   }
 
   /**
@@ -337,10 +363,12 @@ class Slider extends Plugin {
    * @param {jQuery} $handle - the currently selected handle.
    * @param {Number} val - floating point of the new value.
    */
-  _setValues($handle, val) {
-    var idx = this.options.doubleSided ? this.handles.index($handle) : 0;
-    this.inputs.eq(idx).val(val);
-    $handle.attr('aria-valuenow', val);
+  _setValues(handle, val) {
+    handle = handle.nodeType === 1 ? handle : handle[0];
+    var idx = this.options.doubleSided ? this.handles.indexOf(handle) : 0;
+    this.inputs[idx].value = val;
+    // State attributes go through the native layer (7.0 line A, S10).
+    handle.setAttribute('aria-valuenow', val);
   }
 
   /**
@@ -354,7 +382,7 @@ class Slider extends Plugin {
    * @param {Number} val - floating point number for the new value of the slider.
    * TODO clean this up, there's a lot of repeated code between this and the _setHandlePos fn.
    */
-  _handleEvent(e, $handle, val) {
+  _handleEvent(e, handle, val) {
     var value;
     if (!val) {//click or drag events
       e.preventDefault();
@@ -363,10 +391,11 @@ class Slider extends Plugin {
           param = vertical ? 'height' : 'width',
           direction = vertical ? 'top' : 'left',
           eventOffset = vertical ? e.pageY : e.pageX,
-          barDim = this.$element[0].getBoundingClientRect()[param],
-          windowScroll = vertical ? $(window).scrollTop() : $(window).scrollLeft();
+          barDim = this.$element.getBoundingClientRect()[param],
+          windowScroll = vertical ? window.pageYOffset : window.pageXOffset;
 
-      var elemOffset = this.$element.offset()[direction];
+      // jQuery offset(): the document-coordinates edge
+      var elemOffset = this.$element.getBoundingClientRect()[direction] + (vertical ? window.pageYOffset : window.pageXOffset);
 
       // touch events emulated by the touch util give position relative to screen, add window.scroll to event coordinates...
       // best way to guess this is simulated is if clientY == pageY
@@ -389,17 +418,17 @@ class Slider extends Plugin {
 
       value = _this._adjustValue(null, value);
 
-      if (!$handle) {//figure out which handle it is, pass it to the next function.
+      if (!handle) {//figure out which handle it is, pass it to the next function.
         var firstHndlPos = absPosition(this.$handle, direction, barXY, param),
             secndHndlPos = absPosition(this.$handle2, direction, barXY, param);
-            $handle = firstHndlPos <= secndHndlPos ? this.$handle : this.$handle2;
+            handle = firstHndlPos <= secndHndlPos ? this.$handle : this.$handle2;
       }
 
     } else {//change event on input
       value = this._adjustValue(null, val);
     }
 
-    this._setHandlePos($handle, value);
+    this._setHandlePos(handle, value);
   }
 
   /**
@@ -415,7 +444,7 @@ class Slider extends Plugin {
       div = parseFloat(step/2),
       left, previousVal, nextVal;
     if (!!$handle) {
-      val = parseFloat($handle.attr('aria-valuenow'));
+      val = parseFloat($handle.getAttribute('aria-valuenow'));
     }
     else {
       val = value;
@@ -453,29 +482,41 @@ class Slider extends Plugin {
    * @private
    * @param {jQuery} $handle - the current handle to apply listeners to.
    */
-  _eventsForHandle($handle) {
+  _eventsForHandle(handle) {
     var _this = this,
         curHandle;
 
       const handleChangeEvent = function(e) {
-        const idx = _this.inputs.index($(this));
-        _this._handleEvent(e, _this.handles.eq(idx), $(this).val());
+        const idx = _this.inputs.indexOf(this);
+        _this._handleEvent(e, _this.handles[idx], this.value);
       };
 
       // IE only triggers the change event when the input loses focus which strictly follows the HTML specification
       // listen for the enter key and trigger a change
       // @see https://html.spec.whatwg.org/multipage/input.html#common-input-element-events
-      this.inputs.off('keyup.zf.slider').on('keyup.zf.slider', function (e) {
-        if(e.keyCode === 13) handleChangeEvent.call(this, e);
+      // S10: the input keyup/change consumers flip to the native event
+      // layer - their producers are real browser events, which reach native
+      // listeners directly. `this` is the input element, and the listeners
+      // are re-registered on every element of the collection like jQuery's
+      // collection-wide .on() did.
+      this.inputs.forEach(input => {
+        Events.off(input, 'keyup.zf.slider change.zf.slider');
+        Events.on(input, 'keyup.zf.slider', function (e) {
+          if(e.keyCode === 13) handleChangeEvent.call(this, e);
+        });
+        Events.on(input, 'change.zf.slider', handleChangeEvent);
       });
 
-      this.inputs.off('change.zf.slider').on('change.zf.slider', handleChangeEvent);
-
       if (this.options.clickSelect) {
-        this.$element.off('click.zf.slider').on('click.zf.slider', function(e) {
-          if (_this.$element.data('dragging')) { return false; }
+        // S10: the bar-click consumer flips to the native event layer -
+        // real clicks arrive directly and jQuery-synthesized clicks on the
+        // container ride the `.click()` shortcut bridge (reveal-native
+        // precedent).
+        Events.off(this.$element, 'click.zf.slider');
+        Events.on(this.$element, 'click.zf.slider', function(e) {
+          if (_this.$element.zfSliderDragging) { return false; }
 
-          if (!$(e.target).is('[data-slider-handle]')) {
+          if (!e.target.matches('[data-slider-handle]')) {
             if (_this.options.doubleSided) {
               _this._handleEvent(e);
             } else {
@@ -486,42 +527,49 @@ class Slider extends Plugin {
       }
 
     if (this.options.draggable) {
-      this.handles.addTouch();
+      // S13: the drag chain flips with the Touch util - addTouch feeds real
+      // synthesized mouse events now, so the mousedown/mousemove/mouseup
+      // listeners live on the native event layer and serve the mouse and
+      // the touch feed alike.
+      this.handles.forEach(handleEl => Touch.addTouch(handleEl));
 
-      var $body = $('body');
-      $handle
-        .off('mousedown.zf.slider')
-        .on('mousedown.zf.slider', function(e) {
-          $handle.addClass('is-dragging');
-          _this.$fill.addClass('is-dragging');//
-          _this.$element.data('dragging', true);
+      var handleEl = handle.nodeType === 1 ? handle : handle[0];
+      Events.off(handleEl, 'mousedown.zf.slider selectstart.zf.slider touchmove.zf.slider');
+      Events.on(handleEl, 'mousedown.zf.slider', function(e) {
+        handleEl.classList.add('is-dragging');
+        if (_this.$fill) { _this.$fill.classList.add('is-dragging'); }
+        _this.$element.zfSliderDragging = true;
 
-          curHandle = $(e.currentTarget);
+        curHandle = e.currentTarget;
 
-          $body.on('mousemove.zf.slider', function(ev) {
-            ev.preventDefault();
-            _this._handleEvent(ev, curHandle);
+        Events.on(document.body, 'mousemove.zf.slider', function(ev) {
+          ev.preventDefault();
+          _this._handleEvent(ev, curHandle);
+        });
+        Events.on(document.body, 'mouseup.zf.slider', function(ev) {
+          _this._handleEvent(ev, curHandle);
 
-          }).on('mouseup.zf.slider', function(ev) {
-            _this._handleEvent(ev, curHandle);
+          handleEl.classList.remove('is-dragging');
+          if (_this.$fill) { _this.$fill.classList.remove('is-dragging'); }
+          _this.$element.zfSliderDragging = false;
 
-            $handle.removeClass('is-dragging');
-            _this.$fill.removeClass('is-dragging');
-            _this.$element.data('dragging', false);
-
-            $body.off('mousemove.zf.slider mouseup.zf.slider');
-          });
-      })
+          Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
+        });
+      });
       // prevent events triggered by touch
-      .on('selectstart.zf.slider touchmove.zf.slider', function(e) {
+      Events.on(handleEl, 'selectstart.zf.slider touchmove.zf.slider', function(e) {
         e.preventDefault();
       });
     }
 
-    $handle.off('keydown.zf.slider').on('keydown.zf.slider', function(e) {
-      var _$handle = $(this),
-          idx = _this.options.doubleSided ? _this.handles.index(_$handle) : 0,
-          oldValue = parseFloat($handle.attr('aria-valuenow')),
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    var keydownEl = handle.nodeType === 1 ? handle : handle[0];
+    Events.off(keydownEl, 'keydown.zf.slider');
+    Events.on(keydownEl, 'keydown.zf.slider', function(e) {
+      var _$handle = this,
+          oldValue = parseFloat(keydownEl.getAttribute('aria-valuenow')),
           newValue;
 
       // handle keyboard event with keyboard util
@@ -560,9 +608,13 @@ class Slider extends Plugin {
    * Destroys the slider plugin.
    */
   _destroy() {
-    this.handles.off('.zf.slider');
-    this.inputs.off('.zf.slider');
-    this.$element.off('.zf.slider');
+    // Every plugin-namespaced listener drops in one pass each (the input,
+    // click, drag and keydown listeners all live on the native layer now),
+    // plus any body-wide drag pair left mid-drag.
+    this.inputs.forEach(input => Events.off(input, '.zf.slider'));
+    this.handles.forEach(handle => Events.off(handle, '.zf.slider'));
+    Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
+    Events.off(this.$element, '.zf.slider');
 
     clearTimeout(this.timeout);
   }
@@ -708,8 +760,16 @@ Slider.defaults = {
 function percent(frac, num) {
   return (frac / num);
 }
-function absPosition($handle, dir, clickPos, param) {
-  return Math.abs(($handle.position()[dir] + ($handle[param]() / 2)) - clickPos);
+function absPosition(handle, dir, clickPos, param) {
+  // jQuery position(): the offsetParent-relative position; the sliders are
+  // absolutely positioned inside the (relative) slider element, so the
+  // offsetParent chain bottoms out there - rect-difference form.
+  var parentRect = handle.offsetParent ? handle.offsetParent.getBoundingClientRect() : {top: 0, left: 0};
+  var handleRect = handle.getBoundingClientRect();
+  var pos = dir === 'top' ? handleRect.top - parentRect.top : handleRect.left - parentRect.left;
+  // $handle[param](): the outer height/width (rect dimension, border-box)
+  var dim = dir === 'top' ? handleRect.height : handleRect.width;
+  return Math.abs((pos + (dim / 2)) - clickPos);
 }
 function baseLog(base, value) {
   return Math.log(value)/Math.log(base)

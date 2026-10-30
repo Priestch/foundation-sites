@@ -1,6 +1,6 @@
-import $ from 'jquery';
 
 import { MediaQuery } from './foundation.util.mediaQuery';
+import { Events } from './foundation.util.events';
 import { GetYoDigits } from './foundation.core.utils';
 import { Plugin } from './foundation.core.plugin';
 
@@ -33,6 +33,11 @@ let MenuPlugins = {
  * @requires foundation.util.mediaQuery
  */
 
+// 7.0 line A, slice S11: the wrapper itself runs on the native layer. The
+// mq switch is an explicit destroy+rebuild of the sub-plugin on the same
+// element - all three sub-plugins (DropdownMenu, AccordionMenu, Drilldown)
+// are native since S9 and register their own instance/attrs beside the
+// wrapper's, like the 6.x zfPlugin guard let them.
 class ResponsiveMenu extends Plugin {
   /**
    * Creates a new instance of a responsive menu.
@@ -43,8 +48,10 @@ class ResponsiveMenu extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element) {
-    this.$element = $(element);
-    this.rules = this.$element.data('responsive-menu');
+    // 7.0 line A terminal form: the element (constructor contracts hand in
+    // either shape during the mixed state).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.rules = this.$element.getAttribute('data-responsive-menu');
     this.currentMq = null;
     this.currentPlugin = null;
     this.className = 'ResponsiveMenu'; // ie9 back compat
@@ -82,11 +89,13 @@ class ResponsiveMenu extends Plugin {
       this.rules = rulesTree;
     }
 
-    if (!$.isEmptyObject(this.rules)) {
+    if (Object.keys(this.rules).length !== 0) {
       this._checkMediaQueries();
     }
     // Add data-mutate since children may need it.
-    this.$element.attr('data-mutate', (this.$element.attr('data-mutate') || GetYoDigits(6, 'responsive-menu')));
+    if (!this.$element.getAttribute('data-mutate')) {
+      this.$element.setAttribute('data-mutate', GetYoDigits(6, 'responsive-menu'));
+    }
   }
 
   /**
@@ -95,8 +104,12 @@ class ResponsiveMenu extends Plugin {
    * @private
    */
   _events() {
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer binds
+    // there (equalizer/tabs/responsiveToggle/responsiveAccordionTabs/
+    // offcanvas all flipped with the producer in the same move).
     this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
-    $(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 
   /**
@@ -105,9 +118,11 @@ class ResponsiveMenu extends Plugin {
    * @private
    */
   _checkMediaQueries() {
-    var matchedMq, _this = this;
+    var matchedMq = null;
+    var element = this.$element;
+
     // Iterate through each rule and find the last matching rule
-    $.each(this.rules, function(key) {
+    Object.keys(this.rules).forEach(function(key) {
       if (MediaQuery.atLeast(key)) {
         matchedMq = key;
       }
@@ -120,14 +135,16 @@ class ResponsiveMenu extends Plugin {
     if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
 
     // Remove existing plugin-specific CSS classes
-    $.each(MenuPlugins, function(key, value) {
-      _this.$element.removeClass(value.cssClass);
+    Object.keys(MenuPlugins).forEach(function(key) {
+      element.classList.remove(MenuPlugins[key].cssClass);
     });
 
     // Add the CSS class for the new plugin
-    this.$element.addClass(this.rules[matchedMq].cssClass);
+    element.classList.add(this.rules[matchedMq].cssClass);
 
-    // Create an instance of the new plugin
+    // The swap is destroy + construct: the outgoing sub-plugin runs its own
+    // destroy (listeners, feather, wrapper - each S9 plugin cleans its own
+    // layer), then the new type is built on the same element.
     if (this.currentPlugin) this.currentPlugin.destroy();
     this.currentPlugin = new this.rules[matchedMq].plugin(this.$element, {});
   }
@@ -138,7 +155,7 @@ class ResponsiveMenu extends Plugin {
    */
   _destroy() {
     if (this.currentPlugin) this.currentPlugin.destroy();
-    $(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
   }
 }
 

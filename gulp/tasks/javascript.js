@@ -5,6 +5,7 @@ var webpackStream = require('webpack-stream');
 var webpack = require('webpack');
 var named = require('vinyl-named');
 var sourcemaps = require('gulp-sourcemaps');
+var merge = require('merge-stream');
 
 var utils = require('../utils.js');
 var CONFIG = require('../config.js');
@@ -30,10 +31,6 @@ var CONFIG = require('../config.js');
 // See https://webpack.js.org/configuration/externals/#externals
 //
 var webpackExternalPlugins = Object.assign(
-  // | Module import path             | External source names and paths
-  utils.umdExternals({
-    'jquery': { root: 'jQuery' },
-  }),
   utils.umdExternals({
     './foundation.core':              { root: 'foundation.core', default: './foundation.core' },
     './foundation.core.utils':        { root: 'foundation.core', default: './foundation.core' },
@@ -45,7 +42,11 @@ var webpackExternalPlugins = Object.assign(
     './foundation.util.nest':         { root: 'foundation.util.nest' },
     './foundation.util.timer':        { root: 'foundation.util.timer' },
     './foundation.util.touch':        { root: 'foundation.util.touch' },
+    './foundation.util.triggers':     { root: 'foundation.util.triggers' },
     './foundation.util.box':          { root: 'foundation.util.box' },
+    './foundation.util.registry':     { root: 'foundation.util.registry' },
+    './foundation.util.events':       { root: 'foundation.util.events' },
+    './foundation.util.dom':          { root: 'foundation.util.dom' },
     './foundation.dropdownMenu':      { root: 'foundation.dropdownMenu' },
     './foundation.drilldown':         { root: 'foundation.drilldown' },
     './foundation.accordionMenu':     { root: 'foundation.accordionMenu' },
@@ -72,10 +73,7 @@ var webpackConfig = {
   // ".browserslistrc" by default) does not emit modern runtime syntax now that
   // the browserslist file carries the CSS-only baseline.
   target: ['web', 'es5'],
-  externals: utils.umdExternals({
-    // Use the global jQuery object "jQuery" in module-less environments.
-    'jquery': { root: 'jQuery' },
-  }),
+  externals: utils.umdExternals({}),
   module: {
     rules: [
       {
@@ -103,7 +101,19 @@ var webpackConfig = {
 //
 
 // Compiles JavaScript into a single file
-gulp.task('javascript', gulp.series('javascript:foundation', 'javascript:deps', 'javascript:docs'));
+gulp.task('javascript', gulp.series('javascript:foundation', 'javascript:next', 'javascript:deps', 'javascript:docs'));
+
+// Builds the jQuery-free layer skeleton (7.0 line A, S1) as its own bundle.
+// It exports FoundationNext next to - not inside - the 6.x Foundation global,
+// so the existing foundation.js bundle surface stays untouched.
+gulp.task('javascript:next', function() {
+  return gulp.src('js/entries/foundation-next.js')
+    .pipe(named())
+    .pipe(sourcemaps.init())
+    .pipe(webpackStream(webpackConfig, webpack))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('_build/assets/js'));
+});
 
 // Core has to be dealt with slightly differently due to bootstrapping externals
 // and the dependency on foundation.core.utils
@@ -146,7 +156,12 @@ gulp.task('javascript:deps', function() {
 });
 
 gulp.task('javascript:docs', function() {
-  return gulp.src(CONFIG.JS_DOCS)
-    .pipe(concat('docs.js'))
-    .pipe(gulp.dest('_build/assets/js'));
+  return merge(
+    gulp.src(CONFIG.JS_DOCS_BOOT)
+      .pipe(concat('docs.js'))
+      .pipe(gulp.dest('_build/assets/js')),
+    gulp.src(CONFIG.JS_DOCS_CHROME)
+      .pipe(concat('docs-chrome.js'))
+      .pipe(gulp.dest('_build/assets/js'))
+  );
 });

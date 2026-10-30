@@ -1,12 +1,25 @@
-import $ from 'jquery';
+import { Events } from './foundation.util.events';
 
 // Core Foundation Utilities, utilized in a number of places.
+
+// Accepts both the jQuery objects un-migrated callers still pass and plain
+// elements, so the helper survives the line-A migration unchanged.
+function toElement(obj) {
+  // window is array-like too - window[0] is the first frame's Window, and
+  // unwrapping it hands back a (possibly cross-origin) iframe window that
+  // throws on the next property read. Every onLoad(window, ...) call on a
+  // page that already contains an iframe hit this.
+  if (obj === window) { return obj; }
+  // nodeType marks a real node: never unwrap it, even when it is itself
+  // array-like (HTMLSelectElement exposes its first option as [0]).
+  return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
+}
 
   /**
    * Returns a boolean for RTL support
    */
 function rtl() {
-  return $('html').attr('dir') === 'rtl';
+  return document.documentElement.getAttribute('dir') === 'rtl';
 }
 
 /**
@@ -57,8 +70,13 @@ function transitionend($elem){
   if (end) {
     return end;
   } else {
+    // Fallback for engines without transitions (not reached on the baseline
+    // browsers). Dual dispatch like the Triggers util: the native layer for
+    // migrated consumers, jQuery's filtered triggerHandler for the
+    // `.one(transitionend($elem), ...)` listeners of un-migrated ones.
+    let el = toElement($elem);
     setTimeout(function(){
-      $elem.triggerHandler('transitionend', [$elem]);
+      Events.triggerHandler(el, 'transitionend', [el]);
     }, 1);
     return 'transitionend';
   }
@@ -79,15 +97,20 @@ function transitionend($elem){
 function onLoad($elem, handler) {
   const didLoad = document.readyState === 'complete';
   const eventType = (didLoad ? '_didLoad' : 'load') + '.zf.util.onLoad';
-  const cb = () => $elem.triggerHandler(eventType);
 
   if ($elem) {
-    if (handler) $elem.one(eventType, handler);
+    const el = toElement($elem);
+    // Local, native-only dispatch: the handler is registered right below on
+    // the native layer, and a real echoed 'load' on window would re-notify
+    // third-party window-load listeners.
+    const cb = () => Events.triggerHandler(el, eventType);
+
+    if (handler) Events.one(el, eventType, handler);
 
     if (didLoad)
       setTimeout(cb);
     else
-      $(window).one('load', cb);
+      Events.one(window, 'load', cb);
   }
 
   return eventType;
@@ -130,8 +153,8 @@ function ignoreMousedisappear(handler, { ignoreLeaveWindow = false, ignoreReappe
 
       // Otherwise, wait for the mouse to reeapear outside of the element,
       if (!ignoreReappear) {
-        $(document).one('mouseenter', function reenterEventHandler(eReenter) {
-          if (!$(eLeave.currentTarget).has(eReenter.target).length) {
+        Events.one(document, 'mouseenter', function reenterEventHandler(eReenter) {
+          if (!eLeave.currentTarget.contains(eReenter.target)) {
             // Fill where the mouse finally entered.
             eLeave.relatedTarget = eReenter.target;
             callback();

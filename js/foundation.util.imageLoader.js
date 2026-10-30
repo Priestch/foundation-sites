@@ -1,33 +1,40 @@
-import $ from 'jquery';
-
 /**
  * Runs a callback function when images are fully loaded.
- * @param {Object} images - Image(s) to check if loaded.
+ * @param {Object} images - Image(s) to check if loaded. Accepts an element,
+ *   a NodeList, an array or a jQuery collection (7.0 line A: the callers
+ *   keep passing collections during the mixed state).
  * @param {Func} callback - Function to execute when image is fully loaded.
  */
 function onImagesLoaded(images, callback){
-  var unloaded = images.length;
+  const list = images && images.nodeType === 1 ? [images] : Array.from(images || []);
+  var unloaded = list.length;
 
   if (unloaded === 0) {
     callback();
   }
 
-  images.each(function(){
+  list.forEach(function(img){
     // Check if image is loaded
-    if (this.complete && typeof this.naturalWidth !== 'undefined') {
+    if (img.complete && typeof img.naturalWidth !== 'undefined') {
       singleImageLoaded();
     }
     else {
       // If the above check failed, simulate loading on detached element.
       var image = new Image();
-      // Still count image as loaded if it finalizes with an error.
-      var events = "load.zf.images error.zf.images";
-      $(image).one(events, function me(){
-        // Unbind the event listeners. We're using 'one' but only one of the two events will have fired.
-        $(this).off(events, me);
+      // Still count image as loaded if it finalizes with an error. The
+      // guard makes the pair idempotent (jQuery's `.one` + `.off` shape:
+      // only one of the two events fires the handler).
+      var settled = false;
+      var handler = function() {
+        if (settled) { return; }
+        settled = true;
+        image.removeEventListener('load', handler);
+        image.removeEventListener('error', handler);
         singleImageLoaded();
-      });
-      image.src = $(this).attr('src');
+      };
+      image.addEventListener('load', handler);
+      image.addEventListener('error', handler);
+      image.src = img.getAttribute('src');
     }
   });
 
@@ -39,4 +46,4 @@ function onImagesLoaded(images, callback){
   }
 }
 
-export { onImagesLoaded };
+export {onImagesLoaded};

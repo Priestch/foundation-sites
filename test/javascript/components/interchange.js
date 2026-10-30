@@ -1,6 +1,6 @@
 describe('Interchange', function () {
   var plugin;
-  var $html;
+  var html;
 
   /**
    * Generates paths to different assets
@@ -53,43 +53,47 @@ describe('Interchange', function () {
 
   afterEach(function() {
     plugin.destroy();
-    $html.remove();
+    html.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(generateTemplate('template')).appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('template')));
+      plugin = new Foundation.Interchange(html, {});
 
-      plugin.$element.should.be.an('object');
+      (plugin.$element instanceof Element).should.be.true;
       plugin.options.should.be.an('object');
     });
   });
 
   describe('replace()', function() {
     it('replaces src attribute of img', function() {
-      $html = $(generateTemplate('image')).attr('data-interchange', '').appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      html.setAttribute('data-interchange', '');
+      plugin = new Foundation.Interchange(html, {});
 
       plugin.replace(getPath('img', 'large'));
 
-      $html.should.have.attr('src', getPath('img', 'large'));
+      html.getAttribute('src').should.equal(getPath('img', 'large'));
     });
 
     it('replaces background style of divs', function() {
-      $html = $(generateTemplate('background')).attr('data-interchange', '').appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('background')));
+      html.setAttribute('data-interchange', '');
+      plugin = new Foundation.Interchange(html, {});
 
       plugin.replace(getPath('background', 'large'));
 
-      $html[0].style.backgroundImage.should.contain(getPath('background', 'large').replace(/\(/g, '%28').replace(/\)/g, '%29'));
+      html.style.backgroundImage.should.contain(getPath('background', 'large').replace(/\(/g, '%28').replace(/\)/g, '%29'));
     });
 
     it('replaces contents of div with templates', function() {
-      $html = $(generateTemplate('template')).attr('data-interchange', '').appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('template')));
+      html.setAttribute('data-interchange', '');
+      plugin = new Foundation.Interchange(html, {});
 
-      var spy = sinon.spy($, 'get');
+      // S14: the partial fetch moved to window.fetch
+      var spy = sinon.spy(window, 'fetch');
 
       plugin.replace(getPath('template', 'large'));
 
@@ -99,21 +103,22 @@ describe('Interchange', function () {
     });
 
     it('replaces the following the `type` option', function() {
-      $html = $(generateTemplate('background')).attr('data-interchange', '').appendTo('body');
-      plugin = new Foundation.Interchange($html, { type: 'src' });
+      html = document.body.appendChild(fixture(generateTemplate('background')));
+      html.setAttribute('data-interchange', '');
+      plugin = new Foundation.Interchange(html, { type: 'src' });
 
       plugin.replace(getPath('img', 'large'));
 
-      $html.should.have.attr('src', getPath('img', 'large'));
-      $html[0].style.backgroundImage.should.equal('');
+      html.getAttribute('src').should.equal(getPath('img', 'large'));
+      html.style.backgroundImage.should.equal('');
     });
 
     it('fires replaced.zf.interchange event', function() {
-      $html = $(generateTemplate('image')).appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      plugin = new Foundation.Interchange(html, {});
 
       let spy = sinon.spy();
-      $html.on('replaced.zf.interchange', spy);
+      FoundationNext.Events.on(html, 'replaced.zf.interchange', spy);
 
       plugin.replace(getPath('image', 'large'));
 
@@ -123,8 +128,9 @@ describe('Interchange', function () {
 
   describe('reflow()', function() {
     it('calls replace for given media query', function() {
-      $html = $(generateTemplate('image')).attr('data-interchange', '[image.png, (min-width: 1px)]').appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      html.setAttribute('data-interchange', '[image.png, (min-width: 1px)]');
+      plugin = new Foundation.Interchange(html, {});
 
       let spy = sinon.spy();
       plugin.replace = spy;
@@ -138,8 +144,10 @@ describe('Interchange', function () {
 
   describe('parseOptions()', function() {
     it('retrieve options', function() {
-      $html = $(generateTemplate('template', { type: 'src' })).appendTo('body');
-      plugin = new Foundation.Interchange($html);
+      html = document.body.appendChild(fixture(generateTemplate('template', {
+  type: 'src'
+})));
+      plugin = new Foundation.Interchange(html);
 
       plugin._parseOptions();
 
@@ -147,8 +155,10 @@ describe('Interchange', function () {
     });
 
     it('use defaults for invalid options', function() {
-      $html = $(generateTemplate('template', { type: 'src' })).appendTo('body');
-      plugin = new Foundation.Interchange($html, { type: 'invalid-option' });
+      html = document.body.appendChild(fixture(generateTemplate('template', {
+  type: 'src'
+})));
+      plugin = new Foundation.Interchange(html, { type: 'invalid-option' });
 
       plugin._parseOptions();
 
@@ -159,19 +169,20 @@ describe('Interchange', function () {
 
   describe('generateRules()', function() {
     it('extracts rules from the plugin element', function() {
-      $html = $(generateTemplate('image')).appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      plugin = new Foundation.Interchange(html, {});
 
-      plugin._generateRules($html);
+      plugin._generateRules(html);
 
       plugin.rules.length.should.be.equal(3);
     });
 
     it('extracts special queries from the plugin element', function() {
-      $html = $(generateTemplate('image')).attr('data-interchange', '[image.png, retina]').appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      html.setAttribute('data-interchange', '[image.png, retina]');
+      plugin = new Foundation.Interchange(html, {});
 
-      plugin._generateRules($html);
+      plugin._generateRules(html);
 
       plugin.rules[0].query.should.be.equal(Foundation.Interchange.SPECIAL_QUERIES['retina']);
     });
@@ -180,8 +191,8 @@ describe('Interchange', function () {
 
   describe('addBreakpoints()', function() {
     it('adds Foundation breakpoints to special queries', function() {
-      $html = $(generateTemplate('image')).appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      plugin = new Foundation.Interchange(html, {});
 
 
       var specialQueriesCount = Object.keys(Foundation.Interchange.SPECIAL_QUERIES).length,
@@ -192,7 +203,7 @@ describe('Interchange', function () {
         value: 'test-query-value'
       })
 
-      plugin._addBreakpoints($html);
+      plugin._addBreakpoints(html);
 
       Object.keys(Foundation.Interchange.SPECIAL_QUERIES).length.should.be.equal(specialQueriesCount + 1);
 
@@ -203,15 +214,15 @@ describe('Interchange', function () {
 
   describe('events()', function () {
     it('calls reflow on viewport size change once', function (done) {
-      $html = $(generateTemplate('image')).appendTo('body');
-      plugin = new Foundation.Interchange($html, {});
+      html = document.body.appendChild(fixture(generateTemplate('image')));
+      plugin = new Foundation.Interchange(html, {});
 
       // Debounce: time Triggers is waiting for an other event without firing anything (10 by default)
       const debounce = 10;
       // Initialize Triggers manually to control and test the debounce time
-      Foundation.Triggers.Initializers.addMutationEventsListener($(document));
+      // (since S4, addResizeListener dispatches 'resizeme' directly; the
+      // MutationObserver-based listener no longer exists).
       Foundation.Triggers.Initializers.addResizeListener(debounce);
-      $.triggersInitialized = true;
 
       // Trigger several window resize synchrnously and asynchronously.
       // ---
@@ -222,12 +233,14 @@ describe('Interchange', function () {
       //   called way after the expected time.
       setTimeout(function () {
         let spy = sinon.spy(plugin, '_reflow');
-        $(window).trigger('resize');
-        $(window).trigger('resize');
+        // S13: the Triggers window listeners are native - real resize events
+        // drive the debounce
+        window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event('resize'));
 
         setTimeout(function () {
-          $(window).trigger('resize');
-          $(window).trigger('resize');
+          window.dispatchEvent(new Event('resize'));
+          window.dispatchEvent(new Event('resize'));
 
           tryInterval({
             interval: debounce,
@@ -236,7 +249,6 @@ describe('Interchange', function () {
               sinon.assert.calledOnce(spy);
             },
             then: () => {
-              $.triggersInitialized = false;
               done();
             },
           });

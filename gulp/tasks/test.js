@@ -29,7 +29,7 @@ gulp.task('test:reload', function(done) {
   done();
 });
 
-gulp.task('test:transpile-js', gulp.series('javascript:foundation', 'javascript:deps', function () {
+gulp.task('test:transpile-js', gulp.series('javascript:foundation', 'javascript:next', 'javascript:deps', function () {
   rimraf('test/javascript/js-tests.js');
 
   return gulp.src(CONFIG.TEST_JS_FILES)

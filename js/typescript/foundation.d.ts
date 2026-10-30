@@ -287,7 +287,6 @@ declare module FoundationSites {
   }
 
   interface ResponsiveAccordionTabs {
-    storezfData: any;
     open(_target: any, ...args: any[]): any;
     close(_target: any, ...args: any[]): any;
     toggle(_target: any, ...args: any[]): any;
@@ -512,9 +511,11 @@ declare module FoundationSites {
   }
 
   interface Touch {
-    setupSpotSwipe(event: Object): void;
-    setupTouchHandler(event: Object): void;
-    init(event: Object): void;
+    spotSwipe: Object;
+    setupSpotSwipe(): void;
+    setupTouchHandler(): void;
+    addTouch(element: Object): void;
+    init(): void;
   }
 
   interface Triggers {
@@ -525,6 +526,12 @@ declare module FoundationSites {
     version: string;
 
     rtl(): boolean;
+    /**
+     * Initializes Foundation: primes the MediaQuery layer, removes the
+     * `no-js` class and constructs every plugin found under `root`.
+     * (7.0: replaces the $(document).foundation() jQuery entry.)
+     */
+    init(root?: Element | Document | string): Element | Document | string;
     plugin(plugin: Object, name: string): void;
     registerPlugin(plugin: Object): void;
     unregisterPlugin(plugin: Object): void;

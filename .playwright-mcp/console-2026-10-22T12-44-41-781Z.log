@@ -1,0 +1,97 @@
+[ 7281912ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:4557
+[ 7281915ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
+[ 7281915ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 7281915ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
+[ 7281915ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/image.png:0
+[ 7281917ms] [ERROR] Access to XMLHttpRequest at 'file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app. @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/index.html:0
+[ 7281918ms] [ERROR] Failed to load resource: net::ERR_FAILED @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 7290695ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8359:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:4998:17)
+[ 7290695ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 7290695ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8359:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5019:17)
+[ 7290695ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 7290695ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8359:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:4998:17)
+[ 7290695ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 7290695ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8359:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5019:17)
+[ 7290695ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8084703ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:4557
+[ 8084705ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
+[ 8084708ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8084708ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
+[ 8084708ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/image.png:0
+[ 8084708ms] [ERROR] Access to XMLHttpRequest at 'file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app. @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/index.html?r=1792681163036:0
+[ 8084708ms] [ERROR] Failed to load resource: net::ERR_FAILED @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8093629ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5004:17)
+[ 8093629ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8093629ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5025:17)
+[ 8093629ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8093629ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5004:17)
+[ 8093630ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8093630ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5025:17)
+[ 8093630ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8397553ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:4557
+[ 8397556ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
+[ 8397558ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8397558ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
+[ 8397558ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/image.png:0
+[ 8397558ms] [ERROR] Access to XMLHttpRequest at 'file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app. @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/index.html?fresh=1792681475871:0
+[ 8397559ms] [ERROR] Failed to load resource: net::ERR_FAILED @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8405544ms] [LOG] PROBE-VISIBILITY hidden=false state=visible hasFocus=true @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:4174
+[ 8406519ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5007:17)
+[ 8406519ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8406519ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5028:17)
+[ 8406519ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8406520ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5007:17)
+[ 8406520ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8406520ms] Uncaught TypeError: Cannot read properties of null (reading 'hasClass')
+    at _setHandlePos (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:8376:24)
+    at <anonymous> (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:5028:17)
+[ 8406520ms] Uncaught Error: Script error. (:0:0)
+    at commonjsGlobal.onerror (file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/node_modules/mocha/mocha.js:20592:18)
+[ 8866516ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:4557
+[ 8866519ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
+[ 8866521ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8866521ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
+[ 8866521ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/image.png:0
+[ 8866521ms] [ERROR] Access to XMLHttpRequest at 'file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app. @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/index.html?probe3=1792681944848:0
+[ 8866522ms] [ERROR] Failed to load resource: net::ERR_FAILED @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 8874465ms] [LOG] PROBE-VISIBILITY hidden=false state=visible hasFocus=true @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/js-tests.js:4174
+[ 9483425ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/_build/assets/js/foundation.js:4557
+[ 9483427ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
+[ 9483430ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0
+[ 9483430ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
+[ 9483430ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/image.png:0
+[ 9483430ms] [ERROR] Access to XMLHttpRequest at 'file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app. @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/index.html?probe4=1792682561746:0
+[ 9483430ms] [ERROR] Failed to load resource: net::ERR_FAILED @ file:///home/gp/Enter/foundation/.claude/worktrees/agent-a4b6cfc7b08f7d8e1/test/javascript/_build/assets/partials/interchange-large.html:0

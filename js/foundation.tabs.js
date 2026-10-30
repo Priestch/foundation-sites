@@ -1,8 +1,10 @@
-import $ from 'jquery';
 import { Plugin } from './foundation.core.plugin';
-import { onLoad } from './foundation.core.utils';
+import { onLoad, GetYoDigits } from './foundation.core.utils';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Keyboard } from './foundation.util.keyboard';
 import { onImagesLoaded } from './foundation.util.imageLoader';
+import { Motion } from './foundation.util.motion';
 /**
  * Tabs module.
  * @module foundation.tabs
@@ -20,8 +22,9 @@ class Tabs extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Tabs.defaults, this.$element.data(), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Tabs.defaults, datasetOptions(this.$element), options);
     this.className = 'Tabs'; // ie9 back compat
 
     this._init();
@@ -44,33 +47,32 @@ class Tabs extends Plugin {
   _init() {
     var _this = this;
     this._isInitializing = true;
+    // Per-instance id for the native deep-link hashchange namespace (7.0 line
+    // A, S8) - the same shape Reveal/Magellan/Accordion use.
+    this.id = this.$element.id || GetYoDigits(6, 'tabs');
 
-    this.$element.attr({'role': 'tablist'});
-    this.$tabTitles = this.$element.find(`.${this.options.linkClass}`);
-    this.$tabContent = $(`[data-tabs-content="${this.$element[0].id}"]`);
+    this.$element.setAttribute('role', 'tablist');
+    this.$tabTitles = Array.from(this.$element.querySelectorAll(`.${this.options.linkClass}`));
+    this.$tabContent = document.querySelector(`[data-tabs-content="${this.$element.id}"]`);
 
-    this.$tabTitles.each(function(){
-      var $elem = $(this),
-          $link = $elem.find('a'),
-          isActive = $elem.hasClass(`${_this.options.linkActiveClass}`),
-          hash = $link.attr('data-tabs-target') || $link[0].hash.slice(1),
-          linkId = $link[0].id ? $link[0].id : `${hash}-label`,
-          $tabContent = $(`#${hash}`);
+    this.$tabTitles.forEach(function(elem){
+      var link = elem.querySelector('a'),
+          isActive = elem.classList.contains(`${_this.options.linkActiveClass}`),
+          hash = link.getAttribute('data-tabs-target') || link.hash.slice(1),
+          linkId = link.id ? link.id : `${hash}-label`,
+          tabContent = document.getElementById(hash);
 
-      $elem.attr({'role': 'presentation'});
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      elem.setAttribute('role', 'presentation');
 
-      $link.attr({
-        'role': 'tab',
-        'aria-controls': hash,
-        'aria-selected': isActive,
-        'id': linkId,
-        'tabindex': isActive ? '0' : '-1'
-      });
+      link.setAttribute('role', 'tab');
+      link.setAttribute('aria-controls', hash);
+      link.setAttribute('aria-selected', `${isActive}`);
+      link.setAttribute('id', linkId);
+      link.setAttribute('tabindex', isActive ? '0' : '-1');
 
-      $tabContent.attr({
-        'role': 'tabpanel',
-        'aria-labelledby': linkId
-      });
+      tabContent.setAttribute('role', 'tabpanel');
+      tabContent.setAttribute('aria-labelledby', linkId);
 
       // Save up the initial hash to return to it later when going back in history
       if (isActive) {
@@ -78,23 +80,28 @@ class Tabs extends Plugin {
       }
 
       if(!isActive) {
-        $tabContent.attr('aria-hidden', 'true');
+        tabContent.setAttribute('aria-hidden', 'true');
       }
 
       if(isActive && _this.options.autoFocus){
-        _this.onLoadListener = onLoad($(window), function() {
-          $('html, body').animate({ scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, () => {
-            $link.focus();
+        _this.onLoadListener = onLoad(window, function() {
+          // A load callback can land after destroy() nulled the instance
+          // state (the S6 slider guard pattern).
+          if (!_this.$element) { return; }
+          // fx 方案 A: the native page-scroll tween (SmoothScroll S7
+          // equivalence - one viewport tween, the callback once, ledger ②)
+          Motion.animate(document.documentElement, { scrollTop: elem.getBoundingClientRect().top + window.pageYOffset }, _this.options.deepLinkSmudgeDelay, null, () => {
+            link.focus();
           });
         });
       }
     });
 
     if(this.options.matchHeight) {
-      var $images = this.$tabContent.find('img');
+      var images = this.$tabContent ? this.$tabContent.querySelectorAll('img') : [];
 
-      if ($images.length) {
-        onImagesLoaded($images, this._setHeight.bind(this));
+      if (images.length) {
+        onImagesLoaded(images, this._setHeight.bind(this));
       } else {
         this._setHeight();
       }
@@ -112,15 +119,15 @@ class Tabs extends Plugin {
       }
 
       var anchorNoHash = anchor.indexOf('#') >= 0 ? anchor.slice(1) : anchor;
-      var $anchor = anchorNoHash && $(`#${anchorNoHash}`);
-      var $link = anchor && this.$element.find(`[href$="${anchor}"],[data-tabs-target="${anchorNoHash}"]`).first();
+      var anchorEl = anchorNoHash ? document.getElementById(anchorNoHash) : null;
+      var link = anchor ? this.$element.querySelector(`[href$="${anchor}"],[data-tabs-target="${anchorNoHash}"]`) : null;
       // Whether the anchor element that has been found is part of this element
-      var isOwnAnchor = !!($anchor.length && $link.length);
+      var isOwnAnchor = !!(anchorEl && link);
 
       if (isOwnAnchor) {
         // If there is an anchor for the hash, select it
-        if ($anchor && $anchor.length && $link && $link.length) {
-          this.selectTab($anchor, true);
+        if (anchorEl && link) {
+          this.selectTab(anchorEl, true);
         }
         // Otherwise, collapse everything
         else {
@@ -129,15 +136,19 @@ class Tabs extends Plugin {
 
         // Roll up a little to show the titles
         if (this.options.deepLinkSmudge) {
-          var offset = this.$element.offset();
-          $('html, body').animate({ scrollTop: offset.top - this.options.deepLinkSmudgeOffset}, this.options.deepLinkSmudgeDelay);
+          var offsetTop = this.$element.getBoundingClientRect().top + window.pageYOffset;
+          Motion.animate(document.documentElement, { scrollTop: offsetTop - this.options.deepLinkSmudgeOffset}, this.options.deepLinkSmudgeDelay);
         }
 
         /**
          * Fires when the plugin has deeplinked at pageload
          * @event Tabs#deeplink
          */
-        this.$element.trigger('deeplink.zf.tabs', [$link, $anchor]);
+        // S8: real, bubbling CustomEvent - native listeners receive it
+        // directly, still-on-jQuery listeners through the real-event
+        // pass-through (the forwarded $link/$anchor ride in
+        // event.originalEvent.detail for them).
+        Events.trigger(this.$element, 'deeplink.zf.tabs', [link, anchorEl]);
       }
     }
 
@@ -163,11 +174,20 @@ class Tabs extends Plugin {
     if (this.options.matchHeight) {
       this._setHeightMqHandler = this._setHeight.bind(this);
 
-      $(window).on('changed.zf.mediaquery', this._setHeightMqHandler);
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs/offcanvas all flipped with the producer in
+      // the same move).
+      Events.on(window, 'changed.zf.mediaquery', this._setHeightMqHandler);
     }
 
     if(this.options.deepLink) {
-      $(window).on('hashchange', this._checkDeepLink);
+      // S8: the deep-link hashchange moves to the native event layer under
+      // the per-instance namespace shape introduced for Reveal's hashchange,
+      // so the destroy path can drop it precisely. Real hashchange events are
+      // unaffected by the namespace.
+      Events.on(window, `hashchange.zf.tabs:${this.id}`, this._checkDeepLink);
     }
   }
 
@@ -178,12 +198,15 @@ class Tabs extends Plugin {
   _addClickHandler() {
     var _this = this;
 
-    this.$element
-      .off('click.zf.tabs')
-      .on('click.zf.tabs', `.${this.options.linkClass}`, function(e){
-        e.preventDefault();
-        _this._handleTabChange($(this));
-      });
+    // S8: the delegated click consumer flips to the native event layer. Its
+    // producers are real user clicks only (the keyboard flow calls
+    // _handleTabChange directly), so this half can move alone; inside the
+    // handler `this` is the matched title element, like jQuery's delegation.
+    Events.off(this.$element, 'click.zf.tabs');
+    Events.delegate(this.$element, 'click.zf.tabs', `.${this.options.linkClass}`, function(e){
+      e.preventDefault();
+      _this._handleTabChange(this);
+    });
   }
 
   /**
@@ -193,47 +216,50 @@ class Tabs extends Plugin {
   _addKeyHandler() {
     var _this = this;
 
-    this.$tabTitles.off('keydown.zf.tabs').on('keydown.zf.tabs', function(e){
-      if (e.which === 9) return;
+    // 7.0 line A terminal form: the keydown listener runs on the native
+    // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+    // since the S16 migration, so the old jQuery-pass-through reason is
+    // gone). The listener binds on every title, like the collection-wide
+    // .on() did.
+    this.$tabTitles.forEach(function(title) {
+      Events.off(title, 'keydown.zf.tabs');
+      Events.on(title, 'keydown.zf.tabs', function(e){
+        if (e.which === 9) return;
 
+        var elements = Array.from(this.parentElement.children),
+          prevElement,
+          nextElement,
+          i = elements.indexOf(this);
 
-      var $element = $(this),
-        $elements = $element.parent('ul').children('li'),
-        $prevElement,
-        $nextElement;
+        if (_this.options.wrapOnKeys) {
+          prevElement = i === 0 ? elements[elements.length - 1] : elements[i-1];
+          nextElement = i === elements.length - 1 ? elements[0] : elements[i+1];
+        } else {
+          prevElement = elements[Math.max(0, i-1)];
+          nextElement = elements[Math.min(i+1, elements.length-1)];
+        }
 
-      $elements.each(function(i) {
-        if ($(this).is($element)) {
-          if (_this.options.wrapOnKeys) {
-            $prevElement = i === 0 ? $elements.last() : $elements.eq(i-1);
-            $nextElement = i === $elements.length -1 ? $elements.first() : $elements.eq(i+1);
-          } else {
-            $prevElement = $elements.eq(Math.max(0, i-1));
-            $nextElement = $elements.eq(Math.min(i+1, $elements.length-1));
+        var element = this;
+        // handle keyboard event with keyboard util
+        Keyboard.handleKey(e, 'Tabs', {
+          open: function() {
+            element.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(element);
+          },
+          previous: function() {
+            prevElement.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(prevElement);
+          },
+          next: function() {
+            nextElement.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(nextElement);
+          },
+          handled: function() {
+            e.preventDefault();
           }
-          return;
-        }
+        });
       });
-
-      // handle keyboard event with keyboard util
-      Keyboard.handleKey(e, 'Tabs', {
-        open: function() {
-          $element.find('[role="tab"]').focus();
-          _this._handleTabChange($element);
-        },
-        previous: function() {
-          $prevElement.find('[role="tab"]').focus();
-          _this._handleTabChange($prevElement);
-        },
-        next: function() {
-          $nextElement.find('[role="tab"]').focus();
-          _this._handleTabChange($nextElement);
-        },
-        handled: function() {
-          e.preventDefault();
-        }
-      });
-    });
+    }, this.$tabTitles);
   }
 
   /**
@@ -243,28 +269,29 @@ class Tabs extends Plugin {
    * @fires Tabs#change
    * @function
    */
-  _handleTabChange($target, historyHandled) {
+  _handleTabChange(target, historyHandled) {
+    target = target.nodeType === 1 ? target : target[0];
 
     // With `activeCollapse`, if the target is the active Tab, collapse it.
-    if ($target.hasClass(`${this.options.linkActiveClass}`)) {
+    if (target.classList.contains(`${this.options.linkActiveClass}`)) {
         if(this.options.activeCollapse) {
             this._collapse();
         }
         return;
     }
 
-    var $oldTab = this.$element.
-          find(`.${this.options.linkClass}.${this.options.linkActiveClass}`),
-          $tabLink = $target.find('[role="tab"]'),
-          target = $tabLink.attr('data-tabs-target'),
-          anchor = target && target.length ? `#${target}` : $tabLink[0].hash,
-          $targetContent = this.$tabContent.find(anchor);
+    var oldTab = this.$element.
+          querySelector(`.${this.options.linkClass}.${this.options.linkActiveClass}`),
+          tabLink = target.querySelector('[role="tab"]'),
+          targetName = tabLink.getAttribute('data-tabs-target'),
+          anchor = targetName && targetName.length ? `#${targetName}` : tabLink.hash,
+          targetContent = this.$tabContent.querySelector(anchor);
 
     //close old tab
-    this._collapseTab($oldTab);
+    this._collapseTab(oldTab);
 
     //open new tab
-    this._openTab($target);
+    this._openTab(target);
 
     //either replace or update browser history
     if (this.options.deepLink && !historyHandled) {
@@ -279,10 +306,18 @@ class Tabs extends Plugin {
      * Fires when the plugin has successfully changed tabs.
      * @event Tabs#change
      */
-    this.$element.trigger('change.zf.tabs', [$target, $targetContent]);
+    // 7.0 terminal form (the ruled detail sweep): the change production is
+    // a real, bubbling CustomEvent with the plain elements as parameters -
+    // the 6.x jQuery trigger delivered collections as trailing handler
+    // arguments; jQuery listeners on this real event read them from
+    // event.originalEvent.detail.
+    Events.trigger(this.$element, 'change.zf.tabs', [target, targetContent]);
 
-    //fire to children a mutation event
-    $targetContent.find("[data-mutate]").trigger("mutateme.zf.trigger");
+    // S10 group flip: the mutateme forward is a real bubbling event.
+    var mutated = targetContent ? targetContent.querySelectorAll('[data-mutate]') : [];
+    for (var i = 0; i < mutated.length; i++) {
+      Events.trigger(mutated[i], 'mutateme.zf.trigger');
+    }
   }
 
   /**
@@ -290,20 +325,19 @@ class Tabs extends Plugin {
    * @param {jQuery} $target - Tab to open.
    * @function
    */
-  _openTab($target) {
-      var $tabLink = $target.find('[role="tab"]'),
-          hash = $tabLink.attr('data-tabs-target') || $tabLink[0].hash.slice(1),
-          $targetContent = this.$tabContent.find(`#${hash}`);
+  _openTab(target) {
+      var tabLink = target.querySelector('[role="tab"]'),
+          hash = tabLink.getAttribute('data-tabs-target') || tabLink.hash.slice(1),
+          targetContent = this.$tabContent.querySelector(`#${hash}`);
 
-      $target.addClass(`${this.options.linkActiveClass}`);
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      target.classList.add(`${this.options.linkActiveClass}`);
 
-      $tabLink.attr({
-        'aria-selected': 'true',
-        'tabindex': '0'
-      });
+      tabLink.setAttribute('aria-selected', 'true');
+      tabLink.setAttribute('tabindex', '0');
 
-      $targetContent
-        .addClass(`${this.options.panelActiveClass}`).removeAttr('aria-hidden');
+      targetContent.classList.add(`${this.options.panelActiveClass}`);
+      targetContent.removeAttribute('aria-hidden');
   }
 
   /**
@@ -311,18 +345,19 @@ class Tabs extends Plugin {
    * @param {jQuery} $target - Tab to collapse.
    * @function
    */
-  _collapseTab($target) {
-    var $targetAnchor = $target
-      .removeClass(`${this.options.linkActiveClass}`)
-      .find('[role="tab"]')
-      .attr({
-        'aria-selected': 'false',
-        'tabindex': -1
-      });
+  _collapseTab(target) {
+    target = target.nodeType === 1 ? target : target[0];
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    var tabLink = target.querySelector('[role="tab"]');
+    target.classList.remove(`${this.options.linkActiveClass}`);
+    tabLink.setAttribute('aria-selected', 'false');
+    tabLink.setAttribute('tabindex', '-1');
 
-    $(`#${$targetAnchor.attr('aria-controls')}`)
-      .removeClass(`${this.options.panelActiveClass}`)
-      .attr({ 'aria-hidden': 'true' })
+    var panel = document.getElementById(tabLink.getAttribute('aria-controls'));
+    if (panel) {
+      panel.classList.remove(`${this.options.panelActiveClass}`);
+      panel.setAttribute('aria-hidden', 'true');
+    }
   }
 
   /**
@@ -331,16 +366,18 @@ class Tabs extends Plugin {
    * @function
    */
   _collapse() {
-    var $activeTab = this.$element.find(`.${this.options.linkClass}.${this.options.linkActiveClass}`);
+    var activeTab = this.$element.querySelector(`.${this.options.linkClass}.${this.options.linkActiveClass}`);
 
-    if ($activeTab.length) {
-      this._collapseTab($activeTab);
+    if (activeTab) {
+      this._collapseTab(activeTab);
 
       /**
       * Fires when the plugin has successfully collapsed tabs.
       * @event Tabs#collapse
       */
-      this.$element.trigger('collapse.zf.tabs', [$activeTab]);
+      // S8: real, bubbling CustomEvent; the terminal form forwards the
+      // plain element.
+      Events.trigger(this.$element, 'collapse.zf.tabs', [activeTab]);
     }
   }
 
@@ -354,7 +391,9 @@ class Tabs extends Plugin {
     var idStr, hashIdStr;
 
     if (typeof elem === 'object') {
-      idStr = elem[0].id;
+      // nodeType marks a real node: a native element arrives unwrapped
+      // (the 7.0 contract), a jQuery collection still needs the [0] head
+      idStr = elem.nodeType === 1 ? elem.id : elem[0].id;
     } else {
       idStr = elem;
     }
@@ -366,9 +405,12 @@ class Tabs extends Plugin {
       idStr = idStr.slice(1);
     }
 
-    var $target = this.$tabTitles.has(`[href$="${hashIdStr}"],[data-tabs-target="${idStr}"]`).first();
+    // jQuery's .has(): the titles CONTAINING a descendant matching
+    var target = this.$tabTitles.filter(function(title) {
+      return title.querySelector(`[href$="${hashIdStr}"],[data-tabs-target="${idStr}"]`);
+    })[0];
 
-    this._handleTabChange($target, historyHandled);
+    this._handleTabChange(target, historyHandled);
   };
 
   /**
@@ -387,30 +429,31 @@ class Tabs extends Plugin {
       return;
     }
 
-    this.$tabContent
-      .find(`.${this.options.panelClass}`)
-      .css('min-height', '')
-      .each(function() {
+    var panels = Array.from(this.$tabContent.querySelectorAll(`.${this.options.panelClass}`));
 
-        var panel = $(this),
-            isActive = panel.hasClass(`${_this.options.panelActiveClass}`); // get the options from the parent instead of trying to get them from the child
+    panels.forEach(function(panel) {
+      panel.style.minHeight = '';
 
-        if (!isActive) {
-          panel.css({'visibility': 'hidden', 'display': 'block'});
-        }
+      var isActive = panel.classList.contains(`${_this.options.panelActiveClass}`); // get the options from the parent instead of trying to get them from the child
 
-        var temp = this.getBoundingClientRect().height;
+      if (!isActive) {
+        panel.style.visibility = 'hidden';
+        panel.style.display = 'block';
+      }
 
-        if (!isActive) {
-          panel.css({
-            'visibility': '',
-            'display': ''
-          });
-        }
+      var temp = panel.getBoundingClientRect().height;
 
-        max = temp > max ? temp : max;
-      })
-      .css('min-height', `${max}px`);
+      if (!isActive) {
+        panel.style.visibility = '';
+        panel.style.display = '';
+      }
+
+      max = temp > max ? temp : max;
+    });
+
+    panels.forEach(function(panel) {
+      panel.style.minHeight = `${max}px`;
+    });
   }
 
   /**
@@ -418,24 +461,33 @@ class Tabs extends Plugin {
    * @fires Tabs#destroyed
    */
   _destroy() {
-    this.$element
-      .find(`.${this.options.linkClass}`)
-      .off('.zf.tabs').hide().end()
-      .find(`.${this.options.panelClass}`)
-      .hide();
+    // the 6.x destroy cleanup: hide the titles and panels
+    this.$element.querySelectorAll(`.${this.options.linkClass}`).forEach(function(el) {
+      el.style.display = 'none';
+    });
+    this.$element.querySelectorAll(`.${this.options.panelClass}`).forEach(function(el) {
+      el.style.display = 'none';
+    });
+
+    // the delegated click listener, the title keydown listeners and the
+    // deep-link hashchange go with their namespaces.
+    Events.off(this.$element, 'click.zf.tabs');
+    this.$tabTitles.forEach(function(title) {
+      Events.off(title, '.zf.tabs');
+    });
 
     if (this.options.matchHeight) {
       if (this._setHeightMqHandler != null) {
-         $(window).off('changed.zf.mediaquery', this._setHeightMqHandler);
+         Events.off(window, 'changed.zf.mediaquery', this._setHeightMqHandler); // S13 flip, see _events
       }
     }
 
     if (this.options.deepLink) {
-      $(window).off('hashchange', this._checkDeepLink);
+      Events.off(window, `hashchange.zf.tabs:${this.id}`);
     }
 
     if (this.onLoadListener) {
-      $(window).off(this.onLoadListener);
+      Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
     }
   }
 }
@@ -459,7 +511,7 @@ Tabs.defaults = {
   deepLinkSmudge: false,
 
   /**
-   * If `deepLinkSmudge` is enabled, animation time (ms) for the deep link adjustment
+   * If `deepLink` is enabled, animation time (ms) for the deep link adjustment
    * @option
    * @type {number}
    * @default 300
@@ -467,7 +519,7 @@ Tabs.defaults = {
   deepLinkSmudgeDelay: 300,
 
   /**
-   * If `deepLinkSmudge` is enabled, animation offset from the top for the deep link adjustment
+   * If `deepLink` is enabled, animation offset from the top for the deep link adjustment
    * @option
    * @type {number}
    * @default 0

@@ -1,7 +1,9 @@
-import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { Nest } from './foundation.util.nest';
 import { GetYoDigits } from './foundation.core.utils';
+import { datasetOptions, deepMerge, visible } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
+import { Motion } from './foundation.util.motion';
 import { Plugin } from './foundation.core.plugin';
 
 /**
@@ -10,6 +12,14 @@ import { Plugin } from './foundation.core.plugin';
  * @requires foundation.util.keyboard
  * @requires foundation.util.nest
  */
+
+// Element | collection | NodeList | array -> element array (the 6.x
+// multi-target collection form keeps working).
+function normalizeTargets(target) {
+  if (target.nodeType === 1) { return [target]; }
+  if (!target) { return []; }
+  return Array.from(target);
+}
 
 class AccordionMenu extends Plugin {
   /**
@@ -21,8 +31,12 @@ class AccordionMenu extends Plugin {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, AccordionMenu.defaults, this.$element.data(), options);
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, AccordionMenu.defaults, datasetOptions(this.$element), options);
     this.className = 'AccordionMenu'; // ie9 back compat
 
     this._init();
@@ -49,47 +63,47 @@ class AccordionMenu extends Plugin {
 
     var _this = this;
 
-    this.$element.find('[data-submenu]').not('.is-active').slideUp(0);//.find('a').css('padding-left', '1rem');
-    this.$element.attr({
-      'aria-multiselectable': this.options.multiOpen
+    // fx 方案 A: the instant-collapse init hide on the native primitive
+    this.$element.querySelectorAll('[data-submenu]').forEach(function(sub) {
+      if (!sub.classList.contains('is-active')) { Motion.slideUp(sub, 0); }
     });
+    this.$element.setAttribute('aria-multiselectable', this.options.multiOpen);
 
-    this.$menuLinks = this.$element.find('.is-accordion-submenu-parent');
-    this.$menuLinks.each(function() {
-      var linkId = this.id || GetYoDigits(6, 'acc-menu-link'),
-          $elem = $(this),
-          $sub = $elem.children('[data-submenu]'),
-          subId = $sub[0].id || GetYoDigits(6, 'acc-menu'),
-          isActive = $sub.hasClass('is-active');
+    this.$menuLinks = Array.from(this.$element.querySelectorAll('.is-accordion-submenu-parent'));
+    this.$menuLinks.forEach(function(elem) {
+      var linkId = elem.id || GetYoDigits(6, 'acc-menu-link'),
+          sub = elem.querySelector(':scope > [data-submenu]'),
+          subId = sub.id || GetYoDigits(6, 'acc-menu'),
+          isActive = sub.classList.contains('is-active');
 
       if (_this.options.parentLink) {
-        let $anchor = $elem.children('a');
-        $anchor.clone().prependTo($sub).wrap('<li data-is-parent-link class="is-submenu-parent-item is-submenu-item is-accordion-submenu-item"></li>');
+        // $anchor.clone().prependTo($sub).wrap('<li .../>')
+        const anchor = elem.querySelector(':scope > a');
+        const wrapper = document.createElement('li');
+        wrapper.setAttribute('data-is-parent-link', '');
+        wrapper.className = 'is-submenu-parent-item is-submenu-item is-accordion-submenu-item';
+        const cloned = anchor.cloneNode(true);
+        wrapper.appendChild(cloned);
+        sub.insertBefore(wrapper, sub.firstChild);
       }
 
       if (_this.options.submenuToggle) {
-        $elem.addClass('has-submenu-toggle');
-        $elem.children('a').after('<button id="' + linkId + '" class="submenu-toggle" aria-controls="' + subId + '" aria-expanded="' + isActive + '" title="' + _this.options.submenuToggleText + '"><span class="submenu-toggle-text">' + _this.options.submenuToggleText + '</span></button>');
+        elem.classList.add('has-submenu-toggle');
+        elem.querySelector(':scope > a').insertAdjacentHTML('afterend', '<button id="' + linkId + '" class="submenu-toggle" aria-controls="' + subId + '" aria-expanded="' + isActive + '" title="' + _this.options.submenuToggleText + '"><span class="submenu-toggle-text">' + _this.options.submenuToggleText + '</span></button>');
       } else {
-        $elem.attr({
-          'aria-controls': subId,
-          'aria-expanded': isActive,
-          'id': linkId
-        });
+        elem.setAttribute('aria-controls', subId);
+        elem.setAttribute('aria-expanded', isActive);
+        elem.setAttribute('id', linkId);
       }
-      $sub.attr({
-        'aria-labelledby': linkId,
-        'aria-hidden': !isActive,
-        'role': 'group',
-        'id': subId
-      });
+      sub.setAttribute('aria-labelledby', linkId);
+      sub.setAttribute('aria-hidden', !isActive);
+      sub.setAttribute('role', 'group');
+      sub.setAttribute('id', subId);
     });
-    var initPanes = this.$element.find('.is-active');
-    if (initPanes.length) {
-      initPanes.each(function() {
-        _this.down($(this));
-      });
-    }
+    var initPanes = Array.from(this.$element.querySelectorAll('.is-active'));
+    initPanes.forEach(function(pane) {
+      _this.down(pane);
+    });
     this._events();
   }
 
@@ -100,91 +114,109 @@ class AccordionMenu extends Plugin {
   _events() {
     var _this = this;
 
-    this.$element.find('li').each(function() {
-      var $submenu = $(this).children('[data-submenu]');
+    this.$element.querySelectorAll('li').forEach(function(item) {
+      var submenu = item.querySelector(':scope > [data-submenu]');
 
-      if ($submenu.length) {
+      if (submenu) {
+        // S9: the submenu click consumers run on the native event layer -
+        // real clicks reach them directly, jQuery-synthesized clicks ride
+        // the `.click()` shortcut bridge (reveal-native precedent; jQuery
+        // suppresses that shortcut for link anchors).
         if (_this.options.submenuToggle) {
-          $(this).children('.submenu-toggle').off('click.zf.accordionMenu').on('click.zf.accordionMenu', function() {
-            _this.toggle($submenu);
+          Events.off(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu');
+          Events.on(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu', function() {
+            _this.toggle(submenu);
           });
         } else {
-            $(this).children('a').off('click.zf.accordionMenu').on('click.zf.accordionMenu', function(e) {
+          item.querySelectorAll(':scope > a').forEach(anchor => {
+            Events.off(anchor, 'click.zf.accordionMenu');
+            Events.on(anchor, 'click.zf.accordionMenu', function(e) {
               e.preventDefault();
-              _this.toggle($submenu);
+              _this.toggle(submenu);
             });
+          });
         }
       }
-    }).on('keydown.zf.accordionMenu', function(e) {
-      var $element = $(this),
-          $elements = $element.parent('ul').children('li'),
-          $prevElement,
-          $nextElement,
-          $target = $element.children('[data-submenu]');
 
-      $elements.each(function(i) {
-        if ($(this).is($element)) {
-          $prevElement = $elements.eq(Math.max(0, i-1)).find('a').first();
-          $nextElement = $elements.eq(Math.min(i+1, $elements.length-1)).find('a').first();
+      // 7.0 line A terminal form: the keydown listener runs on the native
+      // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+      // since the S16 migration). The traversal below reproduces the jQuery
+      // shape: visible submenus (Dom.visible, the narrow display semantics),
+      // first/last-child positions, closest('li') for the parents walk.
+      Events.off(item, 'keydown.zf.accordionMenu');
+      Events.on(item, 'keydown.zf.accordionMenu', function(e) {
+        var element = this,
+            parentUl = element.parentElement && element.parentElement.matches('ul') ? element.parentElement : null,
+            elements = parentUl ? Array.from(parentUl.children).filter(el => el.matches('li')) : [],
+            prevElement,
+            nextElement,
+            target = element.querySelector(':scope > [data-submenu]');
 
-          if ($(this).children('[data-submenu]:visible').length) { // has open sub menu
-            $nextElement = $element.find('li:first-child').find('a').first();
-          }
-          if ($(this).is(':first-child')) { // is first element of sub menu
-            $prevElement = $element.parents('li').first().find('a').first();
-          } else if ($prevElement.parents('li').first().children('[data-submenu]:visible').length) { // if previous element has open sub menu
-            $prevElement = $prevElement.parents('li').find('li:last-child').find('a').first();
-          }
-          if ($(this).is(':last-child')) { // is last element of sub menu
-            $nextElement = $element.parents('li').first().next('li').find('a').first();
-          }
+        var i = elements.indexOf(element);
+        if (i !== -1) {
+          prevElement = elements[Math.max(0, i-1)].querySelector('a');
+          nextElement = elements[Math.min(i+1, elements.length-1)].querySelector('a');
 
-          return;
+          var openSub = element.querySelector(':scope > [data-submenu]');
+          if (openSub && visible(openSub)) { // has open sub menu
+            nextElement = element.querySelector('li a');
+          }
+          if (element === element.parentElement.firstElementChild) { // is first element of sub menu
+            prevElement = element.closest('li') && element.closest('li') !== element ? element.closest('li').querySelector('a') : prevElement;
+          } else if (prevElement && prevElement.closest('li') && prevElement.closest('li').querySelector(':scope > [data-submenu]') && visible(prevElement.closest('li').querySelector(':scope > [data-submenu]'))) { // if previous element has open sub menu
+            prevElement = prevElement.closest('li').querySelector('li:last-child a');
+          }
+          if (element === element.parentElement.lastElementChild) { // is last element of sub menu
+            var parentLi = element.closest('li');
+            if (parentLi && parentLi !== element && parentLi.nextElementSibling && parentLi.nextElementSibling.matches('li')) {
+              nextElement = parentLi.nextElementSibling.querySelector('a');
+            }
+          }
         }
-      });
 
-      Keyboard.handleKey(e, 'AccordionMenu', {
-        open: function() {
-          if ($target.is(':hidden')) {
-            _this.down($target);
-            $target.find('li').first().find('a').first().focus();
-          }
-        },
-        close: function() {
-          if ($target.length && !$target.is(':hidden')) { // close active sub of this item
-            _this.up($target);
-          } else if ($element.parent('[data-submenu]').length) { // close currently open sub
-            _this.up($element.parent('[data-submenu]'));
-            $element.parents('li').first().find('a').first().focus();
-          }
-        },
-        up: function() {
-          $prevElement.focus();
-          return true;
-        },
-        down: function() {
-          $nextElement.focus();
-          return true;
-        },
-        toggle: function() {
-          if (_this.options.submenuToggle) {
-            return false;
-          }
-          if ($element.children('[data-submenu]').length) {
-            _this.toggle($element.children('[data-submenu]'));
+        Keyboard.handleKey(e, 'AccordionMenu', {
+          open: function() {
+            if (!visible(target)) {
+              _this.down(target);
+              target.querySelector('li a').focus();
+            }
+          },
+          close: function() {
+            if (target && visible(target)) { // close active sub of this item
+              _this.up(target);
+            } else if (element.parentElement && element.parentElement.matches('[data-submenu]')) { // close currently open sub
+              _this.up(element.parentElement);
+              element.closest('li').querySelector('a').focus();
+            }
+          },
+          up: function() {
+            if (prevElement) prevElement.focus();
             return true;
+          },
+          down: function() {
+            if (nextElement) nextElement.focus();
+            return true;
+          },
+          toggle: function() {
+            if (_this.options.submenuToggle) {
+              return false;
+            }
+            if (target) {
+              _this.toggle(target);
+              return true;
+            }
+          },
+          closeAll: function() {
+            _this.hideAll();
+          },
+          handled: function(preventDefault) {
+            if (preventDefault) {
+              e.preventDefault();
+            }
           }
-        },
-        closeAll: function() {
-          _this.hideAll();
-        },
-        handled: function(preventDefault) {
-          if (preventDefault) {
-            e.preventDefault();
-          }
-        }
+        });
       });
-    });//.attr('tabindex', 0);
+    });
   }
 
   /**
@@ -192,7 +224,7 @@ class AccordionMenu extends Plugin {
    * @function
    */
   hideAll() {
-    this.up(this.$element.find('[data-submenu]'));
+    this.up(Array.from(this.$element.querySelectorAll('[data-submenu]')));
   }
 
   /**
@@ -200,7 +232,7 @@ class AccordionMenu extends Plugin {
    * @function
    */
   showAll() {
-    this.down(this.$element.find('[data-submenu]'));
+    this.down(Array.from(this.$element.querySelectorAll('[data-submenu]')));
   }
 
   /**
@@ -208,13 +240,15 @@ class AccordionMenu extends Plugin {
    * @function
    * @param {jQuery} $target - the submenu to toggle
    */
-  toggle($target) {
-    if (!$target.is(':animated')) {
-      if (!$target.is(':hidden')) {
-        this.up($target);
+  toggle(target) {
+    // Accepts an element, a collection, a NodeList or an array.
+    target = normalizeTargets(target);
+    if (!target.some(el => Motion.isAnimating(el))) {
+      if (target.some(el => visible(el))) {
+        this.up(target);
       }
       else {
-        this.down($target);
+        this.down(target);
       }
     }
   }
@@ -224,38 +258,63 @@ class AccordionMenu extends Plugin {
    * @param {jQuery} $target - Sub-menu to open.
    * @fires AccordionMenu#down
    */
-  down($target) {
+  down(target) {
+    target = normalizeTargets(target);
     // If having multiple submenus active is disabled, close all the submenus
     // that are not parents or children of the targeted submenu.
     if (!this.options.multiOpen) {
-      // The "branch" of the targetted submenu, from the component root to
-      // the active submenus nested in it.
-      const $targetBranch = $target.parentsUntil(this.$element)
-        .add($target)
-        .add($target.find('.is-active'));
+      // The "branch" of the targeted submenu, from the component root to
+      // the active submenus nested in it (the union over a multi-target,
+      // like the collection .parentsUntil/.add union did).
+      const branch = [];
+      const addUnique = (el) => { if (el && branch.indexOf(el) === -1) { branch.push(el); } };
+      target.forEach(el => {
+        let ancestor = el.parentElement;
+        while (ancestor && ancestor !== this.$element) {
+          if (ancestor.matches('[data-submenu]')) { addUnique(ancestor); }
+          ancestor = ancestor.parentElement;
+        }
+        addUnique(el);
+        el.querySelectorAll('.is-active').forEach(addUnique);
+      });
       // All the active submenus that are not in the branch.
-      const $othersActiveSubmenus = this.$element.find('.is-active').not($targetBranch);
+      const othersActiveSubmenus = Array.from(this.$element.querySelectorAll('.is-active')).filter(el => branch.indexOf(el) === -1);
 
-      this.up($othersActiveSubmenus);
+      this.up(othersActiveSubmenus);
     }
 
-    $target
-      .addClass('is-active')
-      .attr({ 'aria-hidden': false });
+    // S9: class/ARIA state flips natively.
+    target.forEach(el => {
+      el.classList.add('is-active');
+      el.setAttribute('aria-hidden', 'false');
+    });
 
     if (this.options.submenuToggle) {
-      $target.prev('.submenu-toggle').attr({'aria-expanded': true});
+      target.forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
     }
     else {
-      $target.parent('.is-accordion-submenu-parent').attr({'aria-expanded': true});
+      target.forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'true');
+        }
+      });
     }
 
-    $target.slideDown(this.options.slideSpeed, () => {
+    // fx 方案 A: the fold tween runs on Motion's native slide primitive -
+    // the down event keeps its after-the-tween timing and fires once per
+    // pane; the terminal form forwards the element array.
+    Motion.slideDown(target, this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done opening.
        * @event AccordionMenu#down
        */
-      this.$element.trigger('down.zf.accordionMenu', [$target]);
+      Events.trigger(this.$element, 'down.zf.accordionMenu', [target]);
     });
   }
 
@@ -264,28 +323,48 @@ class AccordionMenu extends Plugin {
    * @param {jQuery} $target - Sub-menu to close.
    * @fires AccordionMenu#up
    */
-  up($target) {
-    const $submenus = $target.find('[data-submenu]');
-    const $allmenus = $target.add($submenus);
+  up(target) {
+    target = normalizeTargets(target);
+    const submenus = [];
+    target.forEach(el => {
+      el.querySelectorAll('[data-submenu]').forEach(sub => {
+        if (submenus.indexOf(sub) === -1) { submenus.push(sub); }
+      });
+    });
+    const allmenus = target.concat(submenus);
 
-    $submenus.slideUp(0);
-    $allmenus
-      .removeClass('is-active')
-      .attr('aria-hidden', true);
+    submenus.forEach(el => Motion.slideUp(el, 0));
+    // S9: class/ARIA state flips natively.
+    allmenus.forEach(el => {
+      el.classList.remove('is-active');
+      el.setAttribute('aria-hidden', 'true');
+    });
 
     if (this.options.submenuToggle) {
-      $allmenus.prev('.submenu-toggle').attr('aria-expanded', false);
+      allmenus.forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
     else {
-      $allmenus.parent('.is-accordion-submenu-parent').attr('aria-expanded', false);
+      allmenus.forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
 
-    $target.slideUp(this.options.slideSpeed, () => {
+    // fx 方案 A, see down(): the fold tween on the native primitive; the
+    // terminal form forwards the element array.
+    Motion.slideUp(target, this.options.slideSpeed, () => {
       /**
        * Fires when the menu is done collapsing up.
        * @event AccordionMenu#up
        */
-      this.$element.trigger('up.zf.accordionMenu', [$target]);
+      Events.trigger(this.$element, 'up.zf.accordionMenu', [target]);
     });
   }
 
@@ -294,14 +373,32 @@ class AccordionMenu extends Plugin {
    * @fires AccordionMenu#destroyed
    */
   _destroy() {
-    this.$element.find('[data-submenu]').slideDown(0).css('display', '');
-    this.$element.find('a').off('click.zf.accordionMenu');
-    this.$element.find('li').off('keydown.zf.accordionMenu');
-    this.$element.find('[data-is-parent-link]').detach();
+    // fx 方案 A: the instant-show destroy cleanup (inline display cleared
+    // so the stylesheet rules own the resting state again)
+    this.$element.querySelectorAll('[data-submenu]').forEach(function(el) {
+      Motion.slideDown(el, 0);
+      el.style.display = '';
+    });
+    // The click and keydown listeners, by plugin namespace.
+    this.$element.querySelectorAll('a, .submenu-toggle').forEach(el => {
+      Events.off(el, 'click.zf.accordionMenu');
+    });
+    this.$element.querySelectorAll('li').forEach(el => {
+      Events.off(el, 'keydown.zf.accordionMenu');
+    });
+    // .detach(): removed without keeping data/events (plain remove here -
+    // the elements carry no other state)
+    this.$element.querySelectorAll('[data-is-parent-link]').forEach(el => {
+      el.remove();
+    });
 
     if (this.options.submenuToggle) {
-      this.$element.find('.has-submenu-toggle').removeClass('has-submenu-toggle');
-      this.$element.find('.submenu-toggle').remove();
+      this.$element.querySelectorAll('.has-submenu-toggle').forEach(el => {
+        el.classList.remove('has-submenu-toggle');
+      });
+      this.$element.querySelectorAll('.submenu-toggle').forEach(el => {
+        el.remove();
+      });
     }
 
     Nest.Burn(this.$element, 'accordion');

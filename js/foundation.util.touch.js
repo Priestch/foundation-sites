@@ -3,8 +3,18 @@
 //**Done by Yohai Ararat ***************************
 //**************************************************
 
-import $ from 'jquery';
+import { Events } from './foundation.util.events';
 
+// S13 (7.0 line A): the synthesizers produce real, bubbling CustomEvents
+// through the Events layer instead of jQuery triggers. The 6.x chain armed
+// itself per element through the `$.event.special` setup hooks; the native
+// chain arms ONCE on the document (Touch.init) and dispatches each synthetic
+// event on the touched element, so it bubbles to the same ancestors the
+// jQuery synthetic walk reached. Extra parameters ride the event detail in
+// the 6.x shapes: 'swipe' carries (touchmoveEvent, direction), the
+// directional swipe<dir> and 'tap' carry their source touch event. Native
+// handlers receive them as trailing arguments; jQuery listeners of the
+// mixed state read them from event.originalEvent.detail.
 var Touch = {};
 
 var startPosX,
@@ -12,25 +22,26 @@ var startPosX,
     elapsedTime,
     startEvent,
     isMoving = false,
-    didMoved = false;
+    didMoved = false,
+    touchTarget = null;
 
 function onTouchEnd(e) {
-  this.removeEventListener('touchmove', onTouchMove);
-  this.removeEventListener('touchend', onTouchEnd);
+  document.removeEventListener('touchmove', onTouchMove);
+  document.removeEventListener('touchend', onTouchEnd);
 
   // If the touch did not move, consider it as a "tap"
   if (!didMoved) {
-    var tapEvent = $.Event('tap', startEvent || e);
-    $(this).trigger(tapEvent);
+    Events.trigger(touchTarget || document.body, 'tap', startEvent || e);
   }
 
   startEvent = null;
   isMoving = false;
   didMoved = false;
+  touchTarget = null;
 }
 
 function onTouchMove(e) {
-  if (true === $.spotSwipe.preventDefault) { e.preventDefault(); }
+  if (true === Touch.spotSwipe.preventDefault) { e.preventDefault(); }
 
   if(isMoving) {
     var x = e.touches[0].pageX;
@@ -40,18 +51,20 @@ function onTouchMove(e) {
     var dir;
     didMoved = true;
     elapsedTime = new Date().getTime() - startTime;
-    if(Math.abs(dx) >= $.spotSwipe.moveThreshold && elapsedTime <= $.spotSwipe.timeThreshold) {
+    if(Math.abs(dx) >= Touch.spotSwipe.moveThreshold && elapsedTime <= Touch.spotSwipe.timeThreshold) {
       dir = dx > 0 ? 'left' : 'right';
     }
-    // else if(Math.abs(dy) >= $.spotSwipe.moveThreshold && elapsedTime <= $.spotSwipe.timeThreshold) {
+    // else if(Math.abs(dy) >= Touch.spotSwipe.moveThreshold && elapsedTime <= Touch.spotSwipe.timeThreshold) {
     //   dir = dy > 0 ? 'down' : 'up';
     // }
     if(dir) {
       e.preventDefault();
+      // the reset in onTouchEnd clears the module state; the swipe still
+      // dispatches on the element the touch started on
+      var swipeTarget = touchTarget;
       onTouchEnd.apply(this, arguments);
-      $(this)
-        .trigger($.Event('swipe', Object.assign({}, e)), dir)
-        .trigger($.Event(`swipe${dir}`, Object.assign({}, e)));
+      Events.trigger(swipeTarget, 'swipe', [e, dir]);
+      Events.trigger(swipeTarget, `swipe${dir}`, e);
     }
   }
 
@@ -60,23 +73,38 @@ function onTouchMove(e) {
 function onTouchStart(e) {
 
   if (e.touches.length === 1) {
+    touchTarget = e.target;
     startPosX = e.touches[0].pageX;
     startEvent = e;
     isMoving = true;
     didMoved = false;
     startTime = new Date().getTime();
-    this.addEventListener('touchmove', onTouchMove, { passive : true === $.spotSwipe.preventDefault });
-    this.addEventListener('touchend', onTouchEnd, false);
+    document.addEventListener('touchmove', onTouchMove, { passive : true === Touch.spotSwipe.preventDefault });
+    document.addEventListener('touchend', onTouchEnd, false);
   }
 }
 
-function init() {
-  this.addEventListener && this.addEventListener('touchstart', onTouchStart, { passive : true });
-}
+function handleTouch(event) {
+  var touches = event.changedTouches,
+      first = touches[0],
+      eventTypes = {
+        touchstart: 'mousedown',
+        touchmove: 'mousemove',
+        touchend: 'mouseup'
+      },
+      type = eventTypes[event.type];
 
-// function teardown() {
-//   this.removeEventListener('touchstart', onTouchStart);
-// }
+  if('MouseEvent' in window && typeof window.MouseEvent === 'function') {
+    first.target.dispatchEvent(new window.MouseEvent(type, {
+      'bubbles': true,
+      'cancelable': true,
+      'screenX': first.screenX,
+      'screenY': first.screenY,
+      'clientX': first.clientX,
+      'clientY': first.clientY
+    }));
+  }
+}
 
 class SpotSwipe {
   constructor() {
@@ -85,18 +113,10 @@ class SpotSwipe {
     this.preventDefault = false;
     this.moveThreshold = 75;
     this.timeThreshold = 200;
-    this._init();
-  }
-
-  _init() {
-    $.event.special.swipe = { setup: init };
-    $.event.special.tap = { setup: init };
-
-    $.each(['left', 'up', 'down', 'right'], function () {
-      $.event.special[`swipe${this}`] = { setup: function(){
-        $(this).on('swipe', $.noop);
-      } };
-    });
+    // The 6.x `_init()` registered the synthesizers through `$.event.special`
+    // setup hooks, which jQuery invoked for every element a 'tap'/'swipe*'
+    // listener was bound to. The native chain arms once on the document (see
+    // Touch.init), so there is nothing per-element to set up anymore.
   }
 }
 
@@ -108,53 +128,35 @@ class SpotSwipe {
  ****************************************************/
 
 Touch.setupSpotSwipe = function() {
-  $.spotSwipe = new SpotSwipe($);
+  Touch.spotSwipe = new SpotSwipe();
 };
 
 /****************************************************
  * Method for adding pseudo drag events to elements *
  ***************************************************/
 Touch.setupTouchHandler = function() {
-  $.fn.addTouch = function(){
-    this.each(function(i, el){
-      $(el).bind('touchstart touchmove touchend touchcancel', function(event)  {
-        //we pass the original event object because the jQuery event
-        //object is normalized to w3c specs and does not provide the TouchList
-        handleTouch(event);
-      });
-    });
-
-    var handleTouch = function(event) {
-      var touches = event.changedTouches,
-          first = touches[0],
-          eventTypes = {
-            touchstart: 'mousedown',
-            touchmove: 'mousemove',
-            touchend: 'mouseup'
-          },
-          type = eventTypes[event.type],
-          simulatedEvent
-        ;
-
-      if('MouseEvent' in window && typeof window.MouseEvent === 'function') {
-        simulatedEvent = new window.MouseEvent(type, {
-          'bubbles': true,
-          'cancelable': true,
-          'screenX': first.screenX,
-          'screenY': first.screenY,
-          'clientX': first.clientX,
-          'clientY': first.clientY
-        });
-      }
-      first.target.dispatchEvent(simulatedEvent);
-    };
+  // Native form of `$.fn.addTouch`: the feed replays touch input as mouse
+  // events dispatched on the touch origin - real events, which reach the
+  // native listeners directly and still-on-jQuery ones through the
+  // real-event pass-through.
+  Touch.addTouch = function(element) {
+    if (!element || !element.addEventListener) { return; }
+    element.addEventListener('touchstart', handleTouch, false);
+    element.addEventListener('touchmove', handleTouch, false);
+    element.addEventListener('touchend', handleTouch, false);
+    element.addEventListener('touchcancel', handleTouch, false);
   };
 };
 
 Touch.init = function () {
-  if(typeof($.spotSwipe) === 'undefined') {
-    Touch.setupSpotSwipe($);
-    Touch.setupTouchHandler($);
+  if(typeof(Touch.spotSwipe) === 'undefined') {
+    Touch.setupSpotSwipe();
+    Touch.setupTouchHandler();
+    // One document-level touchstart arm, replacing the per-element
+    // `$.event.special` setups: every tap/swipe below is dispatched on the
+    // touched element and bubbles, so the ancestor bindings (body tap
+    // handlers) hear it like the jQuery synthetic walk delivered them.
+    document.addEventListener('touchstart', onTouchStart, { passive : true });
   }
 };
 

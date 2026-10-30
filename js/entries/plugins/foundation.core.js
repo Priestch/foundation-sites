@@ -1,16 +1,18 @@
 // --- Foundation Core API ---
 // Initialize Foundation and add some utilities to its public API for backward compatibility.
 // Please note that every utility do not have to be added to the core API.
-import $ from 'jquery';
 import { Foundation } from '../../foundation.core';
 import { Plugin } from '../../foundation.core.plugin';
+import { Registry } from '../../foundation.util.registry';
 import { rtl, GetYoDigits, transitionend, RegExpEscape, onLoad } from '../../foundation.core.utils';
 
-Foundation.addToJquery($);
 
 // Every plugin depends on plugin now, we can include that on the core for the
 // script inclusion path.
 Foundation.Plugin = Plugin;
+// 7.0 plan B: the Registry is the public instance-lookup surface (the
+// $.fn.foundation dispatch is gone).
+Foundation.Registry = Registry;
 
 // These are now separated out, but historically were a part of this module,
 // and since this is here for backwards compatibility we include them in

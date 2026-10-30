@@ -1,7 +1,7 @@
 describe('Dropdown', function() {
   let plugin;
-  let $dropdownController;
-  let $dropdownContainer;
+  let dropdownController;
+  let dropdownContainer;
 
   const getDropdownController = (buttonClasses = '') =>
     `<button class="${buttonClasses}" type="button" data-toggle="my-dropdown">toggle</button>`;
@@ -18,29 +18,29 @@ describe('Dropdown', function() {
   afterEach(function() {
     plugin.destroy();
     document.activeElement.blur();
-    $dropdownController.remove();
-    $dropdownContainer.remove();
+    dropdownController.remove();
+    dropdownContainer.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element & plugin options', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
 
   describe('open()', function () {
     it('fires show.zf.dropdown event', function () {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
       let spy = sinon.spy();
-      $dropdownContainer.on('show.zf.dropdown', spy);
+      FoundationNext.Events.on(dropdownContainer, 'show.zf.dropdown', spy);
 
       plugin.open();
 
@@ -48,23 +48,23 @@ describe('Dropdown', function() {
     });
 
     it('make the dropdown visible', function (done) {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
-      $dropdownContainer.on('show.zf.dropdown', function () {
-        $('#my-dropdown').should.not.be.hidden;
-        $('#my-dropdown').should.have.attr('aria-hidden', 'false');
-        $('#my-dropdown').should.have.class('is-open');
+      FoundationNext.Events.on(dropdownContainer, 'show.zf.dropdown', function () {
+        FoundationNext.Dom.visible(document.querySelector('#my-dropdown')).should.be.true;
+        document.querySelector('#my-dropdown').getAttribute('aria-hidden').should.equal('false');
+        document.querySelector('#my-dropdown').classList.contains('is-open').should.be.true;
         done();
       });
       plugin.open();
     });
 
     it('traps focus accoding to trapFocus option', function () {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, { trapFocus: true });
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, { trapFocus: true });
 
       let spy = sinon.spy(Foundation.Keyboard, 'trapFocus');
       plugin.open();
@@ -74,11 +74,11 @@ describe('Dropdown', function() {
     });
 
     it('should autofocus according to autoFocus option', function(done) {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getAutoFocusDropdownContainer('', 'inputToFocus')).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, { autoFocus: true });
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getAutoFocusDropdownContainer('', 'inputToFocus')));
+      plugin = new Foundation.Dropdown(dropdownContainer, { autoFocus: true });
 
-      $dropdownContainer.on('show.zf.dropdown', function() {
+      FoundationNext.Events.on(dropdownContainer, 'show.zf.dropdown', function() {
         document.activeElement.id.should.be.equal('inputToFocus');
         done();
       });
@@ -88,9 +88,9 @@ describe('Dropdown', function() {
 
   describe('close()', function() {
     it('releases focus if trapFocus option is true', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {trapFocus: true});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {trapFocus: true});
 
       // Open it first...
       plugin.open();
@@ -105,19 +105,18 @@ describe('Dropdown', function() {
 
   describe('inferred positioning', function() {
     it('default orientation should be bottom', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
       plugin.open()
       plugin.position.should.equal('bottom');
     });
 
     it('gets right alignment from float-right', function() {
-      $dropdownController = $(getDropdownController('custom-style-before float-right custom-style-after'))
-        .appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController('custom-style-before float-right custom-style-after')));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
       plugin.open()
       plugin.position.should.equal('bottom')
@@ -127,15 +126,15 @@ describe('Dropdown', function() {
 
   describe('closeOnClick option', function() {
     it('not closes a dropdown by clicking on the dropdown if closeOnClick option is true', function(done) {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {closeOnClick: true});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {closeOnClick: true});
 
       // Open it first...
       plugin.open();
 
       let spy = sinon.spy(plugin, 'close');
-      plugin.$element.trigger('click');
+      plugin.$element.dispatchEvent(new MouseEvent('click', {bubbles: true}));
 
       setTimeout(() => {
         sinon.assert.notCalled(spy);
@@ -146,12 +145,12 @@ describe('Dropdown', function() {
 
   describe('mouse events', function() {
     it('opens the dropdown on button click', function(done) {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
 
       let spy = sinon.spy(plugin, 'open');
-      $dropdownController.trigger('click');
+      FoundationNext.Events.trigger(dropdownController, 'click');
 
       setTimeout(() => {
         sinon.assert.called(spy);
@@ -160,12 +159,12 @@ describe('Dropdown', function() {
     });
 
     it('opens the dropdown on button hover', function(done) {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, { hover: true, hoverDelay: 42 });
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, { hover: true, hoverDelay: 42 });
 
       let spy = sinon.spy(plugin, 'open');
-      $dropdownController.trigger('mouseenter');
+      FoundationNext.Events.trigger(dropdownController, 'mouseover');
 
       setTimeout(() => {
         sinon.assert.called(spy);
@@ -177,40 +176,40 @@ describe('Dropdown', function() {
 
   describe('keyboard events', function () {
     it('opens Dropdown on SPACE', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
-      $dropdownController.focus()
-        .trigger(window.mockKeyboardEvent('SPACE'));
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
+      dropdownController.focus();
+      dropdownController.dispatchEvent(window.mockKeyboardEvent('SPACE'));
 
-      $dropdownContainer.should.be.visible;
+      FoundationNext.Dom.visible(dropdownContainer).should.be.true;
     });
     it('does not focus Dropdown on SPACE by default', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
-      $dropdownController.focus()
-        .trigger(window.mockKeyboardEvent('SPACE'));
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
+      dropdownController.focus();
+      dropdownController.dispatchEvent(window.mockKeyboardEvent('SPACE'));
 
-      document.activeElement.should.be.equal($dropdownController[0]);
+      document.activeElement.should.be.equal(dropdownController);
     });
     it('focuses Dropdown on SPACE when container has a focusable element', function() {
-      $dropdownController = $(getDropdownController()).appendTo('body');
-      $dropdownContainer = $(getFocusableDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
-      $dropdownController.focus()
-        .trigger(window.mockKeyboardEvent('SPACE'));
+      dropdownController = document.body.appendChild(fixture(getDropdownController()));
+      dropdownContainer = document.body.appendChild(fixture(getFocusableDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
+      dropdownController.focus();
+      dropdownController.dispatchEvent(window.mockKeyboardEvent('SPACE'));
 
-      document.activeElement.should.be.equal($dropdownController[0]);
+      document.activeElement.should.be.equal(dropdownController);
     });
     it('does not focus Dropdown when anchor is an input', function() {
-      $dropdownController = $('<input type="text" data-toggle="my-dropdown">').appendTo('body');
-      $dropdownContainer = $(getDropdownContainer()).appendTo('body');
-      plugin = new Foundation.Dropdown($dropdownContainer, {});
-      $dropdownController.focus()
-        .trigger(window.mockKeyboardEvent('SPACE'));
+      dropdownController = document.body.appendChild(fixture('<input type="text" data-toggle="my-dropdown">'));
+      dropdownContainer = document.body.appendChild(fixture(getDropdownContainer()));
+      plugin = new Foundation.Dropdown(dropdownContainer, {});
+      dropdownController.focus();
+      dropdownController.dispatchEvent(window.mockKeyboardEvent('SPACE'));
 
-      document.activeElement.should.be.equal($dropdownController[0]);
+      document.activeElement.should.be.equal(dropdownController);
     });
   })
 });

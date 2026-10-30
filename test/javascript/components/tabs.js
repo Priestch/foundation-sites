@@ -1,6 +1,6 @@
 describe('Tabs', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `
     <div>
       <ul class="tabs" data-tabs id="example-tabs">
@@ -27,68 +27,68 @@ describe('Tabs', function() {
 
   afterEach(function() {
     plugin.destroy();
-    $html.remove();
+    html.remove();
   });
 
  describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
 
   describe('init()', function() {
     it('sets ARIA attributes', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       // Panels
-      $html.find('#panel1').should.have.attr('role', 'tabpanel');
-      $html.find('#panel1').should.have.attr('aria-labelledby', $html.find('[href="#panel1"]').attr('id'));
-      $html.find('#panel1').should.not.have.attr('aria-hidden');
-      $html.find('#panel2').should.have.attr('aria-hidden', 'true');
+      html.querySelector('#panel1').getAttribute('role').should.equal('tabpanel');
+      html.querySelector('#panel1').getAttribute('aria-labelledby').should.equal(html.querySelector('[href="#panel1"]').getAttribute('id'));
+      html.querySelector('#panel1').hasAttribute('aria-hidden').should.be.false;
+      html.querySelector('#panel2').getAttribute('aria-hidden').should.equal('true');
 
       // Links
-      $html.find('[href="#panel1"]').should.have.attr('role', 'tab');
-      $html.find('[href="#panel1"]').should.have.attr('aria-controls', $html.find('panel1').attr('id'));
-      $html.find('[href="#panel1"]').should.have.attr('aria-selected', 'true');
-      $html.find('[href="#panel2"]').should.have.attr('aria-selected', 'false');
+      html.querySelector('[href="#panel1"]').getAttribute('role').should.equal('tab');
+      html.querySelector('[href="#panel1"]').getAttribute('aria-controls').should.equal(html.querySelector('#panel1').getAttribute('id'));
+      html.querySelector('[href="#panel1"]').getAttribute('aria-selected').should.equal('true');
+      html.querySelector('[href="#panel2"]').getAttribute('aria-selected').should.equal('false');
 
       // Tab list items
-      $html.find('[href="#panel1"]').parent().should.have.attr('role', 'presentation');
+      html.querySelector('[href="#panel1"]').parentElement.getAttribute('role').should.equal('presentation');
     });
   });
 
   describe('selectTab()', function() {
     it('opens the selected tab via jQuery element', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      plugin.selectTab($html.find('#panel2'));
-      $html.find('#panel2').should.be.visible;
+      plugin.selectTab(html.querySelector('#panel2'));
+      FoundationNext.Dom.visible(html.querySelector('#panel2')).should.be.true;
     });
 
     it('opens the selected tab via id string', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel2');
-      $html.find('#panel2').should.be.visible;
+      FoundationNext.Dom.visible(html.querySelector('#panel2')).should.be.true;
     });
 
     it('opens the selected tab with data-tabs-target attribute', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#/panel3');
-      $html.find('#panel3').should.be.visible;
+      FoundationNext.Dom.visible(html.querySelector('#panel3')).should.be.true;
     });
 
     it('opens the selected tab with data-tabs-target attribute and external href', function () {
-      $html = $(`
+      html = document.body.appendChild(fixture(`
       <div>
         <ul class="tabs" data-tabs id="example-tabs">
           <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Tab 1</a></li>
@@ -110,58 +110,60 @@ describe('Tabs', function() {
             <p>Check me out! I'm a super cool Tab panel with text content!</p>
           </div>
         </div>
-      </div>`).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      </div>`));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel3');
-      $html.find('#panel3').should.be.visible;
+      FoundationNext.Dom.visible(html.querySelector('#panel3')).should.be.true;
     })
   });
 
   describe('_handleTabChange()', function() {
     it('opens the selected tab', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel2');
-      $html.find('#panel2').should.be.visible;
-      $html.find('#panel2').should.have.class('is-active');
+      FoundationNext.Dom.visible(html.querySelector('#panel2')).should.be.true;
+      html.querySelector('#panel2').classList.contains('is-active').should.be.true;
     });
 
     it('sets ARIA attributes for open tab', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel2');
-      $html.find('#panel2').should.have.not.attr('aria-hidden');
-      $html.find('[href="#panel2"]').should.have.attr('aria-selected', 'true');
+      html.querySelector('#panel2').hasAttribute('aria-hidden').should.be.false;
+      html.querySelector('[href="#panel2"]').getAttribute('aria-selected').should.equal('true');
     });
 
     it('hides the open tab', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel2');
-      $html.find('#panel1').should.be.hidden;
-      $html.find('#panel1').should.not.have.class('is-active');
+      FoundationNext.Dom.visible(html.querySelector('#panel1')).should.be.false;
+      html.querySelector('#panel1').classList.contains('is-active').should.be.false;
     });
 
     it('sets ARIA attributes for closed tab', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
       plugin.selectTab('#panel2');
-      $html.find('#panel1').should.be.have.attr('aria-hidden', 'true');
-      $html.find('[href="#panel1"]').should.be.have.attr('aria-selected', 'false');
+      html.querySelector('#panel1').getAttribute('aria-hidden').should.equal('true');
+      html.querySelector('[href="#panel1"]').getAttribute('aria-selected').should.equal('false');
     });
 
     it('fires change.zf.tabs event with target as data', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      $html.one('change.zf.tabs', function(e, $target) {
+      // terminal form: the change production is a real event with the
+      // plain elements as parameters
+      FoundationNext.Events.one(html, 'change.zf.tabs', function(e, target) {
         e.stopPropagation();
-        $html.find('[href="#panel2"]').parent()[0].should.be.equal($target[0]);
+        html.querySelector('[href="#panel2"]').parentElement.should.be.equal(target);
         done();
       });
 
@@ -171,44 +173,48 @@ describe('Tabs', function() {
 
   describe('keyboard events', function() {
     it('switches to next tab on ARROW_RIGHT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      $html.find('[href="#panel1"]').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_RIGHT'));
+      html.querySelector('[href="#panel1"]').focus();
 
-      $html.find('#panel2').should.be.visible;
-      $html.find('#panel2').should.have.class('is-active');
+      html.querySelector('[href="#panel1"]').dispatchEvent(window.mockKeyboardEvent('ARROW_RIGHT'));
+
+      FoundationNext.Dom.visible(html.querySelector('#panel2')).should.be.true;
+      html.querySelector('#panel2').classList.contains('is-active').should.be.true;
     });
     it('switches to next tab on ARROW_DOWN', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      $html.find('[href="#panel1"]').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_DOWN'));
+      html.querySelector('[href="#panel1"]').focus();
 
-      $html.find('#panel2').should.be.visible;
-      $html.find('#panel2').should.have.class('is-active');
+      html.querySelector('[href="#panel1"]').dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
+
+      FoundationNext.Dom.visible(html.querySelector('#panel2')).should.be.true;
+      html.querySelector('#panel2').classList.contains('is-active').should.be.true;
     });
     it('switches to previous tab on ARROW_LEFT', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      $html.find('[href="#panel2"]').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_LEFT'));
+      html.querySelector('[href="#panel2"]').focus();
 
-      $html.find('#panel1').should.be.visible;
-      $html.find('#panel1').should.have.class('is-active');
+      html.querySelector('[href="#panel2"]').dispatchEvent(window.mockKeyboardEvent('ARROW_LEFT'));
+
+      FoundationNext.Dom.visible(html.querySelector('#panel1')).should.be.true;
+      html.querySelector('#panel1').classList.contains('is-active').should.be.true;
     });
     it('switches to previous tab on ARROW_UP', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Tabs($html.find('[data-tabs]'), {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Tabs(html.querySelector('[data-tabs]'), {});
 
-      $html.find('[href="#panel2"]').focus()
-        .trigger(window.mockKeyboardEvent('ARROW_UP'));
+      html.querySelector('[href="#panel2"]').focus();
 
-      $html.find('#panel1').should.be.visible;
-      $html.find('#panel1').should.have.class('is-active');
+      html.querySelector('[href="#panel2"]').dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
+
+      FoundationNext.Dom.visible(html.querySelector('#panel1')).should.be.true;
+      html.querySelector('#panel1').classList.contains('is-active').should.be.true;
     });
   });
 });

@@ -1,0 +1,113 @@
+- generic [ref=f43e2]:
+  - list [ref=f43e3]:
+    - listitem [ref=f43e4]:
+      - generic [ref=f43e8]: 100%
+    - listitem [ref=f43e9]:
+      - link "passes:" [ref=f43e10] [cursor=pointer]:
+        - /url: javascript:void(0);
+      - emphasis [ref=f43e11]: "9"
+    - listitem [ref=f43e12]:
+      - link "failures:" [ref=f43e13] [cursor=pointer]:
+        - /url: javascript:void(0);
+      - emphasis [ref=f43e14]: "1"
+    - listitem [ref=f43e15]:
+      - text: "duration:"
+      - emphasis [ref=f43e16]: "0.01"
+      - text: s
+  - list [ref=f43e17]:
+    - listitem [ref=f43e18]:
+      - heading [level=1] [ref=f43e19]:
+        - link "Toggler (native layer contract)" [ref=f43e20] [cursor=pointer]:
+          - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)
+      - list [ref=f43e21]:
+        - listitem [ref=f43e22]:
+          - heading [level=1] [ref=f43e23]:
+            - link "state events" [ref=f43e24] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20state%20events
+          - list [ref=f43e25]:
+            - listitem [ref=f43e26]:
+              - text: ✓
+              - heading [level=2] [ref=f43e27] [cursor=pointer]:
+                - text: fires on.zf.toggler and off.zf.toggler through the native event layer
+                - link "‣" [ref=f43e28]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20state%20events%20fires%20on%5C.zf%5C.toggler%20and%20off%5C.zf%5C.toggler%20through%20the%20native%20event%20layer
+            - listitem [ref=f43e29]:
+              - text: ✓
+              - heading [level=2] [ref=f43e30] [cursor=pointer]:
+                - text: fires the state events with the zf.toggler namespace and no extra parameters
+                - link "‣" [ref=f43e31]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20state%20events%20fires%20the%20state%20events%20with%20the%20zf%5C.toggler%20namespace%20and%20no%20extra%20parameters
+        - listitem [ref=f43e32]:
+          - heading [level=1] [ref=f43e33]:
+            - link "toggle.zf.trigger consumption" [ref=f43e34] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20toggle%5C.zf%5C.trigger%20consumption
+          - list [ref=f43e35]:
+            - listitem [ref=f43e36]:
+              - text: ✖
+              - heading [level=2] [ref=f43e37] [cursor=pointer]:
+                - text: toggles through toggle.zf.trigger fired on the native event layer
+                - link "‣" [ref=f43e38]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20toggle%5C.zf%5C.trigger%20consumption%20toggles%20through%20toggle%5C.zf%5C.trigger%20fired%20on%20the%20native%20event%20layer
+              - generic [ref=f43e39]: "AssertionError: expected { Object (0, length, ...) } to have class 'is-visible' at Context.<anonymous> (js-tests.js:4651:30)"
+            - listitem [ref=f43e40]:
+              - text: ✓
+              - heading [level=2] [ref=f43e41] [cursor=pointer]:
+                - text: does not consume toggle.zf.trigger fired on the jQuery side anymore
+                - link "‣" [ref=f43e42]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20toggle%5C.zf%5C.trigger%20consumption%20does%20not%20consume%20toggle%5C.zf%5C.trigger%20fired%20on%20the%20jQuery%20side%20anymore
+        - listitem [ref=f43e43]:
+          - heading [level=1] [ref=f43e44]:
+            - link "ARIA writes" [ref=f43e45] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20ARIA%20writes
+          - list [ref=f43e46]:
+            - listitem [ref=f43e47]:
+              - text: ✓
+              - heading [level=2] [ref=f43e48] [cursor=pointer]:
+                - text: updates aria-expanded on the exact-match triggers with native attributes
+                - link "‣" [ref=f43e49]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20ARIA%20writes%20updates%20aria%5Cx2dexpanded%20on%20the%20exact%5Cx2dmatch%20triggers%20with%20native%20attributes
+        - listitem [ref=f43e50]:
+          - heading [level=1] [ref=f43e51]:
+            - link "mutateme forwarding" [ref=f43e52] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20mutateme%20forwarding
+          - list [ref=f43e53]:
+            - listitem [ref=f43e54]:
+              - text: ✓
+              - heading [level=2] [ref=f43e55] [cursor=pointer]:
+                - text: fires mutateme.zf.trigger on every [data-mutate] descendant
+                - link "‣" [ref=f43e56]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20mutateme%20forwarding%20fires%20mutateme%5C.zf%5C.trigger%20on%20every%20%5C%5Bdata%5Cx2dmutate%5C%5D%20descendant
+        - listitem [ref=f43e57]:
+          - heading [level=1] [ref=f43e58]:
+            - link "re-init" [ref=f43e59] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20re%5Cx2dinit
+          - list [ref=f43e60]:
+            - listitem [ref=f43e61]:
+              - text: ✓
+              - heading [level=2] [ref=f43e62] [cursor=pointer]:
+                - text: re-parses the toggler state and re-syncs the trigger ARIA through reInit
+                - link "‣" [ref=f43e63]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20re%5Cx2dinit%20re%5Cx2dparses%20the%20toggler%20state%20and%20re%5Cx2dsyncs%20the%20trigger%20ARIA%20through%20reInit
+            - listitem [ref=f43e64]:
+              - text: ✓
+              - heading [level=2] [ref=f43e65] [cursor=pointer]:
+                - text: merges converted data attribute values into the plugin options
+                - link "‣" [ref=f43e66]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20re%5Cx2dinit%20merges%20converted%20data%20attribute%20values%20into%20the%20plugin%20options
+        - listitem [ref=f43e67]:
+          - heading [level=1] [ref=f43e68]:
+            - link "destroy" [ref=f43e69] [cursor=pointer]:
+              - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20destroy
+          - list [ref=f43e70]:
+            - listitem [ref=f43e71]:
+              - text: ✓
+              - heading [level=2] [ref=f43e72] [cursor=pointer]:
+                - text: clears the registry entry, so the jQuery method resolves nothing anymore
+                - link "‣" [ref=f43e73]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20destroy%20clears%20the%20registry%20entry%2C%20so%20the%20jQuery%20method%20resolves%20nothing%20anymore
+            - listitem [ref=f43e74]:
+              - text: ✓
+              - heading [level=2] [ref=f43e75] [cursor=pointer]:
+                - text: unbinds the zf.toggler listeners on the bare namespace
+                - link "‣" [ref=f43e76]:
+                  - /url: /test/javascript/index-debug.html?grep=Toggler%20%5C(native%20layer%20contract%5C)%20destroy%20unbinds%20the%20zf%5C.toggler%20listeners%20on%20the%20bare%20namespace

@@ -1,6 +1,6 @@
 describe('Accordion', function() {
   var plugin;
-  var $html;
+  var html;
   var template = `<ul class="accordion" data-accordion>
   <li class="accordion-item is-active" data-accordion-item>
     <a href="#" class="accordion-title">Accordion 1</a>
@@ -28,185 +28,191 @@ describe('Accordion', function() {
   afterEach(function() {
     plugin.destroy();
     document.activeElement.blur();
-    $html.remove();
+    html.remove();
   });
 
   describe('constructor()', function() {
     it('stores the element and plugin options', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      plugin.$element.should.be.an('object');
+      chai.expect(plugin.$element).to.be.an.instanceof(Element);
       plugin.options.should.be.an('object');
     });
   });
 
   describe('up()', function(done) {
     it('closes the targeted container if allowAllClosed is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {allowAllClosed: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {allowAllClosed: true});
 
-      plugin.up($html.find('.accordion-content').eq(0));
-      $html.find('.accordion-content').eq(0).should.have.attr('aria-hidden', 'true');
-      $html.on('up.zf.accordion', function() {
-        $html.find('.accordion-content').eq(0).should.be.hidden;
+      plugin.up(html.querySelector('.accordion-content'));
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.equal('true');
+      FoundationNext.Events.on(html, 'up.zf.accordion', function() {
+        FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.false;
         done();
       });
     });
 
     it('toggles attributes of title of the targeted container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {allowAllClosed: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {allowAllClosed: true});
 
-      plugin.up($html.find('.accordion-content').eq(0));
-      $html.find('.accordion-title').eq(0).should.have.attr('aria-expanded', 'false');
+      plugin.up(html.querySelector('.accordion-content'));
+      html.querySelector('.accordion-title').getAttribute('aria-expanded').should.equal('false');
     });
 
     it('not closes the open container if allowAllClosed is false', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {allowAllClosed: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {allowAllClosed: false});
 
-      plugin.up($html.find('.accordion-content').eq(0));
-      $html.find('.accordion-content').eq(0).should.be.visible;
+      plugin.up(html.querySelector('.accordion-content'));
+      FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.true;
       // Element has aria-hidden="false" not set if it has not been actively toggled so far
       // Therefor check if it has not aria-hidden="true"
-      $html.find('.accordion-content').eq(0).should.not.have.attr('aria-hidden', 'true');
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.not.equal('true');
     });
   });
 
   describe('down()', function() {
     it('opens the targeted container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      plugin.down($html.find('.accordion-content').eq(1));
-      $html.find('.accordion-content').eq(1).should.be.visible;
-      $html.find('.accordion-content').eq(1).should.have.attr('aria-hidden', 'false');
+      plugin.down(html.querySelectorAll('.accordion-content')[1]);
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[1]).should.be.true;
+      html.querySelectorAll('.accordion-content')[1].getAttribute('aria-hidden').should.equal('false');
     });
 
     it('toggles attributes of title of the targeted container', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      plugin.down($html.find('.accordion-content').eq(1));
-      $html.find('.accordion-title').eq(1).should.have.attr('aria-expanded', 'true');
+      plugin.down(html.querySelectorAll('.accordion-content')[1]);
+      html.querySelectorAll('.accordion-title')[1].getAttribute('aria-expanded').should.equal('true');
     });
 
     it('closes open container if multiExpand is false', function(done) {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {multiExpand: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {multiExpand: false});
 
-      plugin.down($html.find('.accordion-content').eq(1));
-      $html.find('.accordion-content').eq(0).should.have.attr('aria-hidden', 'true');
-      $html.on('up.zf.accordion', function() {
-        $html.find('.accordion-content').eq(0).should.be.hidden;
+      plugin.down(html.querySelectorAll('.accordion-content')[1]);
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.equal('true');
+      FoundationNext.Events.on(html, 'up.zf.accordion', function() {
+        FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.false;
         done();
       });
     });
 
     it('not closes open container if multiExpand is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {multiExpand: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {multiExpand: true});
 
-      plugin.down($html.find('.accordion-content').eq(1));
-      $html.find('.accordion-content').eq(0).should.be.visible;
+      plugin.down(html.querySelectorAll('.accordion-content')[1]);
+      FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.true;
       // Element has aria-hidden="false" not set if it has not been actively toggled so far
       // Therefor check if it has not aria-hidden="true"
-      $html.find('.accordion-content').eq(0).should.not.have.attr('aria-hidden', 'true');
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.not.equal('true');
     });
   });
 
   describe('toggle()', function(done) {
     it('closes the only open container if allowAllClosed is true', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {allowAllClosed: true});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {allowAllClosed: true});
 
-      plugin.toggle($html.find('.accordion-content').eq(0));
-      $html.find('.accordion-content').eq(0).should.have.attr('aria-hidden', 'true');
-      $html.on('up.zf.accordion', function() {
-        $html.find('.accordion-content').eq(0).should.be.hidden;
+      plugin.toggle(html.querySelector('.accordion-content'));
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.equal('true');
+      FoundationNext.Events.on(html, 'up.zf.accordion', function() {
+        FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.false;
         done();
       });
     });
 
     it('not closes the only open container if allowAllClosed is false', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {allowAllClosed: false});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {allowAllClosed: false});
 
-      plugin.toggle($html.find('.accordion-content').eq(0));
-      $html.find('.accordion-content').eq(0).should.be.visible;
-      $html.find('.accordion-content').eq(0).should.have.attr('aria-hidden', 'false');
+      plugin.toggle(html.querySelector('.accordion-content'));
+      FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.true;
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.equal('false');
     });
   });
 
   describe('keyboard events', function() {
     it('opens next panel on ARROW_DOWN', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(0).focus()
-        .trigger(window.mockKeyboardEvent('ARROW_DOWN'));
+      html.querySelector('.accordion-title').focus();
 
-      $html.find('.accordion-content').eq(1).should.be.visible;
-      $html.find('.accordion-content').eq(1).should.have.attr('aria-hidden', 'false');
+      html.querySelector('.accordion-title').dispatchEvent(window.mockKeyboardEvent('ARROW_DOWN'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[1]).should.be.true;
+      html.querySelectorAll('.accordion-content')[1].getAttribute('aria-hidden').should.equal('false');
       // Check if focus was moved
-      $html.find('.accordion-title').eq(1)[0].should.be.equal(document.activeElement);
+      html.querySelectorAll(".accordion-title")[1].should.be.equal(document.activeElement);
     });
     it('opens previous panel on ARROW_UP', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(2).focus()
-        .trigger(window.mockKeyboardEvent('ARROW_UP'));
+      html.querySelectorAll('.accordion-title')[2].focus();
 
-      $html.find('.accordion-content').eq(1).should.be.visible;
-      $html.find('.accordion-content').eq(1).should.have.attr('aria-hidden', 'false');
+      html.querySelectorAll('.accordion-title')[2].dispatchEvent(window.mockKeyboardEvent('ARROW_UP'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[1]).should.be.true;
+      html.querySelectorAll('.accordion-content')[1].getAttribute('aria-hidden').should.equal('false');
       // Check if focus was moved
-      $html.find('.accordion-title').eq(1)[0].should.be.equal(document.activeElement);
+      html.querySelectorAll(".accordion-title")[1].should.be.equal(document.activeElement);
     });
     it('opens first panel on HOME', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(1).focus()
-        .trigger(window.mockKeyboardEvent('HOME'));
+      html.querySelectorAll('.accordion-title')[1].focus();
 
-      $html.find('.accordion-content').eq(0).should.be.visible;
-      $html.find('.accordion-content').eq(0).should.have.attr('aria-hidden', 'false');
+      html.querySelectorAll('.accordion-title')[1].dispatchEvent(window.mockKeyboardEvent('HOME'));
+
+      FoundationNext.Dom.visible(html.querySelector('.accordion-content')).should.be.true;
+      html.querySelector('.accordion-content').getAttribute('aria-hidden').should.equal('false');
       // Check if focus was moved
-      $html.find('.accordion-title').eq(0)[0].should.be.equal(document.activeElement);
+      html.querySelector('.accordion-title').should.be.equal(document.activeElement);
    });
     it('opens last panel on END', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(1).focus()
-        .trigger(window.mockKeyboardEvent('END'));
+      html.querySelectorAll('.accordion-title')[1].focus();
 
-      $html.find('.accordion-content').eq(2).should.be.visible;
-      $html.find('.accordion-content').eq(2).should.have.attr('aria-hidden', 'false');
+      html.querySelectorAll('.accordion-title')[1].dispatchEvent(window.mockKeyboardEvent('END'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[2]).should.be.true;
+      html.querySelectorAll('.accordion-content')[2].getAttribute('aria-hidden').should.equal('false');
       // Check if focus was moved
-      $html.find('.accordion-title').eq(2)[0].should.be.equal(document.activeElement);
+      html.querySelectorAll('.accordion-title')[2].should.be.equal(document.activeElement);
     });
     it('opens related panel on ENTER', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(1).focus()
-        .trigger(window.mockKeyboardEvent('ENTER'));
+      html.querySelectorAll('.accordion-title')[1].focus();
 
-      $html.find('.accordion-content').eq(1).should.be.visible;
-      $html.find('.accordion-content').eq(1).should.have.attr('aria-hidden', 'false');
+      html.querySelectorAll('.accordion-title')[1].dispatchEvent(window.mockKeyboardEvent('ENTER'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[1]).should.be.true;
+      html.querySelectorAll('.accordion-content')[1].getAttribute('aria-hidden').should.equal('false');
     });
     it('opens related panel on SPACE', function() {
-      $html = $(template).appendTo('body');
-      plugin = new Foundation.Accordion($html, {});
+      html = document.body.appendChild(fixture(template));
+      plugin = new Foundation.Accordion(html, {});
 
-      $html.find('.accordion-title').eq(1).focus()
-        .trigger(window.mockKeyboardEvent('SPACE'));
+      html.querySelectorAll('.accordion-title')[1].focus();
 
-      $html.find('.accordion-content').eq(1).should.be.visible;
-      $html.find('.accordion-content').eq(1).should.have.attr('aria-hidden', 'false');
+      html.querySelectorAll('.accordion-title')[1].dispatchEvent(window.mockKeyboardEvent('SPACE'));
+
+      FoundationNext.Dom.visible(html.querySelectorAll('.accordion-content')[1]).should.be.true;
+      html.querySelectorAll('.accordion-content')[1].getAttribute('aria-hidden').should.equal('false');
     });
   });
 });

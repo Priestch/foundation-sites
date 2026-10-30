@@ -107,18 +107,20 @@ import { DropdownMenu } from 'foundation-sites/js/foundation.dropdownMenu';
 
 ## Initializing
 
-The `.foundation()` function on the jQuery object will kick off every Foundation plugin at once.
+`Foundation.init()` will kick off every Foundation plugin at once. Without arguments the whole document is scanned.
 
 ```js
-$(document).foundation();
+Foundation.init();
 ```
 
-You can also selectively initialize plugins by calling the `.foundation();` method on one or more elements with a plugin.
+You can also selectively initialize plugins by passing a root element or a selector string.
 
 ```js
-$('#foo').foundation(); // initialize all plugins within the element `#foo`
-$('.has-tip').foundation(); // initialize all tooltips on the page.
+Foundation.init(document.querySelector('#foo')); // initialize all plugins within the element `#foo`
+Foundation.init('.has-tip'); // initialize all tooltips on the page.
 ```
+
+> **7.0**: Foundation no longer depends on jQuery. The former `$(document).foundation()` call is replaced by `Foundation.init()`; the data-attribute API and the `*.zf.*` event names are unchanged.
 
 ---
 
@@ -181,15 +183,19 @@ your accordion element would have a slide speed of 250 milliseconds.
 
 ## Adding Plugins After Page Load
 
-If you add new HTML to the DOM, any plugins on those elements won't be initialized by default. Re-call the `.foundation()` function to check for new plugins.
+If you add new HTML to the DOM, any plugins on those elements won't be initialized by default. Re-call `Foundation.init()` on the changed nodes to check for new plugins.
 
 ```js
-$.ajax('assets/partials/kitten-carousel.html', function(data) {
-  $('#kitten-carousel').html(data).foundation();
-});
+fetch('assets/partials/kitten-carousel.html')
+  .then(response => response.text())
+  .then(html => {
+    const carousel = document.querySelector('#kitten-carousel');
+    carousel.innerHTML = html;
+    Foundation.init(carousel);
+  });
 ```
 
-Plugins that are already initialized will be ignored. However for performance reasons, we recommend calling `.foundation()` only on the DOM nodes that changed.
+Plugins that are already initialized will be ignored. However for performance reasons, we recommend calling `Foundation.init()` only on the DOM nodes that changed.
 
 ---
 

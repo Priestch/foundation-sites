@@ -1,0 +1,11 @@
+[   40881ms] [ERROR] ReferenceError: We're sorry, '_init' is not an available method for this element.
+    at jQuery.fn.init.foundation (http://localhost:8931/_build/assets/js/foundation.js:2299:17)
+    at Object.string (http://localhost:8931/_build/assets/js/foundation.js:2193:87)
+    at Object.reInit (http://localhost:8931/_build/assets/js/foundation.js:2199:18)
+    at Context.<anonymous> (http://localhost:8931/test/javascript/js-tests.js:10458:18)
+    at callFn (http://localhost:8931/node_modules/mocha/mocha.js:13311:23)
+    at Runnable$3.run (http://localhost:8931/node_modules/mocha/mocha.js:13299:7)
+    at Runner.runTest (http://localhost:8931/node_modules/mocha/mocha.js:14855:12)
+    at http://localhost:8931/node_modules/mocha/mocha.js:14978:14
+    at next (http://localhost:8931/node_modules/mocha/mocha.js:14770:16)
+    at http://localhost:8931/node_modules/mocha/mocha.js:14780:9 @ http://localhost:8931/_build/assets/js/foundation.js:2201

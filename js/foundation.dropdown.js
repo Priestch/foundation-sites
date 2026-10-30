@@ -1,6 +1,7 @@
-import $ from 'jquery';
 import { Keyboard } from './foundation.util.keyboard';
 import { GetYoDigits, ignoreMousedisappear } from './foundation.core.utils';
+import { datasetOptions, deepMerge } from './foundation.util.dom';
+import { Events } from './foundation.util.events';
 import { Positionable } from './foundation.positionable';
 
 import { Triggers } from './foundation.util.triggers';
@@ -24,13 +25,14 @@ class Dropdown extends Positionable {
    * @param {Object} options - Overrides to the default plugin settings.
    */
   _setup(element, options) {
-    this.$element = element;
-    this.options = $.extend({}, Dropdown.defaults, this.$element.data(), options);
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = deepMerge({}, Dropdown.defaults, datasetOptions(this.$element), options);
     this.className = 'Dropdown'; // ie9 back compat
 
     // Touch and Triggers init are idempotent, just need to make sure they are initialized
-    Touch.init($);
-    Triggers.init($);
+    Touch.init();
+    Triggers.init();
 
     this._init();
 
@@ -47,40 +49,39 @@ class Dropdown extends Positionable {
    * @private
    */
   _init() {
-    var $id = this.$element.attr('id');
+    var id = this.$element.getAttribute('id');
 
-    this.$anchors = $(`[data-toggle="${$id}"]`).length ? $(`[data-toggle="${$id}"]`) : $(`[data-open="${$id}"]`);
-    this.$anchors.attr({
-      'aria-controls': $id,
-      'data-is-focus': false,
-      'data-yeti-box': $id,
-      'aria-haspopup': true,
-      'aria-expanded': false
+    var toggleAnchors = Array.from(document.querySelectorAll(`[data-toggle="${id}"]`));
+    this.$anchors = toggleAnchors.length ? toggleAnchors : Array.from(document.querySelectorAll(`[data-open="${id}"]`));
+    this.$anchors.forEach(function(anchor) {
+      anchor.setAttribute('aria-controls', id);
+      anchor.setAttribute('data-is-focus', 'false');
+      anchor.setAttribute('data-yeti-box', id);
+      anchor.setAttribute('aria-haspopup', 'true');
+      anchor.setAttribute('aria-expanded', 'false');
     });
 
-    this._setCurrentAnchor(this.$anchors.first());
+    this._setCurrentAnchor(this.$anchors[0]);
 
     if(this.options.parentClass){
-      this.$parent = this.$element.parents('.' + this.options.parentClass);
+      this.$parent = this.$element.closest('.' + this.options.parentClass);
     }else{
       this.$parent = null;
     }
 
     // Set [aria-labelledby] on the Dropdown if it is not set
-    if (typeof this.$element.attr('aria-labelledby') === 'undefined') {
+    if (this.$element.getAttribute('aria-labelledby') === null) {
       // Get the anchor ID or create one
-      if (typeof this.$currentAnchor.attr('id') === 'undefined') {
-        this.$currentAnchor.attr('id', GetYoDigits(6, 'dd-anchor'));
+      if (this.$currentAnchor.getAttribute('id') === null) {
+        this.$currentAnchor.setAttribute('id', GetYoDigits(6, 'dd-anchor'));
       }
 
-      this.$element.attr('aria-labelledby', this.$currentAnchor.attr('id'));
+      this.$element.setAttribute('aria-labelledby', this.$currentAnchor.getAttribute('id'));
     }
 
-    this.$element.attr({
-      'aria-hidden': 'true',
-      'data-yeti-box': $id,
-      'data-resize': $id,
-    });
+    this.$element.setAttribute('aria-hidden', 'true');
+    this.$element.setAttribute('data-yeti-box', id);
+    this.$element.setAttribute('data-resize', id);
 
     super._init();
     this._events();
@@ -88,7 +89,7 @@ class Dropdown extends Positionable {
 
   _getDefaultPosition() {
     // handle legacy classnames
-    var position = this.$element[0].className.match(/(top|left|right|bottom)/g);
+    var position = this.$element.className.match(/(top|left|right|bottom)/g);
     if(position) {
       return position[0];
     } else {
@@ -98,7 +99,7 @@ class Dropdown extends Positionable {
 
   _getDefaultAlignment() {
     // handle legacy float approach
-    var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.attr('class'));
+    var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.getAttribute('class'));
     if(horizontalPosition) {
       return horizontalPosition[1];
     }
@@ -115,9 +116,9 @@ class Dropdown extends Positionable {
    * @private
    */
   _setPosition() {
-    this.$element.removeClass(`has-position-${this.position} has-alignment-${this.alignment}`);
+    this.$element.classList.remove(`has-position-${this.position}`, `has-alignment-${this.alignment}`);
     super._setPosition(this.$currentAnchor, this.$element, this.$parent);
-    this.$element.addClass(`has-position-${this.position} has-alignment-${this.alignment}`);
+    this.$element.classList.add(`has-position-${this.position}`, `has-alignment-${this.alignment}`);
   }
 
   /**
@@ -128,7 +129,7 @@ class Dropdown extends Positionable {
    * @private
    */
   _setCurrentAnchor(el) {
-    this.$currentAnchor = $(el);
+    this.$currentAnchor = el.nodeType === 1 ? el : el[0];
   }
 
   /**
@@ -138,17 +139,26 @@ class Dropdown extends Positionable {
    */
   _events() {
     var _this = this,
-        hasTouch = 'ontouchstart' in window || (typeof window.ontouchstart !== 'undefined');
+        hasTouch = 'ontouchstart' in window || (typeof window.ontouchstart !== 'undefined'),
+        element = this.$element;
 
-    this.$element.on({
-      'open.zf.trigger': this.open.bind(this),
-      'close.zf.trigger': this.close.bind(this),
-      'toggle.zf.trigger': this.toggle.bind(this),
-      'resizeme.zf.trigger': this._setPosition.bind(this)
-    });
+    // S9: the four zf.trigger consumers flip to the native event layer -
+    // open/toggle arrive as element-local dual dispatches and close as a
+    // real bubbling event from the Triggers util (S4), resizeme as the
+    // native resize broadcast.
+    Events.on(element, 'open.zf.trigger', this.open.bind(this));
+    Events.on(element, 'close.zf.trigger', this.close.bind(this));
+    Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
+    Events.on(element, 'resizeme.zf.trigger', this._setPosition.bind(this));
 
-    this.$anchors.off('click.zf.trigger')
-      .on('click.zf.trigger', function(e) {
+    // S9: the anchor click consumer flips to the native event layer - real
+    // clicks reach it directly, jQuery-synthesized clicks ride the `.click()`
+    // native shortcut bridge (reveal-native precedent; jQuery suppresses
+    // that shortcut for link anchors, so jQuery-synthesized clicks on `<a>`
+    // anchors stay undelivered - a real click is the user contract).
+    this.$anchors.forEach(anchor => {
+      Events.off(anchor, 'click.zf.trigger');
+      Events.on(anchor, 'click.zf.trigger', function(e) {
         _this._setCurrentAnchor(this);
 
         if (
@@ -156,61 +166,89 @@ class Dropdown extends Positionable {
           (_this.options.forceFollow === false) ||
           // if forceFollow true and hover option true, only prevent default action on 1st click
           // on 2nd click (dropown opened) the default action (e.g. follow a href) gets executed
-          (hasTouch && _this.options.hover && _this.$element.hasClass('is-open') === false)
+          (hasTouch && _this.options.hover && !_this.$element.classList.contains('is-open'))
         ) {
           e.preventDefault();
         }
+      });
     });
 
+    // 7.0 terminal form: hover runs on the native layer. jQuery's
+    // mouseenter/mouseleave are synthesized from real mouseover/mouseout
+    // with a within-element filter - the native port listens for the real
+    // events and applies the same entering/leaving test, so both real
+    // hovers and programmatic 'mouseover' dispatches reach it. The
+    // what-input read is the attribute what-input maintains.
     if(this.options.hover){
-      this.$anchors.off('mouseenter.zf.dropdown mouseleave.zf.dropdown')
-      .on('mouseenter.zf.dropdown', function(){
-        _this._setCurrentAnchor(this);
+      var hoverFilter = function(handler) {
+        return function(e) {
+          // mouseenter semantics: only when the pointer entered from
+          // outside (or from nowhere, like a synthetic dispatch)
+          if (e.relatedTarget && this.contains(e.relatedTarget)) { return; }
+          handler.call(this, e);
+        };
+      };
+      this.$anchors.forEach(anchor => {
+        Events.off(anchor, 'mouseover.zf.dropdown mouseout.zf.dropdown');
+        Events.on(anchor, 'mouseover.zf.dropdown', hoverFilter(function(){
+          _this._setCurrentAnchor(this);
 
-        var bodyData = $('body').data();
-        if(typeof(bodyData.whatinput) === 'undefined' || bodyData.whatinput === 'mouse') {
+          var whatInput = document.body.getAttribute('data-whatinput');
+          if(whatInput === null || whatInput === 'mouse') {
+            clearTimeout(_this.timeout);
+            _this.timeout = setTimeout(function(){
+              _this.open();
+              // the 6.x hover flag rode jQuery's data cache (DOM-invisible);
+              // the expando property keeps it invisible
+              _this.$anchors[0].zfDropdownHover = true;
+            }, _this.options.hoverDelay);
+          }
+        }));
+        Events.on(anchor, 'mouseout.zf.dropdown', ignoreMousedisappear(function(){
           clearTimeout(_this.timeout);
           _this.timeout = setTimeout(function(){
-            _this.open();
-            _this.$anchors.data('hover', true);
+            _this.close();
+            _this.$anchors[0].zfDropdownHover = false;
           }, _this.options.hoverDelay);
-        }
-      }).on('mouseleave.zf.dropdown', ignoreMousedisappear(function(){
-        clearTimeout(_this.timeout);
-        _this.timeout = setTimeout(function(){
-          _this.close();
-          _this.$anchors.data('hover', false);
-        }, _this.options.hoverDelay);
-      }));
+        }));
+      });
       if(this.options.hoverPane){
-        this.$element.off('mouseenter.zf.dropdown mouseleave.zf.dropdown')
-            .on('mouseenter.zf.dropdown', function(){
-              clearTimeout(_this.timeout);
-            }).on('mouseleave.zf.dropdown', ignoreMousedisappear(function(){
-              clearTimeout(_this.timeout);
-              _this.timeout = setTimeout(function(){
-                _this.close();
-                _this.$anchors.data('hover', false);
-              }, _this.options.hoverDelay);
-            }));
+        Events.off(this.$element, 'mouseover.zf.dropdown mouseout.zf.dropdown');
+        Events.on(this.$element, 'mouseover.zf.dropdown', hoverFilter(function(){
+          clearTimeout(_this.timeout);
+        }));
+        Events.on(this.$element, 'mouseout.zf.dropdown', ignoreMousedisappear(function(){
+          clearTimeout(_this.timeout);
+          _this.timeout = setTimeout(function(){
+            _this.close();
+            _this.$anchors[0].zfDropdownHover = false;
+          }, _this.options.hoverDelay);
+        }));
       }
     }
-    this.$anchors.add(this.$element).on('keydown.zf.dropdown', function(e) {
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    this.$anchors.concat([this.$element]).forEach(bound => {
+      Events.off(bound, 'keydown.zf.dropdown');
+      Events.on(bound, 'keydown.zf.dropdown', function(e) {
+        var target = this;
 
-      var $target = $(this);
-
-      Keyboard.handleKey(e, 'Dropdown', {
-        open: function() {
-          if ($target.is(_this.$anchors) && !$target.is('input, textarea')) {
-            _this.open();
-            _this.$element.attr('tabindex', -1).focus();
-            e.preventDefault();
+        Keyboard.handleKey(e, 'Dropdown', {
+          open: function() {
+            if (_this.$anchors.indexOf(target) !== -1 && !target.matches('input, textarea')) {
+              _this.open();
+              _this.$element.setAttribute('tabindex', '-1');
+              _this.$element.focus();
+              e.preventDefault();
+            }
+          },
+          close: function() {
+            _this.close();
+            // the collection .focus() focused the first anchor
+            if (_this.$anchors[0]) { _this.$anchors[0].focus(); }
           }
-        },
-        close: function() {
-          _this.close();
-          _this.$anchors.focus();
-        }
+        });
       });
     });
   }
@@ -221,19 +259,34 @@ class Dropdown extends Positionable {
    * @private
    */
   _addBodyHandler() {
-     var $body = $(document.body).not(this.$element),
+     var body = document.body,
          _this = this;
-     $body.off('click.zf.dropdown tap.zf.dropdown')
-          .on('click.zf.dropdown tap.zf.dropdown', function (e) {
-            if(_this.$anchors.is(e.target) || _this.$anchors.find(e.target).length) {
-              return;
-            }
-            if(_this.$element.is(e.target) || _this.$element.find(e.target).length) {
-              return;
-            }
-            _this.close();
-            $body.off('click.zf.dropdown tap.zf.dropdown');
-          });
+
+     var bodyHandler = function (e) {
+       if(_this.$anchors.indexOf(e.target) !== -1 || _this.$anchors.some(a => a.contains(e.target))) {
+         return;
+       }
+       if(_this.$element === e.target || _this.$element.contains(e.target)) {
+         return;
+       }
+       _this.close();
+       _this._removeBodyHandler();
+     };
+
+     this._removeBodyHandler();
+     // S13: the tap half flips with the Touch util - 'tap' is a real,
+     // bubbling event on the touched element now, so this native body
+     // listener hears it (real clicks arrived through this layer since S9).
+     Events.on(body, 'click.zf.dropdown tap.zf.dropdown', bodyHandler);
+  }
+
+  /**
+   * Removes the body click/tap handler added by `_addBodyHandler`.
+   * @function
+   * @private
+   */
+  _removeBodyHandler() {
+    Events.off(document.body, 'click.zf.dropdown tap.zf.dropdown');
   }
 
   /**
@@ -248,20 +301,26 @@ class Dropdown extends Positionable {
      * Fires to close other open dropdowns, typically when dropdown is opening
      * @event Dropdown#closeme
      */
-    this.$element.trigger('closeme.zf.dropdown', this.$element.attr('id'));
-    this.$anchors.addClass('hover')
-        .attr({'aria-expanded': true});
-    // this.$element/*.show()*/;
+    // S13: the closeme production flipped with the Triggers listener -
+    // a real, bubbling event whose detail carries the plugin id.
+    Events.trigger(this.$element, 'closeme.zf.dropdown', [this.$element.getAttribute('id')]);
 
-    this.$element.addClass('is-opening');
+    // S9: class/ARIA state flips natively.
+    this.$anchors.forEach(anchor => {
+      anchor.classList.add('hover');
+      anchor.setAttribute('aria-expanded', 'true');
+    });
+
+    this.$element.classList.add('is-opening');
     this._setPosition();
-    this.$element.removeClass('is-opening').addClass('is-open')
-        .attr({'aria-hidden': false});
+    this.$element.classList.remove('is-opening');
+    this.$element.classList.add('is-open');
+    this.$element.setAttribute('aria-hidden', 'false');
 
     if(this.options.autoFocus){
-      var $focusable = Keyboard.findFocusable(this.$element);
-      if($focusable.length){
-        $focusable.eq(0).focus();
+      const focusable = Keyboard.findFocusable(this.$element);
+      if(focusable.length){
+        focusable[0].focus();
       }
     }
 
@@ -275,7 +334,9 @@ class Dropdown extends Positionable {
      * Fires once the dropdown is visible.
      * @event Dropdown#show
      */
-    this.$element.trigger('show.zf.dropdown', [this.$element]);
+    // S9: state production through the native event layer; the terminal
+    // form forwards the plain element.
+    Events.trigger(this.$element, 'show.zf.dropdown', [this.$element]);
   }
 
   /**
@@ -284,20 +345,23 @@ class Dropdown extends Positionable {
    * @fires Dropdown#hide
    */
   close() {
-    if(!this.$element.hasClass('is-open')){
+    if(!this.$element.classList.contains('is-open')){
       return false;
     }
-    this.$element.removeClass('is-open')
-        .attr({'aria-hidden': true});
+    // S9: class/ARIA state flips natively.
+    this.$element.classList.remove('is-open');
+    this.$element.setAttribute('aria-hidden', 'true');
 
-    this.$anchors.removeClass('hover')
-        .attr('aria-expanded', false);
+    this.$anchors.forEach(anchor => {
+      anchor.classList.remove('hover');
+      anchor.setAttribute('aria-expanded', 'false');
+    });
 
     /**
      * Fires once the dropdown is no longer visible.
      * @event Dropdown#hide
      */
-    this.$element.trigger('hide.zf.dropdown', [this.$element]);
+    Events.trigger(this.$element, 'hide.zf.dropdown', [this.$element]);
 
     if (this.options.trapFocus) {
       Keyboard.releaseFocus(this.$element);
@@ -309,8 +373,8 @@ class Dropdown extends Positionable {
    * @function
    */
   toggle() {
-    if(this.$element.hasClass('is-open')){
-      if(this.$anchors.data('hover')) return;
+    if(this.$element.classList.contains('is-open')){
+      if(this.$anchors[0] && this.$anchors[0].zfDropdownHover) return;
       this.close();
     }else{
       this.open();
@@ -322,10 +386,15 @@ class Dropdown extends Positionable {
    * @function
    */
   _destroy() {
-    this.$element.off('.zf.trigger').hide();
-    this.$anchors.off('.zf.dropdown');
-    $(document.body).off('click.zf.dropdown tap.zf.dropdown');
+    // The zf.trigger listeners on the pane and the dropdown listeners on
+    // the anchors, by bare namespaces; the destroy cleanup hides the pane.
+    Events.off(this.$element, '.zf.trigger');
+    this.$anchors.forEach(anchor => {
+      Events.off(anchor, '.zf.dropdown');
+    });
+    this._removeBodyHandler();
 
+    this.$element.style.display = 'none';
   }
 }
 

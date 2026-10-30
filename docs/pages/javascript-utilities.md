@@ -111,7 +111,7 @@ $(window).on('changed.zf.mediaquery', function(event, newSize, oldSize){});
 
 Two handy utilities, one little file.
 
-`Foundation.Motion` is the same JavaScript used by the [Motion-UI](https://github.com/foundation/motion-ui/) library, and is included in Foundation 6. See the GitHub page for more details.
+`Foundation.Motion` implements the same class lifecycle as the JavaScript helpers of the [Motion-UI](https://github.com/foundation/motion-ui/) library (whose classes and Sass mixins it drives), and is included in Foundation. See the GitHub page for more details.
 
 `Foundation.Move` is a simple helper function for utilizing browsers' `requestAnimationFrame` method for hardware acceleration. Invoke like so:
 ```js
@@ -144,10 +144,16 @@ This will execute your callback function after all the images in your jQuery col
 
 Allows you to add `swipe*` and pseudo-drag events to elements.
 
+> **7.0 note:** the jQuery-side surfaces `$.spotSwipe` and
+> `$('selector').addTouch()` are gone. Bind native listeners (or use the
+> `Foundation.Touch` helpers, e.g. `Foundation.Touch.addTouch(element)`) and
+> listen for the events with `element.addEventListener`. jQuery-synthesized
+> events no longer reach native listeners.
+
 ```js
-$('selector').addTouch().on('mousemove', handleDrag);
+Foundation.Touch.addTouch(document.querySelector('#my-element'));
 // Binds elements to touch events. Used in the Slider plugin for mobile devices.
-$('selector').on('swipeleft', handleLeftSwipe);
+document.querySelector('#my-element').addEventListener('swipeleft', handleLeftSwipe);
 // Binds elements to swipe events. Used in the Orbit plugin for mobile devices.
 ```
 
