@@ -2899,14 +2899,28 @@ Triggers.Initializers.addGlobalListeners = function() {
 };
 
 
-Triggers.init = function (__, Foundation) {
-  onLoad(window, function () {
+Triggers.init = function (Foundation) {
+  // 7.0: arm at DOMContentLoaded (or immediately once the DOM is parsed)
+  // instead of window load. A stalled third-party resource - an embedded
+  // video iframe that hangs without erroring - would otherwise leave every
+  // [data-open]/[data-close]/[data-toggle] interaction dead until it gives
+  // up, with nothing in the console. Arming at DOM-ready is safe for the
+  // delegation (the document-level listeners resolve targets at event
+  // time), and the initial Foundation.init() reflow completes before
+  // DOMContentLoaded fires, so the closeme yeti-box snapshot still sees
+  // the full plugin set.
+  const arm = function () {
     if (triggersInitialized !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
       triggersInitialized = true;
     }
-  });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', arm);
+  } else {
+    arm();
+  }
 
   if(Foundation) {
     Foundation.Triggers = Triggers;
@@ -3766,6 +3780,10 @@ class Abide extends Plugin {
    */
   matchValidation($el, validators, required) {
     required = required ? true : false;
+    // The 6.x third validator argument was the parent element; validateInput
+    // resolves its own `el` via toEl, matchValidation needs the same step
+    // (the bare `el` here was a crash on every data-validator run).
+    const el = toEl($el);
 
     var clear = validators.split(' ').map((v) => {
       return this.options.validators[v]($el, required, el.parentElement);
@@ -5427,8 +5445,6 @@ class Drilldown extends Plugin {
     // jQuery's parentsUntil(root, sel) - the [data-submenu] ancestors
     // strictly below the drilldown root
     var submenus = [];
-    elem.firstElementChild ? elem.firstElementChild.parentElement : elem;
-    elem.querySelector(':scope > *') ? elem.querySelector(':scope > *').parentElement : elem;
     var walker = elem.firstElementChild;
     while (walker && walker !== this.$element) {
       if (walker.matches('[data-submenu]')) { submenus.push(walker); }
@@ -13491,13 +13507,16 @@ class ResponsiveAccordionTabs extends Plugin {
       panelsContainer.remove();
     } else if (toSet === 'tabs') {
       var tabsContent = document.querySelector(`[data-tabs-content=${elementId}]`);
-      var placeholder = document.getElementById('tabs-placeholder-' + elementId);
-      if (placeholder) {
+      // A distinct name from the accordion branch's `placeholder`: two
+      // function-scoped vars of the same name confused the binding context
+      // (block-scoped-var).
+      var tabsPlaceholder = document.getElementById('tabs-placeholder-' + elementId);
+      if (tabsPlaceholder) {
         tabsContent = document.createElement('div');
         tabsContent.className = 'tabs-content';
-        placeholder.parentElement.insertBefore(tabsContent, placeholder.nextSibling);
+        tabsPlaceholder.parentElement.insertBefore(tabsContent, tabsPlaceholder.nextSibling);
         tabsContent.setAttribute('data-tabs-content', elementId);
-        placeholder.remove();
+        tabsPlaceholder.remove();
       } else {
         tabsContent = document.createElement('div');
         tabsContent.className = 'tabs-content';
@@ -13603,7 +13622,7 @@ Foundation.Touch = Touch;
 
 // Touch and Triggers init are side-effect driven, just idempotent setup.
 Touch.init();
-Triggers.init($, Foundation);
+Triggers.init(Foundation);
 MediaQuery._init();
 
 Foundation.plugin(Abide, 'Abide');

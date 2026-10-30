@@ -518,8 +518,6 @@ class Drilldown extends Plugin {
     // jQuery's parentsUntil(root, sel) - the [data-submenu] ancestors
     // strictly below the drilldown root
     var submenus = [];
-    var anc = elem.firstElementChild ? elem.firstElementChild.parentElement : elem;
-    anc = elem.querySelector(':scope > *') ? elem.querySelector(':scope > *').parentElement : elem;
     var walker = elem.firstElementChild;
     while (walker && walker !== this.$element) {
       if (walker.matches('[data-submenu]')) { submenus.push(walker); }

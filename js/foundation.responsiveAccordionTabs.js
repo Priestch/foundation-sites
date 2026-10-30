@@ -263,13 +263,16 @@ class ResponsiveAccordionTabs extends Plugin {
       panelsContainer.remove();
     } else if (toSet === 'tabs') {
       var tabsContent = document.querySelector(`[data-tabs-content=${elementId}]`);
-      var placeholder = document.getElementById('tabs-placeholder-' + elementId);
-      if (placeholder) {
+      // A distinct name from the accordion branch's `placeholder`: two
+      // function-scoped vars of the same name confused the binding context
+      // (block-scoped-var).
+      var tabsPlaceholder = document.getElementById('tabs-placeholder-' + elementId);
+      if (tabsPlaceholder) {
         tabsContent = document.createElement('div');
         tabsContent.className = 'tabs-content';
-        placeholder.parentElement.insertBefore(tabsContent, placeholder.nextSibling);
+        tabsPlaceholder.parentElement.insertBefore(tabsContent, tabsPlaceholder.nextSibling);
         tabsContent.setAttribute('data-tabs-content', elementId);
-        placeholder.remove();
+        tabsPlaceholder.remove();
       } else {
         tabsContent = document.createElement('div');
         tabsContent.className = 'tabs-content';

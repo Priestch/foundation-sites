@@ -796,6 +796,10 @@ class Abide extends Plugin {
    */
   matchValidation($el, validators, required) {
     required = required ? true : false;
+    // The 6.x third validator argument was the parent element; validateInput
+    // resolves its own `el` via toEl, matchValidation needs the same step
+    // (the bare `el` here was a crash on every data-validator run).
+    const el = toEl($el);
 
     var clear = validators.split(' ').map((v) => {
       return this.options.validators[v]($el, required, el.parentElement);
