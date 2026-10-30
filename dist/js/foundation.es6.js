@@ -10682,7 +10682,11 @@ class Slider extends Plugin {
     this.$handle = this.handles[0];
     this.$input = this.inputs.length ? this.inputs[0] : document.getElementById(this.$handle.getAttribute('aria-controls'));
     this.$fill = this.$element.querySelector('[data-slider-fill]');
-    this.$fill.style[this.options.vertical ? 'height' : 'width'] = '0';
+    // Sliders without a fill element are valid markup (the 6.x empty
+    // collection made every fill write a no-op; null keeps that contract).
+    if (this.$fill) {
+      this.$fill.style[this.options.vertical ? 'height' : 'width'] = '0';
+    }
 
     // State attributes and classes go through the native layer (7.0 line A, S10).
     if (this.options.disabled || this.$element.classList.contains(this.options.disabledClass)) {
@@ -10896,12 +10900,14 @@ class Slider extends Plugin {
 
       if (!_this.options.doubleSided) {
         //if single-handled, a simple method to expand the fill bar
-        _this.$fill.style[hOrW] = `${pctOfBar * 100}%`;
+        if (_this.$fill) { _this.$fill.style[hOrW] = `${pctOfBar * 100}%`; }
       } else {
         //otherwise, use the css object we created above
-        Object.keys(css).forEach(function(prop) {
-          _this.$fill.style[prop] = css[prop];
-        });
+        if (_this.$fill) {
+          Object.keys(css).forEach(function(prop) {
+            _this.$fill.style[prop] = css[prop];
+          });
+        }
       }
     });
 
@@ -11137,7 +11143,7 @@ class Slider extends Plugin {
       Events.off(handleEl, 'mousedown.zf.slider selectstart.zf.slider touchmove.zf.slider');
       Events.on(handleEl, 'mousedown.zf.slider', function(e) {
         handleEl.classList.add('is-dragging');
-        _this.$fill.classList.add('is-dragging');//
+        if (_this.$fill) { _this.$fill.classList.add('is-dragging'); }
         _this.$element.zfSliderDragging = true;
 
         curHandle = e.currentTarget;
@@ -11150,7 +11156,7 @@ class Slider extends Plugin {
           _this._handleEvent(ev, curHandle);
 
           handleEl.classList.remove('is-dragging');
-          _this.$fill.classList.remove('is-dragging');
+          if (_this.$fill) { _this.$fill.classList.remove('is-dragging'); }
           _this.$element.zfSliderDragging = false;
 
           Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
@@ -12775,7 +12781,7 @@ class Tooltip extends Positionable {
     this.isClick = false;
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init();
 
     this._init();
   }

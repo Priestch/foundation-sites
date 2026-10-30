@@ -5,6 +5,7 @@ var webpackStream = require('webpack-stream');
 var webpack = require('webpack');
 var named = require('vinyl-named');
 var sourcemaps = require('gulp-sourcemaps');
+var merge = require('merge-stream');
 
 var utils = require('../utils.js');
 var CONFIG = require('../config.js');
@@ -154,7 +155,12 @@ gulp.task('javascript:deps', function() {
 });
 
 gulp.task('javascript:docs', function() {
-  return gulp.src(CONFIG.JS_DOCS)
-    .pipe(concat('docs.js'))
-    .pipe(gulp.dest('_build/assets/js'));
+  return merge(
+    gulp.src(CONFIG.JS_DOCS_BOOT)
+      .pipe(concat('docs.js'))
+      .pipe(gulp.dest('_build/assets/js')),
+    gulp.src(CONFIG.JS_DOCS_CHROME)
+      .pipe(concat('docs-chrome.js'))
+      .pipe(gulp.dest('_build/assets/js'))
+  );
 });

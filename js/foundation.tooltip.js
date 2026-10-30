@@ -45,7 +45,7 @@ class Tooltip extends Positionable {
     this.isClick = false;
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init();
 
     this._init();
   }

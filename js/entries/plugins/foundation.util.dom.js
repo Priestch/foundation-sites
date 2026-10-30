@@ -1,4 +1,4 @@
 import { Foundation } from './foundation.core';
-import { q, visible, datasetOptions } from '../../foundation.util.dom';
+import { q, visible, datasetOptions, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox, deepMerge } from '../../foundation.util.dom';
 
-export { Foundation, q, visible, datasetOptions };
+export { Foundation, q, visible, datasetOptions, formControls, isButton, isSubmit, isReset, isRadio, isCheckbox, deepMerge };
