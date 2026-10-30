@@ -98,19 +98,15 @@ $menu-centered-back-compat: true !default;
 $menu-icons-back-compat: true !default;
 
 /// Creates the base styles for a Menu.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin menu-base(
-  $global-flexbox: $global-flexbox
-) {
+@mixin menu-base() {
   padding: 0;
   margin: 0;
   list-style: none;
   position: relative;
 
-  @if $global-flexbox {
-    display: flex;
-    flex-wrap: wrap;
-  }
+  display: flex;
+  flex-wrap: wrap;
+
 
   li {
     @include disable-mouse-outline;
@@ -138,123 +134,74 @@ $menu-icons-back-compat: true !default;
 }
 
 /// Expands the items of a Menu, so each item is the same width.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin menu-expand(
-  $global-flexbox: $global-flexbox
-) {
-  @if $global-flexbox {
-    li {
-      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
-    }
+@mixin menu-expand() {
+  li {
+    flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
   }
-  @else {
-    display: table;
-    width: 100%;
 
-    > li {
-      display: table-cell;
-      vertical-align: middle;
-    }
-  }
+
 }
 
 /// Align menu items.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin menu-align(
   $alignment,
-  $global-flexbox: $global-flexbox
 ) {
   @if $alignment == left {
-    @if $global-flexbox {
-      justify-content: flex-start;
-    }
-    @else {
-      text-align: $global-left;
-    }
+    justify-content: flex-start;
+  
+
   }
   @else if $alignment == right {
-    @if $global-flexbox {
-      li {
-        display: flex;
-        justify-content: flex-end;
+    li {
+      display: flex;
+      justify-content: flex-end;
 
-        .submenu li {
-          justify-content: flex-start;
-        }
-      }
-
-      &.vertical li {
-        display: block;
-        text-align: $global-right;
-
-        .submenu li {
-          text-align: $global-right;
-        }
+      .submenu li {
+        justify-content: flex-start;
       }
     }
-    @else {
+
+    &.vertical li {
+      display: block;
       text-align: $global-right;
 
       .submenu li {
-        text-align: $global-left;
-      }
-
-      &.vertical {
-        .submenu li {
-          text-align: $global-right;
-        }
+        text-align: $global-right;
       }
     }
+  
+
   }
   @else if $alignment == center {
-    @if $global-flexbox {
-      li {
-        display: flex;
-        justify-content: center;
-
-        .submenu li {
-          justify-content: flex-start;
-        }
-      }
-    }
-    @else {
-      text-align: center;
+    li {
+      display: flex;
+      justify-content: center;
 
       .submenu li {
-        text-align: $global-left;
+        justify-content: flex-start;
       }
     }
+  
+
   }
 }
 
 /// Sets the direction of a Menu.
 /// @param {Keyword} $dir [horizontal] - Direction of the Menu. Can be `horizontal` or `vertical`.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin menu-direction(
   $dir: horizontal,
-  $global-flexbox: $global-flexbox
 ) {
   @if $dir == horizontal {
-    @if $global-flexbox {
-      flex-wrap: wrap;
-      flex-direction: row;
-    }
-    @else {
-      li {
-        display: inline-block;
-      }
-    }
+    flex-wrap: wrap;
+    flex-direction: row;
+  
+
   }
   @else if $dir == vertical {
-    @if $global-flexbox {
-      flex-wrap: nowrap;
-      flex-direction: column;
-    }
-    @else {
-      li {
-        display: block;
-      }
-    }
+    flex-wrap: nowrap;
+    flex-direction: column;
+  
+
   }
   @else {
     @warn 'The direction used for menu-direction() must be horizontal or vertical.';
@@ -264,15 +211,12 @@ $menu-icons-back-compat: true !default;
 /// Creates a simple Menu, which has no padding or hover state.
 /// @param {Keyword} $dir [$global-left] - Direction of the menu. This effects the side of the `<li>` that receives the margin.
 /// @param {Number} $margin [$menu-simple-margin] - The margin to apply to each `<li>`.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin menu-simple(
   $dir: $global-left,
   $margin: $menu-simple-margin,
-  $global-flexbox: $global-flexbox
 ) {
-  @if $global-flexbox {
-    align-items: center;
-  }
+  align-items: center;
+
 
   li + li {
     margin-#{$dir}: $margin;
@@ -302,145 +246,103 @@ $menu-icons-back-compat: true !default;
 }
 
 /// Adds basic styles for icons in menus.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin menu-icons(
-  $global-flexbox: $global-flexbox
-) {
-  @if $global-flexbox {
-    a {
-      display: flex;
-    }
+@mixin menu-icons() {
+  a {
+    display: flex;
   }
-  @else {
-    img,
-    i,
-    svg {
-      vertical-align: middle;
 
-      + span {
-        vertical-align: middle;
-      }
-    }
-  }
+
 }
 
 /// Align top/bottom icons within a menu.
 /// @param {Keyword} $alignment [center] - Alignment of the icon
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin menu-icon-alignment(
   $alignment: center,
-  $global-flexbox: $global-flexbox
 ) {
-  @if $global-flexbox {
-    &.icon-top,
-    &.icon-bottom {
-      li a {
-        img,
-        i,
-        svg {
-          @if $alignment == left {
-            text-align: left;
-          }
+  &.icon-top,
+  &.icon-bottom {
+    li a {
+      img,
+      i,
+      svg {
+        @if $alignment == left {
+          text-align: left;
+        }
 
-          @else if $alignment == right {
-            text-align: right;
-          }
+        @else if $alignment == right {
+          text-align: right;
+        }
 
-          @else {
-            text-align: center;
-          }
+        @else {
+          text-align: center;
         }
       }
     }
   }
+
+
 }
 
 /// Adds position classes for icons within a menu.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin menu-icon-position(
   $position: left,
   $spacing: $menu-icon-spacing,
-  $global-flexbox: $global-flexbox
 ) {
   @if $position == left {
     li a {
-      @if $global-flexbox {
-        flex-flow: row nowrap;
-      }
+      flex-flow: row nowrap;
+    
 
       img,
       i,
       svg {
         margin-#{$global-right}: $spacing;
 
-        @if not $global-flexbox {
-          display: inline-block;
-        }
       }
     }
   }
   @else if $position == right {
     li a {
-      @if $global-flexbox {
-        flex-flow: row nowrap;
-      }
+      flex-flow: row nowrap;
+    
 
       img,
       i,
       svg {
         margin-#{$global-left}: $spacing;
 
-        @if not $global-flexbox {
-          display: inline-block;
-        }
       }
     }
   }
   @else if $position == top {
     li a {
-      @if $global-flexbox {
-        flex-flow: column nowrap;
-      }
-      @else {
-        text-align: center;
-      }
+      flex-flow: column nowrap;
+    
 
       img,
       i,
       svg {
-        @if not $global-flexbox {
-          display: block;
-          margin: 0 auto $spacing;
-        }
-        @else {
-          align-self: stretch;
-          margin-bottom: $spacing;
-          text-align: center;
-        }
+        align-self: stretch;
+        margin-bottom: $spacing;
+        text-align: center;
+      
+
       }
     }
   }
   @else if $position == bottom {
     li a {
-      @if $global-flexbox {
-        flex-flow: column nowrap;
-      }
-      @else {
-        text-align: center;
-      }
+      flex-flow: column nowrap;
+    
 
       img,
       i,
       svg {
-        @if not $global-flexbox {
-          display: block;
-          margin: $spacing auto 0;
-        }
-        @else {
-          align-self: stretch;
-          margin-bottom: $spacing;
-          text-align: center;
-        }
+        align-self: stretch;
+        margin-bottom: $spacing;
+        text-align: center;
+      
+
       }
     }
   }
@@ -458,52 +360,48 @@ $menu-icons-back-compat: true !default;
   background: $menu-item-background-active;
   color: color-pick-contrast($menu-item-background-active, ($menu-item-color-active, $menu-item-color-alt-active));
 }
-
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin foundation-menu(
-  $global-flexbox: $global-flexbox
-) {
+@mixin foundation-menu() {
   .menu {
-    @include menu-base($global-flexbox: $global-flexbox);
+    @include menu-base;
 
     // Default orientation: horizontal
     &, &.horizontal {
-      @include menu-direction(horizontal, $global-flexbox: $global-flexbox);
+      @include menu-direction(horizontal);
     }
 
     // Vertical orientation modifier
     &.vertical {
-      @include menu-direction(vertical, $global-flexbox: $global-flexbox);
-      @include menu-icon-alignment(left, $global-flexbox: $global-flexbox);
+      @include menu-direction(vertical);
+      @include menu-icon-alignment(left);
     }
 
     // Even-width modifier for horizontal orientation
     &.expanded {
-      @include menu-expand($global-flexbox: $global-flexbox);
-      @include menu-icon-alignment(left, $global-flexbox: $global-flexbox);
+      @include menu-expand;
+      @include menu-icon-alignment(left);
     }
 
     // Simple
     &.simple {
-      @include menu-simple($global-flexbox: $global-flexbox);
+      @include menu-simple;
     }
 
     // Breakpoint specific versions
     @include zf-each-breakpoint($small: false) using ($size) {
       &.#{$size}-horizontal {
-        @include menu-direction(horizontal, $global-flexbox: $global-flexbox);
+        @include menu-direction(horizontal);
       }
 
       &.#{$size}-vertical {
-        @include menu-direction(vertical, $global-flexbox: $global-flexbox);
+        @include menu-direction(vertical);
       }
 
       &.#{$size}-expanded {
-        @include menu-expand($global-flexbox: $global-flexbox);
+        @include menu-expand;
       }
 
       &.#{$size}-simple {
-        @include menu-expand($global-flexbox: $global-flexbox);
+        @include menu-expand;
       }
     }
 
@@ -514,7 +412,7 @@ $menu-icons-back-compat: true !default;
 
     // Icon Base Styles
     &.icons {
-      @include menu-icons($global-flexbox: $global-flexbox);
+      @include menu-icons;
     }
 
     // Backward Compatibility for active state
@@ -523,7 +421,7 @@ $menu-icons-back-compat: true !default;
       &.icon-right,
       &.icon-bottom,
       &.icon-left {
-        @include menu-icons($global-flexbox: $global-flexbox);
+        @include menu-icons;
       }
     }
 
@@ -533,22 +431,22 @@ $menu-icons-back-compat: true !default;
     &.nested {
       // Icon Left
       &.icon-left {
-        @include menu-icon-position(left, $global-flexbox: $global-flexbox);
+        @include menu-icon-position(left);
       }
 
       // Icon Right
       &.icon-right {
-        @include menu-icon-position(right, $global-flexbox: $global-flexbox);
+        @include menu-icon-position(right);
       }
 
       // Icon Top
       &.icon-top {
-        @include menu-icon-position(top, $global-flexbox: $global-flexbox);
+        @include menu-icon-position(top);
       }
 
       // Icon Bottom
       &.icon-bottom {
-        @include menu-icon-position(bottom, $global-flexbox: $global-flexbox);
+        @include menu-icon-position(bottom);
       }
     }
 
@@ -566,13 +464,13 @@ $menu-icons-back-compat: true !default;
 
     // Align left
     &.align-#{$global-left} {
-      @include menu-align(left, $global-flexbox: $global-flexbox);
+      @include menu-align(left);
     }
 
     // Align right
     &.align-#{$global-right} {
-      @include menu-align(right, $global-flexbox: $global-flexbox);
-      @include menu-icon-alignment(right, $global-flexbox: $global-flexbox);
+      @include menu-align(right);
+      @include menu-icon-alignment(right);
 
       .nested {
         @include menu-nested($nested-alignment: right);
@@ -592,11 +490,10 @@ $menu-icons-back-compat: true !default;
   @if $menu-centered-back-compat {
     .menu-centered {
       > .menu {
-        @if $global-flexbox {
-          justify-content: center;
-        }
+        justify-content: center;
+      
 
-        @include menu-align(center, $global-flexbox: $global-flexbox);
+        @include menu-align(center);
       }
     }
   }

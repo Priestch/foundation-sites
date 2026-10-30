@@ -220,10 +220,8 @@ $offcanvas-push-zindex: 11;
       'Keeps the separator default while the legacy cells are null');
   }
 
-  @include it('surfaces the util-owned global-flexbox through the facade [function]') {
-    @include assert-equal($global-flexbox, true,
-      'Surfaces the util mixins module cell through the components facade');
-  }
+  // 7.0: the global-flexbox cell and its facade pin are gone with the float
+  // mode - flexbox is the only layout mode and no branch reads a switch.
 }
 
 @include describe('components module facade: B7 batch') {

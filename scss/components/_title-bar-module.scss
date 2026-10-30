@@ -47,24 +47,16 @@ $titlebar-text-font-weight: bold !default;
 /// Spacing between the menu icon and text inside a title bar.
 /// @type Length
 $titlebar-icon-spacing: 0.25rem !default;
-
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin foundation-title-bar(
-  $global-flexbox: $global-flexbox
-) {
+@mixin foundation-title-bar() {
   .title-bar {
     padding: $titlebar-padding;
     background: $titlebar-background;
     color: $titlebar-color;
 
-    @if $global-flexbox {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    @else {
-      @include clearfix($global-flexbox: $global-flexbox);
-    }
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  
 
     .menu-icon {
       margin-#{$global-left}: $titlebar-icon-spacing;
@@ -72,26 +64,15 @@ $titlebar-icon-spacing: 0.25rem !default;
     }
   }
 
-  @if $global-flexbox {
-    .title-bar-left,
-    .title-bar-right {
-      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
-    }
-
-    .title-bar-right {
-      text-align: right;
-    }
+  .title-bar-left,
+  .title-bar-right {
+    flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
   }
-  @else {
-    .title-bar-left {
-      float: left;
-    }
 
-    .title-bar-right {
-      float: right;
-      text-align: right;
-    }
+  .title-bar-right {
+    text-align: right;
   }
+
 
   .title-bar-title {
     display: inline-block;

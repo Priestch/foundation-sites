@@ -67,17 +67,13 @@
 @use 'error' as forms-error;
 
 /// Adds the global form styles.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
-///   flexbox mode, threaded by `foundation-everything()` (slice B9); defaults
-///   to the ambient `$global-flexbox` setting, so direct calls are unchanged.
-@mixin foundation-forms(
-  $global-flexbox: util.$global-flexbox
-) {
+/// Adds the global form styles.
+@mixin foundation-forms() {
   @include forms-text.foundation-form-text;
   @include forms-checkbox.foundation-form-checkbox;
   @include forms-label.foundation-form-label;
   @include forms-help-text.foundation-form-helptext;
-  @include forms-input-group.foundation-form-prepostfix($global-flexbox: $global-flexbox);
+  @include forms-input-group.foundation-form-prepostfix;
   @include forms-fieldset.foundation-form-fieldset;
   @include forms-select.foundation-form-select;
   @include forms-error.foundation-form-error;

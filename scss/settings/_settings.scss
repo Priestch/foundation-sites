@@ -63,7 +63,7 @@
 @use "sass:color";
 // Slice B9 disposition: this file keeps `@import 'util/util'` on purpose.
 // Every `@use` form collides with the settings assignments below: a starred
-// use surfaces the util-owned settings ($global-font-size, $global-flexbox,
+// use surfaces the util-owned settings ($global-font-size,
 // $breakpoints, $breakpoints-hidpi, $print-breakpoint, $breakpoint-classes,
 // $black/$white/$dark-gray, ...) that this file re-assigns, and a namespaced
 // use would force qualifying every rem-calc()/zf-* call in the file — the
@@ -105,7 +105,6 @@ $global-radius: 0;
 $global-menu-padding: 0.7rem 1rem;
 $global-menu-nested-margin: 1rem;
 $global-text-direction: ltr;
-$global-flexbox: true;
 $global-prototype-breakpoints: false;
 $global-button-cursor: auto;
 $global-color-pick-contrast-tolerance: 0;

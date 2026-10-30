@@ -66,7 +66,6 @@ $card-margin-bottom: $global-margin !default;
 /// @param {List} $border - Border around the card.
 /// @param {List} $radius - border radius of the card.
 /// @param {List} $shadow - box shadow of the card.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin card-container(
   $background: $card-background,
   $color: $card-font-color,
@@ -74,13 +73,11 @@ $card-margin-bottom: $global-margin !default;
   $border: $card-border,
   $radius: $card-border-radius,
   $shadow: $card-shadow,
-  $global-flexbox: $global-flexbox
 ) {
-  @if $global-flexbox {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
 
   margin-bottom: $margin;
 
@@ -99,16 +96,13 @@ $card-margin-bottom: $global-margin !default;
 }
 
 /// Adds styles for a card divider.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin card-divider(
   $background: $card-divider-background,
   $padding: $card-padding,
-  $global-flexbox: $global-flexbox
 ) {
-  @if $global-flexbox {
-    display: flex;
-    flex: 0 1 auto;
-  }
+  display: flex;
+  flex: 0 1 auto;
+
 
   padding: $padding;
   background: $background;
@@ -119,14 +113,11 @@ $card-margin-bottom: $global-margin !default;
 }
 
 /// Adds styles for a card section.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
 @mixin card-section(
   $padding: $card-padding,
-  $global-flexbox: $global-flexbox
 ) {
-  @if $global-flexbox {
-    flex: 1 0 auto;
-  }
+  flex: 1 0 auto;
+
 
   padding: $padding;
 
@@ -135,19 +126,17 @@ $card-margin-bottom: $global-margin !default;
   }
 }
 
-@mixin foundation-card(
-  $global-flexbox: $global-flexbox
-) {
+@mixin foundation-card() {
   .card {
-    @include card-container($global-flexbox: $global-flexbox);
+    @include card-container;
   }
 
   .card-divider {
-    @include card-divider($global-flexbox: $global-flexbox);
+    @include card-divider;
   }
 
   .card-section {
-    @include card-section($global-flexbox: $global-flexbox);
+    @include card-section;
   }
 
   // For IE 11 - Flexbug

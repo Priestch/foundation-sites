@@ -21,11 +21,6 @@ $-zf-bp-value: null;
 // Settings variable referenced by the mixins below. Declared here because
 // _mixins.scss is its only consumer; the `!default` mirrors the library
 // default in scss/_global.scss, and through the `util/util` @forward facade it
-// stays live-linked with the import-world global, so user settings overrides
-// keep winning. The color settings ($black, $dark-gray, ...) are declared by
-// _color.scss and reached through `@use 'color' as *`.
-$global-flexbox: true !default;
-
 /// Creates an inner box-shadow for only one side
 ///
 /// @param {Keyword} $side - Side the shadow is supposed to appear. Can be `top`, `left`, `right` or `bottom`.
@@ -186,21 +181,18 @@ $global-flexbox: true !default;
 /// The clearfix is augmented with specific styles to prevent borders in flexbox environments
 /// @link http://nicolasgallagher.com/micro-clearfix-hack/ Micro Clearfix Hack
 /// @link http://danisadesigner.com/blog/flexbox-clear-fix-pseudo-elements/ Flexbox fix
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
 ///   flexbox mode, threaded by the slice B9 refactoring; defaults to the
 ///   ambient `$global-flexbox` setting, so direct calls are unchanged.
-@mixin clearfix(
-  $global-flexbox: $global-flexbox
-) {
+@mixin clearfix() {
   &::before,
   &::after {
     display: table;
     content: ' ';
 
-    @if $global-flexbox {
-      flex-basis: 0;
-      order: 1;
-    }
+    flex-basis: 0;
+    order: 1;
+  
+
   }
 
   &::after {

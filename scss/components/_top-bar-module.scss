@@ -42,21 +42,14 @@ $topbar-input-width: 200px !default;
 $topbar-unstack-breakpoint: medium !default;
 
 /// Adds styles for a top bar container.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin top-bar-container(
-  $global-flexbox: $global-flexbox
-) {
+@mixin top-bar-container() {
   padding: $topbar-padding;
 
-  @if $global-flexbox {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-  }
-  @else {
-    @include clearfix($global-flexbox: $global-flexbox);
-  }
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
 
   &,
   ul {
@@ -88,70 +81,47 @@ $topbar-unstack-breakpoint: medium !default;
 }
 
 /// Makes sections of a top bar stack on top of each other.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin top-bar-stacked(
-  $global-flexbox: $global-flexbox
-) {
-  @if $global-flexbox {
-    flex-wrap: wrap;
+@mixin top-bar-stacked() {
+  flex-wrap: wrap;
 
-    // Sub-sections
-    .top-bar-left,
-    .top-bar-right {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
+  // Sub-sections
+  .top-bar-left,
+  .top-bar-right {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
-  @else {
-    // Sub-sections
-    .top-bar-left,
-    .top-bar-right {
-      width: 100%;
-    }
-  }
+
+
 }
 
 /// Undoes the CSS applied by the `top-bar-stacked()` mixin.
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin top-bar-unstack(
-  $global-flexbox: $global-flexbox
-) {
-  @if $global-flexbox {
-    flex-wrap: nowrap;
+@mixin top-bar-unstack() {
+  flex-wrap: nowrap;
 
-    .top-bar-left {
-      flex: 1 1 auto;
-      margin-right: auto;
-    }
+  .top-bar-left {
+    flex: 1 1 auto;
+    margin-right: auto;
+  }
 
-    .top-bar-right {
-      flex: 0 1 auto;
-      margin-left: auto;
-    }
+  .top-bar-right {
+    flex: 0 1 auto;
+    margin-left: auto;
   }
-  @else {
-    .top-bar-left,
-    .top-bar-right {
-      width: auto;
-    }
-  }
+
+
 }
-
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
-@mixin foundation-top-bar(
-  $global-flexbox: $global-flexbox
-) {
+@mixin foundation-top-bar() {
   .top-bar {
-    @include top-bar-container($global-flexbox: $global-flexbox);
+    @include top-bar-container;
   }
   .top-bar {
     // Stack on small screens by default
-    @include top-bar-stacked($global-flexbox: $global-flexbox);
+    @include top-bar-stacked;
   }
   // Top bar container
   .top-bar {
     @include breakpoint($topbar-unstack-breakpoint) {
-      @include top-bar-unstack($global-flexbox: $global-flexbox);
+      @include top-bar-unstack;
     }
 
     // Generate classes for stacking on each screen size (defined in $breakpoint-classes)
@@ -159,7 +129,7 @@ $topbar-unstack-breakpoint: medium !default;
       @if $size != $zf-zero-breakpoint {
         &.stacked-for-#{$size} {
           @include breakpoint($size down) {
-            @include top-bar-stacked($global-flexbox: $global-flexbox);
+            @include top-bar-stacked;
           }
         }
       }
@@ -167,34 +137,15 @@ $topbar-unstack-breakpoint: medium !default;
   }
 
   // Sub-sections
-  @if $global-flexbox {
-    .top-bar-title {
-      flex: 0 0 auto;
-      margin: $topbar-title-spacing;
-    }
-
-    .top-bar-left,
-    .top-bar-right {
-      flex: 0 0 auto;
-    }
+  .top-bar-title {
+    flex: 0 0 auto;
+    margin: $topbar-title-spacing;
   }
-  @else {
-    .top-bar-title {
-      display: inline-block;
-      float: left;
-      padding: $topbar-title-spacing;
 
-      .menu-icon {
-        bottom: 2px;
-      }
-    }
-
-    .top-bar-left {
-      float: left;
-    }
-
-    .top-bar-right {
-      float: right;
-    }
+  .top-bar-left,
+  .top-bar-right {
+    flex: 0 0 auto;
   }
+
+
 }

@@ -31,23 +31,18 @@ $input-prefix-border: 1px solid $medium-gray !default;
 
 /// Left/right padding of an pre/postfixed input label
 $input-prefix-padding: 1rem !default;
-
-/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
 ///   flexbox mode, threaded by `foundation-everything()` (slice B9); defaults
 ///   to the ambient `$global-flexbox` setting, so direct calls are unchanged.
-@mixin foundation-form-prepostfix(
-  $global-flexbox: $global-flexbox
-) {
+@mixin foundation-form-prepostfix() {
   $height: ($input-font-size * $input-line-height) + (get-side($input-padding, 'top') + get-side($input-padding, 'bottom')) - rem-calc(1);
 
   .input-group {
-    display: if($global-flexbox, flex, table);
+    display: flex;
     width: 100%;
     margin-bottom: $form-spacing;
 
-    @if $global-flexbox {
-      align-items: stretch;
-    }
+    align-items: stretch;
+  
 
     > :first-child {
       &, &.input-group-button > * {
@@ -66,10 +61,6 @@ $input-prefix-padding: 1rem !default;
     margin: 0;
     white-space: nowrap;
 
-    @if not $global-flexbox {
-      display: table-cell;
-      vertical-align: middle;
-    }
   }
 
   .input-group-label {
@@ -82,15 +73,10 @@ $input-prefix-padding: 1rem !default;
     text-align: center;
     white-space: nowrap;
 
-    @if $global-flexbox {
-      display: flex;
-      flex: 0 0 auto;
-      align-items: center;
-    }
-    @else {
-      width: 1%;
-      height: 100%;
-    }
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  
 
     @if has-value($input-prefix-border) {
       &:first-child {
@@ -107,10 +93,10 @@ $input-prefix-padding: 1rem !default;
     @extend %input-group-child;
     border-radius: 0;
 
-    @if $global-flexbox {
-      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
-      min-width: 0;
-    }
+    flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
+    min-width: 0;
+  
+
   }
 
   .input-group-button {
@@ -119,14 +105,9 @@ $input-prefix-padding: 1rem !default;
     padding-bottom: 0;
     text-align: center;
 
-    @if $global-flexbox {
-      display: flex;
-      flex: 0 0 auto;
-    }
-    @else {
-      width: 1%;
-      height: 100%;
-    }
+    display: flex;
+    flex: 0 0 auto;
+  
 
     a,
     input,
@@ -134,13 +115,10 @@ $input-prefix-padding: 1rem !default;
     label {
       @extend %input-group-child;
 
-      @if $global-flexbox {
-        align-self: stretch;
-        height: auto;
-      }
-      @else {
-        height: $height;
-      }
+      align-self: stretch;
+      height: auto;
+    
+
       padding-top: 0;
       padding-bottom: 0;
       font-size: $input-font-size;
@@ -148,11 +126,4 @@ $input-prefix-padding: 1rem !default;
   }
 
   // Specificity bump needed to prevent override by buttons
-  @if not $global-flexbox {
-    .input-group {
-      .input-group-button {
-        display: table-cell;
-      }
-    }
-  }
 }

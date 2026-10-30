@@ -62,7 +62,7 @@
 // Utilities
 @forward 'util/util' hide $primary-color, $secondary-color, $success-color, $warning-color, $alert-color;
 // Global styles
-@forward 'global' hide $global-text-direction, $global-flexbox;
+@forward 'global' hide $global-text-direction;
 @forward 'forms/forms' hide $light-gray, $medium-gray, $global-radius, $global-lineheight, $global-weight-normal, $global-weight-bold, $global-left, $global-right, $primary-color, $success-color, $warning-color, $alert-color, $foundation-palette, $body-background, $global-margin;
 @forward 'typography/typography' hide $body-font-family, $global-weight-normal, $global-weight-bold, $global-width, $global-radius, $global-left, $medium-gray, $light-gray, $primary-color;
 
@@ -99,11 +99,10 @@
   // removed — the ambient stays for the component mixins' flex variants).
   // The removed `$xy-grid` write had no consumer after this mixin (the
   // branch below reads the parameter), so it is simply dropped.
-  $-zf-everything-flexbox: util.$global-flexbox;
 
   // Global styles
   @include global.foundation-global-styles;
-  @include forms.foundation-forms($global-flexbox: $-zf-everything-flexbox);
+  @include forms.foundation-forms();
   @include typography.foundation-typography;
 
   // Grid (7.0: xy-grid is the only grid)
@@ -113,7 +112,7 @@
 
   // Generic components
   @include components.foundation-button;
-  @include components.foundation-button-group($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-button-group();
   @include components.foundation-close-button;
   @include components.foundation-label;
   @include components.foundation-progress-bar;
@@ -124,20 +123,20 @@
   @include components.foundation-badge;
   @include components.foundation-breadcrumbs;
   @include components.foundation-callout;
-  @include components.foundation-card($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-card();
   @include components.foundation-dropdown;
   @include components.foundation-pagination;
   @include components.foundation-tooltip;
 
   // Containers
   @include components.foundation-accordion;
-  @include components.foundation-media-object($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-media-object();
   @include components.foundation-orbit;
   @include components.foundation-responsive-embed;
   @include components.foundation-tabs;
   @include components.foundation-thumbnail;
   // Menu-based containers
-  @include components.foundation-menu($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-menu();
   @include components.foundation-menu-icon;
   @include components.foundation-accordion-menu;
   @include components.foundation-drilldown-menu;
@@ -147,8 +146,8 @@
   @include components.foundation-off-canvas;
   @include components.foundation-reveal;
   @include components.foundation-sticky;
-  @include components.foundation-title-bar($global-flexbox: $-zf-everything-flexbox);
-  @include components.foundation-top-bar($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-title-bar();
+  @include components.foundation-top-bar();
 
   // Helpers
   @include components.foundation-float-classes;
