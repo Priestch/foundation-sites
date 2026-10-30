@@ -1,4 +1,3 @@
-import { onLoad } from './foundation.core.utils';
 import { Motion } from './foundation.util.motion';
 import { Events } from './foundation.util.events';
 
@@ -253,14 +252,28 @@ Triggers.Initializers.addGlobalListeners = function() {
 }
 
 
-Triggers.init = function (__, Foundation) {
-  onLoad(window, function () {
+Triggers.init = function (Foundation) {
+  // 7.0: arm at DOMContentLoaded (or immediately once the DOM is parsed)
+  // instead of window load. A stalled third-party resource - an embedded
+  // video iframe that hangs without erroring - would otherwise leave every
+  // [data-open]/[data-close]/[data-toggle] interaction dead until it gives
+  // up, with nothing in the console. Arming at DOM-ready is safe for the
+  // delegation (the document-level listeners resolve targets at event
+  // time), and the initial Foundation.init() reflow completes before
+  // DOMContentLoaded fires, so the closeme yeti-box snapshot still sees
+  // the full plugin set.
+  const arm = function () {
     if (triggersInitialized !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
       triggersInitialized = true;
     }
-  });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', arm);
+  } else {
+    arm();
+  }
 
   if(Foundation) {
     Foundation.Triggers = Triggers;

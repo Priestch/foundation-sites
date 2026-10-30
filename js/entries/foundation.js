@@ -59,7 +59,7 @@ Foundation.Touch = Touch;
 
 // Touch and Triggers init are side-effect driven, just idempotent setup.
 Touch.init();
-Triggers.init($, Foundation);
+Triggers.init(Foundation);
 MediaQuery._init();
 
 Foundation.plugin(Abide, 'Abide');
