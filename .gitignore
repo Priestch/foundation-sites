@@ -56,3 +56,6 @@ data.json
 npm-debug.log
 foundation-docs
 ./vendor
+
+# Playwright MCP session artifacts (screenshots, console logs)
+.playwright-mcp/

@@ -263,8 +263,10 @@ describe('Drilldown Menu', function() {
       trigger.focus();
       $(trigger).trigger('click');
 
-      // 3 items (including the back button) is around 115px height
-      wrapper.offsetHeight.should.be.within(110, 120);
+      // 3 items (including the back button): ~115px under the float
+      // stylesheet the suite used to load, ~77px under the default xy
+      // build the page links since the float grid was removed (7.0).
+      wrapper.offsetHeight.should.be.within(70, 85);
     });
 
     it('correctly resize when closed', function () {

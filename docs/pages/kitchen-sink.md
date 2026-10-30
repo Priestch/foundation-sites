@@ -469,23 +469,23 @@ description: Everything but.
 </div>
 
 ```html
-<div class="row">
-  <div class="small-6 columns">6 columns</div>
-  <div class="small-6 columns">6 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell small-6">6 columns</div>
+  <div class="cell small-6">6 columns</div>
 </div>
-<div class="row">
-  <div class="medium-6 large-4 columns">12/6/4 columns</div>
-  <div class="medium-6 large-8 columns">12/6/8 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell medium-6 large-4">12/6/4 columns</div>
+  <div class="cell medium-6 large-8">12/6/8 columns</div>
 </div>
 ```
 
-<div class="row display">
-  <div class="small-6 columns">6 columns</div>
-  <div class="small-6 columns">6 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell small-6">6 columns</div>
+  <div class="cell small-6">6 columns</div>
 </div>
-<div class="row display">
-  <div class="medium-6 large-4 columns">12/6/4 columns</div>
-  <div class="medium-6 large-8 columns">12/6/8 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell medium-6 large-4">12/6/4 columns</div>
+  <div class="cell medium-6 large-8">12/6/8 columns</div>
 </div>
 
 ---
@@ -592,53 +592,53 @@ description: Everything but.
 </div>
 
 ```html
-<div class="row">
-  <div class="small-2 medium-3 large-4 columns">2/3/4 columns</div>
-  <div class="small-4 medium-3 large-4 columns">4/3/4 columns</div>
-  <div class="small-6 large-4 columns">6/6/4 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell small-2 medium-3 large-4">2/3/4 columns</div>
+  <div class="cell small-4 medium-3 large-4">4/3/4 columns</div>
+  <div class="cell small-6 large-4">6/6/4 columns</div>
 </div>
-<div class="row">
-  <div class="large-3 columns">12/12/3 columns</div>
-  <div class="large-6 columns">12/12/6 columns</div>
-  <div class="large-3 columns">12/12/3 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell large-3">12/12/3 columns</div>
+  <div class="cell large-6">12/12/6 columns</div>
+  <div class="cell large-3">12/12/3 columns</div>
 </div>
-<div class="row">
-  <div class="small-6 large-2 columns">6/6/2 columns</div>
-  <div class="small-6 large-8 columns">6/6/8 columns</div>
-  <div class="small-12 large-2 columns">12/12/2 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell small-6 large-2">6/6/2 columns</div>
+  <div class="cell small-6 large-8">6/6/8 columns</div>
+  <div class="cell small-12 large-2">12/12/2 columns</div>
 </div>
-<div class="row">
-  <div class="small-3 columns">3 columns</div>
-  <div class="small-9 columns">9 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell small-3">3 columns</div>
+  <div class="cell small-9">9 columns</div>
 </div>
-<div class="row">
-  <div class="medium-8 large-4 columns">12/8/4 columns</div>
-  <div class="medium-4 large-8 columns">12/4/8 columns</div>
+<div class="grid-x grid-padding-x">
+  <div class="cell medium-8 large-4">12/8/4 columns</div>
+  <div class="cell medium-4 large-8">12/4/8 columns</div>
 </div>
 ```
 
-<div class="row display">
-  <div class="small-2 medium-3 large-4 columns">2/3/4 columns</div>
-  <div class="small-4 medium-3 large-4 columns">4/3/4 columns</div>
-  <div class="small-6 large-4 columns">6/6/4 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell small-2 medium-3 large-4">2/3/4 columns</div>
+  <div class="cell small-4 medium-3 large-4">4/3/4 columns</div>
+  <div class="cell small-6 large-4">6/6/4 columns</div>
 </div>
-<div class="row display">
-  <div class="large-3 columns">12/12/3 columns</div>
-  <div class="large-6 columns">12/12/6 columns</div>
-  <div class="large-3 columns">12/12/3 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell large-3">12/12/3 columns</div>
+  <div class="cell large-6">12/12/6 columns</div>
+  <div class="cell large-3">12/12/3 columns</div>
 </div>
-<div class="row display">
-  <div class="small-6 large-2 columns">6/6/2 columns</div>
-  <div class="small-6 large-8 columns">6/6/8 columns</div>
-  <div class="small-12 large-2 columns">12/12/2 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell small-6 large-2">6/6/2 columns</div>
+  <div class="cell small-6 large-8">6/6/8 columns</div>
+  <div class="cell small-12 large-2">12/12/2 columns</div>
 </div>
-<div class="row display">
-  <div class="small-3 columns">3 columns</div>
-  <div class="small-9 columns">9 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell small-3">3 columns</div>
+  <div class="cell small-9">9 columns</div>
 </div>
-<div class="row display">
-  <div class="medium-8 large-4 columns">12/8/4 columns</div>
-  <div class="medium-4 large-8 columns">12/4/8 columns</div>
+<div class="grid-x grid-padding-x display">
+  <div class="cell medium-8 large-4">12/8/4 columns</div>
+  <div class="cell medium-4 large-8">12/4/8 columns</div>
 </div>
 
 ---
@@ -1018,8 +1018,8 @@ description: Everything but.
 </div>
 
 ```html_example
-<div class="row">
-  <div class="columns small-6" id="example1" data-something>
+<div class="grid-x grid-padding-x">
+  <div class="cell small-6" id="example1" data-something>
     <p id="doodle">
       Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </p>
@@ -1033,7 +1033,7 @@ description: Everything but.
       Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </p>
   </div>
-  <div class="columns small-6 right" data-sticky-container>
+  <div class="cell small-6 right" data-sticky-container>
     <div class="sticky" data-sticky data-margin-top="6" data-anchor="example1">
       <img class="thumbnail" src="assets/img/generic/rectangle-3.jpg" alt="">
     </div>

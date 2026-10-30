@@ -1,6 +1,0 @@
-[    3489ms] [WARNING] Warning: invalid value "invalid-option" for Interchange option "type" @ http://localhost:8123/_build/assets/js/foundation.js:4556
-[    3492ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8123/test/javascript/_build/assets/img/interchange/strip_icc%28%29/large.jpg:0
-[    3495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8123/test/javascript/_build/assets/partials/interchange-large.html:0
-[    3495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8123/test/javascript/_build/assets/img/interchange/strip_icc()/large.jpg:0
-[    3495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8123/test/javascript/image.png:0
-[    3495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8123/test/javascript/_build/assets/partials/interchange-large.html:0

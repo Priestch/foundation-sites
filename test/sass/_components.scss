@@ -1,12 +1,8 @@
 @use "true" as *;
 
-// The suite reads only util math helpers (ratio-to-percentage(), divide())
-// and the float-grid column functions (grid-column(), flex-grid-column()):
-// both sources load as plain modules, so the former scss/global and
-// components/responsive-embed imports (which only pulled these in
-// transitively under the import world) are gone.
+// 7.0: the float/flex grids are gone; the surviving util math helpers
+// (ratio-to-percentage(), divide()) load as a plain module.
 @use '../../scss/util/math' as *;
-@use '../../scss/grid/grid' as *;
 
 @include describe('Components') {
 
@@ -16,30 +12,6 @@
 
     @include assert-equal($test, $expect,
       'Creates a percentage value from a ratio');
-  }
-
-  @include it('Grid Column [function]') {
-    @include assert-equal(grid-column(6), 50%,
-      'Creates a column width from a column count');
-    @include assert-equal(grid-column(0.5), 50%,
-      'Creates a column width from a decimal value');
-    @include assert-equal(grid-column(50%), 50%,
-      'Creates a column width from a percentage value');
-  }
-
-  @include it('Flex Grid Column [function]') {
-    @include assert-equal(flex-grid-column(), 1 1 0px,
-      'Creates an expanding flex property when passed no value');
-    @include assert-equal(flex-grid-column(shrink), 0 0 auto,
-      'Creates a shrinking flex property when passed shrink');
-    @include assert-equal(flex-grid-column(6), 0 0 50%,
-      'Creates a fixed flex property from a column count');
-    @include assert-equal(flex-grid-column(0.5), 0 0 50%,
-      'Creates a fixed flex property from a decimal value');
-    @include assert-equal(flex-grid-column(50%), 0 0 50%,
-      'Creates a fixed flex property from a percentage value');
-    @include assert-equal(flex-grid-column(1 of 2), 0 0 50%,
-      'Creates a fixed flex property from an x of y value');
   }
 
 }

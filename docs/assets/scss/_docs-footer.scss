@@ -1,7 +1,7 @@
 @use "sass:color";
 
 .footer-nav {
-  @include flex-grid-row;
+  @include xy-grid;
   align-items: center;
   background-color: $topbar-background;
   padding: 2rem;
@@ -16,7 +16,7 @@
 .footer-nav-left,
 .footer-nav-right {
   color: $white;
-  @include flex-grid-column(shrink);
+  @include xy-cell(shrink);
 
   a {
     color: $white;
@@ -32,7 +32,7 @@
   }
 
   @include breakpoint(small only) {
-    @include flex-grid-column(expand);
+    @include xy-cell(auto);
   }
 }
 
@@ -67,7 +67,7 @@
 }
 
 .footer-nav-center {
-  @include flex-grid-column;
+  @include xy-cell(auto);
 
   .footer-nav-menu-item {
     @media screen and (min-width: 40em) and (max-width: 46.25em) {
@@ -352,7 +352,7 @@ a.text-link {
     }
   }
 
-  .row.collapse form {
+  .grid-x form {
     input[type="text"] {
       border: 0;
       color: #999;

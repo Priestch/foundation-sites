@@ -67,7 +67,6 @@
 @forward 'typography/typography' hide $body-font-family, $global-weight-normal, $global-weight-bold, $global-width, $global-radius, $global-left, $medium-gray, $light-gray, $primary-color;
 
 // Grids
-@forward 'grid/grid' hide $global-width, $global-left, $global-right;
 @forward 'xy-grid/xy-grid' hide $global-width, $global-left;
 // Generic components
 // Generic components, basic components, containers, layout components and
@@ -82,13 +81,11 @@
 @use 'global' as global;
 @use 'forms/forms' as forms;
 @use 'typography/typography' as typography;
-@use 'grid/grid' as grid;
 @use 'xy-grid/xy-grid' as xy-grid;
 @use 'components/components' as components;
 @use 'prototype/prototype' as prototype;
 
 @mixin foundation-everything(
-  $flex: true,
   $prototype: false,
   $xy-grid: xy-grid.$xy-grid
 ) {
@@ -96,29 +93,22 @@
   // `$xy-grid: true !global` writes are gone — a !global write only reaches
   // the import world, so it would silently miss the module cells of every
   // @use consumer. The effective flexbox mode is threaded through an optional
-  // trailing `$global-flexbox` parameter instead: like the removed write, a
-  // truthy `$flex` forces flexbox on, otherwise the ambient
-  // `$global-flexbox` setting decides. The removed `$xy-grid` write had no
-  // consumer after this mixin (the branch below reads the parameter), so it
-  // is simply dropped.
-  $-zf-everything-flexbox: $flex or util.$global-flexbox;
+  // trailing `$global-flexbox` parameter instead: the ambient
+  // `$global-flexbox` setting decides (7.0: the float and legacy flex grids
+  // are gone, so the `$flex` switch and both legacy grid branches were
+  // removed — the ambient stays for the component mixins' flex variants).
+  // The removed `$xy-grid` write had no consumer after this mixin (the
+  // branch below reads the parameter), so it is simply dropped.
+  $-zf-everything-flexbox: util.$global-flexbox;
 
   // Global styles
   @include global.foundation-global-styles;
   @include forms.foundation-forms($global-flexbox: $-zf-everything-flexbox);
   @include typography.foundation-typography;
 
-  // Grids
-  @if not $flex {
-    @include grid.foundation-grid;
-  }
-  @else {
-    @if $xy-grid {
-      @include xy-grid.foundation-xy-grid-classes;
-    }
-    @else {
-      @include grid.foundation-flex-grid;
-    }
+  // Grid (7.0: xy-grid is the only grid)
+  @if $xy-grid {
+    @include xy-grid.foundation-xy-grid-classes;
   }
 
   // Generic components
@@ -162,7 +152,9 @@
 
   // Helpers
   @include components.foundation-float-classes;
-  @if $flex { @include components.foundation-flex-classes; }
+  // 7.0: flexbox is the only layout mode, so the flex utility classes are
+  // unconditional now (the former `$flex` switch died with the float grid).
+  @include components.foundation-flex-classes;
   @include components.foundation-visibility-classes;
   @if $prototype { @include prototype.foundation-prototype-classes; }
 }

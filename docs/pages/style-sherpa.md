@@ -95,9 +95,9 @@ The boilerplate uses Foundation's Vertical Menu&mdash;one item is made for each 
 
 {{{{raw}}}}
 ```handlebars
-<div class="row">
+<div class="grid-x grid-padding-x">
       
-  <div class="large-3 medium-4 columns">
+  <div class="cell large-3 medium-4">
     <dl class="vertical tabs" data-tab>
       {{#each pages}}
         <dd{{#if @first}} class="active"{{/if}}><a href="#{{ anchor }}">{{ title }}</a></dd>
@@ -105,7 +105,7 @@ The boilerplate uses Foundation's Vertical Menu&mdash;one item is made for each 
     </dl>
   </div>
 
-  <div class="large-9 medium-8 columns">
+  <div class="cell large-9 medium-8">
     <div class="tabs-content">
       {{#each pages}}
         <section class="content {{#if @first}}active{{/if}}" id="{{ anchor }}">

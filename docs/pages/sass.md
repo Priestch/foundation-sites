@@ -121,9 +121,7 @@ Our [starter projects](starter-projects.html) include the full list of includes,
 
 // Grids (choose one)
 @include foundation.foundation-xy-grid-classes;
-// @include foundation.foundation-grid;
-// @include foundation.foundation-flex-grid;
-
+// 
 // Generic components
 @include foundation.foundation-button;
 @include foundation.foundation-button-group;
