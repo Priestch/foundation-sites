@@ -6,6 +6,14 @@
 /// @group prototype-bordered
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/color' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for bordered utility.
 /// @type Boolean
 $prototype-bordered-breakpoints: $global-prototype-breakpoints !default;
@@ -43,7 +51,7 @@ $prototype-border-color: $medium-gray !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-bordered {
             @include bordered;
           }

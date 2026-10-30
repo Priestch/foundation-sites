@@ -6,6 +6,39 @@
 /// @group forms
 ////
 
+@use '../util/color' as *;
+@use '../util/flex' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use '../util/selector' as *; // text-inputs()
+@use '../global-module' as *; // slice B9: the ambient mirrors moved to the single owners
+
+// Ambient settings consumed here and by the later forms partials, declared as
+// module variables so the partials work as `@use` modules (a module cannot see
+// compilation globals). This mirrors the `_color.scss` pattern from the util
+// slice (M2 line B, B3): each `!default` mirrors the library default in
+// scss/_global.scss — or, for `$form-spacing`, the default this module's
+// aggregator used to declare — and through the `forms/forms` @forward facade
+// the cells stay live-linked with the import-world globals, so user settings
+// overrides keep winning. Later partials reach these through
+// `@use 'text' as *` instead of redeclaring them: a forwarded variable can
+// only be declared by one module.
+//
+// `$white`, `$black` and `$dark-gray` are *not* mirrored here: they are already
+// declared by scss/util/_color.scss and reached through the util facade above.
+// `$foundation-palette` is declared in module land for the first time with the
+// forms slice — only the forms partials load this module, so (unlike a util
+// declaration) it cannot splice the settings-module worlds of the 7.0
+// pipeline, which never import `forms/forms`.
+$form-spacing: rem-calc(16) !default;
+
+// Slice B9: $global-text-direction is owned by scss/util/_flex.scss now (its
+// cell seeds the $zf-flex-justify derivation there). This module starred-uses
+// the util facade, so a local mirror of the same name would be silently
+// dropped by Dart Sass in favor of the forwarded member; the derived
+// $global-left/$global-right cells below read that member and keep the exact
+// same values.
+
 /// Font color of text inputs.
 /// @type Color
 $input-color: $black !default;

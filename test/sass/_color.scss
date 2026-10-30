@@ -1,7 +1,9 @@
-@import "true";
+@use "true" as *;
 
-@import '../../scss/global';
-@import '../../scss/util/color';
+// The suite only needs the util-owned color members ($black/$white,
+// color-pick-contrast(), smart-scale()); the former `scss/global` import
+// reached them transitively, which the direct module load does on its own.
+@use '../../scss/util/color' as *;
 
 @include describe('Color') {
 

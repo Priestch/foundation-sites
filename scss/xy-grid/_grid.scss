@@ -6,6 +6,12 @@
 /// @group xy-grid
 ////
 
+// `$grid-container`, `$grid-container-padding` and `xy-gutters()` live in
+// _gutters.scss, the first xy-grid module.
+@use 'gutters' as *;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
+
 /// Creates a max width container, designed to house your grid content.
 ///
 /// @param {Number} $width [$grid-container] - a width to limit the container to.

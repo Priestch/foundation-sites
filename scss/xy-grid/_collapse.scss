@@ -6,17 +6,27 @@
 /// @group xy-grid
 ////
 
+// Util helpers; `sl-contain()` comes from the vendored sassy-lists facade,
+// `xy-cell-size()` from _cell.scss and `$grid-columns` from _gutters.scss, the
+// first xy-grid module.
+@use '../util/breakpoint' as *;
+@use '../vendor/sassy-lists' as *;
+@use 'gutters' as *;
+@use '../global-module' as *;
+@use 'cell' as *;
+@use '../util/mixins' as *;
+
 /// Collapses the grid a cells within it.
 ///
 /// @param {String} $selector [.cell] - The child element to remove the gutter from.
 /// @param {Keyword} $gutter-type [margin] - The type of gutter to remove.
 /// @param {List} $gutter-position [right left] - The positions to remove gutters from. Accepts `top`, `bottom`, `left`, `right` in any combination.
-/// @param {Keyword} $min-breakpoint [$-zf-zero-breakpoint] - Minimum breakpoint in `$breakpoint-classes` for which to collapse the gutter.
+/// @param {Keyword} $min-breakpoint [$zf-zero-breakpoint] - Minimum breakpoint in `$breakpoint-classes` for which to collapse the gutter.
 @mixin xy-grid-collapse(
   $selector: '.cell',
   $gutter-type: margin,
   $gutter-position: right left,
-  $min-breakpoint: $-zf-zero-breakpoint
+  $min-breakpoint: $zf-zero-breakpoint
 ) {
   // First, lets negate any margins on the top level
   @if ($gutter-type == 'margin') {
@@ -33,7 +43,7 @@
       }
     }
 
-    $excluded-bps: -zf-breakpoints-less-than($min-breakpoint);
+    $excluded-bps: zf-breakpoints-less-than($min-breakpoint);
 
     // Output new widths to not include gutters
     @each $bp in $breakpoint-classes {

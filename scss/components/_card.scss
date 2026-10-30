@@ -6,124 +6,24 @@
 /// @group card
 ////
 
-/// Default background color.
-/// @type Color
-$card-background: $white !default;
-
-/// Default font color for cards.
-/// @type Color
-$card-font-color: $body-font-color !default;
-
-/// Default background.
-/// @type Color
-$card-divider-background: $light-gray !default;
-
-/// Default border style.
-/// @type List
-$card-border: 1px solid $light-gray !default;
-
-/// Default card shadow.
-/// @type List
-$card-shadow: none !default;
-
-/// Default border radius.
-/// @type List
-$card-border-radius: $global-radius !default;
-
-/// Default padding.
-/// @type Number
-$card-padding: $global-padding !default;
-
-/// Default bottom margin.
-/// @type number
-$card-margin-bottom: $global-margin !default;
-
-/// Adds styles for a card container.
-/// @param {Color} $background - Background color of the card.
-/// @param {Color} $color - font color of the card.
-/// @param {Number} $margin - Bottom margin of the card.
-/// @param {List} $border - Border around the card.
-/// @param {List} $radius - border radius of the card.
-/// @param {List} $shadow - box shadow of the card.
-@mixin card-container(
-  $background: $card-background,
-  $color: $card-font-color,
-  $margin: $card-margin-bottom,
-  $border: $card-border,
-  $radius: $card-border-radius,
-  $shadow: $card-shadow
-) {
-  @if $global-flexbox {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  margin-bottom: $margin;
-
-  border: $border;
-  border-radius: $radius;
-
-  background: $background;
-  box-shadow: $shadow;
-
-  overflow: hidden;
-  color: $color;
-
-  & > :last-child {
-    margin-bottom: 0;
-  }
-}
-
-/// Adds styles for a card divider.
-@mixin card-divider(
-  $background: $card-divider-background,
-  $padding: $card-padding
-) {
-  @if $global-flexbox {
-    display: flex;
-    flex: 0 1 auto;
-  }
-
-  padding: $padding;
-  background: $background;
-
-  & > :last-child {
-    margin-bottom: 0;
-  }
-}
-
-/// Adds styles for a card section.
-@mixin card-section(
-  $padding: $card-padding
-) {
-  @if $global-flexbox {
-    flex: 1 0 auto;
-  }
-
-  padding: $padding;
-
-  & > :last-child {
-    margin-bottom: 0;
-  }
-}
-
-@mixin foundation-card {
-  .card {
-    @include card-container;
-  }
-
-  .card-divider {
-    @include card-divider;
-  }
-
-  .card-section {
-    @include card-section;
-  }
-
-  // For IE 11 - Flexbug
-  // https://github.com/philipwalton/flexbugs/issues/75
-  .card-image {
-    min-height: 1px;
-  }
-}
+// 7.0 Sass modularization (M2 line B, slice B6): the card partial is a real
+// `@use` module now (scss/components/_card-module.scss). This file stays at
+// the legacy import path (foundation.scss, docs, customizer and the scss/next
+// load units all `@import` it) as a pure `@forward` facade: the forwarded
+// members land in every @import consumer as globals live-linked with the
+// module cells, so settings overrides keep winning in both directions and the
+// compiled CSS is unchanged.
+//
+// `button-module` is forwarded on purpose: the card module reads the
+// batch-shared ambient mirrors through it, and flattening it here lets a
+// consumer that pre-assigns those names (the scss/next load units) seed the
+// cells before the module derives from them.
+// the card module reads the batch-shared ambient mirrors ($light-gray,
+// $global-radius, $global-margin) through button-module (the $global-flexbox
+// comes from the granular util mixins module), and flattening button-module
+// here lets a consumer that pre-assigns those names (the scss/next load
+// units) seed the cells before the module derives from them. The
+// $body-font-color mirror is owned by this module itself
+// (see _card-module.scss).
+@forward "button-module";
+@forward "card-module";

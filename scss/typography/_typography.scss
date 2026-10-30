@@ -6,21 +6,58 @@
 /// @group typography
 ////
 
+// 7.0 Sass modularization (M2 line B, slice B5): the typography partials are
+// real `@use` modules now. This aggregator is a pure `@forward` facade: members
+// exposed through it are also defined in the global scope of every `@import`
+// consumer (foundation.scss, docs, customizer), so the legacy
+// `@import 'typography/typography'` pipeline keeps compiling unchanged.
+// Overrides of the settings variables stay live-linked between the module
+// scopes and the import-world globals, in both directions.
+//
+// Where the members live:
+//
+// - The ambient settings mirrors shared by several partials ($body-font-family,
+//   $global-weight-normal, $global-weight-bold, $global-width,
+//   $global-radius, $global-text-direction, $global-left, $medium-gray,
+//   $light-gray, $primary-color) are declared by _base.scss, the first
+//   forwarded module; the other partials reach them with `@use 'base' as *`.
+//   `$black`/`$dark-gray`/`$global-font-size` come from the util facade instead
+//   (scss/util/_color.scss, _unit.scss).
+// - The `$header-sizes` downward-compatibility rebuild runs inside _base.scss:
+//   a `@use` module cannot read import-world globals, so the old
+//   `variable-exists(header-sizes)` check became a null-defaulted module cell
+//   synced through the live link (see _base.scss).
+
 // Base typography styles (tags only)
-@import 'base';
+@forward 'base';
 
 // Typography helper classes (classes only)
-@import 'helpers';
+@forward 'helpers';
 
 // Text alignment classes
-@import 'alignment';
+@forward 'alignment';
 
 // Print styles
-@import 'print';
+@forward 'print';
+
+// Slice B9: the facade also `@use`s its own partials — NAMESPACED, not
+// `as *` — so the foundation-typography() body below resolves its
+// `@include`s when the facade is consumed as a module (`@use
+// "typography/typography"` — @forward members pass through to consumers but
+// are not visible to the forwarder's own code). A starred use would splice
+// the partial members into the evaluator's scope, which under the legacy
+// `@import` flow is the consumer's import world and collides with
+// settings-file assignments of the same names. Namespaced uses stay out of
+// the evaluator's scope; the qualified `@include`s compile identically in
+// both flows.
+@use 'base' as typo-base;
+@use 'helpers' as typo-helpers;
+@use 'alignment' as typo-alignment;
+@use 'print' as typo-print;
 
 @mixin foundation-typography {
-  @include foundation-typography-base;
-  @include foundation-typography-helpers;
-  @include foundation-text-alignment;
-  @include foundation-print-styles;
+  @include typo-base.foundation-typography-base;
+  @include typo-helpers.foundation-typography-helpers;
+  @include typo-alignment.foundation-text-alignment;
+  @include typo-print.foundation-print-styles;
 }

@@ -6,6 +6,13 @@
 /// @group prototype-font-styling
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for font styling types
 /// @type Boolean
 $prototype-font-breakpoints: $global-prototype-breakpoints !default;
@@ -72,7 +79,7 @@ $prototype-font-bold: $global-weight-bold !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-font-wide {
             @include font-wide;
           }

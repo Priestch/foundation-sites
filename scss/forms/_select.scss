@@ -6,6 +6,17 @@
 /// @group forms
 ////
 
+// Util helpers and the util-owned color settings ($white, $dark-gray); the
+// `$input-*` cluster, `$form-spacing`, $global-radius and $global-right live
+// in _text.scss.
+@use '../util/color' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+@use '../util/mixins' as *;
+
 /// Background color for select menus.
 /// @type Color
 $select-background: $white !default;

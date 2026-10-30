@@ -1,0 +1,17 @@
+// Foundation for Sites — prototype-mode entry module
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group foundation
+////
+
+// 7.0 Sass modularization (M2 line B, slice B9): module-system replacement for
+// the legacy prototype entry (`@import 'foundation';` +
+// `@include foundation-everything($prototype: true);`). The legacy entry keeps
+// working unchanged; this module exists for `@use` consumers (7.0 compiles:
+// `@use 'foundation-prototype';`).
+
+@use 'foundation' as foundation;
+
+@include foundation.foundation-everything($prototype: true);

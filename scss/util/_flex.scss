@@ -1,5 +1,5 @@
-@function -zf-flex-justify($text-direction) {
-  $-zf-flex-justify: (
+@function zf-flex-justify($text-direction) {
+  $zf-flex-justify: (
     'left': if($text-direction == rtl, flex-end, flex-start),
     'right': if($text-direction == rtl, flex-start, flex-end),
     'center': center,
@@ -7,18 +7,50 @@
     'spaced': space-around,
   );
 
-  @return $-zf-flex-justify;
+  @return $zf-flex-justify;
 }
 
 
-$-zf-flex-align: (
+// 7.0 Sass modularization (M2 line B, slice B9): scss/_global.scss used to
+// assign this cell through the import world (`$zf-flex-justify:
+// zf-flex-justify($global-text-direction)`); a module compilation cannot
+// reproduce that (global-module cannot write the util/_flex cell), so the
+// derivation moved here. _flex.scss now owns the `$global-text-direction`
+// mirror this derives from; through the `util/util` @forward facade the cell
+// stays live-linked with the import-world setting, so user overrides keep
+// winning in both directions, and the value is identical in the ltr and rtl
+// flows.
+//
+// NOTE for the other mirror owners: a module that starred-uses the util
+// facade (`@use '../util/util' as *`) can no longer declare its own
+// `$global-text-direction` cell — Dart Sass drops the shadowed local
+// declaration in favor of the facade-forwarded member. The former local
+// mirrors in scss/forms/_text.scss, scss/typography/_base.scss and
+// scss/xy-grid/_position.scss were therefore removed in this slice; their
+// derived `$global-left`/`$global-right` cells now read this cell and keep
+// the exact same values (this facade is flattened before those facades in
+// scss/foundation.scss, so the seeding order is unchanged).
+$global-text-direction: ltr !default;
+
+/// Internal variables used for text direction, derived from the cell above.
+/// Slice B9 made this module the single owner of the direction trio: every
+/// other former mirror (scss/_global-module.scss, the component batch mirror
+/// in _button-module.scss, the forms/typography/xy-grid partials) was removed
+/// and its readers reach these cells directly, so a settings override seeds
+/// exactly one cell per compilation in both the @import and the @use flow.
+$global-left: if($global-text-direction == rtl, right, left) !default;
+$global-right: if($global-text-direction == rtl, left, right) !default;
+
+$zf-flex-justify: zf-flex-justify($global-text-direction);
+
+$zf-flex-align: (
   'top': flex-start,
   'bottom': flex-end,
   'middle': center,
   'stretch': stretch,
 );
 
-$-zf-flex-direction: (
+$zf-flex-direction: (
   'row': row,
   'row-reverse': row-reverse,
   'column': column,
@@ -36,8 +68,8 @@ $-zf-flex-direction: (
 /// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
 @mixin flex-align($x: null, $y: null) {
   @if $x {
-    @if map-has-key($-zf-flex-justify, $x) {
-      $x: map-get($-zf-flex-justify, $x);
+    @if map-has-key($zf-flex-justify, $x) {
+      $x: map-get($zf-flex-justify, $x);
     }
     @else {
       @warn 'flex-grid-row-align(): #{$x} is not a valid value for horizontal alignment. Use left, right, center, justify, or spaced.';
@@ -45,8 +77,8 @@ $-zf-flex-direction: (
   }
 
   @if $y {
-    @if map-has-key($-zf-flex-align, $y) {
-      $y: map-get($-zf-flex-align, $y);
+    @if map-has-key($zf-flex-align, $y) {
+      $y: map-get($zf-flex-align, $y);
     }
     @else {
       @warn 'flex-grid-row-align(): #{$y} is not a valid value for vertical alignment. Use top, bottom, middle, or stretch.';
@@ -62,8 +94,8 @@ $-zf-flex-direction: (
 /// @param {Keyword} $y [null] - Vertical alignment to use. Can be `top`, `bottom`, `middle`, or `stretch`. Or, set it to `null` (the default) to not set vertical alignment.
 @mixin flex-align-self($y: null) {
   @if $y {
-    @if map-has-key($-zf-flex-align, $y) {
-      $y: map-get($-zf-flex-align, $y);
+    @if map-has-key($zf-flex-align, $y) {
+      $y: map-get($zf-flex-align, $y);
     }
     @else {
       @warn 'flex-grid-column-align(): #{$y} is not a valid value for alignment. Use top, bottom, middle, or stretch.';

@@ -6,58 +6,17 @@
 /// @group badge
 ////
 
-/// Default background color for badges.
-/// @type Color
-$badge-background: $primary-color !default;
-
-/// Default text color for badges.
-/// @type Color
-$badge-color: $white !default;
-
-/// Alternate text color for badges.
-/// @type Color
-$badge-color-alt: $black !default;
-
-/// Coloring classes. A map of classes to output in your CSS, like `.secondary`, `.success`, and so on.
-/// @type Map
-$badge-palette: $foundation-palette !default;
-
-/// Default padding inside badges.
-/// @type Number
-$badge-padding: 0.3em !default;
-
-/// Minimum width of a badge.
-/// @type Number
-$badge-minwidth: 2.1em !default;
-
-/// Default font size for badges.
-/// @type Number
-$badge-font-size: 0.6rem !default;
-
-/// Generates the base styles for a badge.
-@mixin badge {
-  display: inline-block;
-  min-width: $badge-minwidth;
-  padding: $badge-padding;
-
-  border-radius: 50%;
-
-  font-size: $badge-font-size;
-  text-align: center;
-}
-
-@mixin foundation-badge {
-  .badge {
-    @include badge;
-
-    background: $badge-background;
-    color: $badge-color;
-
-    @each $name, $color in $badge-palette {
-      &.#{"" + $name} {
-        background: $color;
-        color: color-pick-contrast($color, ($badge-color, $badge-color-alt));
-      }
-    }
-  }
-}
+// 7.0 Sass modularization (M2 line B, slice B6): the badge partial is a real
+// `@use` module now (scss/components/_badge-module.scss). This file stays at
+// the legacy import path (foundation.scss, docs, customizer and the scss/next
+// load units all `@import` it) as a pure `@forward` facade: the forwarded
+// members land in every @import consumer as globals live-linked with the
+// module cells, so settings overrides keep winning in both directions and the
+// compiled CSS is unchanged.
+//
+// The util and forms facades are forwarded alongside the module on purpose:
+// the module reads its ambient settings ($primary-color, $foundation-palette,
+// $white, $black) through those module instances, and flattening them here
+// lets a consumer that pre-assigns those names (the scss/next load units) seed
+// the module cells before the module derives from them.
+@forward "badge-module";

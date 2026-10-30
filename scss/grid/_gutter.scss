@@ -17,8 +17,8 @@
   $gutter: auto,
   $gutters: $grid-column-gutter
 ) {
-  @include -zf-breakpoint-value($gutter, $gutters) {
-    $padding: rem-calc($-zf-bp-value) * 0.5;
+  @include zf-breakpoint-value($gutter, $gutters) using ($bp-value) {
+    $padding: rem-calc($bp-value) * 0.5;
 
     padding-right: $padding;
     padding-left: $padding;
@@ -56,8 +56,8 @@
   $margin: auto,
   $margins: $grid-column-gutter
 ) {
-  @include -zf-breakpoint-value($margin, $margins) {
-    $margin-bottom: rem-calc($-zf-bp-value);
+  @include zf-breakpoint-value($margin, $margins) using ($bp-value) {
+    $margin-bottom: rem-calc($bp-value);
     margin-bottom: $margin-bottom;
 
     > :last-child {

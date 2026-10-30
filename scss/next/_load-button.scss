@@ -1,0 +1,66 @@
+// Foundation for Sites — load unit for the button component (7.0 line B skeleton)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss. The recipe, in order:
+//
+// 1. Receive the settings the user actually set, through configuration. This
+//    is the reflected user module only — deliberately NOT the merged
+//    effective map: pre-assigning library defaults from a merged map would
+//    defeat the `!default` derivation chain (for example
+//    `$button-radius: $global-radius !default` would freeze at the library
+//    `$global-radius` value instead of picking up the user's override).
+// 2. Configure the component module with exactly the keys the user set.
+//    `map.get()` yields `null` for keys absent from the map, and a `null`
+//    configuration does not satisfy `!default` — so unset settings fall
+//    through to the library defaults, exactly like the legacy pipeline. The
+//    shared ambient settings (the palette, the derived `*-color` values, the
+//    global radius/margin/direction trio, ...) are configured ONCE by the
+//    entry stylesheet via its own `@use ... with` of scss/_global-module.scss
+//    and scss/util/_flex.scss: a module can be configured only once per
+//    compilation, so two load units in one compilation must not both
+//    configure them, and a module-scope re-assignment of a flattened name
+//    cannot reach the owning cell (slice B9).
+// 3. Include the component mixin.
+//
+
+@use "sass:map";
+// The shared ambient modules are configured ONCE per compilation, by the
+// next/_configure unit through the meta.load-css() call in
+// scss/foundation-next.scss (it runs before this unit's component module is
+// loaded). This unit only forwards the user map to its component module.
+
+$user: () !default;
+
+// scss/_global-module.scss owns the palette, the derived *-color settings and
+// the global ambients this component reads (slice B9 single ownership).
+// Button component names (settings section "11. Button"). The ambient
+// settings the component reads through scss/_global-module.scss and
+// scss/util/_flex.scss are configured ONCE by the entry stylesheet (they are
+// shared modules: a module can be configured only once per compilation, so
+// two load units in one compilation must not both configure them).
+@use '../components/button-module' as button-module with (
+  $button-font-family: map.get($user, "button-font-family"),
+  $button-font-weight: map.get($user, "button-font-weight"),
+  $button-padding: map.get($user, "button-padding"),
+  $button-margin: map.get($user, "button-margin"),
+  $button-fill: map.get($user, "button-fill"),
+  $button-background: map.get($user, "button-background"),
+  $button-background-hover: map.get($user, "button-background-hover"),
+  $button-color: map.get($user, "button-color"),
+  $button-color-alt: map.get($user, "button-color-alt"),
+  $button-radius: map.get($user, "button-radius"),
+  $button-border: map.get($user, "button-border"),
+  $button-hollow-border-width: map.get($user, "button-hollow-border-width"),
+  $button-sizes: map.get($user, "button-sizes"),
+  $button-palette: map.get($user, "button-palette"),
+  $button-opacity-disabled: map.get($user, "button-opacity-disabled"),
+  $button-background-hover-lightness: map.get($user, "button-background-hover-lightness"),
+  $button-hollow-hover-lightness: map.get($user, "button-hollow-hover-lightness"),
+  $button-transition: map.get($user, "button-transition"),
+  $button-responsive-expanded: map.get($user, "button-responsive-expanded"),
+);
+
+// Load + emit
+@include button-module.foundation-button;

@@ -1,3 +1,24 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group prototype
+////
+
+@use '../global-module' as *;
+
+// Slice B9: shared ambient mirrors for the prototype modules. _relation is
+// the first module the scss/prototype/_prototype.scss facade forwards, so it
+// owns the mirrors every other prototype module reads (a forwarded variable
+// can only be declared by one module; the other partials reach these with
+// `@use 'relation' as *`). Same `!default`s as scss/_global-module.scss;
+// through the facade they stay live-linked with the import-world globals, so
+// settings overrides keep winning in both directions.
+
+// Relational helpers
+// ------------------
+
 /// Select all children from the first to `$num`.
 /// @param {Number} $num[] First `n` numbers of total children 
 @mixin first($num) {

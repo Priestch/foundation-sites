@@ -2,11 +2,15 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
+// Breakpoint iterators and the breakpoint list come from the util modules.
+@use '../util/util' as *;
+@use '../util/breakpoint' as *;
+
 @mixin foundation-text-alignment {
   @each $size in $breakpoint-classes {
     @include breakpoint($size) {
       @each $align in (left, right, center, justify) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-text-#{$align} {
             text-align: $align;
           }

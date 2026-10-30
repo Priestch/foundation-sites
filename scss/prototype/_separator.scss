@@ -6,6 +6,15 @@
 /// @group prototype-separator
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use 'position' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+@use '../util/mixins' as *;
+
 /// Responsive breakpoints for separator.
 /// @type Boolean
 $prototype-separator-breakpoints: $global-prototype-breakpoints !default;
@@ -79,7 +88,7 @@ $prototype-separator-margin-top: $global-margin !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-separator-center {
             @include separator(center);
           }

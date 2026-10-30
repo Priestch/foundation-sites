@@ -1,0 +1,82 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group label
+////
+
+// Util helpers; the ambient settings mirrors this file consumes ($primary-color,
+// $foundation-palette, $global-radius, $global-text-direction, $global-left,
+// $global-right, $global-margin, $light-gray, $medium-gray) live in
+// _button-module.scss (the first components module), reached with
+// `use button-module as *`; the util helpers come from the granular util
+// modules (NOT the util facade: its own-scope issue-#12080 *-color null
+// !default patch cells would shadow the mirrors under a starred use).
+
+@use '../util/color' as *;
+@use '../util/breakpoint' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use '../util/math' as *;
+@use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
+/// Default background color for labels.
+/// @type Color
+$label-background: $primary-color !default;
+
+/// Default text color for labels.
+/// @type Color
+$label-color: $white !default;
+
+/// Alternate text color for labels.
+/// @type Color
+$label-color-alt: $black !default;
+
+/// Coloring classes. A map of classes to output in your CSS, like `.secondary`, `.success`, and so on.
+/// @type Map
+$label-palette: $foundation-palette !default;
+
+/// Default font size for labels.
+/// @type Number
+$label-font-size: 0.8rem !default;
+
+/// Default padding inside labels.
+/// @type Number
+$label-padding: 0.33333rem 0.5rem !default;
+
+/// Default radius of labels.
+/// @type Number
+$label-radius: $global-radius !default;
+
+/// Generates base styles for a label.
+@mixin label {
+  display: inline-block;
+  padding: $label-padding;
+
+  border-radius: $label-radius;
+
+  font-size: $label-font-size;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+}
+
+@mixin foundation-label {
+  .label {
+    @include label;
+
+    background: $label-background;
+    color: $label-color;
+
+    @each $name, $color in $label-palette {
+      &.#{"" + $name} {
+        background: $color;
+        color: color-pick-contrast($color, ($label-color, $label-color-alt));
+      }
+    }
+  }
+}

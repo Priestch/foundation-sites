@@ -6,6 +6,55 @@
 /// @group xy-grid
 ////
 
+@use '../util/unit' as *;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
+
+// The `$xy-grid`/`$grid-*` settings (previously declared by the aggregator,
+// scss/xy-grid/_xy-grid.scss) and the `$global-width` ambient mirror they are
+// derived from live here, so that every xy-grid partial reaches them through
+// `@use 'gutters' as *` (a forwarded variable can only be declared by one
+// module). Same pattern as scss/forms/_text.scss from slice B4: each `!default`
+// mirrors the library default — the settings ones from the aggregator, and the
+// `$global-width` mirror from scss/_global.scss — and through the
+// `xy-grid/xy-grid` @forward facade the cells stay live-linked with the
+// import-world globals, so user settings overrides keep winning.
+
+/// Enables the XY grid.
+/// @type Boolean
+$xy-grid: true !default;
+
+/// The maximum width of a grid container.
+/// @type Number
+$grid-container: $global-width !default;
+
+/// The number of columns used in the grid.
+/// @type Number
+$grid-columns: 12 !default;
+
+/// The amount of margin between cells at different screen sizes when using the margin grid. To use just one size, set the variable to a number instead of a map.
+/// @type Map | Length
+$grid-margin-gutters: (
+  "small": 20px,
+  "medium": 30px
+) !default;
+
+/// The amount of padding in cells at different screen sizes when using the padding grid. To use just one size, set the variable to a number instead of a map.
+/// @type Map | Length
+$grid-padding-gutters: $grid-margin-gutters !default;
+
+/// The amount of padding to use when padding the grid-container.
+/// @type Map | Length
+$grid-container-padding: $grid-padding-gutters !default;
+
+/// The maximum width to apply to a grid container
+/// @type Number
+$grid-container-max: $global-width !default;
+
+/// The maximum number of cells in an XY block grid.
+/// @type Number
+$xy-block-grid-max: 8 !default;
+
 /// Create gutters for a cell/container.
 ///
 /// @param {Number|Map} $gutters [$grid-margin-gutters] - Map or single value for gutters.
@@ -25,8 +74,8 @@
 
   // Output our margin gutters.
   @if (type-of($gutters) == 'map') {
-    @include -zf-breakpoint-value(auto, $gutters) {
-      $gutter: rem-calc($-zf-bp-value) * 0.5;
+    @include zf-breakpoint-value(auto, $gutters) using ($bp-value) {
+      $gutter: rem-calc($bp-value) * 0.5;
 
       // Loop through each gutter position
       @each $value in $gutter-position {

@@ -6,6 +6,12 @@
 /// @group prototype-text-transformation
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for text transformation classes
 /// @type Boolean
 $prototype-transformation-breakpoints: $global-prototype-breakpoints !default;
@@ -36,7 +42,7 @@ $prototype-text-transformation: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $transformation in $prototype-text-transformation {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-text-#{$transformation} {
               @include text-transform($transformation);
             }

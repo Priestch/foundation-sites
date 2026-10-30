@@ -7,6 +7,35 @@
 /// @deprecated The float grid and the `$global-flexbox: false` setting are deprecated since 6.10 and will be removed in Foundation 7.0. Use the XY grid (`scss/xy-grid`) instead.
 ////
 
+// 7.0 Sass modularization (M2 line B, slice B9): this aggregator is a real
+// `@use`-loadable module now (foundation.scss forwards it and both compile
+// paths consume it), but the eight partials below stay inside it as
+// `@import` splices — a deliberate exception to the one-module-per-partial
+// template, for two reasons:
+//
+// 1. grid-context() (scss/grid/_row.scss) swaps $grid-column-count through a
+//    `!global` write and relies on the spliced partials reading it in the
+//    SAME scope; a one-module-per-partial split cannot reproduce that
+//    dynamic-scoping contract without breaking the public @content API of
+//    grid-row()/grid-context().
+// 2. The float grid and the flex grid are deprecated since 6.10 and are
+//    deleted wholesale in 7.0 (M3), so the mechanical migration would only
+//    churn doomed code.
+//
+// The module owns the grid settings plus $global-width and the
+// $global-left/$global-right mirrors its partials read. $global-text-direction
+// itself is owned by scss/util/_flex.scss since slice B9 and is reached
+// through the starred util facade use below (this module declares no local
+// mirror of it: Dart Sass would drop the shadowed local declaration in favor
+// of the forwarded member).
+
+@use '../util/mixins' as *;
+@use '../util/flex' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+@use '../util/math' as *;
+@use '../global-module' as *;
+
 /// The maximum width of a row.
 /// @type Number
 $grid-row-width: $global-width !default;

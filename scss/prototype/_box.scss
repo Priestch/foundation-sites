@@ -6,6 +6,10 @@
 /// @group prototype-box
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+
 /// Box Mixin: Easily create a square, rectangle or a circle
 /// @param {Number} $width[] Width of the box
 /// @param {Number} $height[$width] Height of the box, defaults to `$width` to easily make a square

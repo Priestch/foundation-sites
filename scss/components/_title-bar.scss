@@ -6,79 +6,20 @@
 /// @group title-bar
 ////
 
-/// Background color of a title bar.
-/// @type Color
-$titlebar-background: $black !default;
-
-/// Color of text inside a title bar.
-/// @type Color
-$titlebar-color: $white !default;
-
-/// Padding inside a title bar.
-/// @type Length
-$titlebar-padding: 0.5rem !default;
-
-/// Font weight of text inside a title bar.
-/// @type Weight
-$titlebar-text-font-weight: bold !default;
-
-/// Color of menu icons inside a title bar.
-/// @type Color
-$titlebar-icon-color: $white !default;
-
-/// Color of menu icons inside a title bar on hover.
-/// @type Color
-$titlebar-icon-color-hover: $medium-gray !default;
-
-/// Spacing between the menu icon and text inside a title bar.
-/// @type Length
-$titlebar-icon-spacing: 0.25rem !default;
-
-@mixin foundation-title-bar {
-  .title-bar {
-    padding: $titlebar-padding;
-    background: $titlebar-background;
-    color: $titlebar-color;
-
-    @if $global-flexbox {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    @else {
-      @include clearfix;
-    }
-
-    .menu-icon {
-      margin-#{$global-left}: $titlebar-icon-spacing;
-      margin-#{$global-right}: $titlebar-icon-spacing;
-    }
-  }
-
-  @if $global-flexbox {
-    .title-bar-left,
-    .title-bar-right {
-      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
-    }
-
-    .title-bar-right {
-      text-align: right;
-    }
-  }
-  @else {
-    .title-bar-left {
-      float: left;
-    }
-
-    .title-bar-right {
-      float: right;
-      text-align: right;
-    }
-  }
-
-  .title-bar-title {
-    display: inline-block;
-    vertical-align: middle;
-    font-weight: $titlebar-text-font-weight;
-  }
-}
+// 7.0 Sass modularization (M2 line B, slice B8): the title-bar partial is a
+// real `@use` module now (scss/components/_title-bar-module.scss). This file
+// stays at the legacy import path (foundation.scss, docs, customizer and the
+// scss/next load units all `@import` it) as a pure `@forward` facade: the
+// forwarded members land in every @import consumer as globals live-linked
+// with the module cells, so settings overrides keep winning in both
+// directions and the compiled CSS is unchanged.
+//
+// `button-module` is forwarded on purpose: the title-bar module reads the
+// batch-shared ambient mirrors ($medium-gray, $global-left, $global-right)
+// through it, and flattening it here lets a consumer that pre-assigns those
+// names (the scss/next load units) seed the cells before the module derives
+// from them. The $titlebar-icon-color/-hover mirrors are owned by this module
+// itself (see _title-bar-module.scss); the menu-icon module — this partial's
+// predecessor in scss/foundation.scss — holds same-name mirrors of its own.
+@forward "button-module";
+@forward "title-bar-module";

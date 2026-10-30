@@ -1,0 +1,152 @@
+// `scss/forms` module-transition suite (M2 line B, slice B4).
+//
+// Pins the contracts introduced by turning the forms partials into `@use`
+// modules behind a pure `@forward` facade (`scss/forms/_forms.scss`):
+// - @import consumers still see every forms member in their global scope;
+// - settings overrides assigned through the import world reach the module
+//   cells, both when assigned before the facade import (the settings-file
+//   flow, re-derived `!default`s included) and after it (the live link);
+// - the palette-derived settings resolve against the effective palette,
+//   including the second-override-point contract pinned by
+//   _settings_override.scss (a direct `*-color` assignment after
+//   scss/_global.scss wins over the palette derivation);
+// - the module-private `-forms-palette-color()` replica keeps the
+//   import-world `get-color()` semantics for the abide settings.
+
+@use "sass:map";
+
+@use "true" as *;
+
+// Slice B10: the framework imports below stay `@import` on purpose — the
+// suite pins the import-world facade contract itself (pre/post-import
+// overrides must rebind the live-linked module cells), which has no `@use`
+// equivalent.
+@import '../../scss/util/util';
+
+// Pre-import overrides (the settings-file flow). $input-padding and
+// $input-radius are derived from these inside the modules, so they must see
+// the overridden values, not the module defaults.
+$global-radius: 8px;
+$form-spacing: 2rem;
+$foundation-palette: (
+  "primary": #1240ab,
+  "secondary": #767676,
+  "success": #2e7d32,
+  "warning": #f9a825,
+  "alert": #c62828,
+);
+
+@import '../../scss/global';
+
+// Second override point (see _settings_override.scss): wins only because it
+// is assigned after add-foundation-colors() ran inside scss/_global.scss.
+$primary-color: #123456;
+
+@import '../../scss/forms/forms';
+
+@include describe('forms module facade') {
+
+  @include it('exposes the forwarded forms members to @import consumers [function]') {
+    @include assert-equal($form-spacing, 2rem,
+      'Keeps the pre-import override instead of the module default rem-calc(16)');
+
+    @include assert-equal($input-padding, 1rem,
+      'Derives $input-padding from the overridden $form-spacing inside the module');
+
+    @include assert-equal($input-radius, 8px,
+      'Derives $input-radius from the overridden $global-radius inside the module');
+
+    @include assert-equal($input-color, #0a0a0a,
+      'Resolves the module default through the util facade ($black)');
+  }
+
+  @include it('compiles the forwarded component mixins with the effective settings [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-form-checkbox;
+      }
+      @include expect($selector: false) {
+        [type='file'],
+        [type='checkbox'],
+        [type='radio'] {
+          margin: 0 0 2rem;
+        }
+        [type='checkbox'] + label,
+        [type='radio'] + label {
+          display: inline-block;
+          vertical-align: baseline;
+          margin-left: 1rem;
+          margin-right: 2rem;
+          margin-bottom: 0;
+        }
+        [type='checkbox'] + label[for],
+        [type='radio'] + label[for] {
+          cursor: pointer;
+        }
+        label > [type='checkbox'],
+        label > [type='radio'] {
+          margin-right: 1rem;
+        }
+        [type='file'] {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  @include it('settings overrides assigned after the import reach the modules [component]') {
+    $old-spacing: $form-spacing;
+    $form-spacing: 3rem !global;
+
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-form-checkbox;
+      }
+      @include expect($selector: false) {
+        [type='file'],
+        [type='checkbox'],
+        [type='radio'] {
+          margin: 0 0 3rem;
+        }
+        [type='checkbox'] + label,
+        [type='radio'] + label {
+          display: inline-block;
+          vertical-align: baseline;
+          margin-left: 1.5rem;
+          margin-right: 3rem;
+          margin-bottom: 0;
+        }
+        [type='checkbox'] + label[for],
+        [type='radio'] + label[for] {
+          cursor: pointer;
+        }
+        label > [type='checkbox'],
+        label > [type='radio'] {
+          margin-right: 1.5rem;
+        }
+        [type='file'] {
+          width: 100%;
+        }
+      }
+    }
+
+    $form-spacing: $old-spacing !global;
+  }
+
+  @include it('resolves the palette-derived settings against the effective palette [function]') {
+    @include assert-equal(map.get($foundation-palette, alert), #c62828,
+      'The module-mirrored palette carries the pre-import override');
+
+    @include assert-equal($input-error-color, #c62828,
+      '-forms-palette-color() resolves the abide settings from the mirrored palette');
+
+    @include assert-equal($primary-color, #123456,
+      'The second-override-point assignment wins over the palette derivation');
+
+    @include assert-equal($slider-handle-background, #123456,
+      'Derives the slider handle color from the overridden $primary-color');
+
+    @include assert-equal($meter-fill-good, #2e7d32,
+      'Derives the meter fill from the overridden palette-derived $success-color');
+  }
+}

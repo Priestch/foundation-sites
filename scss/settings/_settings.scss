@@ -61,6 +61,16 @@
 //  57. Xy Grid
 
 @use "sass:color";
+// Slice B9 disposition: this file keeps `@import 'util/util'` on purpose.
+// Every `@use` form collides with the settings assignments below: a starred
+// use surfaces the util-owned settings ($global-font-size, $global-flexbox,
+// $breakpoints, $breakpoints-hidpi, $print-breakpoint, $breakpoint-classes,
+// $black/$white/$dark-gray, ...) that this file re-assigns, and a namespaced
+// use would force qualifying every rem-calc()/zf-* call in the file — the
+// file is THE user-facing settings template (copied into projects, shipped in
+// dist), so its body must stay plain `@import`-style Sass. The audit's
+// settings-module migration guide (audit/line-b-settings-migration.md)
+// keeps the same import in user settings modules.
 @import 'util/util';
 
 // 1. Global

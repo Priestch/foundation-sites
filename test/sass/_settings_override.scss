@@ -1,0 +1,84 @@
+// Settings override regression suite.
+//
+// This suite is the safety net for the 7.0 Sass module migration (audit/plan-v6-v7.md,
+// "线 B"): it locks in the contract that a value supplied by the user wins over the
+// `!default` value of the partial that consumes it. Today that contract is provided
+// by `@import` + `!default`; when `@import` is replaced by `@use`/`@forward` with
+// `sass:meta.configuration()`, every assertion in here must keep passing unchanged.
+//
+// Two settings are overridden, both through the button component:
+// - `$global-radius`, declared as `0 !default` in scss/_global.scss and consumed as
+//   `$button-radius: $global-radius !default` in scss/components/_button.scss;
+// - `$primary-color`, derived from `$foundation-palette` by `add-foundation-colors()`
+//   (`!global` assignment at the end of scss/_global.scss) and consumed as
+//   `$button-background: $primary-color !default` in scss/components/_button.scss.
+//
+// Both overrides (`8px`, `#123456`) deliberately differ from the defaults (`0`,
+// `#1779ba`), so any assertion below fails loudly if a `!default` ever starts
+// shadowing a user-supplied value.
+//
+// Note the two different override points, which the migration must support alike:
+// - `$global-radius` is set BEFORE `scss/global` is imported, exercising the plain
+//   `!default` fallback chain;
+// - `$primary-color` can only be set AFTER `scss/global` is imported, because
+//   `add-foundation-colors()` re-derives it from `$foundation-palette` with `!global`
+//   and would clobber an earlier override.
+//
+// Slice B10: the framework imports here stay `@import` on purpose — this suite
+// IS the import-world override contract (assignments before/after the imports
+// must rebind the live-linked globals), which has no `@use` equivalent. Only
+// the test harness itself moved to `@use "true" as *`.
+
+@use "true" as *;
+
+@import '../../scss/util/util';
+
+$global-radius: 8px;
+
+@import '../../scss/global';
+
+$primary-color: #123456;
+
+@import '../../scss/components/button';
+
+@include describe('Settings overrides') {
+
+  @include it('Overridden settings win over !default declarations [variables]') {
+    @include assert-equal($global-radius, 8px,
+      'Keeps the user value for $global-radius instead of the !default 0');
+
+    @include assert-equal($primary-color, #123456,
+      'Keeps the user value for $primary-color instead of the !global palette value');
+
+    @include assert-equal($button-radius, 8px,
+      '$button-radius falls back to the overridden $global-radius, not to its own !default');
+
+    @include assert-equal($button-background, #123456,
+      '$button-background falls back to the overridden $primary-color, not to its own !default');
+  }
+
+  @include it('Compiled CSS uses the overridden settings [component]') {
+    @include assert {
+      @include output {
+        .override-button {
+          border-radius: $button-radius;
+          @include button-style;
+        }
+      }
+      @include expect {
+        .override-button {
+          border-radius: 8px;
+        }
+        .override-button, .override-button.disabled, .override-button[disabled], .override-button.disabled:hover, .override-button[disabled]:hover, .override-button.disabled:focus, .override-button[disabled]:focus {
+          background-color: #123456;
+          color: #fefefe;
+        }
+        .override-button:hover, .override-button:focus {
+          background-color: rgb(15.3, 44.2, 73.1);
+          color: #fefefe;
+        }
+      }
+    }
+  }
+
+}

@@ -1,0 +1,48 @@
+// Foundation for Sites — load unit for the table component (7.0 line B skeleton)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss. See scss/next/_load-button.scss for the full
+// recipe: configure the component module and its single-owner ambient
+// dependencies with exactly the keys the user actually set (`map.get()`
+// yields `null` for absent keys, and a `null` configuration does not satisfy
+// `!default`, so unset settings fall through to the library defaults), then
+// include the component mixin. The former direct palette-color re-apply
+// blocks are superseded by the configuration of scss/_global-module.scss
+// (slice B9).
+
+@use "sass:map";
+
+$user: () !default;
+
+// scss/_global-module.scss owns the palette, the derived *-color settings,
+// $body-font-color and the global ambients this component reads.
+// Table component names (settings section "50. Table"). The ambient
+// settings the component reads through scss/_global-module.scss are
+// configured ONCE by the entry stylesheet (they are shared modules: a module
+// can be configured only once per compilation, so two load units in one
+// compilation must not both configure them).
+@use '../components/table-module' as table-module with (
+  $table-background: map.get($user, "table-background"),
+  $table-color-scale: map.get($user, "table-color-scale"),
+  $table-border: map.get($user, "table-border"),
+  $table-padding: map.get($user, "table-padding"),
+  $table-hover-scale: map.get($user, "table-hover-scale"),
+  $table-row-hover: map.get($user, "table-row-hover"),
+  $table-row-stripe-hover: map.get($user, "table-row-stripe-hover"),
+  $table-is-striped: map.get($user, "table-is-striped"),
+  $table-striped-background: map.get($user, "table-striped-background"),
+  $table-stripe: map.get($user, "table-stripe"),
+  $table-head-background: map.get($user, "table-head-background"),
+  $table-head-row-hover: map.get($user, "table-head-row-hover"),
+  $table-foot-background: map.get($user, "table-foot-background"),
+  $table-foot-row-hover: map.get($user, "table-foot-row-hover"),
+  $table-head-font-color: map.get($user, "table-head-font-color"),
+  $table-foot-font-color: map.get($user, "table-foot-font-color"),
+  $show-header-for-stacked: map.get($user, "show-header-for-stacked"),
+  $table-stack-breakpoint: map.get($user, "table-stack-breakpoint"),
+);
+
+// Load + emit
+@include table-module.foundation-table;

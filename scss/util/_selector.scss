@@ -6,6 +6,8 @@
 /// @group functions
 ////
 
+@use 'value' as *;
+
 /// Generates a selector with every text input type. You can also filter the list to only output a subset of those selectors.
 ///
 /// @param {List|Keyword} $types [()] - A list of text input types to use. Leave blank to use all of them.

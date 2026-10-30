@@ -6,6 +6,12 @@
 /// @group prototype-display
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for display classes
 /// @type Boolean
 $prototype-display-breakpoints: $global-prototype-breakpoints !default;
@@ -38,7 +44,7 @@ $prototype-display: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $display in $prototype-display {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-display-#{$display} {
               @include display($display);
             }

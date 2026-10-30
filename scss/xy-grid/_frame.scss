@@ -1,5 +1,11 @@
 // stylelint-disable property-no-vendor-prefix
 
+// Breakpoint iterators and gutter helpers come from the util modules.
+@use '../util/util' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/breakpoint' as *;
+
 /// Modifies a grid to give it "frame" behavior (no overflow, no wrap, stretch behavior)
 ///
 /// @param {Boolean} $vertical [false] - Is grid vertical or horizontal. Should match grid.
@@ -23,12 +29,12 @@
   }
 
   @if $breakpoint == null and type-of($gutters) == 'map' {
-    @include -zf-each-breakpoint() {
-      @include xy-grid-frame($vertical, $nested, $gutters, $-zf-size, false);
+    @include zf-each-breakpoint() using ($size) {
+      @include xy-grid-frame($vertical, $nested, $gutters, $size, false);
     }
   } @else {
     // Get our gutters if applicable
-    $gutter: -zf-get-bp-val($gutters, $breakpoint);
+    $gutter: zf-get-bp-val($gutters, $breakpoint);
 
     // If we have a gutter, add it to the width/height
     @if $gutter {

@@ -1,0 +1,78 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Util helpers; the $progress-* settings consumed below live in
+// scss/forms/_progress.scss and the ambient mirrors in scss/forms/_text.scss
+// (slice B4 moved the native <progress> styles into the forms modules),
+// reached through the granular forms modules so the cells stay live-linked
+// with the import-world globals of the @import consumer.
+@use '../util/color' as *;
+@use '../util/breakpoint' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use '../util/math' as *;
+@use '../forms/progress' as *;
+@use '../forms/text' as *;
+@use '../global-module' as *; // slice B9: the palette's single owner
+
+/// Adds styles for a progress bar container.
+@mixin progress-container {
+  height: $progress-height;
+  margin-bottom: $progress-margin-bottom;
+  border-radius: $progress-radius;
+  background-color: $progress-background;
+}
+
+/// Adds styles for the inner meter of a progress bar.
+@mixin progress-meter {
+  position: relative;
+  display: block;
+  width: 0%;
+  height: 100%;
+  background-color: $progress-meter-background;
+
+  @if has-value($progress-radius) {
+    border-radius: $global-radius;
+  }
+}
+
+/// Adds styles for text in the progress meter.
+@mixin progress-meter-text {
+  @include absolute-center;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: $white;
+  white-space: nowrap;
+
+  @if has-value($progress-radius) {
+    border-radius: $progress-radius;
+  }
+}
+
+@mixin foundation-progress-bar {
+  // Progress bar
+  .progress {
+    @include progress-container;
+
+    @each $name, $color in $foundation-palette {
+      &.#{"" + $name} {
+        .progress-meter {
+          background-color: $color;
+        }
+      }
+    }
+  }
+
+  // Inner meter
+  .progress-meter {
+    @include progress-meter;
+  }
+
+  // Inner meter text
+  .progress-meter-text {
+    @include progress-meter-text;
+  }
+}

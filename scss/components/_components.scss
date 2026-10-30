@@ -1,0 +1,80 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group components
+////
+
+// 7.0 Sass modularization (M2 line B, slices B6-B8): every scss/components
+// partial is a real `@use` module now, one module per partial
+// (*-module.scss) behind a pure `@forward` facade at the legacy import path
+// (foundation.scss, docs, customizer and the scss/next load units all
+// `@import` the individual partials unchanged). This aggregator forwards all
+// 34 modules, so a `@use "components/components"` consumer gets every member
+// with the module cells live-linked to its own import world.
+//
+// Where the members live:
+//
+// - Each module owns the mirrors of the scss/_global.scss settings it reads;
+//   a mirror must live in the module whose facade flattens it before that
+//   module derives from it (the scss/next load units pre-assign these names).
+//   $primary-color and the palette are owned by _button-module.scss (the
+//   granular util modules are used instead of the util facade because the
+//   facade own-scope issue-#12080 `*-color: null !default` patch cells would
+//   shadow those mirrors under `@use ... as *`). $body-font-color is owned by
+//   each reader (_table/_callout/_card) and surfaced exactly once (hide below).
+// - The legacy `variable-exists()` checks in _breadcrumbs-module.scss and
+//   _off-canvas-module.scss ($breadcrumbs-item-slash[-color],
+//   $offcanvas-size[-vertical-size]) became null-defaulted module cells,
+//   synced through the live link like the $header-sizes cell in
+//   scss/typography/_base.scss.
+// - The cross-slice mirror names hold two cells after B7/B8: the B7
+//   pre-readers (_menu-icon-module for the title-bar icon knobs,
+//   _drilldown-module for the dropdown-menu arrow knobs and $anchor-color)
+//   and their B8 owners (_title-bar-module/_dropdown-menu-module) each own
+//   same-name mirrors. The import world flattens the B7 cells first (their
+//   facades come first in scss/foundation.scss), so the aggregator surfaces
+//   those and hides the B8 copies — a forwarded variable can only be
+//   declared by one module.
+
+// Generic components
+@forward "button-module";
+@forward "button-group-module";
+@forward "close-button-module";
+@forward "label-module";
+@forward "progress-bar-module";
+@forward "slider-module";
+@forward "switch-module";
+@forward "table-module";
+// Basic components (B7 adds dropdown, pagination, tooltip)
+@forward "badge-module";
+@forward "breadcrumbs-module";
+@forward "callout-module";
+@forward "card-module";
+@forward "dropdown-module";
+@forward "pagination-module";
+@forward "tooltip-module";
+// Containers
+@forward "accordion-module";
+@forward "media-object-module";
+@forward "orbit-module";
+@forward "responsive-embed-module";
+@forward "tabs-module";
+@forward "thumbnail-module";
+// Menu-based containers
+@forward "menu-module";
+@forward "menu-icon-module";
+@forward "accordion-menu-module";
+@forward "drilldown-module";
+// Layout components (B8)
+@forward "dropdown-menu-module";
+@forward "off-canvas-module";
+@forward "reveal-module";
+@forward "sticky-module";
+@forward "title-bar-module";
+@forward "top-bar-module";
+// Helpers (B8, documentation-level deprecations in 6.10)
+@forward "float-module";
+@forward "flex-module";
+@forward "visibility-module";

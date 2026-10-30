@@ -6,6 +6,12 @@
 /// @group prototype-sizing
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for spacing classes (margin and padding)
 /// @type Boolean
 $prototype-sizing-breakpoints: $global-prototype-breakpoints !default;
@@ -58,7 +64,7 @@ $prototype-sizes: (
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           @each $sizing in $prototype-sizing {
             @each $length, $percentage in $prototype-sizes {
               .#{$size}-#{$sizing}-#{$length} {

@@ -6,6 +6,13 @@
 /// @group forms
 ////
 
+// `$form-spacing` lives in _text.scss; rem-calc() and $black come from util.
+@use '../util/color' as *;
+@use '../util/unit' as *;
+@use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
 /// Default color for help text.
 /// @type Color
 $helptext-color: $black !default;

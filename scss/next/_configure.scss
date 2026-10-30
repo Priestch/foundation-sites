@@ -1,0 +1,28 @@
+@use "sass:map";
+@use "sass:meta";
+
+$user: () !default;
+
+// Shared ambient modules, configured ONCE for the whole compilation. These
+// module owns most ambient settings the load units' components read (slice B9
+// single ownership): the palette, the derived `*-color` values, the global
+// radius/margin/weights. It is configured with exactly the keys the user
+// actually set: `map.get()` yields `null` for absent keys and a `null`
+// configuration does not satisfy `!default`, so unset settings fall through to
+// the library defaults. The direction trio's owner (scss/util/_flex.scss)
+// cannot be configured here: the user settings module already loads it
+// (transitively, through its `@import 'util/util'`), and a module can be
+// configured only once per compilation — an RTL pipeline build would configure
+// it in the entry stylesheet before this unit runs.
+@use '../global-module' as global-module with (
+  $foundation-palette: map.get($user, "foundation-palette"),
+  $primary-color: map.get($user, "primary-color"),
+  $secondary-color: map.get($user, "secondary-color"),
+  $success-color: map.get($user, "success-color"),
+  $warning-color: map.get($user, "warning-color"),
+  $alert-color: map.get($user, "alert-color"),
+  $global-radius: map.get($user, "global-radius"),
+  $global-margin: map.get($user, "global-margin"),
+  $body-font-color: map.get($user, "body-font-color"),
+);
+

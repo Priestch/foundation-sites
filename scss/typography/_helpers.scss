@@ -6,6 +6,16 @@
 /// @group typography-helpers
 ////
 
+@use '../util/color' as *;
+@use '../util/unit' as *;
+
+// The ambient settings mirrors ($medium-gray, $light-gray, $global-weight-normal,
+// $global-left) and `$font-family-monospace` live in _base.scss, the first
+// forwarded typography module.
+@use 'base' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
 /// Default font size for lead paragraphs.
 /// @type Number
 $lead-font-size: $global-font-size * 1.25 !default;

@@ -6,6 +6,17 @@
 /// @group forms
 ////
 
+// Util helpers and the util-owned settings ($global-flexbox, $black); the
+// `$input-*` cluster, `$form-spacing`, the grays and the text directions live
+// in _text.scss.
+@use '../util/color' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
 /// Color of labels prefixed to an input.
 /// @type Color
 $input-prefix-color: $black !default;
@@ -21,7 +32,12 @@ $input-prefix-border: 1px solid $medium-gray !default;
 /// Left/right padding of an pre/postfixed input label
 $input-prefix-padding: 1rem !default;
 
-@mixin foundation-form-prepostfix {
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective
+///   flexbox mode, threaded by `foundation-everything()` (slice B9); defaults
+///   to the ambient `$global-flexbox` setting, so direct calls are unchanged.
+@mixin foundation-form-prepostfix(
+  $global-flexbox: $global-flexbox
+) {
   $height: ($input-font-size * $input-line-height) + (get-side($input-padding, 'top') + get-side($input-padding, 'bottom')) - rem-calc(1);
 
   .input-group {

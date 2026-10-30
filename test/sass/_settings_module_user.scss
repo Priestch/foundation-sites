@@ -1,0 +1,33 @@
+// Sample user settings module for the settings-module pipeline suite
+// (scss/foundation-next.scss). This mirrors the shape the migration guide
+// (audit/line-b-settings-migration.md) tells users to adopt: plain
+// top-level variable assignments, with `@import 'util/util';` kept at the top
+// while settings still call helpers like rem-calc().
+//
+// Overrides exercised here:
+// - $global-radius / $global-margin: ambient settings consumed through
+//   `!default` fallback chains ($button-radius, $button-margin, table radius);
+// - $foundation-palette: derived by add-foundation-colors() inside the load
+//   unit for every `*-color` not set directly;
+// - $primary-color: direct override of a palette-derived color — per the
+//   contract pinned by test/sass/_settings_override.scss it wins over the
+//   palette derivation;
+// - $button-padding / $button-fill / $body-font-color: component-level keys.
+// Keys that are NOT set here must fall through to the library defaults.
+
+@import '../scss/util/util';
+
+$global-width: rem-calc(1200);
+$global-radius: 8px;
+$global-margin: 2rem;
+$foundation-palette: (
+  "primary": #1240ab,
+  "secondary": #767676,
+  "success": #3adb76,
+  "warning": #ffae00,
+  "alert": #cc4b37,
+);
+$primary-color: #123456;
+$button-padding: 2rem 3rem;
+$button-fill: hollow;
+$body-font-color: #343434;

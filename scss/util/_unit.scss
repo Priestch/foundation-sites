@@ -2,7 +2,7 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 
-@import 'math';
+@use 'math' as *;
 
 $unit-warnings: true !default;
 
@@ -48,18 +48,18 @@ $global-font-size: 100% !default;
   }
 
   @if $count == 1 {
-    @return -zf-to-rem($values, $base);
+    @return zf-to-rem($values, $base);
   }
 
   @for $i from 1 through $count {
-    $rem-values: append($rem-values, -zf-to-rem(nth($values, $i), $base));
+    $rem-values: append($rem-values, zf-to-rem(nth($values, $i), $base));
   }
 
   @return $rem-values;
 }
 
 // Converts a unitless, pixel, or rem value to em, for use in breakpoints.
-@function -zf-bp-to-em($value) {
+@function zf-bp-to-em($value) {
   // Pixel and unitless values are converted to rems
   @if unit($value) == 'px' or unitless($value) {
     $value: rem-calc($value, $base: 16px);
@@ -76,7 +76,7 @@ $global-font-size: 100% !default;
 /// @param {Number} $base [null] - Base for pixel conversion.
 ///
 /// @returns {Number} A number in rems, calculated based on the given value and the base pixel value. rem values are passed through as is.
-@function -zf-to-rem($value, $base: null) {
+@function zf-to-rem($value, $base: null) {
   // Check if the value is a number
   @if type-of($value) != 'number' {
     @if $unit-warnings {

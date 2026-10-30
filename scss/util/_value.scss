@@ -6,6 +6,8 @@
 /// @group functions
 ////
 
+@use 'unit' as *;
+
 /// Determine if a value is not falsey, in CSS terms. Falsey values are `null`, `none`, `0` with any unit, or an empty list.
 ///
 /// @param {Mixed} $val - Value to check.
@@ -180,6 +182,6 @@
 /// @param {*} $val - Value to convert.
 ///
 /// @returns {Boolean} Converted Boolean value.
-@function -zf-bool($val) {
+@function zf-bool($val) {
   @return $val != false and has-value($val);
 }

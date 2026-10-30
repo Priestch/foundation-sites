@@ -5,151 +5,164 @@
  * Licensed under MIT Open Source
  */
 
+// 7.0 Sass modularization (M2 line B, slice B9): this file is a real `@use`
+// module now. Every partial it used to splice is a module behind a facade
+// (slices B3-B9), so the 49 `@import`s became `@forward`s: the file loads the
+// whole framework once and re-exposes every member, which keeps both compile
+// paths alive —
+//
+// 1. Legacy path (unchanged for users):
+//
+//        @import 'settings/settings';
+//        @import 'foundation';
+//        @include foundation-everything;
+//
+//    Importing this file splices the forwarded members into the consumer's
+//    import world as globals live-linked with the module cells, so settings
+//    overrides keep winning in both directions and the CSS is unchanged.
+// 2. Module path (new in 7.0):
+//
+//        @use 'foundation';
+//        @include foundation.foundation-everything;
+//
+//    The @forwarded module CSS is emitted once, exactly like the import path.
+//
+// The @forward rules below are in the exact order of the former @import list:
+// the order of the flattens decides which same-name mirror a consumer's
+// import world binds, and the order of module loads decides the CSS output
+// order. Do not reorder them casually.
+//
+// `foundation-everything()` lives in this file's own scope. A @forward passes
+// members through to consumers but does not make them visible to the
+// forwarder itself, so the body below calls the framework through namespaced
+// `@use`s (namespaced — not starred: a starred use inside an import-evaluated
+// file splices its members into the consumer's import world, where they
+// collide with settings-file assignments of the same names).
+
 // --- Dependencies ---
-@import 'vendor/normalize';
-@import '../_vendor/sassy-lists/stylesheets/helpers/missing-dependencies';
-@import '../_vendor/sassy-lists/stylesheets/helpers/true';
-@import '../_vendor/sassy-lists/stylesheets/functions/contain';
-@import '../_vendor/sassy-lists/stylesheets/functions/purge';
-@import '../_vendor/sassy-lists/stylesheets/functions/remove';
-@import '../_vendor/sassy-lists/stylesheets/functions/replace';
-@import '../_vendor/sassy-lists/stylesheets/functions/to-list';
+@forward 'vendor/normalize';
+@forward 'vendor/sassy-lists';
 
 // --- Settings ---
 // import your own `settings` here or
 // import and modify the default settings through
 // @import 'settings/settings';
+//
+// The `hide` lists below keep foundation's own module surface free of
+// duplicate names: several facades surface a mirror of the same ambient
+// setting (each owns its own cell for its sibling partials), and a file that
+// @forwards two modules defining the same variable is a hard error. The
+// FIRST forward that surfaces a name wins in both compile modes — the import
+// world binds the first-flattened cell anyway (later duplicate flattens are
+// ignored there), and every cell carries the same live-linked value, so the
+// hides change no observable value. Do not reorder the forwards: the winner
+// is decided by this order.
 
 // --- Components ---
 // Utilities
-@import 'util/util';
+@forward 'util/util' hide $primary-color, $secondary-color, $success-color, $warning-color, $alert-color;
 // Global styles
-@import 'global';
-@import 'forms/forms';
-@import 'typography/typography';
+@forward 'global' hide $global-text-direction, $global-flexbox;
+@forward 'forms/forms' hide $light-gray, $medium-gray, $global-radius, $global-lineheight, $global-weight-normal, $global-weight-bold, $global-left, $global-right, $primary-color, $success-color, $warning-color, $alert-color, $foundation-palette, $body-background, $global-margin;
+@forward 'typography/typography' hide $body-font-family, $global-weight-normal, $global-weight-bold, $global-width, $global-radius, $global-left, $medium-gray, $light-gray, $primary-color;
 
 // Grids
-@import 'grid/grid';
-@import 'xy-grid/xy-grid';
+@forward 'grid/grid' hide $global-width, $global-left, $global-right;
+@forward 'xy-grid/xy-grid' hide $global-width, $global-left;
 // Generic components
-@import 'components/button';
-@import 'components/button-group';
-@import 'components/close-button';
-@import 'components/label';
-@import 'components/progress-bar';
-@import 'components/slider';
-@import 'components/switch';
-@import 'components/table';
-// Basic components
-@import 'components/badge';
-@import 'components/breadcrumbs';
-@import 'components/callout';
-@import 'components/card';
-@import 'components/dropdown';
-@import 'components/pagination';
-@import 'components/tooltip';
+// Generic components, basic components, containers, layout components and
+// helpers: all 34 component modules through the slice B6-B8 aggregator
+// (one module whose own forward list carries the inter-module hide rules
+// and whose internal forward order matches the former import list).
+@forward 'components/components' hide $anchor-color, $body-background, $foundation-palette, $global-left, $global-margin, $global-menu-nested-margin, $global-menu-padding, $global-padding, $global-radius, $global-right, $global-text-direction, $global-width, $light-gray, $medium-gray, $primary-color, $small-font-size;
+@forward 'prototype/prototype' hide $global-prototype-breakpoints, $global-margin, $global-padding, $global-position, $global-weight-normal, $global-weight-bold, $foundation-palette, $primary-color, $medium-gray;
 
-// Containers
-@import 'components/accordion';
-@import 'components/media-object';
-@import 'components/orbit';
-@import 'components/responsive-embed';
-@import 'components/tabs';
-@import 'components/thumbnail';
-// Menu-based containers
-@import 'components/menu';
-@import 'components/menu-icon';
-@import 'components/accordion-menu';
-@import 'components/drilldown';
-@import 'components/dropdown-menu';
-
-// Layout components
-@import 'components/off-canvas';
-@import 'components/reveal';
-@import 'components/sticky';
-@import 'components/title-bar';
-@import 'components/top-bar';
-
-// Helpers
-@import 'components/float';
-@import 'components/flex';
-@import 'components/visibility';
-@import 'prototype/prototype';
-
+// The same members, namespaced, for foundation-everything() below.
+@use 'util/util' as util;
+@use 'global' as global;
+@use 'forms/forms' as forms;
+@use 'typography/typography' as typography;
+@use 'grid/grid' as grid;
+@use 'xy-grid/xy-grid' as xy-grid;
+@use 'components/components' as components;
+@use 'prototype/prototype' as prototype;
 
 @mixin foundation-everything(
   $flex: true,
   $prototype: false,
-  $xy-grid: $xy-grid
+  $xy-grid: xy-grid.$xy-grid
 ) {
-  @if $flex {
-    $global-flexbox: true !global;
-  }
-
-  @if $xy-grid {
-    $xy-grid: true !global;
-  }
+  // Slice B9: the former `$global-flexbox: true !global` /
+  // `$xy-grid: true !global` writes are gone — a !global write only reaches
+  // the import world, so it would silently miss the module cells of every
+  // @use consumer. The effective flexbox mode is threaded through an optional
+  // trailing `$global-flexbox` parameter instead: like the removed write, a
+  // truthy `$flex` forces flexbox on, otherwise the ambient
+  // `$global-flexbox` setting decides. The removed `$xy-grid` write had no
+  // consumer after this mixin (the branch below reads the parameter), so it
+  // is simply dropped.
+  $-zf-everything-flexbox: $flex or util.$global-flexbox;
 
   // Global styles
-  @include foundation-global-styles;
-  @include foundation-forms;
-  @include foundation-typography;
+  @include global.foundation-global-styles;
+  @include forms.foundation-forms($global-flexbox: $-zf-everything-flexbox);
+  @include typography.foundation-typography;
 
   // Grids
   @if not $flex {
-    @include foundation-grid;
+    @include grid.foundation-grid;
   }
   @else {
     @if $xy-grid {
-      @include foundation-xy-grid-classes;
+      @include xy-grid.foundation-xy-grid-classes;
     }
     @else {
-      @include foundation-flex-grid;
+      @include grid.foundation-flex-grid;
     }
   }
 
   // Generic components
-  @include foundation-button;
-  @include foundation-button-group;
-  @include foundation-close-button;
-  @include foundation-label;
-  @include foundation-progress-bar;
-  @include foundation-slider;
-  @include foundation-switch;
-  @include foundation-table;
+  @include components.foundation-button;
+  @include components.foundation-button-group($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-close-button;
+  @include components.foundation-label;
+  @include components.foundation-progress-bar;
+  @include components.foundation-slider;
+  @include components.foundation-switch;
+  @include components.foundation-table;
   // Basic components
-  @include foundation-badge;
-  @include foundation-breadcrumbs;
-  @include foundation-callout;
-  @include foundation-card;
-  @include foundation-dropdown;
-  @include foundation-pagination;
-  @include foundation-tooltip;
+  @include components.foundation-badge;
+  @include components.foundation-breadcrumbs;
+  @include components.foundation-callout;
+  @include components.foundation-card($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-dropdown;
+  @include components.foundation-pagination;
+  @include components.foundation-tooltip;
 
   // Containers
-  @include foundation-accordion;
-  @include foundation-media-object;
-  @include foundation-orbit;
-  @include foundation-responsive-embed;
-  @include foundation-tabs;
-  @include foundation-thumbnail;
+  @include components.foundation-accordion;
+  @include components.foundation-media-object($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-orbit;
+  @include components.foundation-responsive-embed;
+  @include components.foundation-tabs;
+  @include components.foundation-thumbnail;
   // Menu-based containers
-  @include foundation-menu;
-  @include foundation-menu-icon;
-  @include foundation-accordion-menu;
-  @include foundation-drilldown-menu;
-  @include foundation-dropdown-menu;
+  @include components.foundation-menu($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-menu-icon;
+  @include components.foundation-accordion-menu;
+  @include components.foundation-drilldown-menu;
+  @include components.foundation-dropdown-menu;
 
   // Layout components
-  @include foundation-off-canvas;
-  @include foundation-reveal;
-  @include foundation-sticky;
-  @include foundation-title-bar;
-  @include foundation-top-bar;
+  @include components.foundation-off-canvas;
+  @include components.foundation-reveal;
+  @include components.foundation-sticky;
+  @include components.foundation-title-bar($global-flexbox: $-zf-everything-flexbox);
+  @include components.foundation-top-bar($global-flexbox: $-zf-everything-flexbox);
 
   // Helpers
-  @include foundation-float-classes;
-  @if $flex { @include foundation-flex-classes; }
-  @include foundation-visibility-classes;
-  @if $prototype { @include foundation-prototype-classes; }
+  @include components.foundation-float-classes;
+  @if $flex { @include components.foundation-flex-classes; }
+  @include components.foundation-visibility-classes;
+  @if $prototype { @include prototype.foundation-prototype-classes; }
 }

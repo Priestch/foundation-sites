@@ -6,6 +6,15 @@
 /// @group progress-bar
 ////
 
+// Util helpers; $medium-gray, $global-radius and the palette-derived
+// $primary-color live in _text.scss. $global-margin is this module's only
+// ambient consumer, so its mirror is declared here (same `!default` as
+// scss/_global.scss, live-linked through the `forms/forms` facade).
+@use '../util/value' as *;
+@use 'text' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
 /// Height of a progress bar.
 /// @type Number
 $progress-height: 1rem !default;

@@ -1,0 +1,29 @@
+// Foundation for Sites — float-mode entry module
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group foundation
+////
+
+// 7.0 Sass modularization (M2 line B, slice B9): module-system replacement for
+// the legacy float entry (`$global-flexbox: false;` + `@import 'foundation';`
+// + `@include foundation-everything($flex: false);`). The float fork happens
+// at compile time by configuring the modules that own the affected cells —
+// a module can be configured only once per compilation, and these `@use`s
+// come first, so every later load (foundation.scss and its facades) sees the
+// configured cells:
+//
+// - `util/mixins` owns `$global-flexbox` (read by the menu, button group,
+//   media object, card, title bar, top bar, input group and clearfix
+//   branches);
+// - `_global-module` owns its own `$global-flexbox` cell for parity.
+//
+// The legacy entry keeps working unchanged; this module exists for `@use`
+// consumers (7.0 compiles: `@use 'foundation-float';`).
+
+@use 'util/mixins' with ($global-flexbox: false);
+
+@use 'foundation' as foundation;
+
+@include foundation.foundation-everything($flex: false);

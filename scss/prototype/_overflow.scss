@@ -6,6 +6,12 @@
 /// @group prototype-overflow
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for overflow helper classes
 /// @type Boolean
 $prototype-overflow-breakpoints: $global-prototype-breakpoints !default;
@@ -54,7 +60,7 @@ $prototype-overflow: (
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
         @each $overflow in $prototype-overflow {
-          @if $size != $-zf-zero-breakpoint {
+          @if $size != $zf-zero-breakpoint {
             .#{$size}-overflow-#{$overflow} {
               @include overflow($overflow);
             }

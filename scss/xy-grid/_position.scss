@@ -6,6 +6,21 @@
 /// @group xy-grid
 ////
 
+// Util helpers; `xy-cell-size()`/`xy-cell-gutters()` live in _cell.scss and
+// `$grid-margin-gutters` in _gutters.scss. `$global-left` is this module's only
+// ambient consumer. Slice B9: `$global-text-direction` itself is owned by
+// scss/util/_flex.scss now — this module starred-uses the util facade, so a
+// local mirror of the same name would be silently dropped by Dart Sass in
+// favor of the forwarded member; the derived `$global-left` below reads that
+// member and keeps the exact same value.
+@use '../util/breakpoint' as *;
+@use '../util/unit' as *;
+@use 'cell' as *;
+@use 'gutters' as *;
+@use '../global-module' as *;
+@use '../util/mixins' as *;
+@use '../util/flex' as *;
+
 /// Returns the appropriate CSS value to offset a cell.
 ///
 /// @param {Number|List} $n - Size to offset by. You can pass in any value accepted by the `xy-cell()` mixin, such as `6`, `50%`, or `1 of 2`.
@@ -20,7 +35,7 @@
   $gutter-type: margin,
   $breakpoint: null
 ) {
-  $breakpoint: -zf-current-breakpoint($breakpoint, $default: $-zf-zero-breakpoint);
+  $breakpoint: zf-current-breakpoint($breakpoint, $default: $zf-zero-breakpoint);
   $size: xy-cell-size($n);
 
   $offset: $size;
@@ -50,10 +65,10 @@
   $breakpoint: null,
   $vertical: false
 ) {
-  $breakpoint: -zf-current-breakpoint($breakpoint, $default: $-zf-zero-breakpoint);
+  $breakpoint: zf-current-breakpoint($breakpoint, $default: $zf-zero-breakpoint);
   $direction: if($vertical, 'top', $global-left);
 
-  @include -zf-each-breakpoint-in($breakpoint, $media-queries: 'for-lists') {
+  @include zf-each-breakpoint-in($breakpoint, $media-queries: 'for-lists') using ($size) {
     $offset: xy-cell-offset($n, $gutters, $gutter-type);
     margin-#{$direction}: #{$offset};
   }

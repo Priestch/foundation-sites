@@ -189,10 +189,10 @@
     padding-left: 0;
   }
 
-  @include -zf-each-breakpoint {
+  @include zf-each-breakpoint using ($size) {
     @for $i from 1 through $grid-column-count {
       // Sizing (percentage)
-      .#{$-zf-size}-#{$i} {
+      .#{$size}-#{$i} {
         flex: flex-grid-column($i);
         max-width: grid-column($i);
       }
@@ -200,33 +200,33 @@
       // Offsets
       $o: $i - 1;
 
-      .#{$-zf-size}-offset-#{$o} {
+      .#{$size}-offset-#{$o} {
         @include grid-column-offset($o);
       }
     }
 
     // Block grid
     @for $i from 1 through $block-grid-max {
-      .#{$-zf-size}-up-#{$i} {
+      .#{$size}-up-#{$i} {
         @include flex-grid-layout($i);
       }
     }
 
-    @if $-zf-size != $-zf-zero-breakpoint {
+    @if $size != $zf-zero-breakpoint {
       // Sizing (expand)
-      @include breakpoint($-zf-size) {
-        .#{$-zf-size}-expand {
+      @include breakpoint($size) {
+        .#{$size}-expand {
           flex: flex-grid-column();
         }
       }
 
       // Auto-stacking/unstacking
       @at-root (without: media) {
-        .row.#{$-zf-size}-unstack {
+        .row.#{$size}-unstack {
           > .column {
             flex: flex-grid-column(100%);
 
-            @include breakpoint($-zf-size) {
+            @include breakpoint($size) {
               flex: flex-grid-column();
             }
           }
@@ -235,12 +235,12 @@
     }
 
     // Responsive collapsing
-    .#{$-zf-size}-collapse {
+    .#{$size}-collapse {
       > .column { @include grid-col-collapse; }
     }
 
-    .#{$-zf-size}-uncollapse {
-      > .column { @include grid-col-gutter($-zf-size); }
+    .#{$size}-uncollapse {
+      > .column { @include grid-col-gutter($size); }
     }
   }
 

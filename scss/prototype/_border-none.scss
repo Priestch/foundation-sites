@@ -6,6 +6,12 @@
 /// @group prototype-border-none
 ////
 
+// Slice B9: real `@use` module now. Ambient settings mirrors come from
+// _relation.scss (the first forwarded module), util helpers from the granular
+// util modules.
+@use '../global-module' as *;
+@use '../util/breakpoint' as *;
+
 /// Responsive breakpoints for border none.
 /// @type Boolean
 $prototype-border-none-breakpoints: $global-prototype-breakpoints !default;
@@ -24,7 +30,7 @@ $prototype-border-none-breakpoints: $global-prototype-breakpoints !default;
     // Loop through Responsive Breakpoints
     @each $size in $breakpoint-classes {
       @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
+        @if $size != $zf-zero-breakpoint {
           .#{$size}-border-none {
             @include border-none;
           }

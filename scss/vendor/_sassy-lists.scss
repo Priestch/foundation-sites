@@ -1,0 +1,23 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// `@use` facade for the vendored sassy-lists dependency. The real files live
+// in `<repo>/_vendor/sassy-lists/`, a gitignored build artifact that
+// `gulp sass:deps` copies from `node_modules/sassy-lists` before every Sass
+// build. Modules (e.g. `scss/util/_mixins.scss`) need a tracked, loadable
+// entry point inside the library, which this file provides; the relative
+// `../../_vendor/...` imports below resolve to the same canonical files that
+// `scss/foundation.scss` imports, so both load paths share a single
+// evaluation and no member is duplicated.
+//
+// Only `sl-contain()` and `sl-remove()` are consumed by the library today;
+// the full helper/function set is re-exported to match foundation.scss.
+
+@import '../../_vendor/sassy-lists/stylesheets/helpers/missing-dependencies';
+@import '../../_vendor/sassy-lists/stylesheets/helpers/true';
+@import '../../_vendor/sassy-lists/stylesheets/functions/contain';
+@import '../../_vendor/sassy-lists/stylesheets/functions/purge';
+@import '../../_vendor/sassy-lists/stylesheets/functions/remove';
+@import '../../_vendor/sassy-lists/stylesheets/functions/replace';
+@import '../../_vendor/sassy-lists/stylesheets/functions/to-list';

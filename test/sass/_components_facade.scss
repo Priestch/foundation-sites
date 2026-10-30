@@ -1,0 +1,1201 @@
+// `scss/components` module-transition suite (M2 line B, slice B6).
+//
+// Pins the contracts introduced by turning the generic components and the
+// first basic components partials into `@use` modules behind per-partial
+// `@forward` facades at the legacy import paths (scss/components/_button.scss
+// and friends), aggregated for `@use` consumers by
+// `scss/components/_components.scss`:
+// - @import consumers still see every components member, with the module
+//   cells live-linked to the import-world globals in both directions;
+// - settings overrides reach the modules both before the facade import (the
+//   settings-file flow, re-derived `!default`s included) and after it;
+// - the palette-driven settings resolve against the effective palette,
+//   including the second-override-point contract for a direct `$primary-color`
+//   assignment after scss/_global.scss (pinned by _settings_override.scss);
+// - the legacy `$breadcrumbs-item-slash[-color]` cells stay null-defaulted
+//   module cells (the pre-import override flow itself is pinned by the
+//   double-compile probes of this slice, not repeatably assertable here).
+
+@use "sass:map";
+
+@use "true" as *;
+
+// Slice B10: the framework imports below stay `@import` on purpose — the
+// suite pins the import-world facade contract itself (pre/post-import
+// overrides must rebind the live-linked module cells), which has no `@use`
+// equivalent.
+@import "../../scss/util/util";
+
+// Pre-import overrides (the settings-file flow).
+$global-radius: 8px;
+$global-margin: 2rem;
+$foundation-palette: (
+  "primary": #1240ab,
+  "secondary": #767676,
+  "success": #2e7d32,
+  "warning": #f9a825,
+  "alert": #c62828,
+);
+$button-radius: 4px;
+
+@import "../../scss/global";
+
+// Second override point (see _settings_override.scss): wins only because it
+// is assigned after add-foundation-colors() ran inside scss/_global.scss.
+$primary-color: #123456;
+
+// B8: a colliding off-canvas push z-index, so the deprecated-branch z-index
+// corrections in off-canvas-basics() fire when the B8 suite includes it.
+$offcanvas-push-zindex: 11;
+
+// Slice B9: $anchor-color's single owner moved to typography/_base.scss, so
+// the typography facade joins the import list ahead of the components
+// aggregator (drilldown/dropdown-menu derive their arrow knobs from it).
+@import "../../scss/typography/typography";
+@import "../../scss/components/components";
+
+@include describe('components module facade') {
+
+  @include it('exposes the forwarded components members to @import consumers [function]') {
+    @include assert-equal($button-radius, 4px,
+      'Keeps the pre-import override instead of the module default 0');
+
+    @include assert-equal($button-background, #123456,
+      'Derives $button-background from the second-override-point $primary-color');
+
+    @include assert-equal($badge-background, #123456,
+      'Derives $badge-background from the second-override-point $primary-color');
+
+    @include assert-equal($callout-radius, 8px,
+      'Derives $callout-radius from the overridden $global-radius mirror');
+
+    @include assert-equal($card-margin-bottom, 2rem,
+      'Derives $card-margin-bottom from the overridden $global-margin mirror');
+
+    @include assert-equal($switch-background, #cacaca,
+      'Resolves the module default through the $medium-gray mirror');
+
+    @include assert-equal($table-head-font-color, #0a0a0a,
+      'Derives the table head color through the table-owned $body-font-color mirror');
+  }
+
+  @include it('compiles the forwarded badge with the effective palette [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-badge;
+      }
+      @include expect($selector: false) {
+        .badge {
+          display: inline-block;
+          min-width: 2.1em;
+          padding: 0.3em;
+          border-radius: 50%;
+          font-size: 0.6rem;
+          text-align: center;
+          background: #123456;
+          color: #fefefe;
+        }
+        .badge.primary {
+          background: #1240ab;
+          color: #fefefe;
+        }
+        .badge.secondary {
+          background: #767676;
+          color: #fefefe;
+        }
+        .badge.success {
+          background: #2e7d32;
+          color: #fefefe;
+        }
+        .badge.warning {
+          background: #f9a825;
+          color: #0a0a0a;
+        }
+        .badge.alert {
+          background: #c62828;
+          color: #fefefe;
+        }
+      }
+    }
+  }
+
+  @include it('compiles the forwarded callout with the effective palette [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-callout;
+      }
+      @include expect($selector: false) {
+        .callout {
+          background-color: rgb(254.85, 254.85, 254.85);
+          color: #0a0a0a;
+          position: relative;
+          margin: 0 0 1rem 0;
+          padding: 1rem;
+          border: 1px solid rgba(10, 10, 10, 0.25);
+          border-radius: 8px;
+        }
+        .callout > :first-child {
+          margin-top: 0;
+        }
+        .callout > :last-child {
+          margin-bottom: 0;
+        }
+        .callout.primary {
+          background-color: rgb(211.4357142857, 223.1547619048, 250.4142857143);
+          color: #0a0a0a;
+        }
+        .callout.secondary {
+          background-color: rgb(234.45, 234.45, 234.45);
+          color: #0a0a0a;
+        }
+        .callout.success {
+          background-color: rgb(217.8289473684, 241.3210526316, 219.0184210526);
+          color: #0a0a0a;
+        }
+        .callout.warning {
+          background-color: rgb(254.1, 241.95, 222.3);
+          color: #0a0a0a;
+        }
+        .callout.alert {
+          background-color: rgb(248.1428571429, 221.0571428571, 221.0571428571);
+          color: #0a0a0a;
+        }
+        .callout.small {
+          padding-top: 0.5rem;
+          padding-right: 0.5rem;
+          padding-bottom: 0.5rem;
+          padding-left: 0.5rem;
+        }
+        .callout.large {
+          padding-top: 3rem;
+          padding-right: 3rem;
+          padding-bottom: 3rem;
+          padding-left: 3rem;
+        }
+      }
+    }
+  }
+
+  @include it('settings overrides assigned after the import reach the modules [component]') {
+    $old-radius: $button-radius;
+    $button-radius: 12px !global;
+
+    @include assert {
+      @include output($selector: false) {
+        .probe { @include button-base; }
+      }
+      @include expect($selector: false) {
+        .probe {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 0 2rem 0;
+          border: 1px solid transparent;
+          border-radius: 12px;
+          transition: background-color 0.25s ease-out, color 0.25s ease-out;
+          font-family: inherit;
+          font-size: 0.9rem;
+          -webkit-appearance: none;
+          line-height: 1;
+          text-align: center;
+          cursor: pointer;
+          padding: 0.85em 1em;
+        }
+        [data-whatinput=mouse] .probe {
+          outline: 0;
+        }
+      }
+    }
+
+    $button-radius: $old-radius !global;
+  }
+
+  @include it('keeps the legacy breadcrumbs slash cells null-defaulted [function]') {
+    @include assert-equal($breadcrumbs-item-slash, null,
+      'Declares the legacy slash cell without triggering the override');
+
+    @include assert-equal($breadcrumbs-item-slash-color, null,
+      'Declares the legacy slash-color cell without triggering the override');
+
+    @include assert-equal($breadcrumbs-item-separator, true,
+      'Keeps the separator default while the legacy cells are null');
+  }
+
+  @include it('surfaces the util-owned global-flexbox through the facade [function]') {
+    @include assert-equal($global-flexbox, true,
+      'Surfaces the util mixins module cell through the components facade');
+  }
+}
+
+@include describe('components module facade: B7 batch') {
+
+  @include it('exposes the B7 forwarded members to @import consumers [function]') {
+    @include assert-equal($menu-item-background-active, #1240ab,
+      'Resolves the get-color(primary) replica against the effective palette mirror');
+
+    @include assert-equal($pagination-item-background-current, #123456,
+      'Derives the pagination current background from the second-override-point $primary-color');
+
+    @include assert-equal($accordion-content-color, #0a0a0a,
+      'Derives the accordion content color through the accordion-owned $body-font-color mirror');
+
+    @include assert-equal($tab-content-color, #0a0a0a,
+      'Derives the tab content color through the tabs-owned $body-font-color mirror');
+
+    @include assert-equal($tooltip-font-size, 80%,
+      'Resolves the tooltip font size through the tooltip-owned $small-font-size mirror');
+
+    @include assert-equal($menu-items-padding, 0.7rem 1rem,
+      'Derives the menu item padding from the menu-owned $global-menu-padding mirror');
+
+    @include assert-equal($accordionmenu-padding, 0.7rem 1rem,
+      'Reaches the menu-owned $global-menu-padding mirror through the starred menu-module use');
+
+    @include assert-equal($drilldown-padding, 0.7rem 1rem,
+      'Reaches the menu-owned $global-menu-padding mirror through the starred menu-module use');
+
+    @include assert-equal($dropdownmenu-arrow-size, 6px,
+      'Declares the cross-slice dropdown-menu arrow mirror with the library default');
+
+    @include assert-equal($titlebar-icon-color, #fefefe,
+      'Declares the cross-slice title-bar icon mirror with the library default');
+  }
+
+  @include it('compiles the forwarded menu with the interpolated responsive classes [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-menu;
+      }
+      @include expect($selector: false) {
+    .menu {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    [data-whatinput=mouse] .menu li {
+      outline: 0;
+    }
+    .menu a,
+    .menu .button {
+      line-height: 1;
+      text-decoration: none;
+      display: block;
+      padding: 0.7rem 1rem;
+    }
+    .menu input,
+    .menu select,
+    .menu a,
+    .menu button {
+      margin-bottom: 0;
+    }
+    .menu input {
+      display: inline-block;
+    }
+    .menu, .menu.horizontal {
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+    .menu.vertical {
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
+    .menu.vertical.icon-top li a img,
+    .menu.vertical.icon-top li a i,
+    .menu.vertical.icon-top li a svg, .menu.vertical.icon-bottom li a img,
+    .menu.vertical.icon-bottom li a i,
+    .menu.vertical.icon-bottom li a svg {
+      text-align: left;
+    }
+    .menu.expanded li {
+      flex: 1 1 0px;
+    }
+    .menu.expanded.icon-top li a img,
+    .menu.expanded.icon-top li a i,
+    .menu.expanded.icon-top li a svg, .menu.expanded.icon-bottom li a img,
+    .menu.expanded.icon-bottom li a i,
+    .menu.expanded.icon-bottom li a svg {
+      text-align: left;
+    }
+    .menu.simple {
+      align-items: center;
+    }
+    .menu.simple li + li {
+      margin-left: 1rem;
+    }
+    .menu.simple a {
+      padding: 0;
+    }
+    @media print, screen and (min-width: 40em) {
+      .menu.medium-horizontal {
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+      .menu.medium-vertical {
+        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      .menu.medium-expanded li {
+        flex: 1 1 0px;
+      }
+      .menu.medium-simple li {
+        flex: 1 1 0px;
+      }
+    }
+    @media print, screen and (min-width: 64em) {
+      .menu.large-horizontal {
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+      .menu.large-vertical {
+        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      .menu.large-expanded li {
+        flex: 1 1 0px;
+      }
+      .menu.large-simple li {
+        flex: 1 1 0px;
+      }
+    }
+    .menu.nested {
+      margin-right: 0;
+      margin-left: 1rem;
+    }
+    .menu.icons a {
+      display: flex;
+    }
+    .menu.icon-top a, .menu.icon-right a, .menu.icon-bottom a, .menu.icon-left a {
+      display: flex;
+    }
+    .menu.icon-left li a, .menu.nested.icon-left li a {
+      flex-flow: row nowrap;
+    }
+    .menu.icon-left li a img,
+    .menu.icon-left li a i,
+    .menu.icon-left li a svg, .menu.nested.icon-left li a img,
+    .menu.nested.icon-left li a i,
+    .menu.nested.icon-left li a svg {
+      margin-right: 0.25rem;
+    }
+    .menu.icon-right li a, .menu.nested.icon-right li a {
+      flex-flow: row nowrap;
+    }
+    .menu.icon-right li a img,
+    .menu.icon-right li a i,
+    .menu.icon-right li a svg, .menu.nested.icon-right li a img,
+    .menu.nested.icon-right li a i,
+    .menu.nested.icon-right li a svg {
+      margin-left: 0.25rem;
+    }
+    .menu.icon-top li a, .menu.nested.icon-top li a {
+      flex-flow: column nowrap;
+    }
+    .menu.icon-top li a img,
+    .menu.icon-top li a i,
+    .menu.icon-top li a svg, .menu.nested.icon-top li a img,
+    .menu.nested.icon-top li a i,
+    .menu.nested.icon-top li a svg {
+      align-self: stretch;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    .menu.icon-bottom li a, .menu.nested.icon-bottom li a {
+      flex-flow: column nowrap;
+    }
+    .menu.icon-bottom li a img,
+    .menu.icon-bottom li a i,
+    .menu.icon-bottom li a svg, .menu.nested.icon-bottom li a img,
+    .menu.nested.icon-bottom li a i,
+    .menu.nested.icon-bottom li a svg {
+      align-self: stretch;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    .menu .is-active > a {
+      background: #1240ab;
+      color: #fefefe;
+    }
+    .menu .active > a {
+      background: #1240ab;
+      color: #fefefe;
+    }
+    .menu.align-left {
+      justify-content: flex-start;
+    }
+    .menu.align-right li {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .menu.align-right li .submenu li {
+      justify-content: flex-start;
+    }
+    .menu.align-right.vertical li {
+      display: block;
+      text-align: right;
+    }
+    .menu.align-right.vertical li .submenu li {
+      text-align: right;
+    }
+    .menu.align-right.icon-top li a img,
+    .menu.align-right.icon-top li a i,
+    .menu.align-right.icon-top li a svg, .menu.align-right.icon-bottom li a img,
+    .menu.align-right.icon-bottom li a i,
+    .menu.align-right.icon-bottom li a svg {
+      text-align: right;
+    }
+    .menu.align-right .nested {
+      margin-right: 1rem;
+      margin-left: 0;
+    }
+    .menu.align-center li {
+      display: flex;
+      justify-content: center;
+    }
+    .menu.align-center li .submenu li {
+      justify-content: flex-start;
+    }
+    .menu .menu-text {
+      padding: 0.7rem 1rem;
+      font-weight: bold;
+      line-height: 1;
+      color: inherit;
+    }
+
+    .menu-centered > .menu {
+      justify-content: center;
+    }
+    .menu-centered > .menu li {
+      display: flex;
+      justify-content: center;
+    }
+    .menu-centered > .menu li .submenu li {
+      justify-content: flex-start;
+    }
+
+    .no-js [data-responsive-menu] ul {
+      display: none;
+    }
+      }
+    }
+  }
+
+  @include it('settings overrides assigned after the import reach the B7 modules [component]') {
+    $old-margin: $thumbnail-margin-bottom;
+    $thumbnail-margin-bottom: 3rem !global;
+
+    @include assert {
+      @include output($selector: false) {
+        .probe { @include thumbnail; }
+      }
+      @include expect($selector: false) {
+        .probe {
+          display: inline-block;
+          max-width: 100%;
+          margin-bottom: 3rem;
+          border: 4px solid #fefefe;
+          border-radius: 8px;
+          box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.2);
+          line-height: 0;
+        }
+      }
+    }
+
+    $thumbnail-margin-bottom: $old-margin !global;
+  }
+}
+
+@include describe('components module facade: B8 batch') {
+
+  @include it('exposes the B8 forwarded members to @import consumers [function]') {
+    @include assert-equal($dropdown-menu-item-color-active, #1240ab,
+      'Resolves the get-color(primary) replica against the effective palette mirror');
+
+    @include assert-equal($dropdown-menu-item-background-active, transparent,
+      'Keeps the transparent active background default');
+
+    @include assert-equal($dropdownmenu-arrow-color, #123456,
+      'Derives the surfaced drilldown arrow mirror from the second-override-point $primary-color');
+
+    @include assert-equal($dropdownmenu-arrow-size, 6px,
+      'Keeps the cross-slice arrow size mirror default');
+
+    @include assert-equal($anchor-color, #123456,
+      'Surfaces the drilldown-owned $anchor-color cell');
+
+    @include assert-equal($reveal-max-width, 75rem,
+      'Derives the reveal max width through the reveal-owned $global-width mirror');
+
+    @include assert-equal($reveal-padding, 1rem,
+      'Derives the reveal padding through the card-owned $global-padding mirror');
+
+    @include assert-equal($titlebar-background, #0a0a0a,
+      'Derives the title-bar background through the util color cell');
+
+    @include assert-equal($topbar-background, #e6e6e6,
+      'Derives the top-bar background through the $light-gray mirror');
+
+    @include assert-equal($topbar-submenu-background, #e6e6e6,
+      'Derives the top-bar submenu background from the top-bar background default');
+
+    @include assert-equal($maincontent-class, 'off-canvas-content',
+      'Keeps the off-canvas main content class default');
+
+    @include assert-equal($flex-source-ordering-count, 6,
+      'Keeps the flex source ordering default');
+
+    @include assert-equal($flexbox-responsive-breakpoints, true,
+      'Keeps the flex responsive breakpoints default');
+  }
+
+  @include it('keeps the legacy off-canvas size cells null-defaulted [function]') {
+    @include assert-equal($offcanvas-size, null,
+      'Declares the legacy size cell without triggering the override');
+
+    @include assert-equal($offcanvas-vertical-size, null,
+      'Declares the legacy vertical size cell without triggering the override');
+
+    @include assert-equal($offcanvas-sizes, (small: 250px),
+      'Keeps the size map default while the legacy cells are null');
+
+    @include assert-equal($offcanvas-vertical-sizes, (small: 250px),
+      'Keeps the vertical size map default while the legacy cells are null');
+  }
+
+  // The bare include must live inside an assert() wrapper: a CSS-emitting
+  // include outside one flips the sass-true output parser back to
+  // module-header state and silently drops every later Test: comment (the
+  // B5 landmine). The z-index values themselves are asserted in the next
+  // `it`, which renders after this one in the same world.
+  @include it('runs the off-canvas basics with colliding z-indexes [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include off-canvas-basics;
+      }
+      @include expect($selector: false) {
+        @include off-canvas-basics;
+      }
+    }
+  }
+
+  @include it('corrects colliding off-canvas z-indexes through the module cells [function]') {
+    @include assert-equal($offcanvas-push-zindex, 12,
+      'Raises the colliding push z-index above the surfaced overlay cell');
+
+    @include assert-equal($offcanvas-overlap-zindex, 13,
+      'Keeps the non-colliding overlap z-index');
+
+    @include assert-equal($offcanvas-reveal-zindex, 12,
+      'Keeps the non-colliding reveal z-index');
+  }
+
+  @include it('keeps the cross-slice title-bar icon mirror live-linked after the import [component]') {
+    $old-icon-color: $titlebar-icon-color;
+    $titlebar-icon-color: #663399 !global;
+
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-menu-icon;
+      }
+      @include expect($selector: false) {
+        .menu-icon {
+          position: relative;
+          display: inline-block;
+          vertical-align: middle;
+          width: 20px;
+          height: 16px;
+          cursor: pointer;
+        }
+        .menu-icon::after {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 2px;
+          background: #663399;
+          box-shadow: 0 7px 0 #663399, 0 14px 0 #663399;
+          content: "";
+        }
+        .menu-icon:hover::after {
+          background: #cacaca;
+          box-shadow: 0 7px 0 #cacaca, 0 14px 0 #cacaca;
+        }
+
+        .menu-icon.dark {
+          position: relative;
+          display: inline-block;
+          vertical-align: middle;
+          width: 20px;
+          height: 16px;
+          cursor: pointer;
+        }
+        .menu-icon.dark::after {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 2px;
+          background: #0a0a0a;
+          box-shadow: 0 7px 0 #0a0a0a, 0 14px 0 #0a0a0a;
+          content: "";
+        }
+        .menu-icon.dark:hover::after {
+          background: #8a8a8a;
+          box-shadow: 0 7px 0 #8a8a8a, 0 14px 0 #8a8a8a;
+        }
+      }
+    }
+
+    $titlebar-icon-color: $old-icon-color !global;
+  }
+
+  @include it('compiles the forwarded dropdown-menu with the interpolated responsive classes [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-dropdown-menu;
+      }
+      @include expect($selector: false) {
+.dropdown.menu > li.opens-left > .is-dropdown-submenu {
+  top: 100%;
+  right: 0;
+  left: auto;
+}
+.dropdown.menu > li.opens-right > .is-dropdown-submenu {
+  top: 100%;
+  right: auto;
+  left: 0;
+}
+.dropdown.menu > li.is-dropdown-submenu-parent > a {
+  position: relative;
+  padding-right: 1.5rem;
+}
+.dropdown.menu > li.is-dropdown-submenu-parent > a::after {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px;
+  content: "";
+  border-bottom-width: 0;
+  border-color: #123456 transparent transparent;
+  right: 5px;
+  left: auto;
+  margin-top: -3px;
+}
+[data-whatinput=mouse] .dropdown.menu a {
+  outline: 0;
+}
+.dropdown.menu > li > a {
+  padding: 0.7rem 1rem;
+}
+.dropdown.menu > li.is-active > a {
+  background: transparent;
+  color: #1240ab;
+}
+.no-js .dropdown.menu ul {
+  display: none;
+}
+.dropdown.menu .nested.is-dropdown-submenu {
+  margin-right: 0;
+  margin-left: 0;
+}
+.dropdown.menu.vertical > li .is-dropdown-submenu {
+  top: 0;
+}
+.dropdown.menu.vertical > li.opens-left > .is-dropdown-submenu {
+  top: 0;
+  right: 100%;
+  left: auto;
+}
+.dropdown.menu.vertical > li.opens-right > .is-dropdown-submenu {
+  right: auto;
+  left: 100%;
+}
+.dropdown.menu.vertical > li > a::after {
+  right: 14px;
+}
+.dropdown.menu.vertical > li.opens-left > a::after {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px;
+  content: "";
+  border-left-width: 0;
+  border-color: transparent #123456 transparent transparent;
+  right: auto;
+  left: 5px;
+}
+.dropdown.menu.vertical > li.opens-right > a::after {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px;
+  content: "";
+  border-right-width: 0;
+  border-color: transparent transparent transparent #123456;
+}
+@media print, screen and (min-width: 40em) {
+  .dropdown.menu.medium-horizontal > li.opens-left > .is-dropdown-submenu {
+    top: 100%;
+    right: 0;
+    left: auto;
+  }
+  .dropdown.menu.medium-horizontal > li.opens-right > .is-dropdown-submenu {
+    top: 100%;
+    right: auto;
+    left: 0;
+  }
+  .dropdown.menu.medium-horizontal > li.is-dropdown-submenu-parent > a {
+    position: relative;
+    padding-right: 1.5rem;
+  }
+  .dropdown.menu.medium-horizontal > li.is-dropdown-submenu-parent > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-bottom-width: 0;
+    border-color: #123456 transparent transparent;
+    right: 5px;
+    left: auto;
+    margin-top: -3px;
+  }
+  .dropdown.menu.medium-vertical > li .is-dropdown-submenu {
+    top: 0;
+  }
+  .dropdown.menu.medium-vertical > li.opens-left > .is-dropdown-submenu {
+    top: 0;
+    right: 100%;
+    left: auto;
+  }
+  .dropdown.menu.medium-vertical > li.opens-right > .is-dropdown-submenu {
+    right: auto;
+    left: 100%;
+  }
+  .dropdown.menu.medium-vertical > li > a::after {
+    right: 14px;
+  }
+  .dropdown.menu.medium-vertical > li.opens-left > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-left-width: 0;
+    border-color: transparent #123456 transparent transparent;
+    right: auto;
+    left: 5px;
+  }
+  .dropdown.menu.medium-vertical > li.opens-right > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-right-width: 0;
+    border-color: transparent transparent transparent #123456;
+  }
+}
+@media print, screen and (min-width: 64em) {
+  .dropdown.menu.large-horizontal > li.opens-left > .is-dropdown-submenu {
+    top: 100%;
+    right: 0;
+    left: auto;
+  }
+  .dropdown.menu.large-horizontal > li.opens-right > .is-dropdown-submenu {
+    top: 100%;
+    right: auto;
+    left: 0;
+  }
+  .dropdown.menu.large-horizontal > li.is-dropdown-submenu-parent > a {
+    position: relative;
+    padding-right: 1.5rem;
+  }
+  .dropdown.menu.large-horizontal > li.is-dropdown-submenu-parent > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-bottom-width: 0;
+    border-color: #123456 transparent transparent;
+    right: 5px;
+    left: auto;
+    margin-top: -3px;
+  }
+  .dropdown.menu.large-vertical > li .is-dropdown-submenu {
+    top: 0;
+  }
+  .dropdown.menu.large-vertical > li.opens-left > .is-dropdown-submenu {
+    top: 0;
+    right: 100%;
+    left: auto;
+  }
+  .dropdown.menu.large-vertical > li.opens-right > .is-dropdown-submenu {
+    right: auto;
+    left: 100%;
+  }
+  .dropdown.menu.large-vertical > li > a::after {
+    right: 14px;
+  }
+  .dropdown.menu.large-vertical > li.opens-left > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-left-width: 0;
+    border-color: transparent #123456 transparent transparent;
+    right: auto;
+    left: 5px;
+  }
+  .dropdown.menu.large-vertical > li.opens-right > a::after {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px;
+    content: "";
+    border-right-width: 0;
+    border-color: transparent transparent transparent #123456;
+  }
+}
+.dropdown.menu.align-right .is-dropdown-submenu.first-sub {
+  top: 100%;
+  right: 0;
+  left: auto;
+}
+
+.is-dropdown-menu.vertical {
+  width: 100px;
+}
+.is-dropdown-menu.vertical.align-right {
+  float: right;
+}
+
+.is-dropdown-submenu-parent {
+  position: relative;
+}
+.is-dropdown-submenu-parent a::after {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  left: auto;
+  margin-top: -6px;
+}
+.is-dropdown-submenu-parent.opens-inner > .is-dropdown-submenu {
+  top: 100%;
+  left: auto;
+}
+.is-dropdown-submenu-parent.opens-left > .is-dropdown-submenu {
+  right: 100%;
+  left: auto;
+}
+.is-dropdown-submenu-parent.opens-right > .is-dropdown-submenu {
+  right: auto;
+  left: 100%;
+}
+
+.is-dropdown-submenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 1;
+  display: none;
+  min-width: 200px;
+  border: 1px solid #cacaca;
+  background: #fefefe;
+}
+.dropdown .is-dropdown-submenu a {
+  padding: 0.7rem 1rem;
+}
+.is-dropdown-submenu .is-dropdown-submenu-parent > a::after {
+  right: 14px;
+}
+.is-dropdown-submenu .is-dropdown-submenu-parent.opens-left > a::after {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px;
+  content: "";
+  border-left-width: 0;
+  border-color: transparent #123456 transparent transparent;
+  right: auto;
+  left: 5px;
+}
+.is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px;
+  content: "";
+  border-right-width: 0;
+  border-color: transparent transparent transparent #123456;
+}
+.is-dropdown-submenu .is-dropdown-submenu {
+  margin-top: -1px;
+}
+.is-dropdown-submenu > li {
+  width: 100%;
+}
+.is-dropdown-submenu.js-dropdown-active {
+  display: block;
+}
+      }
+    }
+  }
+
+  @include it('compiles the forwarded visibility classes with the interpolated breakpoint families [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-visibility-classes;
+      }
+      @include expect($selector: false) {
+.hide {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+@media print, screen and (max-width: 39.99875em) {
+  .hide-for-small-only {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 0em), screen and (min-width: 40em) {
+  .show-for-small-only {
+    display: none !important;
+  }
+}
+
+@media print, screen and (min-width: 40em) {
+  .hide-for-medium {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 39.99875em) {
+  .show-for-medium {
+    display: none !important;
+  }
+}
+
+@media print, screen and (min-width: 40em) and (max-width: 63.99875em) {
+  .hide-for-medium-only {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 39.99875em), screen and (min-width: 64em) {
+  .show-for-medium-only {
+    display: none !important;
+  }
+}
+
+@media print, screen and (min-width: 64em) {
+  .hide-for-large {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 63.99875em) {
+  .show-for-large {
+    display: none !important;
+  }
+}
+
+@media print, screen and (min-width: 64em) and (max-width: 74.99875em) {
+  .hide-for-large-only {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 63.99875em), screen and (min-width: 75em) {
+  .show-for-large-only {
+    display: none !important;
+  }
+}
+
+.show-for-sr,
+.show-on-focus {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.show-on-focus:active, .show-on-focus:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+.show-for-landscape,
+.hide-for-portrait {
+  display: block !important;
+}
+@media screen and (orientation: landscape) {
+  .show-for-landscape,
+  .hide-for-portrait {
+    display: block !important;
+  }
+}
+@media screen and (orientation: portrait) {
+  .show-for-landscape,
+  .hide-for-portrait {
+    display: none !important;
+  }
+}
+
+.hide-for-landscape,
+.show-for-portrait {
+  display: none !important;
+}
+@media screen and (orientation: landscape) {
+  .hide-for-landscape,
+  .show-for-portrait {
+    display: none !important;
+  }
+}
+@media screen and (orientation: portrait) {
+  .hide-for-landscape,
+  .show-for-portrait {
+    display: block !important;
+  }
+}
+
+.show-for-dark-mode {
+  display: none;
+}
+
+.hide-for-dark-mode {
+  display: block;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .show-for-dark-mode {
+    display: block !important;
+  }
+  .hide-for-dark-mode {
+    display: none !important;
+  }
+}
+.show-for-ie {
+  display: none;
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .show-for-ie {
+    display: block !important;
+  }
+  .hide-for-ie {
+    display: none !important;
+  }
+}
+.show-for-sticky {
+  display: none;
+}
+
+.is-stuck .show-for-sticky {
+  display: block;
+}
+
+.is-stuck .hide-for-sticky {
+  display: none;
+}
+      }
+    }
+  }
+
+  @include it('compiles the forwarded float and sticky classes [component]') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation-float-classes;
+        @include foundation-sticky;
+      }
+      @include expect($selector: false) {
+.float-left {
+  float: left !important;
+}
+
+.float-right {
+  float: right !important;
+}
+
+.float-center {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.clearfix::before, .clearfix::after {
+  display: table;
+  content: " ";
+  flex-basis: 0;
+  order: 1;
+}
+.clearfix::after {
+  clear: both;
+}
+
+.sticky-container {
+  position: relative;
+}
+
+.sticky {
+  position: relative;
+  z-index: 0;
+  transform: translate3d(0, 0, 0);
+}
+
+.sticky.is-stuck {
+  position: fixed;
+  z-index: 5;
+  width: 100%;
+}
+.sticky.is-stuck.is-at-top {
+  top: 0;
+}
+.sticky.is-stuck.is-at-bottom {
+  bottom: 0;
+}
+
+.sticky.is-anchored {
+  position: relative;
+  right: auto;
+  left: auto;
+}
+.sticky.is-anchored.is-at-bottom {
+  bottom: 0;
+}
+      }
+    }
+  }
+}

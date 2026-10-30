@@ -6,22 +6,20 @@
 /// @group float
 ////
 
-@mixin foundation-float-classes {
-  .float-left {
-    float: left !important;
-  }
-
-  .float-right {
-    float: right !important;
-  }
-
-  .float-center {
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  .clearfix {
-    @include clearfix;
-  }
-}
+// @deprecated The float classes and the float grid behind them are deprecated
+// since 6.10 (documentation-level deprecation only — no code change) and will
+// be removed in Foundation 7.0 together with the grid consolidation on the
+// xy-grid.
+//
+// 7.0 Sass modularization (M2 line B, slice B8): the float partial is a real
+// `@use` module now (scss/components/_float-module.scss). This file stays at
+// the legacy import path (foundation.scss, docs, customizer and the scss/next
+// load units all `@import` it) as a pure `@forward` facade: the forwarded
+// members land in every @import consumer as globals live-linked with the
+// module cells, so settings overrides keep winning in both directions and
+// the compiled CSS is unchanged.
+//
+// `button-module` is forwarded for uniformity with every components facade
+// (the float module itself reads no settings — see _float-module.scss).
+@forward "button-module";
+@forward "float-module";

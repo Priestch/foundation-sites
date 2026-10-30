@@ -1,7 +1,8 @@
-@import "true";
+@use "true" as *;
 
-@import '../../scss/util/unit';
-@import '../../scss/util/value';
+// Single facade load: _value @uses _unit, so loading both partials via
+// `@use` would evaluate _unit in two modes.
+@use '../../scss/util/util' as *;
 
 @include describe('Value') {
 

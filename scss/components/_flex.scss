@@ -5,115 +5,21 @@
 ////
 /// @group Flexbox Utilities
 ////
+
+// @deprecated The vanilla flex helpers are deprecated since 6.10
+// (documentation-level deprecation only — no code change) and will be
+// consolidated with the xy-grid alignment classes in Foundation 7.0.
 //
-/// Default value for the count of source ordering`
-/// @type Number
-$flex-source-ordering-count: 6 !default;
-
-/// Quickly disable/enable Responsive breakpoints for Vanilla Flex Helpers.
-/// @type Boolean
-$flexbox-responsive-breakpoints: true !default;
-
-@mixin flex-helpers {
-  .flex-container {
-    @include flex;
-  }
-
-  .flex-child-auto {
-    flex: 1 1 auto;
-  }
-
-  .flex-child-grow {
-    flex: 1 0 auto;
-  }
-
-  .flex-child-shrink {
-    flex: 0 1 auto;
-  }
-
-  @each $dir, $prop in $-zf-flex-direction {
-    .flex-dir-#{$dir} {
-      @include flex-direction($prop);
-    }
-  }
-
-  @if ($flexbox-responsive-breakpoints) {
-    // Loop through Responsive Breakpoints
-    @each $size in $breakpoint-classes {
-      @include breakpoint($size) {
-        @if $size != $-zf-zero-breakpoint {
-          .#{$size}-flex-container {
-            @include flex;
-          }
-
-          .#{$size}-flex-child-auto {
-            flex: 1 1 auto;
-          }
-
-          .#{$size}-flex-child-grow {
-            flex: 1 0 auto;
-          }
-
-          .#{$size}-flex-child-shrink {
-            flex: 0 1 auto;
-          }
-
-          @each $dir, $prop in $-zf-flex-direction {
-            .#{$size}-flex-dir-#{$dir} {
-              @include flex-direction($prop);
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-@mixin foundation-flex-classes {
-  // Horizontal alignment using justify-content
-  @each $hdir, $prop in $-zf-flex-justify {
-    .align-#{$hdir} {
-      @include flex-align($x: $hdir);
-    }
-  }
-  
-  // Horizontal alignment Specifically for Vertical Menu
-  @each $hdir, $prop in map-remove($-zf-flex-justify, 'justify', 'spaced') {
-    .align-#{$hdir} {
-      &.vertical {
-        &.menu > li > a {
-          @include flex-align($x: $hdir);
-        }
-      }
-    }
-  }
-
-  // Vertical alignment using align-items and align-self
-  @each $vdir, $prop in $-zf-flex-align {
-    .align-#{$vdir} {
-      @include flex-align($y: $vdir);
-    }
-
-    .align-self-#{$vdir} {
-      @include flex-align-self($y: $vdir);
-    }
-  }
-
-  // Central alignment of content
-  .align-center-middle {
-    @include flex-align($x: center, $y: middle);
-    align-content: center;
-  }
-
-  // Source ordering
-  @include -zf-each-breakpoint {
-    @for $i from 1 through $flex-source-ordering-count {
-      .#{$-zf-size}-order-#{$i} {
-        @include flex-order($i);
-      }
-    }
-  }
-
-  // Vanilla Flexbox Helpers
-  @include flex-helpers;
-}
+// 7.0 Sass modularization (M2 line B, slice B8): the flex partial is a real
+// `@use` module now (scss/components/_flex-module.scss). This file stays at
+// the legacy import path (foundation.scss, docs, customizer and the scss/next
+// load units all `@import` it) as a pure `@forward` facade: the forwarded
+// members land in every @import consumer as globals live-linked with the
+// module cells, so settings overrides keep winning in both directions and
+// the compiled CSS is unchanged.
+//
+// `button-module` is forwarded for uniformity with every components facade
+// (the flex module itself reads no ambient settings mirrors — see
+// _flex-module.scss; its util helpers come from the granular util modules).
+@forward "button-module";
+@forward "flex-module";

@@ -1,0 +1,153 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group breadcrumbs
+////
+
+// Util helpers; the ambient settings mirrors this file consumes ($primary-color,
+// $foundation-palette, $global-radius, $global-text-direction, $global-left,
+// $global-right, $global-margin, $light-gray, $medium-gray) live in
+// _button-module.scss (the first components module), reached with
+// `use button-module as *`; the util helpers come from the granular util
+// modules (NOT the util facade: its own-scope issue-#12080 *-color null
+// !default patch cells would shadow the mirrors under a starred use).
+
+@use '../util/color' as *;
+@use '../util/breakpoint' as *;
+@use '../util/mixins' as *;
+@use '../util/unit' as *;
+@use '../util/value' as *;
+@use '../util/math' as *;
+@use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
+/// Margin around a breadcrumbs container.
+/// @type Number
+$breadcrumbs-margin: 0 0 $global-margin 0 !default;
+
+/// Font size of breadcrumb links.
+/// @type Number
+$breadcrumbs-item-font-size: rem-calc(11) !default;
+
+/// Color of breadcrumb links.
+/// @type Color
+$breadcrumbs-item-color: $primary-color !default;
+
+/// Color of the active breadcrumb link.
+/// @type Color
+$breadcrumbs-item-color-current: $black !default;
+
+/// Opacity of disabled breadcrumb links.
+/// @type Number
+$breadcrumbs-item-color-disabled: $medium-gray !default;
+
+/// Margin between breadcrumb items.
+/// @type Number
+$breadcrumbs-item-margin: 0.75rem !default;
+
+/// If `true`, makes breadcrumb links uppercase.
+/// @type Boolean
+$breadcrumbs-item-uppercase: true !default;
+
+/// If `true`, adds a seperator between breadcrumb links.
+/// @type Boolean
+$breadcrumbs-item-separator: true !default;
+
+// Legacy `$breadcrumbs-item-slash` value, still honored to override the separator
+// variable when set. Declared as a null-defaulted module cell because the
+// import-world check it replaces (`variable-exists(breadcrumbs-item-slash)`, a
+// compile-global read) cannot reach a `@use` module: the facade live link
+// syncs a settings-file assignment into this cell before the override below
+// runs. Unlike the old check, an explicit `null` assignment no longer
+// triggers the override (same trade-off as the `$header-sizes` cell in
+// scss/typography/_base.scss).
+$breadcrumbs-item-slash: null !default;
+
+// If it is set, $breadcrumbs-item-slash is used to build $breadcrumbs-item-separator. See the documentation.
+@if $breadcrumbs-item-slash != null {
+  $breadcrumbs-item-separator: $breadcrumbs-item-slash;
+}
+
+/// Used character for the breadcrumb separator.
+/// @type Content
+$breadcrumbs-item-separator-item: '/' !default;
+
+/// Used character for the breadcrumb separator in rtl mode.
+/// @type Content
+$breadcrumbs-item-separator-item-rtl: '\\' !default;
+
+/// Color of breadcrumb item.
+/// @type Color
+$breadcrumbs-item-separator-color: $medium-gray !default;
+
+// Legacy `$breadcrumbs-item-slash-color` value, still honored to override the
+// separator color when set — same null-defaulted module cell trade-off as
+// $breadcrumbs-item-slash above (see scss/typography/_base.scss).
+$breadcrumbs-item-slash-color: null !default;
+
+// If it is set, $breadcrumbs-item-slash-color is used to build $breadcrumbs-item-separator-color. See the documentation.
+@if $breadcrumbs-item-slash-color != null {
+  $breadcrumbs-item-separator-color: $breadcrumbs-item-slash-color;
+}
+
+/// Adds styles for a breadcrumbs container, along with the styles for the `<li>` and `<a>` elements inside of it.
+@mixin breadcrumbs-container {
+  margin: $breadcrumbs-margin;
+  list-style: none;
+
+  @include clearfix;
+
+  // Item wrapper
+  li {
+    float: #{$global-left};
+
+    font-size: $breadcrumbs-item-font-size;
+    color: $breadcrumbs-item-color-current;
+    cursor: default;
+
+    @if $breadcrumbs-item-uppercase {
+      text-transform: uppercase;
+    }
+
+    @if $breadcrumbs-item-separator {
+      // Need to escape the backslash
+      $separator: if($global-text-direction == 'ltr', $breadcrumbs-item-separator-item, $breadcrumbs-item-separator-item-rtl);
+
+      &:not(:last-child) {
+        &::after {
+          position: relative;
+          margin: 0 $breadcrumbs-item-margin;
+          opacity: 1;
+          content: $separator;
+          color: $breadcrumbs-item-separator-color;
+        }
+      }
+    }
+    @else {
+      margin-#{$global-right}: $breadcrumbs-item-margin;
+    }
+  }
+
+  // Page links
+  a {
+    color: $breadcrumbs-item-color;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@mixin foundation-breadcrumbs {
+  .breadcrumbs {
+    @include breadcrumbs-container;
+
+    .disabled {
+      color: $breadcrumbs-item-color-disabled;
+      cursor: not-allowed;
+    }
+  }
+}

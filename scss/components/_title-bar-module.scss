@@ -1,0 +1,102 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group title-bar
+////
+
+// Util helpers (clearfix() and the $global-flexbox cell from
+// scss/util/_mixins.scss, $black/$white from _color.scss — NOT the util
+// facade: its own-scope issue-#12080 `*-color: null !default` patch cells
+// would shadow the mirrors below under a starred use); the batch-shared
+// ambient mirrors ($medium-gray, $global-left, $global-right) live in
+// _button-module.scss (the first components module).
+@use '../util/color' as *;
+@use '../util/mixins' as *;
+@use 'button-module' as *;
+@use '../global-module' as *;
+@use '../util/flex' as *;
+
+// Mirrors of the title-bar icon knobs (same `!default`s), owned HERE: the
+// menu-icon module sits before this partial in scss/foundation.scss and
+// holds same-name mirrors to feed the hamburger() mixin at its include time;
+// through the facades both spellings sync with the same import-world globals
+// (the second `!default` flattening is a no-op). The components aggregator
+// hides these on this module's forward so the menu-icon cells stay the
+// single surfaced source (a forwarded variable can only be declared by one
+// module).
+$titlebar-icon-color: $white !default;
+$titlebar-icon-color-hover: $medium-gray !default;
+
+/// Background color of a title bar.
+/// @type Color
+$titlebar-background: $black !default;
+
+/// Color of text inside a title bar.
+/// @type Color
+$titlebar-color: $white !default;
+
+/// Padding inside a title bar.
+/// @type Length
+$titlebar-padding: 0.5rem !default;
+
+/// Font weight of text inside a title bar.
+/// @type Weight
+$titlebar-text-font-weight: bold !default;
+
+/// Spacing between the menu icon and text inside a title bar.
+/// @type Length
+$titlebar-icon-spacing: 0.25rem !default;
+
+/// @param {Boolean} $global-flexbox [$global-flexbox] - Internal: effective flexbox mode, threaded by `foundation-everything()` (slice B9).
+@mixin foundation-title-bar(
+  $global-flexbox: $global-flexbox
+) {
+  .title-bar {
+    padding: $titlebar-padding;
+    background: $titlebar-background;
+    color: $titlebar-color;
+
+    @if $global-flexbox {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    @else {
+      @include clearfix($global-flexbox: $global-flexbox);
+    }
+
+    .menu-icon {
+      margin-#{$global-left}: $titlebar-icon-spacing;
+      margin-#{$global-right}: $titlebar-icon-spacing;
+    }
+  }
+
+  @if $global-flexbox {
+    .title-bar-left,
+    .title-bar-right {
+      flex: 1 1 0px; // stylelint-disable-line length-zero-no-unit
+    }
+
+    .title-bar-right {
+      text-align: right;
+    }
+  }
+  @else {
+    .title-bar-left {
+      float: left;
+    }
+
+    .title-bar-right {
+      float: right;
+      text-align: right;
+    }
+  }
+
+  .title-bar-title {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: $titlebar-text-font-weight;
+  }
+}
