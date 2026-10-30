@@ -333,6 +333,11 @@ const Events = { on, one, off, delegate, trigger, triggerHandler };
 // Accepts both the jQuery objects un-migrated callers still pass and plain
 // elements, so the helper survives the line-A migration unchanged.
 function toElement$1(obj) {
+  // window is array-like too - window[0] is the first frame's Window, and
+  // unwrapping it hands back a (possibly cross-origin) iframe window that
+  // throws on the next property read. Every onLoad(window, ...) call on a
+  // page that already contains an iframe hit this.
+  if (obj === window) { return obj; }
   // nodeType marks a real node: never unwrap it, even when it is itself
   // array-like (HTMLSelectElement exposes its first option as [0]).
   return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
