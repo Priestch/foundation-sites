@@ -49,10 +49,6 @@ var Triggers = {
   Initializers: {}
 }
 
-// Module-level flag (S4): was `$.triggersInitialized`, a property hung on the
-// jQuery namespace. Same one-shot semantics, no jQuery dependency.
-let triggersInitialized = false;
-
 Triggers.Listeners.Basic  = {
   openListener: function() {
     triggers(this, 'open');
@@ -262,11 +258,17 @@ Triggers.init = function (Foundation) {
   // time), and the initial Foundation.init() reflow completes before
   // DOMContentLoaded fires, so the closeme yeti-box snapshot still sees
   // the full plugin set.
+  //
+  // The armed flag lives on window, not in module state: the docs layout
+  // loads the foundation.js monolith next to the per-plugin chain, and
+  // every copy of this module used to arm its own delegation set - one
+  // click then ran toggle eight times, which nets to "closed" for every
+  // open/close style interaction (dropdown, responsive toggle).
   const arm = function () {
-    if (triggersInitialized !== true) {
+    if (window.zfTriggersArmed !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-      triggersInitialized = true;
+      window.zfTriggersArmed = true;
     }
   };
   if (document.readyState === 'loading') {

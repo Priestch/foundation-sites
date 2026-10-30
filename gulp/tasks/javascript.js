@@ -42,6 +42,7 @@ var webpackExternalPlugins = Object.assign(
     './foundation.util.nest':         { root: 'foundation.util.nest' },
     './foundation.util.timer':        { root: 'foundation.util.timer' },
     './foundation.util.touch':        { root: 'foundation.util.touch' },
+    './foundation.util.triggers':     { root: 'foundation.util.triggers' },
     './foundation.util.box':          { root: 'foundation.util.box' },
     './foundation.util.registry':     { root: 'foundation.util.registry' },
     './foundation.util.events':       { root: 'foundation.util.events' },

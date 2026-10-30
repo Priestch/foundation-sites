@@ -2883,10 +2883,6 @@ var Triggers = {
   },
   Initializers: {}
 };
-
-// Module-level flag (S4): was `$.triggersInitialized`, a property hung on the
-// jQuery namespace. Same one-shot semantics, no jQuery dependency.
-var triggersInitialized = false;
 Triggers.Listeners.Basic = {
   openListener: function openListener() {
     triggers(this, 'open');
@@ -3088,11 +3084,17 @@ Triggers.init = function (Foundation) {
   // time), and the initial Foundation.init() reflow completes before
   // DOMContentLoaded fires, so the closeme yeti-box snapshot still sees
   // the full plugin set.
+  //
+  // The armed flag lives on window, not in module state: the docs layout
+  // loads the foundation.js monolith next to the per-plugin chain, and
+  // every copy of this module used to arm its own delegation set - one
+  // click then ran toggle eight times, which nets to "closed" for every
+  // open/close style interaction (dropdown, responsive toggle).
   var arm = function arm() {
-    if (triggersInitialized !== true) {
+    if (window.zfTriggersArmed !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-      triggersInitialized = true;
+      window.zfTriggersArmed = true;
     }
   };
   if (document.readyState === 'loading') {
@@ -8468,8 +8470,14 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
     key: "_events",
     value: function _events() {
       var _this = this;
-      _this.onLoadListener = onLoad(window, function () {
-        // A load callback can land after destroy() nulled the instance state
+
+      // Interactions arm at DOM-ready, not window load: a hung third-party
+      // resource (the docs site's video iframe) would otherwise leave the
+      // scroll spy and the nav-link clicks dead for as long as window load
+      // is stalled. The 6.x load-time re-measure stays - images settle after
+      // DOM-ready and the points need their final dimensions.
+      var arm = function arm() {
+        // A late callback can land after destroy() nulled the instance state
         // (the same post-destroy window the S6 slider guards cover; jQuery's
         // $(null) tolerance hid this in 6.x).
         if (!_this.$element) {
@@ -8480,6 +8488,10 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
             _this.scrollToLoc(location.hash);
           }
         }
+        // Re-read the links: DOMContentLoaded runs after every synchronous
+        // page script, so nav lists a late script builds (the docs sidebar's
+        // generated subnav) are present now but were not at _setup time.
+        _this.links = Array.from(_this.$element.querySelectorAll('a'));
         _this.calcPoints();
         _this._updateActive();
         // S7: the resizeme/scrollme consumers flip to the native event layer.
@@ -8492,6 +8504,22 @@ var Magellan = /*#__PURE__*/function (_Plugin) {
           e.preventDefault();
           _this.scrollToLoc(this.getAttribute('href'));
         });
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', arm);
+      } else {
+        arm();
+      }
+
+      // The load-time re-measure: images and late layout settle after
+      // DOM-ready, so the demarcation points are recalculated once the
+      // document has fully loaded.
+      this.onLoadListener = onLoad(window, function () {
+        if (!_this.$element) {
+          return;
+        }
+        _this.calcPoints();
+        _this._updateActive();
       });
       this._deepLinkScroll = function () {
         if (_this.options.deepLinking) {
