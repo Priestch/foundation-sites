@@ -14,7 +14,6 @@
 // $global-menu-nested-margin and the menu-nested() mixin live in
 // _menu-module.scss (the first menu-based module).
 @use '../util/mixins' as *;
-@use 'button-module' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
 @use 'menu-module' as *;

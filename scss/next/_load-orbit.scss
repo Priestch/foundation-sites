@@ -1,0 +1,29 @@
+// Foundation for Sites — load unit for the orbit component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/orbit-module' as orbit-module with (
+  $orbit-bullet-background: map.get($user, "orbit-bullet-background"),
+  $orbit-bullet-background-active: map.get($user, "orbit-bullet-background-active"),
+  $orbit-bullet-diameter: map.get($user, "orbit-bullet-diameter"),
+  $orbit-bullet-margin: map.get($user, "orbit-bullet-margin"),
+  $orbit-bullet-margin-top: map.get($user, "orbit-bullet-margin-top"),
+  $orbit-bullet-margin-bottom: map.get($user, "orbit-bullet-margin-bottom"),
+  $orbit-caption-background: map.get($user, "orbit-caption-background"),
+  $orbit-caption-padding: map.get($user, "orbit-caption-padding"),
+  $orbit-control-background-hover: map.get($user, "orbit-control-background-hover"),
+  $orbit-control-padding: map.get($user, "orbit-control-padding"),
+  $orbit-control-zindex: map.get($user, "orbit-control-zindex")
+);
+
+@include orbit-module.foundation-orbit;

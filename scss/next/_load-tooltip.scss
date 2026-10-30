@@ -1,0 +1,29 @@
+// Foundation for Sites — load unit for the tooltip component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/tooltip-module' as tooltip-module with (
+  $has-tip-cursor: map.get($user, "has-tip-cursor"),
+  $has-tip-font-weight: map.get($user, "has-tip-font-weight"),
+  $has-tip-border-bottom: map.get($user, "has-tip-border-bottom"),
+  $tooltip-background-color: map.get($user, "tooltip-background-color"),
+  $tooltip-color: map.get($user, "tooltip-color"),
+  $tooltip-padding: map.get($user, "tooltip-padding"),
+  $tooltip-max-width: map.get($user, "tooltip-max-width"),
+  $tooltip-font-size: map.get($user, "tooltip-font-size"),
+  $tooltip-pip-width: map.get($user, "tooltip-pip-width"),
+  $tooltip-pip-height: map.get($user, "tooltip-pip-height"),
+  $tooltip-radius: map.get($user, "tooltip-radius")
+);
+
+@include tooltip-module.foundation-tooltip;

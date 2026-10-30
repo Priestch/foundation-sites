@@ -16,7 +16,6 @@
 // (the first menu-based module).
 @use '../util/color' as *;
 @use '../util/mixins' as *;
-@use 'button-module' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
 @use 'dropdown-menu-module' as *;  // slice B9: the arrow knobs' single owner

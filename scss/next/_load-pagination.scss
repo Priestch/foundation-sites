@@ -1,0 +1,34 @@
+// Foundation for Sites — load unit for the pagination component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/pagination-module' as pagination-module with (
+  $pagination-font-size: map.get($user, "pagination-font-size"),
+  $pagination-margin-bottom: map.get($user, "pagination-margin-bottom"),
+  $pagination-item-color: map.get($user, "pagination-item-color"),
+  $pagination-item-padding: map.get($user, "pagination-item-padding"),
+  $pagination-item-spacing: map.get($user, "pagination-item-spacing"),
+  $pagination-radius: map.get($user, "pagination-radius"),
+  $pagination-item-background-hover: map.get($user, "pagination-item-background-hover"),
+  $pagination-item-background-current: map.get($user, "pagination-item-background-current"),
+  $pagination-item-color-current: map.get($user, "pagination-item-color-current"),
+  $pagination-item-color-disabled: map.get($user, "pagination-item-color-disabled"),
+  $pagination-ellipsis-color: map.get($user, "pagination-ellipsis-color"),
+  $pagination-mobile-items: map.get($user, "pagination-mobile-items"),
+  $pagination-mobile-current-item: map.get($user, "pagination-mobile-current-item"),
+  $pagination-arrows: map.get($user, "pagination-arrows"),
+  $pagination-arrow-previous: map.get($user, "pagination-arrow-previous"),
+  $pagination-arrow-next: map.get($user, "pagination-arrow-next")
+);
+
+@include pagination-module.foundation-pagination;

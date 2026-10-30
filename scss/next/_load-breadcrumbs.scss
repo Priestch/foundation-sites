@@ -1,0 +1,31 @@
+// Foundation for Sites — load unit for the breadcrumbs component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/breadcrumbs-module' as breadcrumbs-module with (
+  $breadcrumbs-margin: map.get($user, "breadcrumbs-margin"),
+  $breadcrumbs-item-font-size: map.get($user, "breadcrumbs-item-font-size"),
+  $breadcrumbs-item-color: map.get($user, "breadcrumbs-item-color"),
+  $breadcrumbs-item-color-current: map.get($user, "breadcrumbs-item-color-current"),
+  $breadcrumbs-item-color-disabled: map.get($user, "breadcrumbs-item-color-disabled"),
+  $breadcrumbs-item-margin: map.get($user, "breadcrumbs-item-margin"),
+  $breadcrumbs-item-uppercase: map.get($user, "breadcrumbs-item-uppercase"),
+  $breadcrumbs-item-separator: map.get($user, "breadcrumbs-item-separator"),
+  $breadcrumbs-item-slash: map.get($user, "breadcrumbs-item-slash"),
+  $breadcrumbs-item-separator-item: map.get($user, "breadcrumbs-item-separator-item"),
+  $breadcrumbs-item-separator-item-rtl: map.get($user, "breadcrumbs-item-separator-item-rtl"),
+  $breadcrumbs-item-separator-color: map.get($user, "breadcrumbs-item-separator-color"),
+  $breadcrumbs-item-slash-color: map.get($user, "breadcrumbs-item-slash-color")
+);
+
+@include breadcrumbs-module.foundation-breadcrumbs;

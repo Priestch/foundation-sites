@@ -18,10 +18,8 @@
 @use '../util/unit' as *;
 @use '../util/breakpoint' as *;
 @use '../util/mixins' as *;
-@use 'button-module' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
-@use 'card-module' as *;
 
 // Mirror of the scss/typography/_base.scss cell (same `!default`): the reveal
 // is the name's only components reader, like the tooltip module's

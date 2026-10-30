@@ -1,0 +1,27 @@
+// Foundation for Sites — load unit for the close-button component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/close-button-module' as close-button-module with (
+  $closebutton-position: map.get($user, "closebutton-position"),
+  $closebutton-z-index: map.get($user, "closebutton-z-index"),
+  $closebutton-default-size: map.get($user, "closebutton-default-size"),
+  $closebutton-offset-horizontal: map.get($user, "closebutton-offset-horizontal"),
+  $closebutton-offset-vertical: map.get($user, "closebutton-offset-vertical"),
+  $closebutton-size: map.get($user, "closebutton-size"),
+  $closebutton-lineheight: map.get($user, "closebutton-lineheight"),
+  $closebutton-color: map.get($user, "closebutton-color"),
+  $closebutton-color-hover: map.get($user, "closebutton-color-hover")
+);
+
+@include close-button-module.foundation-close-button;

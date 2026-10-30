@@ -1,0 +1,30 @@
+// Foundation for Sites — load unit for the accordion component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/accordion-module' as accordion-module with (
+  $accordion-background: map.get($user, "accordion-background"),
+  $accordion-plusminus: map.get($user, "accordion-plusminus"),
+  $accordion-plus-content: map.get($user, "accordion-plus-content"),
+  $accordion-minus-content: map.get($user, "accordion-minus-content"),
+  $accordion-title-font-size: map.get($user, "accordion-title-font-size"),
+  $accordion-item-color: map.get($user, "accordion-item-color"),
+  $accordion-item-background-hover: map.get($user, "accordion-item-background-hover"),
+  $accordion-item-padding: map.get($user, "accordion-item-padding"),
+  $accordion-content-background: map.get($user, "accordion-content-background"),
+  $accordion-content-border: map.get($user, "accordion-content-border"),
+  $accordion-content-color: map.get($user, "accordion-content-color"),
+  $accordion-content-padding: map.get($user, "accordion-content-padding")
+);
+
+@include accordion-module.foundation-accordion;

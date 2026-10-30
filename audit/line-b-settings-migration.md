@@ -158,8 +158,17 @@ settings 模块里的笔误（如 `$gobal-radius`）**不会静默**——编译
 
 ## 当前限制（定稿时点）
 
-1. **组件覆盖范围**：机制只接了 `foundation-button` / `foundation-table` 两个试点。
-   其余组件走旧 `scss/foundation.scss` 路径（`@import` 或 `@use 'foundation'` 均可）。
+1. **组件覆盖范围**（7.0 全量铺开更新）：机制覆盖 **29 个独立组件**——accordion、
+   badge、breadcrumbs、button、callout、card、close-button、dropdown、flex/float/visibility
+   工具类、label、media-object、menu、off-canvas、orbit、pagination、progress-bar、
+   responsive-embed、reveal、slider、sticky、switch、table、tabs、thumbnail、title-bar、
+   tooltip、top-bar。**五个结构性耦合组件走旧路径**（`@use 'foundation' as f; @include
+   f.foundation-X`，配置经 settings 文件生效）：`button-group`（复用 button 的
+   fill mixin）、`accordion-menu`/`drilldown`/`dropdown-menu`（复用 menu 的嵌套 mixin）、
+   `menu-icon`（读 title-bar 的图标旋钮，B8 门面契约钉死的跨片活链接）。架构原因：
+   Sass 一编译一模块一配置，而它们的模块 plain-load 依赖对象会堵死后者的配置式加载；
+   解法是把共享 mixin 参数化（独立切片）。B6-C 镜像规则只救得了纯变量读取
+   （试过 menu-icon，因破坏活链接契约而回退）。
 2. **一个组件一次编译只能 include 一次**。load unit 是模块，模块只能被配置一次；
    需要第二份不同配置的输出时，另起一次编译。
 3. **不能包在 at-rule 里**。`meta.load-css()` 不能出现在 `@media` 等内，mixin 只能

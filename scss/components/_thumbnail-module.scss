@@ -12,7 +12,6 @@
 // ambient mirrors ($primary-color, $global-margin, $global-radius) live in
 // _button-module.scss.
 @use '../util/color' as *;
-@use 'button-module' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
 /// Border around thumbnail images.

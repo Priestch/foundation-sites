@@ -24,7 +24,6 @@
 @use "../util/value" as *;
 @use "../util/math" as *;
 @use "../forms/error" as *;
-@use "button-module" as *;
 @use '../util/flex' as *;
 @use '../global-module' as *; // slice B9: \$body-font-color's single owner
 

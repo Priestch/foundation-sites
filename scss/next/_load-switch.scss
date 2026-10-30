@@ -1,0 +1,34 @@
+// Foundation for Sites — load unit for the switch component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/switch-module' as switch-module with (
+  $switch-background: map.get($user, "switch-background"),
+  $switch-background-focus: map.get($user, "switch-background-focus"),
+  $switch-background-active: map.get($user, "switch-background-active"),
+  $switch-background-active-focus: map.get($user, "switch-background-active-focus"),
+  $switch-height: map.get($user, "switch-height"),
+  $switch-height-tiny: map.get($user, "switch-height-tiny"),
+  $switch-height-small: map.get($user, "switch-height-small"),
+  $switch-height-large: map.get($user, "switch-height-large"),
+  $switch-radius: map.get($user, "switch-radius"),
+  $switch-margin: map.get($user, "switch-margin"),
+  $switch-paddle-background: map.get($user, "switch-paddle-background"),
+  $switch-paddle-offset: map.get($user, "switch-paddle-offset"),
+  $switch-paddle-radius: map.get($user, "switch-paddle-radius"),
+  $switch-paddle-transition: map.get($user, "switch-paddle-transition"),
+  $switch-opacity-disabled: map.get($user, "switch-opacity-disabled"),
+  $switch-cursor-disabled: map.get($user, "switch-cursor-disabled")
+);
+
+@include switch-module.foundation-switch;

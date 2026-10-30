@@ -14,10 +14,8 @@
 // components module that reads it), both reached with starred uses.
 @use '../util/breakpoint' as *;
 @use '../util/mixins' as *;
-@use 'button-module' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
-@use 'card-module' as *;
 /// Bottom margin of a media object.
 /// @type Number
 $mediaobject-margin-bottom: $global-margin !default;

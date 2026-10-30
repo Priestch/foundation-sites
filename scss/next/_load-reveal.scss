@@ -1,0 +1,26 @@
+// Foundation for Sites — load unit for the reveal component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/reveal-module' as reveal-module with (
+  $reveal-background: map.get($user, "reveal-background"),
+  $reveal-width: map.get($user, "reveal-width"),
+  $reveal-max-width: map.get($user, "reveal-max-width"),
+  $reveal-padding: map.get($user, "reveal-padding"),
+  $reveal-border: map.get($user, "reveal-border"),
+  $reveal-radius: map.get($user, "reveal-radius"),
+  $reveal-zindex: map.get($user, "reveal-zindex"),
+  $reveal-overlay-background: map.get($user, "reveal-overlay-background")
+);
+
+@include reveal-module.foundation-reveal;

@@ -1,28 +1,24 @@
-// Foundation for Sites — load unit for the table component (7.0 line B skeleton)
+// Foundation for Sites — load unit for the table component (7.0 line B)
 // https://get.foundation
 // Licensed under MIT Open Source
 
 // Loaded (and configured) exclusively through the meta.load-css() call in
-// scss/foundation-next.scss. See scss/next/_load-button.scss for the full
-// recipe: configure the component module and its single-owner ambient
-// dependencies with exactly the keys the user actually set (`map.get()`
-// yields `null` for absent keys, and a `null` configuration does not satisfy
-// `!default`, so unset settings fall through to the library defaults), then
-// include the component mixin. The former direct palette-color re-apply
-// blocks are superseded by the configuration of scss/_global-module.scss
-// (slice B9).
+// scss/foundation-next.scss. The recipe, in order:
+//
+// 1. Receive the settings the user actually set, through configuration. This
+//    is the reflected user module only — deliberately NOT the merged
+//    effective map: pre-assigning library defaults from a merged map would
+//    defeat the `!default` derivation chain.
+// 2. Configure the component module with exactly the keys the user set.
+//    `map.get()` yields `null` for keys absent from the map, and a `null`
+//    configuration does not satisfy `!default` — so unset settings fall
+//    through to the library defaults. The shared ambient settings are
+//    configured ONCE by the entry stylesheet via next/_configure.
+// 3. Include the component mixin.
 
 @use "sass:map";
-
 $user: () !default;
 
-// scss/_global-module.scss owns the palette, the derived *-color settings,
-// $body-font-color and the global ambients this component reads.
-// Table component names (settings section "50. Table"). The ambient
-// settings the component reads through scss/_global-module.scss are
-// configured ONCE by the entry stylesheet (they are shared modules: a module
-// can be configured only once per compilation, so two load units in one
-// compilation must not both configure them).
 @use '../components/table-module' as table-module with (
   $table-background: map.get($user, "table-background"),
   $table-color-scale: map.get($user, "table-color-scale"),
@@ -41,8 +37,7 @@ $user: () !default;
   $table-head-font-color: map.get($user, "table-head-font-color"),
   $table-foot-font-color: map.get($user, "table-foot-font-color"),
   $show-header-for-stacked: map.get($user, "show-header-for-stacked"),
-  $table-stack-breakpoint: map.get($user, "table-stack-breakpoint"),
+  $table-stack-breakpoint: map.get($user, "table-stack-breakpoint")
 );
 
-// Load + emit
 @include table-module.foundation-table;

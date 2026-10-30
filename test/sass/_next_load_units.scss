@@ -1,0 +1,95 @@
+@use "true" as *;
+@use "sass:map";
+@use "../../scss/foundation-next" as fs;
+
+// 7.0 line B rollout: every component load unit compiles with library
+// defaults in a single compilation (meta.load-css gives each unit a fresh,
+// independently configurable module instance; the ambient cells come from
+// next/configure once). Emitted CSS lands in this file's compilation - the
+// point is that nothing errors and every mixin produces output.
+@include fs.foundation-accordion();
+@include fs.foundation-breadcrumbs();
+@include fs.foundation-button();
+@include fs.foundation-callout();
+@include fs.foundation-card();
+@include fs.foundation-close-button();
+@include fs.foundation-dropdown();
+@include fs.foundation-flex-classes();
+@include fs.foundation-float-classes();
+@include fs.foundation-label();
+@include fs.foundation-media-object();
+@include fs.foundation-menu();
+@include fs.foundation-off-canvas();
+@include fs.foundation-orbit();
+@include fs.foundation-progress-bar();
+@include fs.foundation-responsive-embed();
+@include fs.foundation-reveal();
+@include fs.foundation-slider();
+@include fs.foundation-sticky();
+@include fs.foundation-switch();
+@include fs.foundation-table();
+@include fs.foundation-tabs();
+@include fs.foundation-thumbnail();
+@include fs.foundation-title-bar();
+@include fs.foundation-top-bar();
+@include fs.foundation-visibility-classes();
+
+@include describe('Next load units (full component rollout)') {
+
+  @include it('loads the component units with library defaults in one compilation (badge, tooltip and pagination load in the override tests below - a load unit is configurable once per compilation)') {
+    @include assert-true(true,
+      'All load units compiled with library defaults without errors');
+  }
+
+  @include it('passes component settings through the reflected user map [badge]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-badge((
+          "badge-background": #ff00ff,
+          "badge-padding": 3rem 4rem,
+        ));
+      }
+      @include contains($selector: false) {
+        .badge {
+          background: #ff00ff;
+          padding: 3rem 4rem;
+        }
+      }
+    }
+  }
+
+  @include it('passes component settings through the reflected user map [tooltip]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-tooltip((
+          "tooltip-background-color": #123456,
+          "tooltip-radius": 9px,
+        ));
+      }
+      @include contains($selector: false) {
+        .tooltip {
+          background-color: #123456;
+          border-radius: 9px;
+        }
+      }
+    }
+  }
+
+  @include it('unset settings fall through to the library defaults [pagination]') {
+    // Only one key set: every other pagination setting must keep its default
+    // derivation chain (the null configuration does not satisfy !default).
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-pagination((
+          "pagination-radius": 7px,
+        ));
+      }
+      @include contains($selector: false) {
+        .pagination li {
+          border-radius: 7px;
+        }
+      }
+    }
+  }
+
+}

@@ -1,0 +1,27 @@
+// Foundation for Sites — load unit for the callout component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/callout-module' as callout-module with (
+  $callout-background: map.get($user, "callout-background"),
+  $callout-background-fade: map.get($user, "callout-background-fade"),
+  $callout-border: map.get($user, "callout-border"),
+  $callout-margin: map.get($user, "callout-margin"),
+  $callout-sizes: map.get($user, "callout-sizes"),
+  $callout-font-color: map.get($user, "callout-font-color"),
+  $callout-font-color-alt: map.get($user, "callout-font-color-alt"),
+  $callout-radius: map.get($user, "callout-radius"),
+  $callout-link-tint: map.get($user, "callout-link-tint")
+);
+
+@include callout-module.foundation-callout;

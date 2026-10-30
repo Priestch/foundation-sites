@@ -1,0 +1,25 @@
+// Foundation for Sites — load unit for the title-bar component (7.0 line B rollout)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared ambient cells (palette,
+// derived *-color, global radius/margin, direction trio) are configured ONCE
+// by next/_configure; this unit only forwards the user map to the component
+// module it owns.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/title-bar-module' as title-bar-module with (
+  $titlebar-icon-color: map.get($user, "titlebar-icon-color"),
+  $titlebar-icon-color-hover: map.get($user, "titlebar-icon-color-hover"),
+  $titlebar-background: map.get($user, "titlebar-background"),
+  $titlebar-color: map.get($user, "titlebar-color"),
+  $titlebar-padding: map.get($user, "titlebar-padding"),
+  $titlebar-text-font-weight: map.get($user, "titlebar-text-font-weight"),
+  $titlebar-icon-spacing: map.get($user, "titlebar-icon-spacing")
+);
+
+@include title-bar-module.foundation-title-bar;

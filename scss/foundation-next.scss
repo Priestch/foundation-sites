@@ -181,3 +181,139 @@ $fs-user: () !default;
   // the component module is configured here.
   @include meta.load-css("next/load-table", $with: ("user": -fs-non-null($user-settings)));
 }
+
+@mixin foundation-accordion($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-accordion", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-badge($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-badge", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-breadcrumbs($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-breadcrumbs", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-callout($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-callout", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-card($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-card", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-close-button($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-close-button", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-dropdown($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-dropdown", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-flex-classes($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-flex-classes", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-float-classes($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-float-classes", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-label($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-label", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-media-object($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-media-object", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-menu($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-menu", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-off-canvas($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-off-canvas", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-orbit($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-orbit", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-pagination($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-pagination", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-progress-bar($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-progress-bar", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-responsive-embed($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-responsive-embed", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-reveal($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-reveal", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-slider($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-slider", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-sticky($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-sticky", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-switch($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-switch", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-tabs($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-tabs", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-thumbnail($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-thumbnail", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-title-bar($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-title-bar", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-tooltip($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-tooltip", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-top-bar($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-top-bar", $with: ("user": -fs-non-null($user-settings)));
+}
+@mixin foundation-visibility-classes($user-settings: ()) {
+  // See foundation-button(): the ambient cells come from next/configure; only
+  // the component module is configured here.
+  @include meta.load-css("next/load-visibility-classes", $with: ("user": -fs-non-null($user-settings)));
+}
