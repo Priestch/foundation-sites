@@ -1,0 +1,28 @@
+// Foundation for Sites — load unit for the drilldown component (7.0)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared mixins live in the cell-free
+// button-styles/menu-styles modules; the shared ambients (including the
+// title-bar icon color knobs) are configured ONCE by next/_configure.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/drilldown-module' as drilldown-module with (
+  $drilldown-transition: map.get($user, "drilldown-transition"),
+  $drilldown-arrows: map.get($user, "drilldown-arrows"),
+  $drilldown-padding: map.get($user, "drilldown-padding"),
+  $drilldown-nested-margin: map.get($user, "drilldown-nested-margin"),
+  $drilldown-background: map.get($user, "drilldown-background"),
+  $drilldown-submenu-padding: map.get($user, "drilldown-submenu-padding"),
+  $drilldown-submenu-background: map.get($user, "drilldown-submenu-background"),
+  $drilldown-arrow-color: map.get($user, "drilldown-arrow-color"),
+  $drilldown-arrow-size: map.get($user, "drilldown-arrow-size"),
+  $dropdownmenu-arrow-size: map.get($user, "dropdownmenu-arrow-size"),
+  $dropdownmenu-arrow-color: map.get($user, "dropdownmenu-arrow-color")
+);
+
+@include drilldown-module.foundation-drilldown-menu;

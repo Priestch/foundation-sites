@@ -18,9 +18,8 @@
 @use '../util/mixins' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
-@use 'dropdown-menu-module' as *;  // slice B9: the arrow knobs' single owner
 @use '../typography/base' as *;
-@use 'menu-module' as *;
+@use 'menu-styles' as *;
 
 // Mirrors of scss/components/_dropdown-menu.scss (same `!default`s), owned
 // HERE: the drilldown partial sits before the dropdown-menu partial in
@@ -67,6 +66,15 @@ $drilldown-arrow-color: $primary-color !default;
 /// Sets drilldown arrow size if arrow is used.
 /// @type Length
 $drilldown-arrow-size: 6px !default;
+
+// B6 mirror rule (reader-owned): drilldown reads the dropdown-menu arrow
+// knobs; owning mirrors severs the plain load of dropdown-menu-module (a
+// module can be configured only once per compilation). Same `!default`s and
+// the same $anchor-color derivation as _dropdown-menu-module.scss; the
+// import world flattens the cells, the aggregator surfaces them once through
+// dropdown-menu.
+$dropdownmenu-arrow-size: 6px !default;
+$dropdownmenu-arrow-color: $anchor-color !default;
 
 @mixin zf-drilldown-left-right-arrows {
   .is-drilldown-submenu-parent > a {

@@ -24,6 +24,7 @@
 // scss/_global-module.scss now, exactly like the later components modules.
 @use "../global-module" as *;
 @use "../util/flex" as *;
+@use 'button-styles';
 
 /// Font family for button elements.
 /// @type Font
@@ -158,143 +159,51 @@ $button-responsive-expanded: false !default;
   }
 }
 
-/// Sets the base styles of a hollow or clear button filling according to `$fill`.
-/// See mixin `button-fill-style` for the filling styles.
-/// @param {Keyword} $fill [$button-fill] - Type of filling between `hollow` and `clear`. `solid` has no effects.
 @mixin button-fill(
   $fill: $button-fill
 ) {
-  @if $fill == hollow {
-    @include button-hollow;
-  }
-  @else if $fill == clear {
-    @include button-clear;
-  }
+  @include button-styles.button-fill($fill);
 }
 
-/// Sets the visual styles of a solid/hollow/clear button filling according to `$fill`.
-/// See mixins `button-style`, `button-hollow-style` and `button-clear-style` for effects of visual styling parameters.
-/// @param {Keyword} $fill [$button-fill] - Type of filling between `hollow` and `clear`.
-/// @param {Color} $background [$button-background] - -
-/// @param {Color} $background-hover [$button-background-hover] - -
-/// @param {Color} $color [$button-color] - -
 @mixin button-fill-style(
   $fill: $button-fill,
   $background: $button-background,
   $background-hover: $button-background-hover,
   $color: $button-color
 ) {
-  @if $fill == solid {
-    @include button-style($background, $background-hover, $color);
-  }
-  @else if $fill == hollow {
-    @include button-hollow-style($background);
-  }
-  @else if $fill == clear {
-    @include button-clear-style($background);
-  }
+  @include button-styles.button-fill-style($fill, $background, $background-hover, $color, ($button-color, $button-color-alt), $button-background-hover-lightness, $button-hollow-hover-lightness, $button-hollow-border-width);
 }
 
-/// Sets the visual style of a button.
-/// @param {Color} $background [$button-background] - Background color of the button.
-/// @param {Color} $background-hover [$button-background-hover] - Background color of the button on hover. Set to `auto` to have the mixin automatically generate a hover color.
-/// @param {Color} $color [$button-color] - Text color of the button. Set to `auto` to automatically generate a color based on the background color.
 @mixin button-style(
   $background: $button-background,
   $background-hover: $button-background-hover,
   $color: $button-color,
   $background-hover-lightness: $button-background-hover-lightness
 ) {
-  @if $color == auto {
-    $color: color-pick-contrast($background, ($button-color, $button-color-alt));
-  }
-
-  @if $background-hover == auto {
-    $background-hover: scale-color($background, $lightness: $background-hover-lightness);
-  }
-
-  // Default and disabled states
-  &,
-  &.disabled, &[disabled],
-  &.disabled:hover, &[disabled]:hover,
-  &.disabled:focus, &[disabled]:focus {
-    background-color: $background;
-    color: $color;
-  }
-
-  &:hover, &:focus {
-    background-color: $background-hover;
-    color: $color;
-  }
+  @include button-styles.button-style($background, $background-hover, $color, $background-hover-lightness, ($button-color, $button-color-alt));
 }
 
-/// Sets the base styles of a hollow button.
-/// See mixin `button-hollow-style` for the filling styles.
 @mixin button-hollow {
-  &, &.disabled, &[disabled] {
-    &, &:hover, &:focus {
-      background-color: transparent;
-    }
-  }
+  @include button-styles.button-hollow;
 }
 
-/// Sets the visual style of a hollow button.
-/// @param {Color} $color [$button-background] - Text and border color of the button.
-/// @param {Color} $hover-lightness [$button-hollow-hover-lightness] - Color lightness on hover.
-/// @param {Color} $border-width [$button-hollow-border-width] - Border width of the button.
 @mixin button-hollow-style(
   $color: $button-background,
   $hover-lightness: $button-hollow-hover-lightness,
   $border-width: $button-hollow-border-width
 ) {
-  $color-hover: scale-color($color, $lightness: $hover-lightness);
-
-  // Default and disabled states
-  &,
-  &.disabled, &[disabled],
-  &.disabled:hover, &[disabled]:hover,
-  &.disabled:focus, &[disabled]:focus {
-    border: $border-width solid $color;
-    color: $color;
-  }
-
-  &:hover, &:focus {
-    border-color: $color-hover;
-    color: $color-hover;
-  }
+  @include button-styles.button-hollow-style($color, $hover-lightness, $border-width);
 }
 
-/// Sets the base styles of a clear button.
-/// See mixin `button-clear-style` for the filling styles.
 @mixin button-clear {
-  &, &.disabled, &[disabled] {
-    &, &:hover, &:focus {
-      border-color: transparent;
-      background-color: transparent;
-    }
-  }
+  @include button-styles.button-clear;
 }
 
-/// Sets the visual style of a clear button.
-/// @param {Color} $color [$button-background] - Text color of the button.
-/// @param {Color} $hover-lightness [$button-hollow-hover-lightness] - Color lightness on hover.
 @mixin button-clear-style(
   $color: $button-background,
   $hover-lightness: $button-hollow-hover-lightness
 ) {
-  $color-hover: scale-color($color, $lightness: $hover-lightness);
-
-  // Default and disabled states
-  &,
-  &.disabled, &[disabled],
-  &.disabled:hover, &[disabled]:hover,
-  &.disabled:focus, &[disabled]:focus {
-    color: $color;
-  }
-
-  &:hover, &:focus {
-    color: $color-hover;
-  }
+  @include button-styles.button-clear-style($color, $hover-lightness);
 }
 
 /// Adds disabled styles to a button by fading the element and reseting the cursor.

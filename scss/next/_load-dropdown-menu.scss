@@ -1,0 +1,30 @@
+// Foundation for Sites — load unit for the dropdown-menu component (7.0)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared mixins live in the cell-free
+// button-styles/menu-styles modules; the shared ambients (including the
+// title-bar icon color knobs) are configured ONCE by next/_configure.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/dropdown-menu-module' as dropdown-menu-module with (
+  $dropdownmenu-arrow-size: map.get($user, "dropdownmenu-arrow-size"),
+  $dropdownmenu-arrow-color: map.get($user, "dropdownmenu-arrow-color"),
+  $dropdownmenu-arrows: map.get($user, "dropdownmenu-arrows"),
+  $dropdownmenu-arrow-padding: map.get($user, "dropdownmenu-arrow-padding"),
+  $dropdownmenu-min-width: map.get($user, "dropdownmenu-min-width"),
+  $dropdownmenu-background: map.get($user, "dropdownmenu-background"),
+  $dropdownmenu-submenu-background: map.get($user, "dropdownmenu-submenu-background"),
+  $dropdownmenu-padding: map.get($user, "dropdownmenu-padding"),
+  $dropdownmenu-nested-margin: map.get($user, "dropdownmenu-nested-margin"),
+  $dropdownmenu-submenu-padding: map.get($user, "dropdownmenu-submenu-padding"),
+  $dropdownmenu-border: map.get($user, "dropdownmenu-border"),
+  $dropdown-menu-item-color-active: map.get($user, "dropdown-menu-item-color-active"),
+  $dropdown-menu-item-background-active: map.get($user, "dropdown-menu-item-background-active")
+);
+
+@include dropdown-menu-module.foundation-dropdown-menu;

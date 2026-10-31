@@ -1,0 +1,33 @@
+// Foundation for Sites — load unit for the button-group component (7.0)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared mixins live in the cell-free
+// button-styles/menu-styles modules; the shared ambients (including the
+// title-bar icon color knobs) are configured ONCE by next/_configure.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/button-group-module' as button-group-module with (
+  $buttongroup-margin: map.get($user, "buttongroup-margin"),
+  $buttongroup-spacing: map.get($user, "buttongroup-spacing"),
+  $buttongroup-child-selector: map.get($user, "buttongroup-child-selector"),
+  $buttongroup-expand-max: map.get($user, "buttongroup-expand-max"),
+  $buttongroup-radius-on-each: map.get($user, "buttongroup-radius-on-each"),
+  $button-fill: map.get($user, "button-fill"),
+  $button-background: map.get($user, "button-background"),
+  $button-background-hover: map.get($user, "button-background-hover"),
+  $button-color: map.get($user, "button-color"),
+  $button-color-alt: map.get($user, "button-color-alt"),
+  $button-radius: map.get($user, "button-radius"),
+  $button-hollow-border-width: map.get($user, "button-hollow-border-width"),
+  $button-sizes: map.get($user, "button-sizes"),
+  $button-palette: map.get($user, "button-palette"),
+  $button-background-hover-lightness: map.get($user, "button-background-hover-lightness"),
+  $button-hollow-hover-lightness: map.get($user, "button-hollow-hover-lightness")
+);
+
+@include button-group-module.foundation-button-group;

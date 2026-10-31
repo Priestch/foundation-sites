@@ -27,7 +27,7 @@
 @use '../global-module' as *;
 @use '../util/flex' as *;
 @use '../typography/base' as *;
-@use 'menu-module' as *;
+@use 'menu-styles' as *;
 
 // Mirrors of the scss/typography/_base.scss cell ($anchor-color, same
 // `!default`) and of this partial's arrow knobs (same `!default`s), owned

@@ -19,7 +19,7 @@
 @use '../util/unit' as *;
 @use '../util/value' as *;
 @use '../util/math' as *;
-@use 'button-module' as *;
+@use 'button-styles' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
 
@@ -46,6 +46,31 @@ $buttongroup-radius-on-each: true !default;
 /// Add styles for a button group container.
 /// @param {String} $child-selector [$buttongroup-child-selector] - Selector for the buttons inside a button group.
 /// @param {Number} $spacing [$buttongroup-spacing] - Spacing between buttons in a button group.
+// B6 mirror rule (reader-owned): button-group derives its child-button
+// styling from the button settings (the scale, fill, palette, radius and
+// the fill-style union). Owning mirrors severs the plain load of
+// button-module (a module can be configured only once per compilation, so a
+// plain load here would poison the configured load of the button unit); the
+// shared mixins themselves live in the cell-free _button-styles module.
+// Same `!default`s and derivations as _button-module.scss; the import world
+// flattens the cells, the aggregator surfaces them once through button.
+$button-fill: solid !default;
+$button-background: $primary-color !default;
+$button-background-hover: scale-color($button-background, $lightness: -15%) !default;
+$button-color: $white !default;
+$button-color-alt: $black !default;
+$button-radius: $global-radius !default;
+$button-hollow-border-width: 1px !default;
+$button-sizes: (
+  tiny: 0.6rem,
+  small: 0.75rem,
+  default: 0.9rem,
+  large: 1.25rem,
+) !default;
+$button-palette: $foundation-palette !default;
+$button-background-hover-lightness: -20% !default;
+$button-hollow-hover-lightness: -50% !default;
+
 @mixin button-group(
   $child-selector: $buttongroup-child-selector,
   $spacing: $buttongroup-spacing,
@@ -209,7 +234,7 @@ $buttongroup-radius-on-each: true !default;
         @if($button-fill != $filling) {
           #{$buttongroup-child-selector} {
             @include button-fill($filling);
-            @include button-fill-style($filling);
+            @include button-fill-style($filling, $button-background, $button-background-hover, $button-color, ($button-color, $button-color-alt), $button-background-hover-lightness, $button-hollow-hover-lightness, $button-hollow-border-width);
           }
         }
 
@@ -217,12 +242,12 @@ $buttongroup-radius-on-each: true !default;
           @if($button-fill != $filling) {
             $individual-selector: ' #{$buttongroup-child-selector}.#{"" + $name}';
             &.#{"" + $name} #{$buttongroup-child-selector}, &#{$individual-selector} {
-              @include button-fill-style($filling, $color, auto, auto);
+              @include button-fill-style($filling, $color, auto, auto, ($button-color, $button-color-alt), $button-background-hover-lightness, $button-hollow-hover-lightness, $button-hollow-border-width);
             }
           }
           @else {
             &.#{"" + $name} #{$buttongroup-child-selector} {
-              @include button-fill-style($filling, $color, auto, auto);
+              @include button-fill-style($filling, $color, auto, auto, ($button-color, $button-color-alt), $button-background-hover-lightness, $button-hollow-hover-lightness, $button-hollow-border-width);
             }
           }
         }

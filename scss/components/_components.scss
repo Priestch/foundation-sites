@@ -40,7 +40,7 @@
 
 // Generic components
 @forward "button-module";
-@forward "button-group-module";
+@forward "button-group-module" hide $button-fill, $button-background, $button-background-hover, $button-color, $button-color-alt, $button-radius, $button-hollow-border-width, $button-sizes, $button-palette, $button-background-hover-lightness, $button-hollow-hover-lightness; // B6-D: the reader mirrors stay module-internal (button surfaces them)
 @forward "close-button-module";
 @forward "label-module";
 @forward "progress-bar-module";
@@ -66,7 +66,7 @@
 @forward "menu-module";
 @forward "menu-icon-module";
 @forward "accordion-menu-module";
-@forward "drilldown-module";
+@forward "drilldown-module" hide $dropdownmenu-arrow-size, $dropdownmenu-arrow-color; // B6-D: the mirrors stay module-internal (dropdown-menu surfaces them)
 // Layout components (B8)
 @forward "dropdown-menu-module";
 @forward "off-canvas-module";

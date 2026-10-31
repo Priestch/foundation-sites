@@ -1,0 +1,29 @@
+// Foundation for Sites — load unit for the accordion-menu component (7.0)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared mixins live in the cell-free
+// button-styles/menu-styles modules; the shared ambients (including the
+// title-bar icon color knobs) are configured ONCE by next/_configure.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/accordion-menu-module' as accordion-menu-module with (
+  $accordionmenu-padding: map.get($user, "accordionmenu-padding"),
+  $accordionmenu-nested-margin: map.get($user, "accordionmenu-nested-margin"),
+  $accordionmenu-submenu-padding: map.get($user, "accordionmenu-submenu-padding"),
+  $accordionmenu-arrows: map.get($user, "accordionmenu-arrows"),
+  $accordionmenu-arrow-color: map.get($user, "accordionmenu-arrow-color"),
+  $accordionmenu-item-background: map.get($user, "accordionmenu-item-background"),
+  $accordionmenu-border: map.get($user, "accordionmenu-border"),
+  $accordionmenu-submenu-toggle-background: map.get($user, "accordionmenu-submenu-toggle-background"),
+  $accordion-submenu-toggle-border: map.get($user, "accordion-submenu-toggle-border"),
+  $accordionmenu-submenu-toggle-width: map.get($user, "accordionmenu-submenu-toggle-width"),
+  $accordionmenu-submenu-toggle-height: map.get($user, "accordionmenu-submenu-toggle-height"),
+  $accordionmenu-arrow-size: map.get($user, "accordionmenu-arrow-size")
+);
+
+@include accordion-menu-module.foundation-accordion-menu;

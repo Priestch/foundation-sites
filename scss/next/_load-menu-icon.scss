@@ -1,0 +1,16 @@
+// Foundation for Sites — load unit for the menu-icon component (7.0)
+// https://get.foundation
+// Licensed under MIT Open Source
+
+// Loaded (and configured) exclusively through the meta.load-css() call in
+// scss/foundation-next.scss: see scss/next/_load-button.scss for the recipe
+// and configuration-ownership rules. The shared mixins live in the cell-free
+// button-styles/menu-styles modules; the shared ambients (including the
+// title-bar icon color knobs) are configured ONCE by next/_configure.
+
+@use "sass:map";
+$user: () !default;
+
+@use '../components/menu-icon-module' as menu-icon-module;
+
+@include menu-icon-module.foundation-menu-icon;

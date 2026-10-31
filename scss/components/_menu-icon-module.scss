@@ -9,8 +9,6 @@
 // module).
 @use '../util/color' as *;
 @use '../util/mixins' as *;
-@use 'button-module' as *;
-@use 'title-bar-module' as *;  // slice B9: the knobs' single owner
 @use '../global-module' as *;
 @use '../util/flex' as *;
 

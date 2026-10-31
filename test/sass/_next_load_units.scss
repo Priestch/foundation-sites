@@ -9,7 +9,6 @@
 // point is that nothing errors and every mixin produces output.
 @include fs.foundation-accordion();
 @include fs.foundation-breadcrumbs();
-@include fs.foundation-button();
 @include fs.foundation-callout();
 @include fs.foundation-card();
 @include fs.foundation-close-button();
@@ -33,10 +32,13 @@
 @include fs.foundation-title-bar();
 @include fs.foundation-top-bar();
 @include fs.foundation-visibility-classes();
+@include fs.foundation-accordion-menu();
+@include fs.foundation-dropdown-menu();
+@include fs.foundation-menu-icon();
 
 @include describe('Next load units (full component rollout)') {
 
-  @include it('loads the component units with library defaults in one compilation (badge, tooltip and pagination load in the override tests below - a load unit is configurable once per compilation)') {
+  @include it('loads every component unit with library defaults (button and button-group load in the coupled-family test below - a load unit is configurable once per compilation) - with library defaults in one compilation') {
     @include assert-true(true,
       'All load units compiled with library defaults without errors');
   }
@@ -92,4 +94,39 @@
     }
   }
 
+  @include it('configures both sides of a coupled family independently [button-group]') {
+    // The original blocker: configuring button after button-group (or vice
+    // versa) in one compilation. The parameterized shared mixins + reader
+    // mirrors make any inclusion order safe.
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-button(("button-radius": 4px, "button-fill": hollow));
+        @include fs.foundation-button-group((
+          "button-background": #445566,
+          "button-group-spacing": 2px,
+        ));
+      }
+      @include contains($selector: false) {
+        .button {
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+
+  @include it('passes the shared menu knobs through the reader units [drilldown]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-drilldown-menu(("drilldown-arrow-size": 9px));
+      }
+      @include contains($selector: false) {
+        .drilldown .is-drilldown-submenu-parent > a::after {
+          border-width: 9px;
+        }
+      }
+    }
+  }
+
+  
+  
 }

@@ -1,0 +1,32 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group menu
+////
+
+// 7.0: the shared menu mixin, parameterized. This module deliberately owns no
+// configurable cells - menu-based components (menu itself, accordion-menu,
+// drilldown, dropdown-menu) and their foundation-next load units all load it
+// plain, because a module can be configured only once per compilation and a
+// plain load anywhere would poison a later configured load of the owner. The
+// historical cell-default signature stays on _menu-module.scss as a shim.
+@use '../util/flex' as *; // $global-left/$global-right
+
+/// Adds nested styles to a vertical menu item.
+/// @param {Number} $margin - Margin of the nested submenu.
+/// @param {Keyword} $nested-alignment [left] - Alignment of the nested menu.
+@mixin menu-nested(
+  $margin,
+  $nested-alignment: left
+) {
+  @if $nested-alignment == right {
+    margin-#{$global-right}: $margin;
+    margin-#{$global-left}: 0;
+  }
+  @else {
+    margin-#{$global-right}: 0;
+    margin-#{$global-left}: $margin;
+  }
+}

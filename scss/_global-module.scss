@@ -115,6 +115,12 @@ $global-radius: 0 !default;
 
 /// Global value used for all menu styles. Can be overwritten at individual menu component level.
 /// @type Number
+/// Color of the menu icon (hamburger) in a title bar.
+/// @type Color
+$titlebar-icon-color: $white !default;
+/// Color of the menu icon on hover.
+/// @type Color
+$titlebar-icon-color-hover: $medium-gray !default;
 $global-menu-padding: 0.7rem 1rem !default;
 
 /// Global value used for all menu styles. Nested margin for submenu.

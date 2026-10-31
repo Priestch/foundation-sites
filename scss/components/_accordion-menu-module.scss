@@ -16,7 +16,7 @@
 @use '../util/mixins' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
-@use 'menu-module' as *;
+@use 'menu-styles' as *;
 /// Sets accordion menu padding.
 /// @type Number
 $accordionmenu-padding: $global-menu-padding !default;

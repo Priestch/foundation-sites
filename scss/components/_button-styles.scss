@@ -1,0 +1,160 @@
+// Foundation for Sites
+// https://get.foundation
+// Licensed under MIT Open Source
+
+////
+/// @group button
+////
+
+// 7.0: the shared button style mixins, parameterized. This module
+// deliberately owns no configurable cells - button and button-group (and
+// their foundation-next load units) load it plain, because a module can be
+// configured only once per compilation and a plain load anywhere would
+// poison a later configured load of the owner. The historical cell-default
+// signatures stay on _button-module.scss as shims; button-group owns mirrors
+// of the knobs it passes through.
+@use '../util/color' as *; // color-pick-contrast()
+
+/// Sets the base styles of a hollow button.
+@mixin button-hollow {
+  &, &.disabled, &[disabled] {
+    &, &:hover, &:focus {
+      background-color: transparent;
+    }
+  }
+}
+
+/// Sets the base styles of a clear button.
+@mixin button-clear {
+  &, &.disabled, &[disabled] {
+    &, &:hover, &:focus {
+      border-color: transparent;
+      background-color: transparent;
+    }
+  }
+}
+
+/// Sets the visual style of a button.
+/// @param {Color} $background - Background color.
+/// @param {Color} $background-hover - Hover background, or `auto` to derive.
+/// @param {Color} $color - Text color, or `auto` to pick from $color-pair.
+/// @param {Number} $background-hover-lightness - Lightness shift for `auto` hover.
+/// @param {List} $color-pair - The (color, color-alt) pair for the `auto` text color.
+@mixin button-style(
+  $background,
+  $background-hover,
+  $color,
+  $background-hover-lightness,
+  $color-pair
+) {
+  @if $color == auto {
+    $color: color-pick-contrast($background, $color-pair);
+  }
+
+  @if $background-hover == auto {
+    $background-hover: scale-color($background, $lightness: $background-hover-lightness);
+  }
+
+  // Default and disabled states
+  &,
+  &.disabled, &[disabled],
+  &.disabled:hover, &[disabled]:hover,
+  &.disabled:focus, &[disabled]:focus {
+    background-color: $background;
+    color: $color;
+  }
+
+  &:hover, &:focus {
+    background-color: $background-hover;
+    color: $color;
+  }
+}
+
+/// Sets the visual style of a hollow button.
+/// @param {Color} $color - Text and border color.
+/// @param {Number} $hover-lightness - Color lightness on hover.
+/// @param {Number} $border-width - Border width.
+@mixin button-hollow-style(
+  $color,
+  $hover-lightness,
+  $border-width
+) {
+  $color-hover: scale-color($color, $lightness: $hover-lightness);
+
+  // Default and disabled states
+  &,
+  &.disabled, &[disabled],
+  &.disabled:hover, &[disabled]:hover,
+  &.disabled:focus, &[disabled]:focus {
+    border: $border-width solid $color;
+    color: $color;
+  }
+
+  &:hover, &:focus {
+    border-color: $color-hover;
+    color: $color-hover;
+  }
+}
+
+/// Sets the visual style of a clear button.
+/// @param {Color} $color - Text color.
+/// @param {Number} $hover-lightness - Color lightness on hover.
+@mixin button-clear-style(
+  $color,
+  $hover-lightness
+) {
+  $color-hover: scale-color($color, $lightness: $hover-lightness);
+
+  // Default and disabled states
+  &,
+  &.disabled, &[disabled],
+  &.disabled:hover, &[disabled]:hover,
+  &.disabled:focus, &[disabled]:focus {
+    color: $color;
+  }
+
+  &:hover, &:focus {
+    color: $color-hover;
+  }
+}
+
+/// Sets the base styles of a hollow/clear button filling.
+/// @param {Keyword} $fill - Type of filling between `hollow` and `clear`.
+@mixin button-fill($fill) {
+  @if $fill == hollow {
+    @include button-hollow;
+  }
+  @else if $fill == clear {
+    @include button-clear;
+  }
+}
+
+/// Sets the visual styles of a solid/hollow/clear button filling.
+/// @param {Keyword} $fill - Type of filling: `solid`, `hollow` or `clear`.
+/// @param {Color} $background - Background (solid) / text+border (hollow, clear) color.
+/// @param {Color} $background-hover - Hover background, or `auto` to derive.
+/// @param {Color} $color - Text color, or `auto` to pick from $color-pair.
+/// @param {List} $color-pair - The (color, color-alt) pair for the `auto` text color.
+/// @param {Number} $background-hover-lightness - Lightness shift for `auto` hover.
+/// @param {Number} $hollow-hover-lightness - Lightness shift for hollow/clear hover.
+/// @param {Number} $border-width - Border width of a hollow button.
+@mixin button-fill-style(
+  $fill,
+  $background,
+  $background-hover,
+  $color,
+  $color-pair,
+  $background-hover-lightness,
+  $hollow-hover-lightness,
+  $border-width
+) {
+  @if $fill == solid {
+    @include button-style($background, $background-hover, $color, $background-hover-lightness, $color-pair);
+  }
+  @else if $fill == hollow {
+    @include button-hollow-style($background, $hollow-hover-lightness, $border-width);
+  }
+  @else if $fill == clear {
+    @include button-clear-style($background, $hollow-hover-lightness);
+  }
+}

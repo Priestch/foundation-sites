@@ -22,6 +22,7 @@
 @use '../util/mixins' as *;
 @use '../global-module' as *;
 @use '../util/flex' as *;
+@use 'menu-styles';
 
 // Mirrors of scss/_global.scss (same `!default`s), owned HERE (this module
 // is their first components consumer; _accordion-menu/_drilldown reach them
@@ -234,15 +235,7 @@ $menu-icons-back-compat: true !default;
   $margin: $menu-nested-margin,
   $nested-alignment: left
 ) {
-  @if $nested-alignment == right {
-    margin-#{$global-right}: $margin;
-    margin-#{$global-left}: 0;
-  }
-  @else {
-    margin-#{$global-right}: 0;
-    margin-#{$global-left}: $margin;
-  }
-
+  @include menu-styles.menu-nested($margin, $nested-alignment);
 }
 
 /// Adds basic styles for icons in menus.
