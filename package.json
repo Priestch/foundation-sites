@@ -86,7 +86,7 @@
     "requirejs": "^2.3.6",
     "rimraf": "^3.0.2",
     "rollup": "^4.0.0",
-    "sass-embedded": "~1.97.0",
+    "sass-embedded": "^1.107.0",
     "sass-true": "^8.0.0",
     "sinon": "^7.2.2",
     "strip-indent": "^2.0.0",
