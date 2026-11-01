@@ -7,12 +7,12 @@
 ////
 
 @use "sass:color";
+@use "sass:list";
 @use 'math' as *;
 @use 'unit' as *;
 @use 'value' as *;
 @use 'breakpoint' as *;
 @use 'color' as *;
-@use '../vendor/sassy-lists' as *;
 
 // Patch to fix issue #12080. Like `$-zf-size` in _breakpoint.scss this is a
 // module-private variable now; its value is passed to `@content` explicitly.
@@ -26,6 +26,23 @@ $-zf-bp-value: null;
 /// @param {Keyword} $side - Side the shadow is supposed to appear. Can be `top`, `left`, `right` or `bottom`.
 /// @param {Number} $size - Width for the target side.
 /// @param {Color} $color - Color of the shadow.
+
+/// Removes every occurrence of `$value` from `$list`, preserving order and
+/// the list's separator. Native replacement for the vendored sassy-lists
+/// `sl-remove()` (replace-with-null + purge), which the library drops in 7.0.
+/// @param {List} $list - The list to filter.
+/// @param {*} $value - The value to remove.
+/// @return {List}
+@function list-remove($list, $value) {
+  $result: ();
+  @each $item in $list {
+    @if $item != $value {
+      $result: list.append($result, $item, $separator: list.separator($list));
+    }
+  }
+  @return list.join((), $result, $separator: list.separator($list));
+}
+
 @mixin inner-side-shadow(
   $side: bottom,
   $size: 20px,
@@ -332,10 +349,10 @@ $-zf-bp-value: null;
 
   // Add or remove the zero breakpoint according to `$zero-breakpoint`
   @if $zero-breakpoint == true {
-    $-list: join(($zf-zero-breakpoint), sl-remove($-list, $zf-zero-breakpoint));
+    $-list: join(($zf-zero-breakpoint), list-remove($-list, $zf-zero-breakpoint));
   }
   @else if $zero-breakpoint == false {
-    $-list: sl-remove($-list, $zf-zero-breakpoint);
+    $-list: list-remove($-list, $zf-zero-breakpoint);
   }
 
   // Iterate on breakpoint(s). The breakpoint name is passed to `@content`

@@ -6,11 +6,11 @@
 /// @group xy-grid
 ////
 
-// Util helpers; `sl-contain()` comes from the vendored sassy-lists facade,
+// Util helpers (`list-remove()` lives in util/mixins);
 // `xy-cell-size()` from _cell.scss and `$grid-columns` from _gutters.scss, the
 // first xy-grid module.
+@use "sass:list";
 @use '../util/breakpoint' as *;
-@use '../vendor/sassy-lists' as *;
 @use 'gutters' as *;
 @use '../global-module' as *;
 @use 'cell' as *;
@@ -47,7 +47,7 @@
 
     // Output new widths to not include gutters
     @each $bp in $breakpoint-classes {
-      @if(sl-contain($excluded-bps, $bp)) {
+      @if(list.index($excluded-bps, $bp) != null) {
         @include breakpoint($min-breakpoint) {
           @for $i from 1 through $grid-columns {
             // Sizing (percentage)

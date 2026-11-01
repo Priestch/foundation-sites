@@ -130,15 +130,13 @@ settings 模块里的笔误（如 `$gobal-radius`）**不会静默**——编译
   作用域，不产生用户可见的 import 警告路径差异（编译时有 `import` deprecation 警告，
   M3 删岛后自然消失）。
 
-### 2. vendor 桥（scss/vendor/_sassy-lists.scss 内部 7 处，sassy-lists 5 个 function + 2 个 helper）
+### 2. vendor 桥（7.0 已移除：sassy-lists 依赖整体删除）
 
-- **是什么**：vendored 第三方库（`node_modules/sassy-lists` → 构建期拷贝到
-  gitignored `_vendor/`），源码是 import 风格相对路径。`scss/vendor/_sassy-lists.scss`
-  是给模块世界用的**可跟踪加载门面**（`@forward` 不行——被转发文件在仓库外按构建产物
-  存在）；库内只有 `sl-contain()` / `sl-remove()` 两个消费者（xy-grid collapse 等）。
-- **用户侧怎么写**：什么都不用改。sassy-lists 成员经 `util/util` 门面与
-  `foundation.scss` 的 `@forward 'vendor/sassy-lists'` 双路暴露；用户代码里直接调
-  `sl-contain(...)` 在两条路径下都可用。M3 移除 `_vendor`/sassy-lists 时豁免一并消失。
+库内对它的消费只有 `sl-contain()`（2 处）与 `sl-remove()`（4 处），已由
+`util/mixins` 的原生 `list-remove()`（按分隔符保序过滤，语义逐条对照
+replace-with-null+purge 实现）与 `list.index() != null` 等价替换；vendor 门面、
+gulp `sass:deps` 任务、`_vendor/` 构建产物与 package.json 依赖全部移除，
+dist 字节门禁验证等价。全仓 @import 豁免随之 −7。
 
 ### 3. settings 模板（scss/settings/_settings.scss:74 保留 `@import 'util/util'` 1 处）
 

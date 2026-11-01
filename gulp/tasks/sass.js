@@ -14,14 +14,8 @@ var SASS_OPTIONS = { silenceDeprecations: ['import', 'global-builtin'] };
 // Compiles Sass files into CSS
 gulp.task('sass', gulp.series('sass:foundation', 'sass:docs'));
 
-// Prepare dependencies
-gulp.task('sass:deps', function() {
-  return gulp.src(CONFIG.SASS_DEPS_FILES)
-    .pipe(gulp.dest('_vendor'));
-});
-
 // Compiles Foundation Sass
-gulp.task('sass:foundation', gulp.series('sass:deps', function() {
+gulp.task('sass:foundation', gulp.series(function() {
   return gulp.src(['assets/*'])
     .pipe(sourcemaps.init())
     .pipe(plumber())
@@ -32,7 +26,7 @@ gulp.task('sass:foundation', gulp.series('sass:deps', function() {
 }));
 
 // Compiles docs Sass (includes Foundation code also)
-gulp.task('sass:docs', gulp.series('sass:deps', function() {
+gulp.task('sass:docs', gulp.series(function() {
   return gulp.src('docs/assets/scss/docs.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({

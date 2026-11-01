@@ -20,9 +20,8 @@
 //   the `$global-width` mirror they are derived from are declared by
 //   _gutters.scss, the first forwarded module; the other partials reach them
 //   with `@use 'gutters' as *`.
-// - _cell.scss and _collapse.scss reach the vendored sassy-lists helpers
-//   through `scss/vendor/_sassy-lists.scss`, the same tracked facade
-//   scss/util/_mixins.scss uses.
+// - _cell.scss and _collapse.scss use the native list-remove() helper
+//   from util/mixins (the sassy-lists vendor bridge is gone in 7.0)
 
 @forward 'gutters';
 @forward 'grid';

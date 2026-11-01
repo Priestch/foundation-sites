@@ -6,13 +6,11 @@
 /// @group xy-grid
 ////
 
-// Util helpers; `sl-remove()` comes from the vendored sassy-lists facade (the
-// same tracked entry point scss/util/_mixins.scss uses). `$grid-margin-gutters`,
+// Util helpers (`list-remove()` lives in util/mixins);
 // `$grid-columns` and `xy-gutters()` live in _gutters.scss, the first xy-grid
 // module.
 @use '../util/breakpoint' as *;
 @use '../util/unit' as *;
-@use '../vendor/sassy-lists' as *;
 @use 'gutters' as *;
 @use '../global-module' as *;
 @use '../util/mixins' as *;
@@ -242,7 +240,7 @@
   @if ($gutter-output != null) {
     @warn 'xy-cell: $gutter-output is deprecated and will be removed. See migration notes at https://git.io/foundation-6-6-0';
     @if ($gutter-output == false) {
-      $output: sl-remove($output, gutters);
+      $output: list-remove($output, gutters);
     }
   }
 

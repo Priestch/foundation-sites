@@ -9784,11 +9784,6 @@ sassdoc@^2.1.11, sassdoc@^2.7.3:
     vinyl-source-stream "1.1.2"
     vinyl-string "^1.0.2"
 
-sassy-lists@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/sassy-lists/-/sassy-lists-3.0.1.tgz#7906cf02e1468edae87b123224a14024e8843b59"
-  integrity sha512-An91IowmfMkzbounEkrIodyPyo4rGBvrL3Sv9YHmLLK070f4finQg7bdYkOiyPukjpcLPiA3xuL2Y1isCZnvgg==
-
 sax@^1.1.4:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.4.1.tgz#44cc8988377f126304d3b3fc1010c733b929ef0f"

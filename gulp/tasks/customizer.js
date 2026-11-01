@@ -66,13 +66,6 @@ gulp.task('customizer:loadConfig', function(done) {
 // Prepare dependencies
 gulp.task('customizer:prepareSassDeps', function() {
   return gulp.src([
-      'node_modules/@(sassy-lists)/stylesheets/helpers/missing-dependencies',
-      'node_modules/@(sassy-lists)/stylesheets/helpers/true',
-      'node_modules/@(sassy-lists)/stylesheets/functions/contain',
-      'node_modules/@(sassy-lists)/stylesheets/functions/purge',
-      'node_modules/@(sassy-lists)/stylesheets/functions/remove',
-      'node_modules/@(sassy-lists)/stylesheets/functions/replace',
-      'node_modules/@(sassy-lists)/stylesheets/functions/to-list'
     ])
     .pipe(gulp.dest('_vendor'));
 });
