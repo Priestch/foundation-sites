@@ -139,11 +139,11 @@ $dropdownmenu-arrow-color: $anchor-color !default;
       &.is-active {
         z-index: 1;
         display: block;
-        transform: translateX(if($global-text-direction == ltr, -100%, 100%));
+        transform: translateX(if(sass($global-text-direction == ltr): -100%; else: 100%));
       }
 
       &.is-closing {
-        transform: translateX(if($global-text-direction == ltr, 100%, -100%));
+        transform: translateX(if(sass($global-text-direction == ltr): 100%; else: -100%));
       }
 
       // Submenu item padding

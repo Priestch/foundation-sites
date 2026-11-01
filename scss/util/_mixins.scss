@@ -246,7 +246,7 @@ $-zf-bp-value: null;
 @mixin element-invisible(
   $enforce: true
 ) {
-  $important: if($enforce, '!important', null);
+  $important: if(sass($enforce): '!important'; else: null);
 
   position: absolute #{$important};
   width: 1px #{$important};
@@ -263,7 +263,7 @@ $-zf-bp-value: null;
 @mixin element-invisible-off(
   $enforce: true
 ) {
-  $important: if($enforce, '!important', null);
+  $important: if(sass($enforce): '!important'; else: null);
 
   position: static #{$important};
   width: auto #{$important};

@@ -46,13 +46,13 @@ $input-prefix-padding: 1rem !default;
 
     > :first-child {
       &, &.input-group-button > * {
-        border-radius: if($global-text-direction == rtl, 0 $input-radius $input-radius 0, $input-radius 0 0 $input-radius);
+        border-radius: if(sass($global-text-direction == rtl): 0 $input-radius $input-radius 0; else: $input-radius 0 0 $input-radius);
       }
     }
 
     > :last-child {
       &, &.input-group-button > * {
-        border-radius: if($global-text-direction == rtl, $input-radius 0 0 $input-radius, 0 $input-radius $input-radius 0);
+        border-radius: if(sass($global-text-direction == rtl): $input-radius 0 0 $input-radius; else: 0 $input-radius $input-radius 0);
       }
     }
   }

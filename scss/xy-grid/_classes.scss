@@ -122,7 +122,7 @@
 }
 
 @mixin -xy-breakpoint-cell-classes($class-breakpoint, $gutter-breakpoint, $vertical) {
-  $prefix: if($class-breakpoint == $zf-zero-breakpoint, '', '#{$class-breakpoint}-');
+  $prefix: if(sass($class-breakpoint == $zf-zero-breakpoint): ''; else: '#{$class-breakpoint}-');
   > .#{$prefix}auto {
     @include xy-cell-size(auto, $vertical: $vertical);
   }
@@ -133,7 +133,7 @@
 
   @for $i from 1 through $grid-columns {
     // Sizing (percentage)
-    $classname: if($vertical, '.#{$class-breakpoint}-#{$i}', '.#{$class-breakpoint}-#{$i}');
+    $classname: if(sass($vertical): '.#{$class-breakpoint}-#{$i}'; else: '.#{$class-breakpoint}-#{$i}');
 
     > #{$classname} {
       @include xy-cell-size($i, $vertical: $vertical);

@@ -39,7 +39,7 @@
     // If we have a gutter, add it to the width/height
     @if $gutter {
       @if $vertical == true {
-        $unit: if($nested == true, 100%, 100vh);
+        $unit: if(sass($nested == true): 100%; else: 100vh);
         $gutter: rem-calc($gutter);
         // Make sure that 0 is translated in 0rem for calc()
         @if $gutter == 0 {
@@ -48,7 +48,7 @@
         }
         height: calc(#{$unit} + #{$gutter});
       } @else {
-        $unit: if($nested == true, 100%, 100vw);
+        $unit: if(sass($nested == true): 100%; else: 100vw);
         $gutter: rem-calc($gutter);
         // Make sure that 0 is translated in 0rem for calc()
         @if $gutter == 0 {
@@ -59,9 +59,9 @@
     }
     @else {
       @if $vertical == true {
-        height: if($nested == true, 100%, 100vh);
+        height: if(sass($nested == true): 100%; else: 100vh);
       } @else {
-        width: if($nested == true, 100%, 100vw);
+        width: if(sass($nested == true): 100%; else: 100vw);
       }
     }
   }
@@ -73,7 +73,7 @@
 @mixin xy-cell-block(
   $vertical: false
 ) {
-  $property: if($vertical == true, 'overflow-y', 'overflow-x');
+  $property: if(sass($vertical == true): 'overflow-y'; else: 'overflow-x');
 
   @if $vertical == true {
     overflow-y: auto;

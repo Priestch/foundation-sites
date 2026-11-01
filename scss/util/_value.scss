@@ -100,7 +100,7 @@
 ///
 /// @returns {List} Depending on the flag, returns either $keys or $values or both.
 @function map-to-list($map, $keep: 'both') {
-  $keep: if(index('keys' 'values', $keep), $keep, 'both');
+  $keep: if(sass(index('keys' 'values', $keep)): $keep; else: 'both');
 
   @if type-of($map) == 'map' {
     $keys: ();
@@ -122,7 +122,7 @@
     }
   }
 
-  @return if(type-of($map) != 'list', ($value,), $map);
+  @return if(sass(type-of($map) != 'list'): ($value,); else: $map);
 
 }
 

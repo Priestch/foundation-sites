@@ -35,8 +35,8 @@
   $direction: horizontal,
   $wrap: true
 ) {
-  $direction: if($direction == 'horizontal', row, column);
-  $wrap: if($wrap, wrap, nowrap);
+  $direction: if(sass($direction == 'horizontal'): row; else: column);
+  $wrap: if(sass($wrap): wrap; else: nowrap);
 
   display: flex;
   flex-flow: $direction $wrap;

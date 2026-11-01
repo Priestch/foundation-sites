@@ -140,11 +140,11 @@ $global-button-cursor: auto !default;
 
 // Internal variables used for colors: the module replica of
 // add-foundation-colors() (see the note at the top of this file).
-$primary-color: if(map.has-key($foundation-palette, primary), map.get($foundation-palette, primary), #1779ba) !default;
-$secondary-color: if(map.has-key($foundation-palette, secondary), map.get($foundation-palette, secondary), #767676) !default;
-$success-color: if(map.has-key($foundation-palette, success), map.get($foundation-palette, success), #3adb76) !default;
-$warning-color: if(map.has-key($foundation-palette, warning), map.get($foundation-palette, warning), #ffae00) !default;
-$alert-color: if(map.has-key($foundation-palette, alert), map.get($foundation-palette, alert), #cc4b37) !default;
+$primary-color: if(sass(map.has-key($foundation-palette, primary)): map.get($foundation-palette, primary); else: #1779ba) !default;
+$secondary-color: if(sass(map.has-key($foundation-palette, secondary)): map.get($foundation-palette, secondary); else: #767676) !default;
+$success-color: if(sass(map.has-key($foundation-palette, success)): map.get($foundation-palette, success); else: #3adb76) !default;
+$warning-color: if(sass(map.has-key($foundation-palette, warning)): map.get($foundation-palette, warning); else: #ffae00) !default;
+$alert-color: if(sass(map.has-key($foundation-palette, alert)): map.get($foundation-palette, alert); else: #cc4b37) !default;
 
 @mixin foundation-global-styles {
   @include foundation-normalize;

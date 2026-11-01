@@ -211,7 +211,7 @@ $maincontent-class: 'off-canvas-content' !default;
 @mixin off-canvas-position(
   $position: left,
   $orientation: horizontal,
-  $sizes: if($orientation == horizontal, $offcanvas-sizes, $offcanvas-vertical-sizes)
+  $sizes: if(sass($orientation == horizontal): $offcanvas-sizes; else: $offcanvas-vertical-sizes)
 ) {
   @if $position == left {
     top: 0;

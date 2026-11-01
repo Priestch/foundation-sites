@@ -1,7 +1,7 @@
 @function zf-flex-justify($text-direction) {
   $zf-flex-justify: (
-    'left': if($text-direction == rtl, flex-end, flex-start),
-    'right': if($text-direction == rtl, flex-start, flex-end),
+    'left': if(sass($text-direction == rtl): flex-end; else: flex-start),
+    'right': if(sass($text-direction == rtl): flex-start; else: flex-end),
     'center': center,
     'justify': space-between,
     'spaced': space-around,
@@ -38,8 +38,8 @@ $global-text-direction: ltr !default;
 /// in _button-module.scss, the forms/typography/xy-grid partials) was removed
 /// and its readers reach these cells directly, so a settings override seeds
 /// exactly one cell per compilation in both the @import and the @use flow.
-$global-left: if($global-text-direction == rtl, right, left) !default;
-$global-right: if($global-text-direction == rtl, left, right) !default;
+$global-left: if(sass($global-text-direction == rtl): right; else: left) !default;
+$global-right: if(sass($global-text-direction == rtl): left; else: right) !default;
 
 $zf-flex-justify: zf-flex-justify($global-text-direction);
 

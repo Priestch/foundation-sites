@@ -295,7 +295,7 @@ $button-responsive-expanded: false !default;
 
     // Solid, hollow & clear styles
     @each $filling in (solid hollow clear) {
-      $selector: if($button-fill == $filling, null, '.#{$filling}');
+      $selector: if(sass($button-fill == $filling): null; else: '.#{$filling}');
 
       &#{$selector} {
         @include button-fill($filling);

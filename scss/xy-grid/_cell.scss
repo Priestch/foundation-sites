@@ -102,7 +102,7 @@
   }
 
   // Calculate the cell size (number)
-  $size-raw: if($size == 'full', 100%, xy-cell-size($size));
+  $size-raw: if(sass($size == 'full'): 100%; else: xy-cell-size($size));
 
   // Calculate the cell CSS size including gutters (string)
   // If the cell has responsive margin gutters, return a responsive map of sizes.
@@ -115,7 +115,7 @@
         // stylelint-disable length-zero-no-unit
         $mgc: 0rem;
       }
-      $size-css: if($mg == 0, $size-raw, calc(#{$size-raw} - #{$mg}));
+      $size-css: if(sass($mg == 0): $size-raw; else: calc(#{$size-raw} - #{$mg}));
       $responsive-css-sizes: map-merge($responsive-css-sizes, ($bp: $size-css));
     }
 
@@ -128,7 +128,7 @@
     @if $mgc == 0 {
       $mgc: 0rem;
     }
-    $css-size: if($margin-gutter == 0, $size-raw, calc(#{$size-raw} - #{$mgc}));
+    $css-size: if(sass($margin-gutter == 0): $size-raw; else: calc(#{$size-raw} - #{$mgc}));
     @return $css-size;
   }
 }
@@ -152,7 +152,7 @@
 ///
 /// @param {Boolean} $vertical [false] - Set to true to output vertical (height) styles rather than widths.
 @mixin xy-cell-reset($vertical: true) {
-  $direction: if($vertical == true, height, width);
+  $direction: if(sass($vertical == true): height; else: width);
   #{$direction}: auto;
   max-#{$direction}: none;
 }
@@ -174,7 +174,7 @@
   $vertical: false
 ) {
   $sizes: xy-cell-size-css($size, $gutters, $gutter-type, $breakpoint);
-  $direction: if($vertical == true, height, width);
+  $direction: if(sass($vertical == true): height; else: width);
 
   @if (type-of($sizes) == 'map') {
     @include zf-breakpoint-value(auto, $sizes) using ($bp-value) {
@@ -202,7 +202,7 @@
 ) {
   // Get the default gutter position according to cell direction
   @if($gutter-position == null) {
-    $gutter-position: if($vertical == true, top bottom, left right);
+    $gutter-position: if(sass($vertical == true): top bottom; else: left right);
   }
 
   // Get the gutter width for this breakpoint
@@ -280,10 +280,10 @@
   @warn 'xy-cell-static() mixin is deprecated and will be removed. Use "xy-cell()" instead. See migration notes at https://git.io/foundation-6-6-0';
 
   $gutter: zf-get-bp-val($gutters, $breakpoint);
-  $gutter-position: if($vertical == true, top bottom, left right);
+  $gutter-position: if(sass($vertical == true): top bottom; else: left right);
 
-  $-gutter-output: if($gutter-type == 'margin', true, $gutter-output);
-  $-gutter-margin: if($gutter-type == 'margin', $gutter, 0);
+  $-gutter-output: if(sass($gutter-type == 'margin'): true; else: $gutter-output);
+  $-gutter-margin: if(sass($gutter-type == 'margin'): $gutter; else: 0);
 
   @include -xy-cell-properties($size, $-gutter-margin, $vertical);
   @if ($-gutter-output) {

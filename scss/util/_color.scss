@@ -43,7 +43,7 @@ $global-color-pick-contrast-tolerance: 0 !default;
     $rgb: nth($rgba, $i);
     $rgb: divide($rgb, 255);
 
-    $rgb: if($rgb < 0.03928, divide($rgb, 12.92), pow(divide($rgb + 0.055, 1.055), 2.4));
+    $rgb: if(sass($rgb < 0.03928): divide($rgb, 12.92); else: pow(divide($rgb + 0.055, 1.055), 2.4));
 
     $rgba2: append($rgba2, $rgb);
   }

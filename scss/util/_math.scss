@@ -188,7 +188,7 @@
   }
 
   // Fallback for incompatible units: long division with a conversion table.
-  $sign: if($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0, 1, -1);
+  $sign: if(sass($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0): 1; else: -1);
   $dividend: math.abs($dividend);
   $divisor: math.abs($divisor);
   $remainder: $dividend;

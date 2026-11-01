@@ -227,7 +227,7 @@ $button-hollow-hover-lightness: -50% !default;
 
     // Solid, hollow & clear styles
     @each $filling in (solid hollow clear) {
-      $base-selector: if($button-fill == $filling, null, '.#{$filling}');
+      $base-selector: if(sass($button-fill == $filling): null; else: '.#{$filling}');
 
       &#{$base-selector} {
         // Do not generate button base styles for the default filling

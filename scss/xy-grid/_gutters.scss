@@ -67,10 +67,10 @@ $xy-block-grid-max: 8 !default;
   $gutter-position: right left,
   $negative: false
 ) {
-  $operator: if($negative, '-', '');
+  $operator: if(sass($negative): '-'; else: '');
 
   // If we have declared negative gutters, force type to `margin.
-  $gutter-type: if($negative, 'margin', $gutter-type);
+  $gutter-type: if(sass($negative): 'margin'; else: $gutter-type);
 
   // Output our margin gutters.
   @if (type-of($gutters) == 'map') {
