@@ -5,9 +5,15 @@
  * https://get.foundation
  * Licensed under MIT Open Source
  */
+/**
+ * Foundation for Sites
+ * Version 6.9.0
+ * https://get.foundation
+ * Licensed under MIT Open Source
+ */
 /* stylelint-disable-all -- print stylesheet intentionally deviates (h5bp legacy) */
 @media print, screen and (min-width: 40em) {
-  .reveal.large, .reveal.small, .reveal.tiny, .reveal {
+  .reveal, .reveal.tiny, .reveal.small, .reveal.large {
     right: auto;
     left: auto;
     margin: 0 auto;

@@ -4,20 +4,15 @@
  * https://get.foundation
  * Licensed under MIT Open Source
  */
-// Foundation for Sites entry point.
+// Foundation for Sites dist entry (7.0: module flow).
 //
-// 7.0 Sass modularization (M2 line B, slice B9): scss/foundation.scss is a
-// real module now and this file keeps compiling through it unchanged — the
-// import splices the forwarded members into this entry's import world exactly
-// as before. A parallel `@use` entry module exists
-// (scss/foundation-prototype.scss scss/foundation-float.scss /
-// scss/foundation-rtl.scss for the forked variants); it is not used for the
-// dist build yet because Dart Sass orders @extend-derived selectors by source
-// order in module mode, while the import world reverses them (reveal's
-// %reveal-centered family), so module-mode CSS is not byte-identical with the
-// released artifacts. Wiring these entries into the dist build is a 7.0 task
-// that comes with a re-baseline of the released CSS.
+// The entry now @uses the foundation module directly: @extend-derived
+// selectors compile in source order in module mode (the import world emitted
+// them reversed - the reveal %reveal-centered family), which is the 7.0
+// dist re-baseline. The legacy @import flow this file used until 6.x kept
+// byte-parity with the released artifacts; that parity is deliberately
+// dropped here.
 
-@import '../scss/foundation';
+@use '../scss/foundation' as foundation;
 
-@include foundation-everything;
+@include foundation.foundation-everything;

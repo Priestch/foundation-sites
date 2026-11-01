@@ -138,21 +138,13 @@ replace-with-null+purge 实现）与 `list.index() != null` 等价替换；vendo
 gulp `sass:deps` 任务、`_vendor/` 构建产物与 package.json 依赖全部移除，
 dist 字节门禁验证等价。全仓 @import 豁免随之 −7。
 
-### 3. settings 模板（scss/settings/_settings.scss:74 保留 `@import 'util/util'` 1 处）
+### 3. dist 资产入口（7.0 已切模块流）
 
-- **是什么**：该文件**就是**发给用户拷贝的 settings 模板（dist 随包发布、starter
-  项目、CLI 模板同源）。它的正文必须是"裸 import 风格 Sass"：任何 `@use` 形态都会
-  与下方数百行 settings 赋值冲突（starred use 会把 util 持有的 settings 变量
-  （`$global-font-size`、`$breakpoints`、`$black/$white`…）引进模块，与文件内再赋值
-  撞名；namespaced use 则要求逐个限定 `rem-calc()` 调用，模板不可读）。
-- **用户侧怎么写**：
-  - 留在旧路径：照旧拷贝模板、改值、`@import 'settings/settings'; @import 'foundation';`
-    ——完全支持，直到该用户自行迁移到 settings 模块。
-  - 走新机制：按上文"三步"把模板**精简成 settings 模块**；模块顶部**保留
-    `@import 'util/util';`**（只要还调用 `rem-calc()` 等函数）。不要改成
-    `@use "util/util" as *;`——`rem-calc()` 读的 `$global-font-size` 会解析到 util 模块
-    自己的 `100% !default` cell，用户对 `$global-font-size` 的赋值会**静默不生效**（见
-    限制 5）。库侧（`scss/next/_load-*.scss`）全部走 `@use ... with`，不受此限。
+三个 dist 入口（`assets/foundation{,-prototype,-rtl}.scss`）已从 `@import` 切到
+`@use` 模块流（rtl 经 `@use 'util/flex' with` 配置方向三元组）。随之落地的
+7.0 dist 重定基线：`@extend` 派生选择器从 import 世界的反序变为模块世界的
+**源序**（reveal 的 %reveal-centered 族），加上 sass-embedded 1.107 的序列化
+差异与 IE9 回退删除，一次性换基。字节门禁自此以新产物为基准。
 
 ## 当前限制（定稿时点）
 

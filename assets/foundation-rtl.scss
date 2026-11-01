@@ -4,8 +4,18 @@
  * https://get.foundation
  * Licensed under MIT Open Source
  */
-$global-text-direction: rtl;
+// Foundation for Sites dist entry (7.0: module flow).
+//
+// The entry now @uses the foundation module directly: @extend-derived
+// selectors compile in source order in module mode (the import world emitted
+// them reversed - the reveal %reveal-centered family), which is the 7.0
+// dist re-baseline. The legacy @import flow this file used until 6.x kept
+// byte-parity with the released artifacts; that parity is deliberately
+// dropped here.
 
-@import '../scss/foundation';
+// The direction trio's owner (scss/util/_flex.scss) configured first - the
+// module world has no pre-assignment.
+@use '../scss/util/flex' with ($global-text-direction: rtl);
+@use '../scss/foundation' as foundation;
 
-@include foundation-everything;
+@include foundation.foundation-everything;
