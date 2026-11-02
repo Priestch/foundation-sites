@@ -2,8 +2,8 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 //
-// The `.show-for-ie` / `.hide-for-ie` classes are deprecated since 6.10 and
-// will be removed in Foundation 7.0, together with all IE support.
+// 7.0: the IE-only .show-for-ie / .hide-for-ie classes are gone together
+// with the IE support matrix (deprecated since 6.10).
 
 // Util helpers (breakpoint()/zf-bp-to-em()/zf-map-next()/$breakpoints/
 // $breakpoint-classes/$zf-zero-breakpoint from scss/util/_breakpoint.scss,
@@ -162,19 +162,6 @@
       display: block !important;
     }
     .hide-for-dark-mode {
-      display: none !important;
-    }
-  }
-
-  // IE10+ Visibility
-  .show-for-ie {
-    display: none;
-  }
-  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    .show-for-ie {
-      display: block !important;
-    }
-    .hide-for-ie {
       display: none !important;
     }
   }

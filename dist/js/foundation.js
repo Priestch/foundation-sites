@@ -7,8 +7,8 @@
 		var a = factory();
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(self, function() {
-return /******/ (function() { // webpackBootstrap
+})(globalThis, () => {
+return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
@@ -16,29 +16,16 @@ return /******/ (function() { // webpackBootstrap
 /*!********************************!*\
   !*** ./js/foundation.abide.js ***!
   \********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Abide: function() { return /* binding */ Abide; }
+/* harmony export */   Abide: () => (/* binding */ Abide)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -52,7 +39,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 // jQuery `.data('abide-describedby')` stand-in (7.0 line A, S12): a module
 // side channel like jQuery's data store - the 6.x flag never surfaced in the
 // DOM either.
-var describedBy = new WeakSet();
+const describedBy = new WeakSet();
 
 // jQuery collection / element / array acceptance for the public $el-shaped
 // parameters (core.utils toElement shape, kept local until that helper is
@@ -71,917 +58,812 @@ function toEls(obj) {
 // jQuery addClass/removeClass equivalents: the option classes may carry
 // several whitespace-separated names.
 function addClasses(el, names) {
-  names.split(/\s+/).forEach(function (name) {
+  names.split(/\s+/).forEach(name => {
     if (name) {
       el.classList.add(name);
     }
   });
 }
 function removeClasses(el, names) {
-  names.split(/\s+/).forEach(function (name) {
+  names.split(/\s+/).forEach(name => {
     if (name) {
       el.classList.remove(name);
     }
   });
 }
-var Abide = /*#__PURE__*/function (_Plugin) {
-  function Abide() {
-    _classCallCheck(this, Abide);
-    return _callSuper(this, Abide, arguments);
+class Abide extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of Abide.
+   * @class
+   * @name Abide
+   * @fires Abide#init
+   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element) {
+    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    // Native deep merge (7.0 line A, S14): the Dom deepMerge mirrors jQuery's
+    // `$.extend(true)` semantics (array index merge, null overwrite,
+    // reference assignment for functions/RegExps - the validator functions
+    // and RegExp patterns above survive the merge by reference). Pinned
+    // against jQuery in the deepMerge equivalence suite.
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Abide.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.isEnabled = true;
+    this.formnovalidate = null;
+    this.className = 'Abide'; // ie9 back compat
+    this._init();
   }
-  _inherits(Abide, _Plugin);
-  return _createClass(Abide, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Abide.
-     * @class
-     * @name Abide
-     * @fires Abide#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      // Native deep merge (7.0 line A, S14): the Dom deepMerge mirrors jQuery's
-      // `$.extend(true)` semantics (array index merge, null overwrite,
-      // reference assignment for functions/RegExps - the validator functions
-      // and RegExp patterns above survive the merge by reference). Pinned
-      // against jQuery in the deepMerge equivalence suite.
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Abide.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.isEnabled = true;
-      this.formnovalidate = null;
-      this.className = 'Abide'; // ie9 back compat
-      this._init();
+
+  /**
+   * Initializes the Abide plugin and calls functions to get Abide functioning on load.
+   * @private
+   */
+  _init() {
+    const form = this.$element;
+    // Native field sweep (7.0 line A, S12): every input except the submit
+    // ones, plus the textareas and selects. The former two-find + $.merge
+    // grouped the set by tag; the flat document order changes nothing about
+    // which fields are validated (fields are validated independently,
+    // checkbox groups are deduped by name while iterating).
+    this.inputs = Array.from(form.querySelectorAll('input:not([type="submit"]), textarea, select'));
+    this.submits = Array.from(form.querySelectorAll('[type="submit"]'));
+    const globalErrors = Array.from(form.querySelectorAll('[data-abide-error]'));
+
+    // Add a11y attributes to all fields
+    if (this.options.a11yAttributes) {
+      this.inputs.forEach(input => this.addA11yAttributes(input));
+      globalErrors.forEach(error => this.addGlobalErrorA11yAttributes(error));
     }
+    this._events();
+  }
 
-    /**
-     * Initializes the Abide plugin and calls functions to get Abide functioning on load.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this = this;
-      var form = this.$element;
-      // Native field sweep (7.0 line A, S12): every input except the submit
-      // ones, plus the textareas and selects. The former two-find + $.merge
-      // grouped the set by tag; the flat document order changes nothing about
-      // which fields are validated (fields are validated independently,
-      // checkbox groups are deduped by name while iterating).
-      this.inputs = Array.from(form.querySelectorAll('input:not([type="submit"]), textarea, select'));
-      this.submits = Array.from(form.querySelectorAll('[type="submit"]'));
-      var globalErrors = Array.from(form.querySelectorAll('[data-abide-error]'));
+  /**
+   * Initializes events for Abide.
+   * @private
+   */
+  _events() {
+    const form = this.$element;
 
-      // Add a11y attributes to all fields
-      if (this.options.a11yAttributes) {
-        this.inputs.forEach(function (input) {
-          return _this.addA11yAttributes(input);
-        });
-        globalErrors.forEach(function (error) {
-          return _this.addGlobalErrorA11yAttributes(error);
-        });
-      }
-      this._events();
-    }
-
-    /**
-     * Initializes events for Abide.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this2 = this;
-      var form = this.$element;
-
-      // S12: the form-level and per-field consumers flip to the native event
-      // layer. Their producers are the real DOM reset/submit/change/input/
-      // blur events (which reach both listener layers during the mixed state)
-      // and this plugin's own native triggers, so every seam here closes on
-      // the consumer side alone.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(form, '.abide');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(form, 'reset.zf.abide', function () {
-        _this2.resetForm();
+    // S12: the form-level and per-field consumers flip to the native event
+    // layer. Their producers are the real DOM reset/submit/change/input/
+    // blur events (which reach both listener layers during the mixed state)
+    // and this plugin's own native triggers, so every seam here closes on
+    // the consumer side alone.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(form, '.abide');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(form, 'reset.zf.abide', () => {
+      this.resetForm();
+    });
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(form, 'submit.zf.abide', () => {
+      return this.validateForm();
+    });
+    this.submits.forEach(submit => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(submit, 'click.zf.abide keydown.zf.abide');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(submit, 'click.zf.abide keydown.zf.abide', e => {
+        if (!e.key || e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          this.formnovalidate = e.target.getAttribute('formnovalidate') !== null;
+          this._submitForm();
+        }
       });
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(form, 'submit.zf.abide', function () {
-        return _this2.validateForm();
-      });
-      this.submits.forEach(function (submit) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(submit, 'click.zf.abide keydown.zf.abide');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(submit, 'click.zf.abide keydown.zf.abide', function (e) {
-          if (!e.key || e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            _this2.formnovalidate = e.target.getAttribute('formnovalidate') !== null;
-            _this2._submitForm();
-          }
+    });
+    if (this.options.validateOn === 'fieldChange') {
+      this.inputs.forEach(input => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'change.zf.abide');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'change.zf.abide', e => {
+          this.validateInput(e.target);
         });
       });
-      if (this.options.validateOn === 'fieldChange') {
-        this.inputs.forEach(function (input) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'change.zf.abide');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'change.zf.abide', function (e) {
-            _this2.validateInput(e.target);
-          });
+    }
+    if (this.options.liveValidate) {
+      this.inputs.forEach(input => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'input.zf.abide');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'input.zf.abide', e => {
+          this.validateInput(e.target);
         });
-      }
-      if (this.options.liveValidate) {
-        this.inputs.forEach(function (input) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'input.zf.abide');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'input.zf.abide', function (e) {
-            _this2.validateInput(e.target);
-          });
-        });
-      }
-      if (this.options.validateOnBlur) {
-        this.inputs.forEach(function (input) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'blur.zf.abide');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'blur.zf.abide', function (e) {
-            _this2.validateInput(e.target);
-          });
-        });
-      }
-    }
-
-    /**
-     * Formerly `this.$element.submit()` (7.0 line A, S12): jQuery's synthetic
-     * submit trigger ran the submit handlers and handed over to the native
-     * form.submit() only when no handler cancelled - Events.trigger implements
-     * exactly that shape. The native submit() fires no submit event of its
-     * own, so nothing recurses.
-     * @private
-     */
-  }, {
-    key: "_submitForm",
-    value: function _submitForm() {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'submit');
-    }
-
-    /**
-     * Calls necessary functions to update Abide upon DOM change
-     * @private
-     */
-  }, {
-    key: "_reflow",
-    value: function _reflow() {
-      this._init();
-    }
-
-    /**
-     * Checks whether the submitted form should be validated or not, consodering formnovalidate and isEnabled
-     * @returns {Boolean}
-     * @private
-     */
-  }, {
-    key: "_validationIsDisabled",
-    value: function _validationIsDisabled() {
-      if (this.isEnabled === false) {
-        // whole validation disabled
-        return true;
-      } else if (typeof this.formnovalidate === 'boolean') {
-        // triggered by $submit
-        return this.formnovalidate;
-      }
-      // triggered by Enter in non-submit input
-      return this.submits.length ? this.submits[0].getAttribute('formnovalidate') !== null : false;
-    }
-
-    /**
-     * Enables the whole validation
-     */
-  }, {
-    key: "enableValidation",
-    value: function enableValidation() {
-      this.isEnabled = true;
-    }
-
-    /**
-     * Disables the whole validation
-     */
-  }, {
-    key: "disableValidation",
-    value: function disableValidation() {
-      this.isEnabled = false;
-    }
-
-    /**
-     * Checks whether or not a form element has the required attribute and if it's checked or not
-     * @param {Object} element - jQuery object to check for required attribute
-     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
-     */
-  }, {
-    key: "requiredCheck",
-    value: function requiredCheck($el) {
-      var el = toEl($el);
-      if (!el.hasAttribute('required')) return true;
-      var isGood = true;
-      switch (el.type) {
-        case 'checkbox':
-          isGood = el.checked;
-          break;
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          var opt = el.querySelectorAll('option:checked');
-          if (!opt.length || !opt[0].value) isGood = false;
-          break;
-        default:
-          if (!el.value || !el.value.length) isGood = false;
-      }
-      return isGood;
-    }
-
-    /**
-     * Get:
-     * - Based on $el, the first element(s) corresponding to `formErrorSelector` in this order:
-     *   1. The element's direct sibling('s).
-     *   2. The element's parent's children.
-     * - Element(s) with the attribute `[data-form-error-for]` set with the element's id.
-     *
-     * This allows for multiple form errors per input, though if none are found, no form errors will be shown.
-     *
-     * @param {Object} $el - jQuery object to use as reference to find the form error selector.
-     * @param {String[]} [failedValidators] - List of failed validators.
-     * @returns {Object} jQuery object with the selector.
-     */
-  }, {
-    key: "findFormError",
-    value: function findFormError($el, failedValidators) {
-      var _this3 = this;
-      var els = toEls($el);
-      var id = els.length ? els[0].id : '';
-      var form = this.$element;
-      var errors = [];
-      var addUnique = function addUnique(candidates) {
-        candidates.forEach(function (candidate) {
-          if (candidate && errors.indexOf(candidate) === -1) {
-            errors.push(candidate);
-          }
-        });
-      };
-
-      // 1. The direct siblings matching the selector (jQuery unions the
-      // per-element sibling lists of the whole collection, in order).
-      els.forEach(function (el) {
-        addUnique(Array.from(el.parentNode.children).filter(function (child) {
-          return child !== el && child.matches(_this3.options.formErrorSelector);
-        }));
       });
+    }
+    if (this.options.validateOnBlur) {
+      this.inputs.forEach(input => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, 'blur.zf.abide');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(input, 'blur.zf.abide', e => {
+          this.validateInput(e.target);
+        });
+      });
+    }
+  }
 
-      // 2. The parent's matching children, when no sibling matched.
-      if (!errors.length) {
-        els.forEach(function (el) {
-          addUnique(Array.from(el.parentNode.querySelectorAll(_this3.options.formErrorSelector)));
-        });
-      }
-      if (id) {
-        addUnique(Array.from(form.querySelectorAll("[data-form-error-for=\"".concat(id, "\"]"))));
-      }
-      if (!!failedValidators) {
-        errors = errors.filter(function (error) {
-          return !error.hasAttribute('data-form-error-on');
-        });
-        failedValidators.forEach(function (v) {
-          els.forEach(function (el) {
-            addUnique(Array.from(el.parentNode.children).filter(function (child) {
-              return child !== el && child.matches("[data-form-error-on=\"".concat(v, "\"]"));
-            }));
-          });
-          addUnique(Array.from(form.querySelectorAll("[data-form-error-for=\"".concat(id, "\"][data-form-error-on=\"").concat(v, "\"]"))));
-        });
-      }
+  /**
+   * Formerly `this.$element.submit()` (7.0 line A, S12): jQuery's synthetic
+   * submit trigger ran the submit handlers and handed over to the native
+   * form.submit() only when no handler cancelled - Events.trigger implements
+   * exactly that shape. The native submit() fires no submit event of its
+   * own, so nothing recurses.
+   * @private
+   */
+  _submitForm() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'submit');
+  }
 
-      // 7.0 terminal form: the plain element array (the mixed state wrapped it)
-      return errors;
+  /**
+   * Calls necessary functions to update Abide upon DOM change
+   * @private
+   */
+  _reflow() {
+    this._init();
+  }
+
+  /**
+   * Checks whether the submitted form should be validated or not, consodering formnovalidate and isEnabled
+   * @returns {Boolean}
+   * @private
+   */
+  _validationIsDisabled() {
+    if (this.isEnabled === false) {
+      // whole validation disabled
+      return true;
+    } else if (typeof this.formnovalidate === 'boolean') {
+      // triggered by $submit
+      return this.formnovalidate;
+    }
+    // triggered by Enter in non-submit input
+    return this.submits.length ? this.submits[0].getAttribute('formnovalidate') !== null : false;
+  }
+
+  /**
+   * Enables the whole validation
+   */
+  enableValidation() {
+    this.isEnabled = true;
+  }
+
+  /**
+   * Disables the whole validation
+   */
+  disableValidation() {
+    this.isEnabled = false;
+  }
+
+  /**
+   * Checks whether or not a form element has the required attribute and if it's checked or not
+   * @param {Object} element - jQuery object to check for required attribute
+   * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+   */
+  requiredCheck($el) {
+    const el = toEl($el);
+    if (!el.hasAttribute('required')) return true;
+    var isGood = true;
+    switch (el.type) {
+      case 'checkbox':
+        isGood = el.checked;
+        break;
+      case 'select':
+      case 'select-one':
+      case 'select-multiple':
+        var opt = el.querySelectorAll('option:checked');
+        if (!opt.length || !opt[0].value) isGood = false;
+        break;
+      default:
+        if (!el.value || !el.value.length) isGood = false;
+    }
+    return isGood;
+  }
+
+  /**
+   * Get:
+   * - Based on $el, the first element(s) corresponding to `formErrorSelector` in this order:
+   *   1. The element's direct sibling('s).
+   *   2. The element's parent's children.
+   * - Element(s) with the attribute `[data-form-error-for]` set with the element's id.
+   *
+   * This allows for multiple form errors per input, though if none are found, no form errors will be shown.
+   *
+   * @param {Object} $el - jQuery object to use as reference to find the form error selector.
+   * @param {String[]} [failedValidators] - List of failed validators.
+   * @returns {Object} jQuery object with the selector.
+   */
+  findFormError($el, failedValidators) {
+    const els = toEls($el);
+    const id = els.length ? els[0].id : '';
+    const form = this.$element;
+    let errors = [];
+    const addUnique = candidates => {
+      candidates.forEach(candidate => {
+        if (candidate && errors.indexOf(candidate) === -1) {
+          errors.push(candidate);
+        }
+      });
+    };
+
+    // 1. The direct siblings matching the selector (jQuery unions the
+    // per-element sibling lists of the whole collection, in order).
+    els.forEach(el => {
+      addUnique(Array.from(el.parentNode.children).filter(child => child !== el && child.matches(this.options.formErrorSelector)));
+    });
+
+    // 2. The parent's matching children, when no sibling matched.
+    if (!errors.length) {
+      els.forEach(el => {
+        addUnique(Array.from(el.parentNode.querySelectorAll(this.options.formErrorSelector)));
+      });
+    }
+    if (id) {
+      addUnique(Array.from(form.querySelectorAll(`[data-form-error-for="${id}"]`)));
+    }
+    if (!!failedValidators) {
+      errors = errors.filter(error => !error.hasAttribute('data-form-error-on'));
+      failedValidators.forEach(v => {
+        els.forEach(el => {
+          addUnique(Array.from(el.parentNode.children).filter(child => child !== el && child.matches(`[data-form-error-on="${v}"]`)));
+        });
+        addUnique(Array.from(form.querySelectorAll(`[data-form-error-for="${id}"][data-form-error-on="${v}"]`)));
+      });
     }
 
-    /**
-     * Get the first element in this order:
-     * 2. The <label> with the attribute `[for="someInputId"]`
-     * 3. The `.closest()` <label>
-     *
-     * @param {Object} $el - jQuery object to check for required attribute
-     * @returns {Object} jQuery object with the label.
-     */
-  }, {
-    key: "findLabel",
-    value: function findLabel($el) {
-      var el = toEl($el);
-      var label = this.$element.querySelector("label[for=\"".concat(el.id, "\"]"));
+    // 7.0 terminal form: the plain element array (the mixed state wrapped it)
+    return errors;
+  }
 
-      // 7.0 terminal form: the label elements as an array (empty when absent)
+  /**
+   * Get the first element in this order:
+   * 2. The <label> with the attribute `[for="someInputId"]`
+   * 3. The `.closest()` <label>
+   *
+   * @param {Object} $el - jQuery object to check for required attribute
+   * @returns {Object} jQuery object with the label.
+   */
+  findLabel($el) {
+    const el = toEl($el);
+    const label = this.$element.querySelector(`label[for="${el.id}"]`);
+
+    // 7.0 terminal form: the label elements as an array (empty when absent)
+    if (!label) {
+      const closest = el.closest('label');
+      return closest ? [closest] : [];
+    }
+    return [label];
+  }
+
+  /**
+   * Get the set of labels associated with a set of radio els in this order
+   * 2. The <label> with the attribute `[for="someInputId"]`
+   * 3. The `.closest()` <label>
+   *
+   * @param {Object} $el - jQuery object to check for required attribute
+   * @returns {Object} jQuery object with the labels.
+   */
+  findRadioLabels($els) {
+    return this._labelsForGroup($els);
+  }
+
+  /**
+   * Get the set of labels associated with a set of checkbox els in this order
+   * 2. The <label> with the attribute `[for="someInputId"]`
+   * 3. The `.closest()` <label>
+   *
+   * @param {Object} $el - jQuery object to check for required attribute
+   * @returns {Object} jQuery object with the labels.
+   */
+  findCheckboxLabels($els) {
+    return this._labelsForGroup($els);
+  }
+  _labelsForGroup($els) {
+    const labels = [];
+    toEls($els).forEach(el => {
+      let label = el.id ? this.$element.querySelector(`label[for="${el.id}"]`) : null;
       if (!label) {
-        var closest = el.closest('label');
-        return closest ? [closest] : [];
+        label = el.closest('label');
       }
-      return [label];
-    }
-
-    /**
-     * Get the set of labels associated with a set of radio els in this order
-     * 2. The <label> with the attribute `[for="someInputId"]`
-     * 3. The `.closest()` <label>
-     *
-     * @param {Object} $el - jQuery object to check for required attribute
-     * @returns {Object} jQuery object with the labels.
-     */
-  }, {
-    key: "findRadioLabels",
-    value: function findRadioLabels($els) {
-      return this._labelsForGroup($els);
-    }
-
-    /**
-     * Get the set of labels associated with a set of checkbox els in this order
-     * 2. The <label> with the attribute `[for="someInputId"]`
-     * 3. The `.closest()` <label>
-     *
-     * @param {Object} $el - jQuery object to check for required attribute
-     * @returns {Object} jQuery object with the labels.
-     */
-  }, {
-    key: "findCheckboxLabels",
-    value: function findCheckboxLabels($els) {
-      return this._labelsForGroup($els);
-    }
-  }, {
-    key: "_labelsForGroup",
-    value: function _labelsForGroup($els) {
-      var _this4 = this;
-      var labels = [];
-      toEls($els).forEach(function (el) {
-        var label = el.id ? _this4.$element.querySelector("label[for=\"".concat(el.id, "\"]")) : null;
-        if (!label) {
-          label = el.closest('label');
-        }
-        if (label) {
-          labels.push(label);
-        }
-      });
-      return labels;
-    }
-
-    /**
-     * Adds the CSS error class as specified by the Abide settings to the label, input, and the form
-     * @param {Object} $el - jQuery object to add the class to
-     * @param {String[]} [failedValidators] - List of failed validators.
-     */
-  }, {
-    key: "addErrorClasses",
-    value: function addErrorClasses($el, failedValidators) {
-      var _this5 = this;
-      var el = toEl($el);
-      var $label = this.findLabel($el);
-      var $formError = this.findFormError($el, failedValidators);
-      $label.forEach(function (label) {
-        return addClasses(label, _this5.options.labelErrorClass);
-      });
-      $formError.forEach(function (error) {
-        return addClasses(error, _this5.options.formErrorClass);
-      });
-      addClasses(el, this.options.inputErrorClass);
-      el.setAttribute('data-invalid', '');
-      el.setAttribute('aria-invalid', 'true');
-      if ($formError.some(_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)) {
-        this.addA11yErrorDescribe($el, $formError);
+      if (label) {
+        labels.push(label);
       }
+    });
+    return labels;
+  }
+
+  /**
+   * Adds the CSS error class as specified by the Abide settings to the label, input, and the form
+   * @param {Object} $el - jQuery object to add the class to
+   * @param {String[]} [failedValidators] - List of failed validators.
+   */
+  addErrorClasses($el, failedValidators) {
+    const el = toEl($el);
+    const $label = this.findLabel($el);
+    const $formError = this.findFormError($el, failedValidators);
+    $label.forEach(label => addClasses(label, this.options.labelErrorClass));
+    $formError.forEach(error => addClasses(error, this.options.formErrorClass));
+    addClasses(el, this.options.inputErrorClass);
+    el.setAttribute('data-invalid', '');
+    el.setAttribute('aria-invalid', 'true');
+    if ($formError.some(_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)) {
+      this.addA11yErrorDescribe($el, $formError);
     }
+  }
 
-    /**
-     * Adds [for] and [role=alert] attributes to all form error targetting $el,
-     * and [aria-describedby] attribute to $el toward the first form error.
-     * @param {Object} $el - jQuery object
-     */
-  }, {
-    key: "addA11yAttributes",
-    value: function addA11yAttributes($el) {
-      var el = toEl($el);
-      var errors = this.findFormError($el);
-      var labels = errors.filter(function (error) {
-        return error.matches('label');
-      });
-      if (!errors.length) return;
+  /**
+   * Adds [for] and [role=alert] attributes to all form error targetting $el,
+   * and [aria-describedby] attribute to $el toward the first form error.
+   * @param {Object} $el - jQuery object
+   */
+  addA11yAttributes($el) {
+    const el = toEl($el);
+    const errors = this.findFormError($el);
+    const labels = errors.filter(error => error.matches('label'));
+    if (!errors.length) return;
 
-      // The former `:visible` filter, narrowed to the display rule (Dom's
-      // `visible` - see the PENDING DECISION note there).
-      var firstError = errors.find(_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible);
-      if (firstError) {
-        this.addA11yErrorDescribe($el, firstError);
-      }
-      if (labels.filter(function (label) {
-        return label.hasAttribute('for');
-      }).length < labels.length) {
-        // Get the input ID or create one
-        var elemId = el.getAttribute('id');
-        if (elemId == null) {
-          elemId = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'abide-input');
-          el.setAttribute('id', elemId);
-        }
-
-        // For each label targeting $el, set [for] if it is not set.
-        labels.forEach(function (label) {
-          if (!label.hasAttribute('for')) {
-            label.setAttribute('for', elemId);
-          }
-        });
+    // The former `:visible` filter, narrowed to the display rule (Dom's
+    // `visible` - see the PENDING DECISION note there).
+    const firstError = errors.find(_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible);
+    if (firstError) {
+      this.addA11yErrorDescribe($el, firstError);
+    }
+    if (labels.filter(label => label.hasAttribute('for')).length < labels.length) {
+      // Get the input ID or create one
+      let elemId = el.getAttribute('id');
+      if (elemId == null) {
+        elemId = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'abide-input');
+        el.setAttribute('id', elemId);
       }
 
-      // For each error targeting $el, set [role=alert] if it is not set.
-      errors.forEach(function (error) {
-        if (!error.hasAttribute('role')) {
-          error.setAttribute('role', 'alert');
+      // For each label targeting $el, set [for] if it is not set.
+      labels.forEach(label => {
+        if (!label.hasAttribute('for')) {
+          label.setAttribute('for', elemId);
         }
       });
     }
-  }, {
-    key: "addA11yErrorDescribe",
-    value: function addA11yErrorDescribe($el, $error) {
-      var el = toEl($el);
-      var error = toEl($error);
-      if (el.getAttribute('type') === 'hidden') return;
-      if (el.hasAttribute('aria-describedby')) return;
 
-      // Set [aria-describedby] on the input toward the first form error if it is not set
-      // Get the first error ID or create one
-      var errorId = error.getAttribute('id');
-      if (errorId == null) {
-        errorId = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'abide-error');
-        error.setAttribute('id', errorId);
+    // For each error targeting $el, set [role=alert] if it is not set.
+    errors.forEach(error => {
+      if (!error.hasAttribute('role')) {
+        error.setAttribute('role', 'alert');
       }
-      el.setAttribute('aria-describedby', errorId);
-      describedBy.add(el);
-    }
+    });
+  }
+  addA11yErrorDescribe($el, $error) {
+    const el = toEl($el);
+    const error = toEl($error);
+    if (el.getAttribute('type') === 'hidden') return;
+    if (el.hasAttribute('aria-describedby')) return;
 
-    /**
-     * Adds [aria-live] attribute to the given global form error $el.
-     * @param {Object} $el - jQuery object to add the attribute to
-     */
-  }, {
-    key: "addGlobalErrorA11yAttributes",
-    value: function addGlobalErrorA11yAttributes($el) {
-      var el = toEl($el);
-      if (!el.hasAttribute('aria-live')) {
-        el.setAttribute('aria-live', this.options.a11yErrorLevel);
-      }
+    // Set [aria-describedby] on the input toward the first form error if it is not set
+    // Get the first error ID or create one
+    let errorId = error.getAttribute('id');
+    if (errorId == null) {
+      errorId = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'abide-error');
+      error.setAttribute('id', errorId);
     }
+    el.setAttribute('aria-describedby', errorId);
+    describedBy.add(el);
+  }
 
-    /**
-     * Remove CSS error classes etc from an entire radio button group
-     * @param {String} groupName - A string that specifies the name of a radio button group
-     *
-     */
-  }, {
-    key: "removeRadioErrorClasses",
-    value: function removeRadioErrorClasses(groupName) {
-      var _this6 = this;
-      var $els = this._groupEls('radio', groupName);
-      var $labels = this.findRadioLabels($els);
-      var $formErrors = this.findFormError($els);
-      $labels.forEach(function (label) {
-        return removeClasses(label, _this6.options.labelErrorClass);
-      });
-      $formErrors.forEach(function (error) {
-        return removeClasses(error, _this6.options.formErrorClass);
-      });
-      $els.forEach(function (el) {
-        removeClasses(el, _this6.options.inputErrorClass);
-        el.removeAttribute('data-invalid');
-        el.removeAttribute('aria-invalid');
-      });
+  /**
+   * Adds [aria-live] attribute to the given global form error $el.
+   * @param {Object} $el - jQuery object to add the attribute to
+   */
+  addGlobalErrorA11yAttributes($el) {
+    const el = toEl($el);
+    if (!el.hasAttribute('aria-live')) {
+      el.setAttribute('aria-live', this.options.a11yErrorLevel);
     }
+  }
 
-    /**
-     * Remove CSS error classes etc from an entire checkbox group
-     * @param {String} groupName - A string that specifies the name of a checkbox group
-     *
-     */
-  }, {
-    key: "removeCheckboxErrorClasses",
-    value: function removeCheckboxErrorClasses(groupName) {
-      var _this7 = this;
-      var $els = this._groupEls('checkbox', groupName);
-      var $labels = this.findCheckboxLabels($els);
-      var $formErrors = this.findFormError($els);
-      $labels.forEach(function (label) {
-        return removeClasses(label, _this7.options.labelErrorClass);
-      });
-      $formErrors.forEach(function (error) {
-        return removeClasses(error, _this7.options.formErrorClass);
-      });
-      $els.forEach(function (el) {
-        removeClasses(el, _this7.options.inputErrorClass);
-        el.removeAttribute('data-invalid');
-        el.removeAttribute('aria-invalid');
-      });
-    }
-
-    // Native stand-in for the former `:radio/:checkbox` group queries (7.0
-    // line A, S12): `input[type="..."][name="..."]`, the exact
-    // createInputPseudo set.
-  }, {
-    key: "_groupEls",
-    value: function _groupEls(type, groupName) {
-      return Array.from(this.$element.querySelectorAll("input[type=\"".concat(type, "\"][name=\"").concat(groupName, "\"]")));
-    }
-
-    /**
-     * Removes CSS error class as specified by the Abide settings from the label, input, and the form
-     * @param {Object} $el - jQuery object to remove the class from
-     */
-  }, {
-    key: "removeErrorClasses",
-    value: function removeErrorClasses($el) {
-      var _this8 = this;
-      var el = toEl($el);
-      // radios need to clear all of the els
-      if (el.type === 'radio') {
-        return this.removeRadioErrorClasses(el.getAttribute('name'));
-      }
-      // checkboxes need to clear all of the els
-      else if (el.type === 'checkbox') {
-        return this.removeCheckboxErrorClasses(el.getAttribute('name'));
-      }
-      var $label = this.findLabel($el);
-      var $formError = this.findFormError($el);
-      $label.forEach(function (label) {
-        return removeClasses(label, _this8.options.labelErrorClass);
-      });
-      $formError.forEach(function (error) {
-        return removeClasses(error, _this8.options.formErrorClass);
-      });
+  /**
+   * Remove CSS error classes etc from an entire radio button group
+   * @param {String} groupName - A string that specifies the name of a radio button group
+   *
+   */
+  removeRadioErrorClasses(groupName) {
+    const $els = this._groupEls('radio', groupName);
+    const $labels = this.findRadioLabels($els);
+    const $formErrors = this.findFormError($els);
+    $labels.forEach(label => removeClasses(label, this.options.labelErrorClass));
+    $formErrors.forEach(error => removeClasses(error, this.options.formErrorClass));
+    $els.forEach(el => {
       removeClasses(el, this.options.inputErrorClass);
       el.removeAttribute('data-invalid');
       el.removeAttribute('aria-invalid');
-      if (describedBy.has(el)) {
-        el.removeAttribute('aria-describedby');
-        describedBy.delete(el);
-      }
+    });
+  }
+
+  /**
+   * Remove CSS error classes etc from an entire checkbox group
+   * @param {String} groupName - A string that specifies the name of a checkbox group
+   *
+   */
+  removeCheckboxErrorClasses(groupName) {
+    const $els = this._groupEls('checkbox', groupName);
+    const $labels = this.findCheckboxLabels($els);
+    const $formErrors = this.findFormError($els);
+    $labels.forEach(label => removeClasses(label, this.options.labelErrorClass));
+    $formErrors.forEach(error => removeClasses(error, this.options.formErrorClass));
+    $els.forEach(el => {
+      removeClasses(el, this.options.inputErrorClass);
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+  }
+
+  // Native stand-in for the former `:radio/:checkbox` group queries (7.0
+  // line A, S12): `input[type="..."][name="..."]`, the exact
+  // createInputPseudo set.
+  _groupEls(type, groupName) {
+    return Array.from(this.$element.querySelectorAll(`input[type="${type}"][name="${groupName}"]`));
+  }
+
+  /**
+   * Removes CSS error class as specified by the Abide settings from the label, input, and the form
+   * @param {Object} $el - jQuery object to remove the class from
+   */
+  removeErrorClasses($el) {
+    const el = toEl($el);
+    // radios need to clear all of the els
+    if (el.type === 'radio') {
+      return this.removeRadioErrorClasses(el.getAttribute('name'));
+    }
+    // checkboxes need to clear all of the els
+    else if (el.type === 'checkbox') {
+      return this.removeCheckboxErrorClasses(el.getAttribute('name'));
+    }
+    const $label = this.findLabel($el);
+    const $formError = this.findFormError($el);
+    $label.forEach(label => removeClasses(label, this.options.labelErrorClass));
+    $formError.forEach(error => removeClasses(error, this.options.formErrorClass));
+    removeClasses(el, this.options.inputErrorClass);
+    el.removeAttribute('data-invalid');
+    el.removeAttribute('aria-invalid');
+    if (describedBy.has(el)) {
+      el.removeAttribute('aria-describedby');
+      describedBy.delete(el);
+    }
+  }
+
+  /**
+   * Goes through a form to find inputs and proceeds to validate them in ways specific to their type.
+   * Ignores inputs with data-abide-ignore, type="hidden" or disabled attributes set
+   * @fires Abide#invalid
+   * @fires Abide#valid
+   * @param {Object} element - jQuery object to validate, should be an HTML input
+   * @returns {Boolean} goodToGo - If the input is valid or not.
+   */
+  validateInput($el) {
+    const el = toEl($el);
+    var clearRequire = this.requiredCheck($el),
+      validator = el.getAttribute('data-validator'),
+      failedValidators = [],
+      manageErrorClasses = true;
+
+    // skip validation if disabled
+    if (this._validationIsDisabled()) {
+      return true;
     }
 
-    /**
-     * Goes through a form to find inputs and proceeds to validate them in ways specific to their type.
-     * Ignores inputs with data-abide-ignore, type="hidden" or disabled attributes set
-     * @fires Abide#invalid
-     * @fires Abide#valid
-     * @param {Object} element - jQuery object to validate, should be an HTML input
-     * @returns {Boolean} goodToGo - If the input is valid or not.
-     */
-  }, {
-    key: "validateInput",
-    value: function validateInput($el) {
-      var _this9 = this;
-      var el = toEl($el);
-      var clearRequire = this.requiredCheck($el),
-        validator = el.getAttribute('data-validator'),
-        failedValidators = [],
-        manageErrorClasses = true;
-
-      // skip validation if disabled
-      if (this._validationIsDisabled()) {
-        return true;
-      }
-
-      // don't validate ignored inputs or hidden inputs or disabled inputs
-      if (el.hasAttribute('data-abide-ignore') || el.matches('[type="hidden"]') || el.hasAttribute('disabled')) {
-        return true;
-      }
-      switch (el.type) {
-        case 'radio':
-          this.validateRadio(el.getAttribute('name')) || failedValidators.push('required');
-          break;
-        case 'checkbox':
-          this.validateCheckbox(el.getAttribute('name')) || failedValidators.push('required');
-          // validateCheckbox() adds/removes error classes
-          manageErrorClasses = false;
-          break;
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          clearRequire || failedValidators.push('required');
-          break;
-        default:
-          clearRequire || failedValidators.push('required');
-          this.validateText($el) || failedValidators.push('pattern');
-      }
-      if (validator) {
-        var required = el.hasAttribute('required');
-        validator.split(' ').forEach(function (v) {
-          _this9.options.validators[v]($el, required, el.parentElement) || failedValidators.push(v);
-        });
-      }
-      if (el.getAttribute('data-equalto')) {
-        this.options.validators.equalTo($el) || failedValidators.push('equalTo');
-      }
-      var goodToGo = failedValidators.length === 0;
-      var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
-      if (goodToGo) {
-        // Re-validate inputs that depend on this one with equalto
-        var dependentElements = this.$element.querySelectorAll("[data-equalto=\"".concat(el.id, "\"]"));
-        if (dependentElements.length) {
-          Array.from(dependentElements).forEach(function (dependent) {
-            if (dependent.value) {
-              _this9.validateInput(dependent);
-            }
-          });
-        }
-      }
-      if (manageErrorClasses) {
-        this.removeErrorClasses($el);
-        if (!goodToGo) {
-          this.addErrorClasses($el, failedValidators);
-        }
-      }
-
-      /**
-       * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
-       * Trigger includes the DOM element of the input.
-       * @event Abide#valid
-       * @event Abide#invalid
-       */
-      // S12: the production flips to the native event layer - a real, bubbling
-      // event; still-on-jQuery listeners receive it through the real-event
-      // pass-through, the forwarded $el rides in event.originalEvent.detail
-      // (the final param form is the wrap-up slice's uniform move).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, message, [el]);
-      return goodToGo;
+    // don't validate ignored inputs or hidden inputs or disabled inputs
+    if (el.hasAttribute('data-abide-ignore') || el.matches('[type="hidden"]') || el.hasAttribute('disabled')) {
+      return true;
     }
-
-    /**
-     * Goes through a form and if there are any invalid inputs, it will display the form error element
-     * @returns {Boolean} noError - true if no errors were detected...
-     * @fires Abide#formvalid
-     * @fires Abide#forminvalid
-     */
-  }, {
-    key: "validateForm",
-    value: function validateForm() {
-      var _this10 = this;
-      var acc = [];
-      var checkboxGroupName;
-      var form = this.$element;
-
-      // Remember first form submission to prevent specific checkbox validation (more than one required) until form got initially submitted
-      if (!this.initialized) {
-        this.initialized = true;
-      }
-
-      // skip validation if disabled
-      if (this._validationIsDisabled()) {
-        this.formnovalidate = null;
-        return true;
-      }
-      this.inputs.forEach(function (el) {
-        // Only use one checkbox per group since validateCheckbox() iterates over all associated checkboxes
-        if (el.type === 'checkbox') {
-          if (el.getAttribute('name') === checkboxGroupName) return;
-          checkboxGroupName = el.getAttribute('name');
-        }
-        acc.push(_this10.validateInput(el));
+    switch (el.type) {
+      case 'radio':
+        this.validateRadio(el.getAttribute('name')) || failedValidators.push('required');
+        break;
+      case 'checkbox':
+        this.validateCheckbox(el.getAttribute('name')) || failedValidators.push('required');
+        // validateCheckbox() adds/removes error classes
+        manageErrorClasses = false;
+        break;
+      case 'select':
+      case 'select-one':
+      case 'select-multiple':
+        clearRequire || failedValidators.push('required');
+        break;
+      default:
+        clearRequire || failedValidators.push('required');
+        this.validateText($el) || failedValidators.push('pattern');
+    }
+    if (validator) {
+      const required = el.hasAttribute('required');
+      validator.split(' ').forEach(v => {
+        this.options.validators[v]($el, required, el.parentElement) || failedValidators.push(v);
       });
-      var noError = acc.indexOf(false) === -1;
-      form.querySelectorAll('[data-abide-error]').forEach(function (elem) {
-        // Ensure a11y attributes are set
-        if (_this10.options.a11yAttributes) _this10.addGlobalErrorA11yAttributes(elem);
-        // Show or hide the error
-        elem.style.display = noError ? 'none' : 'block';
-      });
-
-      /**
-       * Fires when the form is finished validating. Event trigger is either `formvalid.zf.abide` or `forminvalid.zf.abide`.
-       * Trigger includes the element of the form.
-       * @event Abide#formvalid
-       * @event Abide#forminvalid
-       */
-      // S12: production flips to the native event layer, same shape as the
-      // input-level events above.
-      // Terminal form: the forwarded form is the plain element.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(form, (noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [form]);
-      return noError;
     }
-
-    /**
-     * Determines whether or a not a text input is valid based on the pattern specified in the attribute. If no matching pattern is found, returns true.
-     * @param {Object} $el - jQuery object to validate, should be a text input HTML element
-     * @param {String} pattern - string value of one of the RegEx patterns in Abide.options.patterns
-     * @returns {Boolean} Boolean value depends on whether or not the input value matches the pattern specified
-     */
-  }, {
-    key: "validateText",
-    value: function validateText($el, pattern) {
-      var el = toEl($el);
-      // A pattern can be passed to this function, or it will be infered from the input's "pattern" attribute, or it's "type" attribute
-      pattern = pattern || el.getAttribute('data-pattern') || el.getAttribute('pattern') || el.getAttribute('type');
-      var inputText = el.value;
-      var valid = true;
-      if (inputText.length) {
-        // If the pattern attribute on the element is in Abide's list of patterns, then test that regexp
-        if (this.options.patterns.hasOwnProperty(pattern)) {
-          valid = this.options.patterns[pattern].test(inputText);
-        }
-        // If the pattern name isn't also the type attribute of the field, then test it as a regexp
-        else if (pattern !== el.getAttribute('type')) {
-          valid = new RegExp(pattern).test(inputText);
-        }
-      }
-      return valid;
+    if (el.getAttribute('data-equalto')) {
+      this.options.validators.equalTo($el) || failedValidators.push('equalTo');
     }
-
-    /**
-     * Determines whether or a not a radio input is valid based on whether or not it is required and selected. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all radio buttons in its group.
-     * @param {String} groupName - A string that specifies the name of a radio button group
-     * @returns {Boolean} Boolean value depends on whether or not at least one radio input has been selected (if it's required)
-     */
-  }, {
-    key: "validateRadio",
-    value: function validateRadio(groupName) {
-      // If at least one radio in the group has the `required` attribute, the group is considered required
-      // Per W3C spec, all radio buttons in a group should have `required`, but we're being nice
-      var $group = this._groupEls('radio', groupName);
-      var valid = false,
-        required = false;
-
-      // For the group to be required, at least one radio needs to be required
-      $group.forEach(function (el) {
-        if (el.hasAttribute('required')) {
-          required = true;
-        }
-      });
-      if (!required) valid = true;
-      if (!valid) {
-        // For the group to be valid, at least one radio needs to be checked
-        $group.forEach(function (el) {
-          if (el.checked) {
-            valid = true;
+    var goodToGo = failedValidators.length === 0;
+    var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
+    if (goodToGo) {
+      // Re-validate inputs that depend on this one with equalto
+      const dependentElements = this.$element.querySelectorAll(`[data-equalto="${el.id}"]`);
+      if (dependentElements.length) {
+        Array.from(dependentElements).forEach(dependent => {
+          if (dependent.value) {
+            this.validateInput(dependent);
           }
         });
       }
-      return valid;
+    }
+    if (manageErrorClasses) {
+      this.removeErrorClasses($el);
+      if (!goodToGo) {
+        this.addErrorClasses($el, failedValidators);
+      }
     }
 
     /**
-     * Determines whether or a not a checkbox input is valid based on whether or not it is required and checked. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all checkboxes in its group.
-     * @param {String} groupName - A string that specifies the name of a checkbox group
-     * @returns {Boolean} Boolean value depends on whether or not at least one checkbox input has been checked (if it's required)
+     * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
+     * Trigger includes the DOM element of the input.
+     * @event Abide#valid
+     * @event Abide#invalid
      */
-  }, {
-    key: "validateCheckbox",
-    value: function validateCheckbox(groupName) {
-      var _this11 = this;
-      // If at least one checkbox in the group has the `required` attribute, the group is considered required
-      // Per W3C spec, all checkboxes in a group should have `required`, but we're being nice
-      var $group = this._groupEls('checkbox', groupName);
-      var valid = false,
-        required = false,
-        minRequired = 1,
-        checked = 0;
+    // S12: the production flips to the native event layer - a real, bubbling
+    // event; still-on-jQuery listeners receive it through the real-event
+    // pass-through, the forwarded $el rides in event.originalEvent.detail
+    // (the final param form is the wrap-up slice's uniform move).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, message, [el]);
+    return goodToGo;
+  }
 
-      // For the group to be required, at least one checkbox needs to be required
-      $group.forEach(function (el) {
-        if (el.hasAttribute('required')) {
-          required = true;
-        }
-      });
-      if (!required) valid = true;
-      if (!valid) {
-        // Count checked checkboxes within the group
-        // Use data-min-required if available (default: 1)
-        $group.forEach(function (el) {
-          if (el.checked) {
-            checked++;
-          }
-          if (el.hasAttribute('data-min-required')) {
-            minRequired = parseInt(el.getAttribute('data-min-required'), 10);
-          }
-        });
+  /**
+   * Goes through a form and if there are any invalid inputs, it will display the form error element
+   * @returns {Boolean} noError - true if no errors were detected...
+   * @fires Abide#formvalid
+   * @fires Abide#forminvalid
+   */
+  validateForm() {
+    var acc = [];
+    var checkboxGroupName;
+    const form = this.$element;
 
-        // For the group to be valid, the minRequired amount of checkboxes have to be checked
-        if (checked >= minRequired) {
+    // Remember first form submission to prevent specific checkbox validation (more than one required) until form got initially submitted
+    if (!this.initialized) {
+      this.initialized = true;
+    }
+
+    // skip validation if disabled
+    if (this._validationIsDisabled()) {
+      this.formnovalidate = null;
+      return true;
+    }
+    this.inputs.forEach(el => {
+      // Only use one checkbox per group since validateCheckbox() iterates over all associated checkboxes
+      if (el.type === 'checkbox') {
+        if (el.getAttribute('name') === checkboxGroupName) return;
+        checkboxGroupName = el.getAttribute('name');
+      }
+      acc.push(this.validateInput(el));
+    });
+    var noError = acc.indexOf(false) === -1;
+    form.querySelectorAll('[data-abide-error]').forEach(elem => {
+      // Ensure a11y attributes are set
+      if (this.options.a11yAttributes) this.addGlobalErrorA11yAttributes(elem);
+      // Show or hide the error
+      elem.style.display = noError ? 'none' : 'block';
+    });
+
+    /**
+     * Fires when the form is finished validating. Event trigger is either `formvalid.zf.abide` or `forminvalid.zf.abide`.
+     * Trigger includes the element of the form.
+     * @event Abide#formvalid
+     * @event Abide#forminvalid
+     */
+    // S12: production flips to the native event layer, same shape as the
+    // input-level events above.
+    // Terminal form: the forwarded form is the plain element.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(form, (noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [form]);
+    return noError;
+  }
+
+  /**
+   * Determines whether or a not a text input is valid based on the pattern specified in the attribute. If no matching pattern is found, returns true.
+   * @param {Object} $el - jQuery object to validate, should be a text input HTML element
+   * @param {String} pattern - string value of one of the RegEx patterns in Abide.options.patterns
+   * @returns {Boolean} Boolean value depends on whether or not the input value matches the pattern specified
+   */
+  validateText($el, pattern) {
+    const el = toEl($el);
+    // A pattern can be passed to this function, or it will be infered from the input's "pattern" attribute, or it's "type" attribute
+    pattern = pattern || el.getAttribute('data-pattern') || el.getAttribute('pattern') || el.getAttribute('type');
+    var inputText = el.value;
+    var valid = true;
+    if (inputText.length) {
+      // If the pattern attribute on the element is in Abide's list of patterns, then test that regexp
+      if (this.options.patterns.hasOwnProperty(pattern)) {
+        valid = this.options.patterns[pattern].test(inputText);
+      }
+      // If the pattern name isn't also the type attribute of the field, then test it as a regexp
+      else if (pattern !== el.getAttribute('type')) {
+        valid = new RegExp(pattern).test(inputText);
+      }
+    }
+    return valid;
+  }
+
+  /**
+   * Determines whether or a not a radio input is valid based on whether or not it is required and selected. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all radio buttons in its group.
+   * @param {String} groupName - A string that specifies the name of a radio button group
+   * @returns {Boolean} Boolean value depends on whether or not at least one radio input has been selected (if it's required)
+   */
+  validateRadio(groupName) {
+    // If at least one radio in the group has the `required` attribute, the group is considered required
+    // Per W3C spec, all radio buttons in a group should have `required`, but we're being nice
+    const $group = this._groupEls('radio', groupName);
+    var valid = false,
+      required = false;
+
+    // For the group to be required, at least one radio needs to be required
+    $group.forEach(el => {
+      if (el.hasAttribute('required')) {
+        required = true;
+      }
+    });
+    if (!required) valid = true;
+    if (!valid) {
+      // For the group to be valid, at least one radio needs to be checked
+      $group.forEach(el => {
+        if (el.checked) {
           valid = true;
         }
-      }
+      });
+    }
+    return valid;
+  }
 
-      // Skip validation if more than 1 checkbox have to be checked AND if the form hasn't got submitted yet (otherwise it will already show an error during the first fill in)
-      if (this.initialized !== true && minRequired > 1) {
-        return true;
-      }
+  /**
+   * Determines whether or a not a checkbox input is valid based on whether or not it is required and checked. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all checkboxes in its group.
+   * @param {String} groupName - A string that specifies the name of a checkbox group
+   * @returns {Boolean} Boolean value depends on whether or not at least one checkbox input has been checked (if it's required)
+   */
+  validateCheckbox(groupName) {
+    // If at least one checkbox in the group has the `required` attribute, the group is considered required
+    // Per W3C spec, all checkboxes in a group should have `required`, but we're being nice
+    const $group = this._groupEls('checkbox', groupName);
+    var valid = false,
+      required = false,
+      minRequired = 1,
+      checked = 0;
 
-      // Refresh error class for all input
-      $group.forEach(function (el) {
-        if (!valid) {
-          _this11.addErrorClasses(el, ['required']);
-        } else {
-          _this11.removeErrorClasses(el);
+    // For the group to be required, at least one checkbox needs to be required
+    $group.forEach(el => {
+      if (el.hasAttribute('required')) {
+        required = true;
+      }
+    });
+    if (!required) valid = true;
+    if (!valid) {
+      // Count checked checkboxes within the group
+      // Use data-min-required if available (default: 1)
+      $group.forEach(el => {
+        if (el.checked) {
+          checked++;
+        }
+        if (el.hasAttribute('data-min-required')) {
+          minRequired = parseInt(el.getAttribute('data-min-required'), 10);
         }
       });
-      return valid;
+
+      // For the group to be valid, the minRequired amount of checkboxes have to be checked
+      if (checked >= minRequired) {
+        valid = true;
+      }
     }
+
+    // Skip validation if more than 1 checkbox have to be checked AND if the form hasn't got submitted yet (otherwise it will already show an error during the first fill in)
+    if (this.initialized !== true && minRequired > 1) {
+      return true;
+    }
+
+    // Refresh error class for all input
+    $group.forEach(el => {
+      if (!valid) {
+        this.addErrorClasses(el, ['required']);
+      } else {
+        this.removeErrorClasses(el);
+      }
+    });
+    return valid;
+  }
+
+  /**
+   * Determines if a selected input passes a custom validation function. Multiple validations can be used, if passed to the element with `data-validator="foo bar baz"` in a space separated listed.
+   * @param {Object} $el - jQuery input element.
+   * @param {String} validators - a string of function names matching functions in the Abide.options.validators object.
+   * @param {Boolean} required - self explanatory?
+   * @returns {Boolean} - true if validations passed.
+   */
+  matchValidation($el, validators, required) {
+    required = required ? true : false;
+    // The 6.x third validator argument was the parent element; validateInput
+    // resolves its own `el` via toEl, matchValidation needs the same step
+    // (the bare `el` here was a crash on every data-validator run).
+    const el = toEl($el);
+    var clear = validators.split(' ').map(v => {
+      return this.options.validators[v]($el, required, el.parentElement);
+    });
+    return clear.indexOf(false) === -1;
+  }
+
+  /**
+   * Resets form inputs and styles
+   * @fires Abide#formreset
+   */
+  resetForm() {
+    const form = this.$element,
+      opts = this.options;
+    form.querySelectorAll(`.${opts.labelErrorClass}`).forEach(el => {
+      if (!el.matches('small')) removeClasses(el, opts.labelErrorClass);
+    });
+    form.querySelectorAll(`.${opts.inputErrorClass}`).forEach(el => {
+      if (!el.matches('small')) removeClasses(el, opts.inputErrorClass);
+    });
+    document.querySelectorAll(`${opts.formErrorSelector}.${opts.formErrorClass}`).forEach(el => {
+      removeClasses(el, opts.formErrorClass);
+    });
+    form.querySelectorAll('[data-abide-error]').forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Native reset sweep (7.0 line A, S12) - the former pseudo-selector
+    // chain `:input :not(:button, :submit, :reset, :hidden, :radio,
+    // :checkbox, [data-abide-ignore])` with the Dom stand-in helpers; the
+    // jQuery `:hidden` zero-box sense is narrowed to input[type=hidden],
+    // which was its only effect on a rendered form.
+    (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.formControls)(form).forEach(el => {
+      if ((0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isButton)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isSubmit)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isReset)(el) || el.matches('input[type="hidden"]') || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isRadio)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isCheckbox)(el) || el.hasAttribute('data-abide-ignore')) {
+        return;
+      }
+      el.value = '';
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+    form.querySelectorAll('input[type="radio"]').forEach(el => {
+      if (el.hasAttribute('data-abide-ignore')) return;
+      el.checked = false;
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
+    form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (el.hasAttribute('data-abide-ignore')) return;
+      el.checked = false;
+      el.removeAttribute('data-invalid');
+      el.removeAttribute('aria-invalid');
+    });
 
     /**
-     * Determines if a selected input passes a custom validation function. Multiple validations can be used, if passed to the element with `data-validator="foo bar baz"` in a space separated listed.
-     * @param {Object} $el - jQuery input element.
-     * @param {String} validators - a string of function names matching functions in the Abide.options.validators object.
-     * @param {Boolean} required - self explanatory?
-     * @returns {Boolean} - true if validations passed.
+     * Fires when the form has been reset.
+     * @event Abide#formreset
      */
-  }, {
-    key: "matchValidation",
-    value: function matchValidation($el, validators, required) {
-      var _this12 = this;
-      required = required ? true : false;
-      var clear = validators.split(' ').map(function (v) {
-        return _this12.options.validators[v]($el, required, el.parentElement);
-      });
-      return clear.indexOf(false) === -1;
-    }
+    // S12: production flips to the native event layer, same shape as the
+    // other productions above.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(form, 'formreset.zf.abide', [this.$element]);
+  }
 
-    /**
-     * Resets form inputs and styles
-     * @fires Abide#formreset
-     */
-  }, {
-    key: "resetForm",
-    value: function resetForm() {
-      var form = this.$element,
-        opts = this.options;
-      form.querySelectorAll(".".concat(opts.labelErrorClass)).forEach(function (el) {
-        if (!el.matches('small')) removeClasses(el, opts.labelErrorClass);
-      });
-      form.querySelectorAll(".".concat(opts.inputErrorClass)).forEach(function (el) {
-        if (!el.matches('small')) removeClasses(el, opts.inputErrorClass);
-      });
-      document.querySelectorAll("".concat(opts.formErrorSelector, ".").concat(opts.formErrorClass)).forEach(function (el) {
-        removeClasses(el, opts.formErrorClass);
-      });
-      form.querySelectorAll('[data-abide-error]').forEach(function (el) {
-        el.style.display = 'none';
-      });
+  /**
+   * Destroys an instance of Abide.
+   * Removes error styles and classes from elements, without resetting their values.
+   */
+  _destroy() {
+    const form = this.$element;
 
-      // Native reset sweep (7.0 line A, S12) - the former pseudo-selector
-      // chain `:input :not(:button, :submit, :reset, :hidden, :radio,
-      // :checkbox, [data-abide-ignore])` with the Dom stand-in helpers; the
-      // jQuery `:hidden` zero-box sense is narrowed to input[type=hidden],
-      // which was its only effect on a rendered form.
-      (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.formControls)(form).forEach(function (el) {
-        if ((0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isButton)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isSubmit)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isReset)(el) || el.matches('input[type="hidden"]') || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isRadio)(el) || (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.isCheckbox)(el) || el.hasAttribute('data-abide-ignore')) {
-          return;
-        }
-        el.value = '';
-        el.removeAttribute('data-invalid');
-        el.removeAttribute('aria-invalid');
-      });
-      form.querySelectorAll('input[type="radio"]').forEach(function (el) {
-        if (el.hasAttribute('data-abide-ignore')) return;
-        el.checked = false;
-        el.removeAttribute('data-invalid');
-        el.removeAttribute('aria-invalid');
-      });
-      form.querySelectorAll('input[type="checkbox"]').forEach(function (el) {
-        if (el.hasAttribute('data-abide-ignore')) return;
-        el.checked = false;
-        el.removeAttribute('data-invalid');
-        el.removeAttribute('aria-invalid');
-      });
+    // The plugin-namespaced listeners on the form (the native table the
+    // library owns).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(form, '.abide');
+    form.querySelectorAll('[data-abide-error]').forEach(error => {
+      error.style.display = 'none';
+    });
+    this.inputs.forEach(input => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, '.abide');
+      this.removeErrorClasses(input);
+    });
+    this.submits.forEach(submit => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(submit, '.abide');
+    });
+  }
+}
 
-      /**
-       * Fires when the form has been reset.
-       * @event Abide#formreset
-       */
-      // S12: production flips to the native event layer, same shape as the
-      // other productions above.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(form, 'formreset.zf.abide', [this.$element]);
-    }
-
-    /**
-     * Destroys an instance of Abide.
-     * Removes error styles and classes from elements, without resetting their values.
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      var _this13 = this;
-      var form = this.$element;
-
-      // The plugin-namespaced listeners on the form (the native table the
-      // library owns).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(form, '.abide');
-      form.querySelectorAll('[data-abide-error]').forEach(function (error) {
-        error.style.display = 'none';
-      });
-      this.inputs.forEach(function (input) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(input, '.abide');
-        _this13.removeErrorClasses(input);
-      });
-      this.submits.forEach(function (submit) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(submit, '.abide');
-      });
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
 /**
  * Default settings for plugin
  */
@@ -1088,7 +970,7 @@ Abide.defaults = {
     color: /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/,
     // Domain || URL
     website: {
-      test: function test(text) {
+      test: text => {
         return Abide.defaults.patterns.domain.test(text) || Abide.defaults.patterns.url.test(text);
       }
     }
@@ -1100,11 +982,11 @@ Abide.defaults = {
    * @option
    */
   validators: {
-    equalTo: function equalTo(el) {
+    equalTo: function (el) {
       // Native id lookup (7.0 line A, S12): the former `$(`#${...}`).val()`
       // compared against undefined when the source element does not exist;
       // the guard keeps that "no source element means invalid" outcome.
-      var source = document.getElementById(toEl(el).getAttribute('data-equalto'));
+      const source = document.getElementById(toEl(el).getAttribute('data-equalto'));
       return !!source && source.value === toEl(el).value;
     }
   }
@@ -1117,11 +999,11 @@ Abide.defaults = {
 /*!************************************!*\
   !*** ./js/foundation.accordion.js ***!
   \************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Accordion: function() { return /* binding */ Accordion; }
+/* harmony export */   Accordion: () => (/* binding */ Accordion)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -1129,19 +1011,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -1166,441 +1035,399 @@ function normalizeTargets(target) {
   }
   return Array.from(target);
 }
-var Accordion = /*#__PURE__*/function (_Plugin) {
-  function Accordion() {
-    _classCallCheck(this, Accordion);
-    return _callSuper(this, Accordion, arguments);
+class Accordion extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of an accordion.
+   * @class
+   * @name Accordion
+   * @fires Accordion#init
+   * @param {jQuery} element - jQuery object to make into an accordion.
+   * @param {Object} options - a plain object with settings to override the default options.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Accordion.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
+    this.className = 'Accordion'; // ie9 back compat
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Accordion', {
+      'ENTER': 'toggle',
+      'SPACE': 'toggle',
+      'ARROW_DOWN': 'next',
+      'ARROW_UP': 'previous',
+      'HOME': 'first',
+      'END': 'last'
+    });
   }
-  _inherits(Accordion, _Plugin);
-  return _createClass(Accordion, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of an accordion.
-     * @class
-     * @name Accordion
-     * @fires Accordion#init
-     * @param {jQuery} element - jQuery object to make into an accordion.
-     * @param {Object} options - a plain object with settings to override the default options.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Accordion.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
-      this.className = 'Accordion'; // ie9 back compat
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Accordion', {
-        'ENTER': 'toggle',
-        'SPACE': 'toggle',
-        'ARROW_DOWN': 'next',
-        'ARROW_UP': 'previous',
-        'HOME': 'first',
-        'END': 'last'
-      });
+
+  /**
+   * Initializes the accordion by animating the preset active pane(s).
+   * @private
+   */
+  _init() {
+    this._isInitializing = true;
+    // Per-instance id for the native deep-link hashchange namespace (7.0 line
+    // A, S8) - the same shape Reveal/Magellan/Tabs use.
+    this.id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'accordion');
+    this.$tabs = Array.from(this.$element.children).filter(el => el.matches('[data-accordion-item]'));
+    this.$tabs.forEach(function (el) {
+      var content = el.querySelector(':scope > [data-tab-content]'),
+        id = content.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'accordion'),
+        linkId = el.id ? `${el.id}-label` : `${id}-label`;
+
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      var link = el.querySelector('a:first-of-type');
+      link.setAttribute('aria-controls', id);
+      link.setAttribute('id', linkId);
+      link.setAttribute('aria-expanded', 'false');
+      content.setAttribute('role', 'region');
+      content.setAttribute('aria-labelledby', linkId);
+      content.setAttribute('aria-hidden', 'true');
+      content.setAttribute('id', id);
+    });
+    var initActive = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
+    if (initActive.length) {
+      // Save up the initial hash to return to it later when going back in history
+      this._initialAnchor = initActive[0].previousElementSibling.matches('a') ? initActive[0].previousElementSibling.getAttribute('href') : undefined;
+      this._openSingleTab(initActive);
     }
-
-    /**
-     * Initializes the accordion by animating the preset active pane(s).
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this2 = this;
-      this._isInitializing = true;
-      // Per-instance id for the native deep-link hashchange namespace (7.0 line
-      // A, S8) - the same shape Reveal/Magellan/Tabs use.
-      this.id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'accordion');
-      this.$tabs = Array.from(this.$element.children).filter(function (el) {
-        return el.matches('[data-accordion-item]');
-      });
-      this.$tabs.forEach(function (el) {
-        var content = el.querySelector(':scope > [data-tab-content]'),
-          id = content.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'accordion'),
-          linkId = el.id ? "".concat(el.id, "-label") : "".concat(id, "-label");
-
-        // State/ARIA go through the native layer (7.0 line A, S8).
-        var link = el.querySelector('a:first-of-type');
-        link.setAttribute('aria-controls', id);
-        link.setAttribute('id', linkId);
-        link.setAttribute('aria-expanded', 'false');
-        content.setAttribute('role', 'region');
-        content.setAttribute('aria-labelledby', linkId);
-        content.setAttribute('aria-hidden', 'true');
-        content.setAttribute('id', id);
-      });
-      var initActive = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
-      if (initActive.length) {
-        // Save up the initial hash to return to it later when going back in history
-        this._initialAnchor = initActive[0].previousElementSibling.matches('a') ? initActive[0].previousElementSibling.getAttribute('href') : undefined;
-        this._openSingleTab(initActive);
+    this._checkDeepLink = () => {
+      var anchor = window.location.hash;
+      if (!anchor.length) {
+        // If we are still initializing and there is no anchor, then there is nothing to do
+        if (this._isInitializing) return;
+        // Otherwise, move to the initial anchor
+        if (this._initialAnchor) anchor = this._initialAnchor;
       }
-      this._checkDeepLink = function () {
-        var anchor = window.location.hash;
-        if (!anchor.length) {
-          // If we are still initializing and there is no anchor, then there is nothing to do
-          if (_this2._isInitializing) return;
-          // Otherwise, move to the initial anchor
-          if (_this2._initialAnchor) anchor = _this2._initialAnchor;
-        }
 
-        // jQuery's $(weird-hash) returned an empty collection instead of
-        // throwing on invalid selectors; querySelector needs the guard.
-        var anchorEl = null;
-        if (anchor) {
-          try {
-            anchorEl = document.querySelector(anchor);
-          } catch (err) {
-            anchorEl = null;
+      // jQuery's $(weird-hash) returned an empty collection instead of
+      // throwing on invalid selectors; querySelector needs the guard.
+      var anchorEl = null;
+      if (anchor) {
+        try {
+          anchorEl = document.querySelector(anchor);
+        } catch (err) {
+          anchorEl = null;
+        }
+      }
+      var link = anchor ? this.$element.querySelector(`[href$="${anchor}"]`) : null;
+      // Whether the anchor element that has been found is part of this element
+      var isOwnAnchor = !!(anchorEl && link);
+      if (isOwnAnchor) {
+        // If there is an anchor for the hash, open it (if not already active)
+        if (anchorEl && link) {
+          if (!link.closest('[data-accordion-item]').classList.contains('is-active')) {
+            this._openSingleTab(anchorEl);
           }
         }
-        var link = anchor ? _this2.$element.querySelector("[href$=\"".concat(anchor, "\"]")) : null;
-        // Whether the anchor element that has been found is part of this element
-        var isOwnAnchor = !!(anchorEl && link);
-        if (isOwnAnchor) {
-          // If there is an anchor for the hash, open it (if not already active)
-          if (anchorEl && link) {
-            if (!link.closest('[data-accordion-item]').classList.contains('is-active')) {
-              _this2._openSingleTab(anchorEl);
+        // Otherwise, close everything
+        else {
+          this._closeAllTabs();
+        }
+
+        // Roll up a little to show the titles
+        if (this.options.deepLinkSmudge) {
+          (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, () => {
+            // A load callback can land after destroy() nulled the instance
+            // state (the S6 slider guard pattern).
+            if (!this.$element) {
+              return;
             }
-          }
-          // Otherwise, close everything
-          else {
-            _this2._closeAllTabs();
-          }
-
-          // Roll up a little to show the titles
-          if (_this2.options.deepLinkSmudge) {
-            (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-              // A load callback can land after destroy() nulled the instance
-              // state (the S6 slider guard pattern).
-              if (!_this2.$element) {
-                return;
-              }
-              var offsetTop = _this2.$element.getBoundingClientRect().top + window.pageYOffset;
-              // fx 方案 A: the native page-scroll tween (SmoothScroll S7
-              // equivalence - one viewport tween, callback once per ledger ②)
-              _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.animate(document.documentElement, {
-                scrollTop: offsetTop - _this2.options.deepLinkSmudgeOffset
-              }, _this2.options.deepLinkSmudgeDelay);
-            });
-          }
-
-          /**
-           * Fires when the plugin has deeplinked at pageload
-           * @event Accordion#deeplink
-           */
-          // S8: real, bubbling CustomEvent - native listeners receive it
-          // directly, still-on-jQuery listeners through the real-event
-          // pass-through (the forwarded $link/$anchor ride in
-          // event.originalEvent.detail for them).
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this2.$element, 'deeplink.zf.accordion', [link, anchorEl]);
-        }
-      };
-
-      //use browser to open a tab, if it exists in this tabset
-      if (this.options.deepLink) {
-        this._checkDeepLink();
-      }
-      this._events();
-      this._isInitializing = false;
-    }
-
-    /**
-     * Adds event handlers for items within the accordion.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      this.$tabs.forEach(function (elem) {
-        var tabContent = elem.querySelector(':scope > [data-tab-content]');
-        if (!tabContent) {
-          return;
-        }
-        Array.from(elem.children).filter(function (el) {
-          return el.matches('a');
-        }).forEach(function (anchor) {
-          // S8: the click consumer runs on the native event layer; the
-          // keyboard forwarding below dispatches real clicks on the same
-          // layer. Real user clicks reach it directly.
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'click.zf.accordion');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'click.zf.accordion', function (e) {
-            e.preventDefault();
-            _this.toggle(tabContent);
+            var offsetTop = this.$element.getBoundingClientRect().top + window.pageYOffset;
+            // fx 方案 A: the native page-scroll tween (SmoothScroll S7
+            // equivalence - one viewport tween, callback once per ledger ②)
+            _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.animate(document.documentElement, {
+              scrollTop: offsetTop - this.options.deepLinkSmudgeOffset
+            }, this.options.deepLinkSmudgeDelay);
           });
+        }
 
-          // 7.0 line A terminal form: the keydown listener runs on the native
-          // event layer (the coarse suite's mocks dispatch real KeyboardEvents
-          // since the S16 migration).
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'keydown.zf.accordion');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'keydown.zf.accordion', function (e) {
-            _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Accordion', {
-              toggle: function toggle() {
-                _this.toggle(tabContent);
-              },
-              next: function next() {
-                var a = (elem.nextElementSibling || {}).querySelector && elem.nextElementSibling.querySelector('a');
-                if (a) a.focus();
-                if (!_this.options.multiExpand) {
-                  _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
-                }
-              },
-              previous: function previous() {
-                var a = (elem.previousElementSibling || {}).querySelector && elem.previousElementSibling.querySelector('a');
-                if (a) a.focus();
-                if (!_this.options.multiExpand) {
-                  _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
-                }
-              },
-              first: function first() {
-                var a = _this.$tabs[0].querySelector('.accordion-title');
-                a.focus();
-                if (!_this.options.multiExpand) {
-                  _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
-                }
-              },
-              last: function last() {
-                var a = _this.$tabs[_this.$tabs.length - 1].querySelector('.accordion-title');
-                a.focus();
-                if (!_this.options.multiExpand) {
-                  _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
-                }
-              },
-              handled: function handled() {
-                e.preventDefault();
+        /**
+         * Fires when the plugin has deeplinked at pageload
+         * @event Accordion#deeplink
+         */
+        // S8: real, bubbling CustomEvent - native listeners receive it
+        // directly, still-on-jQuery listeners through the real-event
+        // pass-through (the forwarded $link/$anchor ride in
+        // event.originalEvent.detail for them).
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'deeplink.zf.accordion', [link, anchorEl]);
+      }
+    };
+
+    //use browser to open a tab, if it exists in this tabset
+    if (this.options.deepLink) {
+      this._checkDeepLink();
+    }
+    this._events();
+    this._isInitializing = false;
+  }
+
+  /**
+   * Adds event handlers for items within the accordion.
+   * @private
+   */
+  _events() {
+    var _this = this;
+    this.$tabs.forEach(function (elem) {
+      var tabContent = elem.querySelector(':scope > [data-tab-content]');
+      if (!tabContent) {
+        return;
+      }
+      Array.from(elem.children).filter(el => el.matches('a')).forEach(function (anchor) {
+        // S8: the click consumer runs on the native event layer; the
+        // keyboard forwarding below dispatches real clicks on the same
+        // layer. Real user clicks reach it directly.
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'click.zf.accordion');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'click.zf.accordion', function (e) {
+          e.preventDefault();
+          _this.toggle(tabContent);
+        });
+
+        // 7.0 line A terminal form: the keydown listener runs on the native
+        // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+        // since the S16 migration).
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'keydown.zf.accordion');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'keydown.zf.accordion', function (e) {
+          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Accordion', {
+            toggle: function () {
+              _this.toggle(tabContent);
+            },
+            next: function () {
+              var a = (elem.nextElementSibling || {}).querySelector && elem.nextElementSibling.querySelector('a');
+              if (a) a.focus();
+              if (!_this.options.multiExpand) {
+                _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
               }
-            });
+            },
+            previous: function () {
+              var a = (elem.previousElementSibling || {}).querySelector && elem.previousElementSibling.querySelector('a');
+              if (a) a.focus();
+              if (!_this.options.multiExpand) {
+                _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            first: function () {
+              var a = _this.$tabs[0].querySelector('.accordion-title');
+              a.focus();
+              if (!_this.options.multiExpand) {
+                _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            last: function () {
+              var a = _this.$tabs[_this.$tabs.length - 1].querySelector('.accordion-title');
+              a.focus();
+              if (!_this.options.multiExpand) {
+                _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(a, 'click.zf.accordion');
+              }
+            },
+            handled: function () {
+              e.preventDefault();
+            }
           });
         });
       });
-      if (this.options.deepLink) {
-        // S8: the deep-link hashchange moves to the native event layer under
-        // the per-instance namespace shape introduced for Reveal's hashchange,
-        // so the destroy path can drop it precisely. Real hashchange events are
-        // unaffected by the namespace.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, "hashchange.zf.accordion:".concat(this.id), this._checkDeepLink);
-      }
+    });
+    if (this.options.deepLink) {
+      // S8: the deep-link hashchange moves to the native event layer under
+      // the per-instance namespace shape introduced for Reveal's hashchange,
+      // so the destroy path can drop it precisely. Real hashchange events are
+      // unaffected by the namespace.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, `hashchange.zf.accordion:${this.id}`, this._checkDeepLink);
     }
+  }
 
-    /**
-     * Toggles the selected content pane's open/close state.
-     * @param {jQuery} $target - jQuery object of the pane to toggle (`.accordion-content`).
-     * @function
-     */
-  }, {
-    key: "toggle",
-    value: function toggle(target) {
-      // Accepts an element, a collection, a NodeList or an array (the 6.x
-      // multi-target collection form works; state and fx iterate per element).
-      target = normalizeTargets(target);
-      if (target[0].closest('[data-accordion]').matches('[disabled]')) {
-        console.info('Cannot toggle an accordion that is disabled.');
-        return;
-      }
-      if (target[0].parentElement.classList.contains('is-active')) {
-        this.up(target);
+  /**
+   * Toggles the selected content pane's open/close state.
+   * @param {jQuery} $target - jQuery object of the pane to toggle (`.accordion-content`).
+   * @function
+   */
+  toggle(target) {
+    // Accepts an element, a collection, a NodeList or an array (the 6.x
+    // multi-target collection form works; state and fx iterate per element).
+    target = normalizeTargets(target);
+    if (target[0].closest('[data-accordion]').matches('[disabled]')) {
+      console.info('Cannot toggle an accordion that is disabled.');
+      return;
+    }
+    if (target[0].parentElement.classList.contains('is-active')) {
+      this.up(target);
+    } else {
+      this.down(target);
+    }
+    //either replace or update browser history
+    if (this.options.deepLink) {
+      var anchor = target[0].previousElementSibling.getAttribute('href');
+      if (this.options.updateHistory) {
+        history.pushState({}, '', anchor);
       } else {
-        this.down(target);
-      }
-      //either replace or update browser history
-      if (this.options.deepLink) {
-        var anchor = target[0].previousElementSibling.getAttribute('href');
-        if (this.options.updateHistory) {
-          history.pushState({}, '', anchor);
-        } else {
-          history.replaceState({}, '', anchor);
-        }
+        history.replaceState({}, '', anchor);
       }
     }
+  }
 
-    /**
-     * Opens the accordion tab defined by `$target`.
-     * @param {jQuery} $target - Accordion pane to open (`.accordion-content`).
-     * @fires Accordion#down
-     * @function
-     */
-  }, {
-    key: "down",
-    value: function down(target) {
-      target = normalizeTargets(target);
-      if (target[0].closest('[data-accordion]').matches('[disabled]')) {
-        console.info('Cannot call down on an accordion that is disabled.');
-        return;
-      }
-      if (this.options.multiExpand) this._openTab(target);else this._openSingleTab(target);
+  /**
+   * Opens the accordion tab defined by `$target`.
+   * @param {jQuery} $target - Accordion pane to open (`.accordion-content`).
+   * @fires Accordion#down
+   * @function
+   */
+  down(target) {
+    target = normalizeTargets(target);
+    if (target[0].closest('[data-accordion]').matches('[disabled]')) {
+      console.info('Cannot call down on an accordion that is disabled.');
+      return;
+    }
+    if (this.options.multiExpand) this._openTab(target);else this._openSingleTab(target);
+  }
+
+  /**
+   * Closes the tab defined by `$target`.
+   * It may be ignored if the Accordion options don't allow it.
+   *
+   * @param {jQuery} $target - Accordion tab to close (`.accordion-content`).
+   * @fires Accordion#up
+   * @function
+   */
+  up(target) {
+    target = normalizeTargets(target);
+    if (this.$element.matches('[disabled]')) {
+      console.info('Cannot call up on an accordion that is disabled.');
+      return;
     }
 
-    /**
-     * Closes the tab defined by `$target`.
-     * It may be ignored if the Accordion options don't allow it.
-     *
-     * @param {jQuery} $target - Accordion tab to close (`.accordion-content`).
-     * @fires Accordion#up
-     * @function
-     */
-  }, {
-    key: "up",
-    value: function up(target) {
-      target = normalizeTargets(target);
-      if (this.$element.matches('[disabled]')) {
-        console.info('Cannot call up on an accordion that is disabled.');
-        return;
-      }
+    // Don't close the item if it is already closed
+    const targetItem = target[0].parentElement;
+    if (!targetItem.classList.contains('is-active')) return;
 
-      // Don't close the item if it is already closed
-      var targetItem = target[0].parentElement;
-      if (!targetItem.classList.contains('is-active')) return;
+    // Don't close the item if there is no other active item (unless with `allowAllClosed`)
+    const othersItems = Array.from(targetItem.parentElement.children).filter(el => el !== targetItem);
+    if (!this.options.allowAllClosed && !othersItems.some(el => el.classList.contains('is-active'))) return;
+    this._closeTab(target);
+  }
 
-      // Don't close the item if there is no other active item (unless with `allowAllClosed`)
-      var othersItems = Array.from(targetItem.parentElement.children).filter(function (el) {
-        return el !== targetItem;
-      });
-      if (!this.options.allowAllClosed && !othersItems.some(function (el) {
-        return el.classList.contains('is-active');
-      })) return;
-      this._closeTab(target);
+  /**
+   * Make the tab defined by `$target` the only opened tab, closing all others tabs.
+   * @param {jQuery} $target - Accordion tab to open (`.accordion-content`).
+   * @function
+   * @private
+   */
+  _openSingleTab(target) {
+    target = normalizeTargets(target);
+    // Close all the others active tabs.
+    const activeContents = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]')).filter(el => target.indexOf(el) === -1);
+    if (activeContents.length) {
+      this._closeTab(activeContents);
     }
 
-    /**
-     * Make the tab defined by `$target` the only opened tab, closing all others tabs.
-     * @param {jQuery} $target - Accordion tab to open (`.accordion-content`).
-     * @function
-     * @private
-     */
-  }, {
-    key: "_openSingleTab",
-    value: function _openSingleTab(target) {
-      target = normalizeTargets(target);
-      // Close all the others active tabs.
-      var activeContents = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]')).filter(function (el) {
-        return target.indexOf(el) === -1;
-      });
-      if (activeContents.length) {
-        this._closeTab(activeContents);
-      }
+    // Then open the target.
+    this._openTab(target);
+  }
 
-      // Then open the target.
-      this._openTab(target);
+  /**
+   * Opens the tab defined by `$target`.
+   * @param {jQuery} $target - Accordion tab to open (`.accordion-content`).
+   * @fires Accordion#down
+   * @function
+   * @private
+   */
+  _openTab(targets) {
+    targets = normalizeTargets(targets);
+    // The labelledby lookup keeps the 6.x first-element read; the class and
+    // aria-hidden writes apply to every pane, like the collection calls did.
+    const targetContentId = targets[0].getAttribute('aria-labelledby');
+
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    targets.forEach(function (el) {
+      el.setAttribute('aria-hidden', 'false');
+      el.parentElement.classList.add('is-active');
+    });
+    const label = document.getElementById(targetContentId);
+    if (label) label.setAttribute('aria-expanded', 'true');
+
+    // fx 方案 A: the fold tween runs on Motion's native slide primitive
+    // (jQuery fx parity: finish() jumps any in-flight fold, the down event
+    // stays timed by the completion callback and fires once per pane, like
+    // the jQuery collection callback did; the terminal form forwards the
+    // element array, 6.x forwarded the collection).
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.finish(targets);
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(targets, this.options.slideSpeed, () => {
+      /**
+       * Fires when the tab is done opening.
+       * @event Accordion#down
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'down.zf.accordion', [targets]);
+    });
+  }
+
+  /**
+   * Closes the tab defined by `$target`.
+   * @param {jQuery} $target - Accordion tab to close (`.accordion-content`).
+   * @fires Accordion#up
+   * @function
+   * @private
+   */
+  _closeTab(targets) {
+    targets = normalizeTargets(targets);
+    // See _openTab: first-element labelledby lookup, per-element writes.
+    const targetContentId = targets[0].getAttribute('aria-labelledby');
+
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    targets.forEach(function (el) {
+      el.setAttribute('aria-hidden', 'true');
+      el.parentElement.classList.remove('is-active');
+    });
+    const label = document.getElementById(targetContentId);
+    if (label) label.setAttribute('aria-expanded', 'false');
+
+    // fx 方案 A, see _openTab.
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.finish(targets);
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(targets, this.options.slideSpeed, () => {
+      /**
+       * Fires when the tab is done collapsing up.
+       * @event Accordion#up
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'up.zf.accordion', [targets]);
+    });
+  }
+
+  /**
+   * Closes all active tabs
+   * @fires Accordion#up
+   * @function
+   * @private
+   */
+  _closeAllTabs() {
+    var activeTabs = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
+    if (activeTabs.length) {
+      this._closeTab(activeTabs);
     }
+  }
 
-    /**
-     * Opens the tab defined by `$target`.
-     * @param {jQuery} $target - Accordion tab to open (`.accordion-content`).
-     * @fires Accordion#down
-     * @function
-     * @private
-     */
-  }, {
-    key: "_openTab",
-    value: function _openTab(targets) {
-      var _this3 = this;
-      targets = normalizeTargets(targets);
-      // The labelledby lookup keeps the 6.x first-element read; the class and
-      // aria-hidden writes apply to every pane, like the collection calls did.
-      var targetContentId = targets[0].getAttribute('aria-labelledby');
-
-      // State/ARIA go through the native layer (7.0 line A, S8).
-      targets.forEach(function (el) {
-        el.setAttribute('aria-hidden', 'false');
-        el.parentElement.classList.add('is-active');
-      });
-      var label = document.getElementById(targetContentId);
-      if (label) label.setAttribute('aria-expanded', 'true');
-
-      // fx 方案 A: the fold tween runs on Motion's native slide primitive
-      // (jQuery fx parity: finish() jumps any in-flight fold, the down event
-      // stays timed by the completion callback and fires once per pane, like
-      // the jQuery collection callback did; the terminal form forwards the
-      // element array, 6.x forwarded the collection).
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.finish(targets);
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(targets, this.options.slideSpeed, function () {
-        /**
-         * Fires when the tab is done opening.
-         * @event Accordion#down
-         */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this3.$element, 'down.zf.accordion', [targets]);
-      });
+  /**
+   * Destroys an instance of an accordion.
+   * @fires Accordion#destroyed
+   * @function
+   */
+  _destroy() {
+    // fx 方案 A (see _openTab): the collapse-to-zero cleanup stops any
+    // in-flight fold and hides instantly.
+    this.$element.querySelectorAll('[data-tab-content]').forEach(function (el) {
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.stop(el, true);
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(el, 0);
+      el.style.display = '';
+    });
+    // The click and keydown listeners, by bare plugin namespace.
+    this.$element.querySelectorAll('a').forEach(function (anchor) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, '.zf.accordion');
+    });
+    if (this.options.deepLink) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, `hashchange.zf.accordion:${this.id}`);
     }
-
-    /**
-     * Closes the tab defined by `$target`.
-     * @param {jQuery} $target - Accordion tab to close (`.accordion-content`).
-     * @fires Accordion#up
-     * @function
-     * @private
-     */
-  }, {
-    key: "_closeTab",
-    value: function _closeTab(targets) {
-      var _this4 = this;
-      targets = normalizeTargets(targets);
-      // See _openTab: first-element labelledby lookup, per-element writes.
-      var targetContentId = targets[0].getAttribute('aria-labelledby');
-
-      // State/ARIA go through the native layer (7.0 line A, S8).
-      targets.forEach(function (el) {
-        el.setAttribute('aria-hidden', 'true');
-        el.parentElement.classList.remove('is-active');
-      });
-      var label = document.getElementById(targetContentId);
-      if (label) label.setAttribute('aria-expanded', 'false');
-
-      // fx 方案 A, see _openTab.
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.finish(targets);
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(targets, this.options.slideSpeed, function () {
-        /**
-         * Fires when the tab is done collapsing up.
-         * @event Accordion#up
-         */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this4.$element, 'up.zf.accordion', [targets]);
-      });
-    }
-
-    /**
-     * Closes all active tabs
-     * @fires Accordion#up
-     * @function
-     * @private
-     */
-  }, {
-    key: "_closeAllTabs",
-    value: function _closeAllTabs() {
-      var activeTabs = Array.from(this.$element.querySelectorAll('.is-active > [data-tab-content]'));
-      if (activeTabs.length) {
-        this._closeTab(activeTabs);
-      }
-    }
-
-    /**
-     * Destroys an instance of an accordion.
-     * @fires Accordion#destroyed
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // fx 方案 A (see _openTab): the collapse-to-zero cleanup stops any
-      // in-flight fold and hides instantly.
-      this.$element.querySelectorAll('[data-tab-content]').forEach(function (el) {
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.stop(el, true);
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(el, 0);
-        el.style.display = '';
-      });
-      // The click and keydown listeners, by bare plugin namespace.
-      this.$element.querySelectorAll('a').forEach(function (anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, '.zf.accordion');
-      });
-      if (this.options.deepLink) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, "hashchange.zf.accordion:".concat(this.id));
-      }
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+  }
+}
 Accordion.defaults = {
   /**
    * Amount of time to animate the opening of an accordion pane.
@@ -1668,11 +1495,11 @@ Accordion.defaults = {
 /*!****************************************!*\
   !*** ./js/foundation.accordionMenu.js ***!
   \****************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AccordionMenu: function() { return /* binding */ AccordionMenu; }
+/* harmony export */   AccordionMenu: () => (/* binding */ AccordionMenu)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.nest */ "./js/foundation.util.nest.js");
@@ -1681,19 +1508,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -1720,421 +1534,384 @@ function normalizeTargets(target) {
   }
   return Array.from(target);
 }
-var AccordionMenu = /*#__PURE__*/function (_Plugin) {
-  function AccordionMenu() {
-    _classCallCheck(this, AccordionMenu);
-    return _callSuper(this, AccordionMenu, arguments);
+class AccordionMenu extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_6__.Plugin {
+  /**
+   * Creates a new instance of an accordion menu.
+   * @class
+   * @name AccordionMenu
+   * @fires AccordionMenu#init
+   * @param {jQuery} element - jQuery object to make into an accordion menu.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, AccordionMenu.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'AccordionMenu'; // ie9 back compat
+
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('AccordionMenu', {
+      'ENTER': 'toggle',
+      'SPACE': 'toggle',
+      'ARROW_RIGHT': 'open',
+      'ARROW_UP': 'up',
+      'ARROW_DOWN': 'down',
+      'ARROW_LEFT': 'close',
+      'ESCAPE': 'closeAll'
+    });
   }
-  _inherits(AccordionMenu, _Plugin);
-  return _createClass(AccordionMenu, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of an accordion menu.
-     * @class
-     * @name AccordionMenu
-     * @fires AccordionMenu#init
-     * @param {jQuery} element - jQuery object to make into an accordion menu.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, AccordionMenu.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'AccordionMenu'; // ie9 back compat
 
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('AccordionMenu', {
-        'ENTER': 'toggle',
-        'SPACE': 'toggle',
-        'ARROW_RIGHT': 'open',
-        'ARROW_UP': 'up',
-        'ARROW_DOWN': 'down',
-        'ARROW_LEFT': 'close',
-        'ESCAPE': 'closeAll'
-      });
-    }
+  /**
+   * Initializes the accordion menu by hiding all nested menus.
+   * @private
+   */
+  _init() {
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Feather(this.$element, 'accordion');
+    var _this = this;
 
-    /**
-     * Initializes the accordion menu by hiding all nested menus.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Feather(this.$element, 'accordion');
-      var _this = this;
+    // fx 方案 A: the instant-collapse init hide on the native primitive
+    this.$element.querySelectorAll('[data-submenu]').forEach(function (sub) {
+      if (!sub.classList.contains('is-active')) {
+        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(sub, 0);
+      }
+    });
+    this.$element.setAttribute('aria-multiselectable', this.options.multiOpen);
+    this.$menuLinks = Array.from(this.$element.querySelectorAll('.is-accordion-submenu-parent'));
+    this.$menuLinks.forEach(function (elem) {
+      var linkId = elem.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'acc-menu-link'),
+        sub = elem.querySelector(':scope > [data-submenu]'),
+        subId = sub.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'acc-menu'),
+        isActive = sub.classList.contains('is-active');
+      if (_this.options.parentLink) {
+        // $anchor.clone().prependTo($sub).wrap('<li .../>')
+        const anchor = elem.querySelector(':scope > a');
+        const wrapper = document.createElement('li');
+        wrapper.setAttribute('data-is-parent-link', '');
+        wrapper.className = 'is-submenu-parent-item is-submenu-item is-accordion-submenu-item';
+        const cloned = anchor.cloneNode(true);
+        wrapper.appendChild(cloned);
+        sub.insertBefore(wrapper, sub.firstChild);
+      }
+      if (_this.options.submenuToggle) {
+        elem.classList.add('has-submenu-toggle');
+        elem.querySelector(':scope > a').insertAdjacentHTML('afterend', '<button id="' + linkId + '" class="submenu-toggle" aria-controls="' + subId + '" aria-expanded="' + isActive + '" title="' + _this.options.submenuToggleText + '"><span class="submenu-toggle-text">' + _this.options.submenuToggleText + '</span></button>');
+      } else {
+        elem.setAttribute('aria-controls', subId);
+        elem.setAttribute('aria-expanded', isActive);
+        elem.setAttribute('id', linkId);
+      }
+      sub.setAttribute('aria-labelledby', linkId);
+      sub.setAttribute('aria-hidden', !isActive);
+      sub.setAttribute('role', 'group');
+      sub.setAttribute('id', subId);
+    });
+    var initPanes = Array.from(this.$element.querySelectorAll('.is-active'));
+    initPanes.forEach(function (pane) {
+      _this.down(pane);
+    });
+    this._events();
+  }
 
-      // fx 方案 A: the instant-collapse init hide on the native primitive
-      this.$element.querySelectorAll('[data-submenu]').forEach(function (sub) {
-        if (!sub.classList.contains('is-active')) {
-          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(sub, 0);
-        }
-      });
-      this.$element.setAttribute('aria-multiselectable', this.options.multiOpen);
-      this.$menuLinks = Array.from(this.$element.querySelectorAll('.is-accordion-submenu-parent'));
-      this.$menuLinks.forEach(function (elem) {
-        var linkId = elem.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'acc-menu-link'),
-          sub = elem.querySelector(':scope > [data-submenu]'),
-          subId = sub.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'acc-menu'),
-          isActive = sub.classList.contains('is-active');
-        if (_this.options.parentLink) {
-          // $anchor.clone().prependTo($sub).wrap('<li .../>')
-          var anchor = elem.querySelector(':scope > a');
-          var wrapper = document.createElement('li');
-          wrapper.setAttribute('data-is-parent-link', '');
-          wrapper.className = 'is-submenu-parent-item is-submenu-item is-accordion-submenu-item';
-          var cloned = anchor.cloneNode(true);
-          wrapper.appendChild(cloned);
-          sub.insertBefore(wrapper, sub.firstChild);
-        }
+  /**
+   * Adds event handlers for items within the menu.
+   * @private
+   */
+  _events() {
+    var _this = this;
+    this.$element.querySelectorAll('li').forEach(function (item) {
+      var submenu = item.querySelector(':scope > [data-submenu]');
+      if (submenu) {
+        // S9: the submenu click consumers run on the native event layer -
+        // real clicks reach them directly, jQuery-synthesized clicks ride
+        // the `.click()` shortcut bridge (reveal-native precedent; jQuery
+        // suppresses that shortcut for link anchors).
         if (_this.options.submenuToggle) {
-          elem.classList.add('has-submenu-toggle');
-          elem.querySelector(':scope > a').insertAdjacentHTML('afterend', '<button id="' + linkId + '" class="submenu-toggle" aria-controls="' + subId + '" aria-expanded="' + isActive + '" title="' + _this.options.submenuToggleText + '"><span class="submenu-toggle-text">' + _this.options.submenuToggleText + '</span></button>');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu', function () {
+            _this.toggle(submenu);
+          });
         } else {
-          elem.setAttribute('aria-controls', subId);
-          elem.setAttribute('aria-expanded', isActive);
-          elem.setAttribute('id', linkId);
-        }
-        sub.setAttribute('aria-labelledby', linkId);
-        sub.setAttribute('aria-hidden', !isActive);
-        sub.setAttribute('role', 'group');
-        sub.setAttribute('id', subId);
-      });
-      var initPanes = Array.from(this.$element.querySelectorAll('.is-active'));
-      initPanes.forEach(function (pane) {
-        _this.down(pane);
-      });
-      this._events();
-    }
-
-    /**
-     * Adds event handlers for items within the menu.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      this.$element.querySelectorAll('li').forEach(function (item) {
-        var submenu = item.querySelector(':scope > [data-submenu]');
-        if (submenu) {
-          // S9: the submenu click consumers run on the native event layer -
-          // real clicks reach them directly, jQuery-synthesized clicks ride
-          // the `.click()` shortcut bridge (reveal-native precedent; jQuery
-          // suppresses that shortcut for link anchors).
-          if (_this.options.submenuToggle) {
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(item.querySelector(':scope > .submenu-toggle'), 'click.zf.accordionMenu', function () {
+          item.querySelectorAll(':scope > a').forEach(anchor => {
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(anchor, 'click.zf.accordionMenu');
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(anchor, 'click.zf.accordionMenu', function (e) {
+              e.preventDefault();
               _this.toggle(submenu);
             });
-          } else {
-            item.querySelectorAll(':scope > a').forEach(function (anchor) {
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(anchor, 'click.zf.accordionMenu');
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(anchor, 'click.zf.accordionMenu', function (e) {
-                e.preventDefault();
-                _this.toggle(submenu);
-              });
-            });
-          }
-        }
-
-        // 7.0 line A terminal form: the keydown listener runs on the native
-        // event layer (the coarse suite's mocks dispatch real KeyboardEvents
-        // since the S16 migration). The traversal below reproduces the jQuery
-        // shape: visible submenus (Dom.visible, the narrow display semantics),
-        // first/last-child positions, closest('li') for the parents walk.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(item, 'keydown.zf.accordionMenu');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(item, 'keydown.zf.accordionMenu', function (e) {
-          var element = this,
-            parentUl = element.parentElement && element.parentElement.matches('ul') ? element.parentElement : null,
-            elements = parentUl ? Array.from(parentUl.children).filter(function (el) {
-              return el.matches('li');
-            }) : [],
-            prevElement,
-            nextElement,
-            target = element.querySelector(':scope > [data-submenu]');
-          var i = elements.indexOf(element);
-          if (i !== -1) {
-            prevElement = elements[Math.max(0, i - 1)].querySelector('a');
-            nextElement = elements[Math.min(i + 1, elements.length - 1)].querySelector('a');
-            var openSub = element.querySelector(':scope > [data-submenu]');
-            if (openSub && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(openSub)) {
-              // has open sub menu
-              nextElement = element.querySelector('li a');
-            }
-            if (element === element.parentElement.firstElementChild) {
-              // is first element of sub menu
-              prevElement = element.closest('li') && element.closest('li') !== element ? element.closest('li').querySelector('a') : prevElement;
-            } else if (prevElement && prevElement.closest('li') && prevElement.closest('li').querySelector(':scope > [data-submenu]') && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(prevElement.closest('li').querySelector(':scope > [data-submenu]'))) {
-              // if previous element has open sub menu
-              prevElement = prevElement.closest('li').querySelector('li:last-child a');
-            }
-            if (element === element.parentElement.lastElementChild) {
-              // is last element of sub menu
-              var parentLi = element.closest('li');
-              if (parentLi && parentLi !== element && parentLi.nextElementSibling && parentLi.nextElementSibling.matches('li')) {
-                nextElement = parentLi.nextElementSibling.querySelector('a');
-              }
-            }
-          }
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'AccordionMenu', {
-            open: function open() {
-              if (!(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(target)) {
-                _this.down(target);
-                target.querySelector('li a').focus();
-              }
-            },
-            close: function close() {
-              if (target && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(target)) {
-                // close active sub of this item
-                _this.up(target);
-              } else if (element.parentElement && element.parentElement.matches('[data-submenu]')) {
-                // close currently open sub
-                _this.up(element.parentElement);
-                element.closest('li').querySelector('a').focus();
-              }
-            },
-            up: function up() {
-              if (prevElement) prevElement.focus();
-              return true;
-            },
-            down: function down() {
-              if (nextElement) nextElement.focus();
-              return true;
-            },
-            toggle: function toggle() {
-              if (_this.options.submenuToggle) {
-                return false;
-              }
-              if (target) {
-                _this.toggle(target);
-                return true;
-              }
-            },
-            closeAll: function closeAll() {
-              _this.hideAll();
-            },
-            handled: function handled(preventDefault) {
-              if (preventDefault) {
-                e.preventDefault();
-              }
-            }
           });
-        });
-      });
-    }
-
-    /**
-     * Closes all panes of the menu.
-     * @function
-     */
-  }, {
-    key: "hideAll",
-    value: function hideAll() {
-      this.up(Array.from(this.$element.querySelectorAll('[data-submenu]')));
-    }
-
-    /**
-     * Opens all panes of the menu.
-     * @function
-     */
-  }, {
-    key: "showAll",
-    value: function showAll() {
-      this.down(Array.from(this.$element.querySelectorAll('[data-submenu]')));
-    }
-
-    /**
-     * Toggles the open/close state of a submenu.
-     * @function
-     * @param {jQuery} $target - the submenu to toggle
-     */
-  }, {
-    key: "toggle",
-    value: function toggle(target) {
-      // Accepts an element, a collection, a NodeList or an array.
-      target = normalizeTargets(target);
-      if (!target.some(function (el) {
-        return _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.isAnimating(el);
-      })) {
-        if (target.some(function (el) {
-          return (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(el);
-        })) {
-          this.up(target);
-        } else {
-          this.down(target);
         }
       }
-    }
 
-    /**
-     * Opens the sub-menu defined by `$target`.
-     * @param {jQuery} $target - Sub-menu to open.
-     * @fires AccordionMenu#down
-     */
-  }, {
-    key: "down",
-    value: function down(target) {
-      var _this2 = this;
-      target = normalizeTargets(target);
-      // If having multiple submenus active is disabled, close all the submenus
-      // that are not parents or children of the targeted submenu.
-      if (!this.options.multiOpen) {
-        // The "branch" of the targeted submenu, from the component root to
-        // the active submenus nested in it (the union over a multi-target,
-        // like the collection .parentsUntil/.add union did).
-        var branch = [];
-        var addUnique = function addUnique(el) {
-          if (el && branch.indexOf(el) === -1) {
-            branch.push(el);
+      // 7.0 line A terminal form: the keydown listener runs on the native
+      // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+      // since the S16 migration). The traversal below reproduces the jQuery
+      // shape: visible submenus (Dom.visible, the narrow display semantics),
+      // first/last-child positions, closest('li') for the parents walk.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(item, 'keydown.zf.accordionMenu');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(item, 'keydown.zf.accordionMenu', function (e) {
+        var element = this,
+          parentUl = element.parentElement && element.parentElement.matches('ul') ? element.parentElement : null,
+          elements = parentUl ? Array.from(parentUl.children).filter(el => el.matches('li')) : [],
+          prevElement,
+          nextElement,
+          target = element.querySelector(':scope > [data-submenu]');
+        var i = elements.indexOf(element);
+        if (i !== -1) {
+          prevElement = elements[Math.max(0, i - 1)].querySelector('a');
+          nextElement = elements[Math.min(i + 1, elements.length - 1)].querySelector('a');
+          var openSub = element.querySelector(':scope > [data-submenu]');
+          if (openSub && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(openSub)) {
+            // has open sub menu
+            nextElement = element.querySelector('li a');
           }
-        };
-        target.forEach(function (el) {
-          var ancestor = el.parentElement;
-          while (ancestor && ancestor !== _this2.$element) {
-            if (ancestor.matches('[data-submenu]')) {
-              addUnique(ancestor);
+          if (element === element.parentElement.firstElementChild) {
+            // is first element of sub menu
+            prevElement = element.closest('li') && element.closest('li') !== element ? element.closest('li').querySelector('a') : prevElement;
+          } else if (prevElement && prevElement.closest('li') && prevElement.closest('li').querySelector(':scope > [data-submenu]') && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(prevElement.closest('li').querySelector(':scope > [data-submenu]'))) {
+            // if previous element has open sub menu
+            prevElement = prevElement.closest('li').querySelector('li:last-child a');
+          }
+          if (element === element.parentElement.lastElementChild) {
+            // is last element of sub menu
+            var parentLi = element.closest('li');
+            if (parentLi && parentLi !== element && parentLi.nextElementSibling && parentLi.nextElementSibling.matches('li')) {
+              nextElement = parentLi.nextElementSibling.querySelector('a');
             }
-            ancestor = ancestor.parentElement;
           }
-          addUnique(el);
-          el.querySelectorAll('.is-active').forEach(addUnique);
+        }
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'AccordionMenu', {
+          open: function () {
+            if (!(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(target)) {
+              _this.down(target);
+              target.querySelector('li a').focus();
+            }
+          },
+          close: function () {
+            if (target && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(target)) {
+              // close active sub of this item
+              _this.up(target);
+            } else if (element.parentElement && element.parentElement.matches('[data-submenu]')) {
+              // close currently open sub
+              _this.up(element.parentElement);
+              element.closest('li').querySelector('a').focus();
+            }
+          },
+          up: function () {
+            if (prevElement) prevElement.focus();
+            return true;
+          },
+          down: function () {
+            if (nextElement) nextElement.focus();
+            return true;
+          },
+          toggle: function () {
+            if (_this.options.submenuToggle) {
+              return false;
+            }
+            if (target) {
+              _this.toggle(target);
+              return true;
+            }
+          },
+          closeAll: function () {
+            _this.hideAll();
+          },
+          handled: function (preventDefault) {
+            if (preventDefault) {
+              e.preventDefault();
+            }
+          }
         });
-        // All the active submenus that are not in the branch.
-        var othersActiveSubmenus = Array.from(this.$element.querySelectorAll('.is-active')).filter(function (el) {
-          return branch.indexOf(el) === -1;
-        });
-        this.up(othersActiveSubmenus);
-      }
-
-      // S9: class/ARIA state flips natively.
-      target.forEach(function (el) {
-        el.classList.add('is-active');
-        el.setAttribute('aria-hidden', 'false');
       });
-      if (this.options.submenuToggle) {
-        target.forEach(function (el) {
-          var toggle = el.previousElementSibling;
-          if (toggle && toggle.matches('.submenu-toggle')) {
-            toggle.setAttribute('aria-expanded', 'true');
-          }
-        });
-      } else {
-        target.forEach(function (el) {
-          var parentLink = el.parentElement;
-          if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
-            parentLink.setAttribute('aria-expanded', 'true');
-          }
-        });
-      }
+    });
+  }
 
-      // fx 方案 A: the fold tween runs on Motion's native slide primitive -
-      // the down event keeps its after-the-tween timing and fires once per
-      // pane; the terminal form forwards the element array.
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(target, this.options.slideSpeed, function () {
-        /**
-         * Fires when the menu is done opening.
-         * @event AccordionMenu#down
-         */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this2.$element, 'down.zf.accordionMenu', [target]);
+  /**
+   * Closes all panes of the menu.
+   * @function
+   */
+  hideAll() {
+    this.up(Array.from(this.$element.querySelectorAll('[data-submenu]')));
+  }
+
+  /**
+   * Opens all panes of the menu.
+   * @function
+   */
+  showAll() {
+    this.down(Array.from(this.$element.querySelectorAll('[data-submenu]')));
+  }
+
+  /**
+   * Toggles the open/close state of a submenu.
+   * @function
+   * @param {jQuery} $target - the submenu to toggle
+   */
+  toggle(target) {
+    // Accepts an element, a collection, a NodeList or an array.
+    target = normalizeTargets(target);
+    if (!target.some(el => _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.isAnimating(el))) {
+      if (target.some(el => (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(el))) {
+        this.up(target);
+      } else {
+        this.down(target);
+      }
+    }
+  }
+
+  /**
+   * Opens the sub-menu defined by `$target`.
+   * @param {jQuery} $target - Sub-menu to open.
+   * @fires AccordionMenu#down
+   */
+  down(target) {
+    target = normalizeTargets(target);
+    // If having multiple submenus active is disabled, close all the submenus
+    // that are not parents or children of the targeted submenu.
+    if (!this.options.multiOpen) {
+      // The "branch" of the targeted submenu, from the component root to
+      // the active submenus nested in it (the union over a multi-target,
+      // like the collection .parentsUntil/.add union did).
+      const branch = [];
+      const addUnique = el => {
+        if (el && branch.indexOf(el) === -1) {
+          branch.push(el);
+        }
+      };
+      target.forEach(el => {
+        let ancestor = el.parentElement;
+        while (ancestor && ancestor !== this.$element) {
+          if (ancestor.matches('[data-submenu]')) {
+            addUnique(ancestor);
+          }
+          ancestor = ancestor.parentElement;
+        }
+        addUnique(el);
+        el.querySelectorAll('.is-active').forEach(addUnique);
+      });
+      // All the active submenus that are not in the branch.
+      const othersActiveSubmenus = Array.from(this.$element.querySelectorAll('.is-active')).filter(el => branch.indexOf(el) === -1);
+      this.up(othersActiveSubmenus);
+    }
+
+    // S9: class/ARIA state flips natively.
+    target.forEach(el => {
+      el.classList.add('is-active');
+      el.setAttribute('aria-hidden', 'false');
+    });
+    if (this.options.submenuToggle) {
+      target.forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+    } else {
+      target.forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'true');
+        }
       });
     }
 
-    /**
-     * Closes the sub-menu defined by `$target`. All sub-menus inside the target will be closed as well.
-     * @param {jQuery} $target - Sub-menu to close.
-     * @fires AccordionMenu#up
-     */
-  }, {
-    key: "up",
-    value: function up(target) {
-      var _this3 = this;
-      target = normalizeTargets(target);
-      var submenus = [];
-      target.forEach(function (el) {
-        el.querySelectorAll('[data-submenu]').forEach(function (sub) {
-          if (submenus.indexOf(sub) === -1) {
-            submenus.push(sub);
-          }
-        });
-      });
-      var allmenus = target.concat(submenus);
-      submenus.forEach(function (el) {
-        return _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(el, 0);
-      });
-      // S9: class/ARIA state flips natively.
-      allmenus.forEach(function (el) {
-        el.classList.remove('is-active');
-        el.setAttribute('aria-hidden', 'true');
-      });
-      if (this.options.submenuToggle) {
-        allmenus.forEach(function (el) {
-          var toggle = el.previousElementSibling;
-          if (toggle && toggle.matches('.submenu-toggle')) {
-            toggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      } else {
-        allmenus.forEach(function (el) {
-          var parentLink = el.parentElement;
-          if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
-            parentLink.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
+    // fx 方案 A: the fold tween runs on Motion's native slide primitive -
+    // the down event keeps its after-the-tween timing and fires once per
+    // pane; the terminal form forwards the element array.
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(target, this.options.slideSpeed, () => {
+      /**
+       * Fires when the menu is done opening.
+       * @event AccordionMenu#down
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'down.zf.accordionMenu', [target]);
+    });
+  }
 
-      // fx 方案 A, see down(): the fold tween on the native primitive; the
-      // terminal form forwards the element array.
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(target, this.options.slideSpeed, function () {
-        /**
-         * Fires when the menu is done collapsing up.
-         * @event AccordionMenu#up
-         */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this3.$element, 'up.zf.accordionMenu', [target]);
+  /**
+   * Closes the sub-menu defined by `$target`. All sub-menus inside the target will be closed as well.
+   * @param {jQuery} $target - Sub-menu to close.
+   * @fires AccordionMenu#up
+   */
+  up(target) {
+    target = normalizeTargets(target);
+    const submenus = [];
+    target.forEach(el => {
+      el.querySelectorAll('[data-submenu]').forEach(sub => {
+        if (submenus.indexOf(sub) === -1) {
+          submenus.push(sub);
+        }
+      });
+    });
+    const allmenus = target.concat(submenus);
+    submenus.forEach(el => _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(el, 0));
+    // S9: class/ARIA state flips natively.
+    allmenus.forEach(el => {
+      el.classList.remove('is-active');
+      el.setAttribute('aria-hidden', 'true');
+    });
+    if (this.options.submenuToggle) {
+      allmenus.forEach(el => {
+        const toggle = el.previousElementSibling;
+        if (toggle && toggle.matches('.submenu-toggle')) {
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    } else {
+      allmenus.forEach(el => {
+        const parentLink = el.parentElement;
+        if (parentLink && parentLink.matches('.is-accordion-submenu-parent')) {
+          parentLink.setAttribute('aria-expanded', 'false');
+        }
       });
     }
 
-    /**
-     * Destroys an instance of accordion menu.
-     * @fires AccordionMenu#destroyed
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // fx 方案 A: the instant-show destroy cleanup (inline display cleared
-      // so the stylesheet rules own the resting state again)
-      this.$element.querySelectorAll('[data-submenu]').forEach(function (el) {
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(el, 0);
-        el.style.display = '';
+    // fx 方案 A, see down(): the fold tween on the native primitive; the
+    // terminal form forwards the element array.
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideUp(target, this.options.slideSpeed, () => {
+      /**
+       * Fires when the menu is done collapsing up.
+       * @event AccordionMenu#up
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'up.zf.accordionMenu', [target]);
+    });
+  }
+
+  /**
+   * Destroys an instance of accordion menu.
+   * @fires AccordionMenu#destroyed
+   */
+  _destroy() {
+    // fx 方案 A: the instant-show destroy cleanup (inline display cleared
+    // so the stylesheet rules own the resting state again)
+    this.$element.querySelectorAll('[data-submenu]').forEach(function (el) {
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_5__.Motion.slideDown(el, 0);
+      el.style.display = '';
+    });
+    // The click and keydown listeners, by plugin namespace.
+    this.$element.querySelectorAll('a, .submenu-toggle').forEach(el => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'click.zf.accordionMenu');
+    });
+    this.$element.querySelectorAll('li').forEach(el => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'keydown.zf.accordionMenu');
+    });
+    // .detach(): removed without keeping data/events (plain remove here -
+    // the elements carry no other state)
+    this.$element.querySelectorAll('[data-is-parent-link]').forEach(el => {
+      el.remove();
+    });
+    if (this.options.submenuToggle) {
+      this.$element.querySelectorAll('.has-submenu-toggle').forEach(el => {
+        el.classList.remove('has-submenu-toggle');
       });
-      // The click and keydown listeners, by plugin namespace.
-      this.$element.querySelectorAll('a, .submenu-toggle').forEach(function (el) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'click.zf.accordionMenu');
-      });
-      this.$element.querySelectorAll('li').forEach(function (el) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'keydown.zf.accordionMenu');
-      });
-      // .detach(): removed without keeping data/events (plain remove here -
-      // the elements carry no other state)
-      this.$element.querySelectorAll('[data-is-parent-link]').forEach(function (el) {
+      this.$element.querySelectorAll('.submenu-toggle').forEach(el => {
         el.remove();
       });
-      if (this.options.submenuToggle) {
-        this.$element.querySelectorAll('.has-submenu-toggle').forEach(function (el) {
-          el.classList.remove('has-submenu-toggle');
-        });
-        this.$element.querySelectorAll('.submenu-toggle').forEach(function (el) {
-          el.remove();
-        });
-      }
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Burn(this.$element, 'accordion');
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_6__.Plugin);
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Burn(this.$element, 'accordion');
+  }
+}
 AccordionMenu.defaults = {
   /**
    * Adds the parent link to the submenu.
@@ -2178,23 +1955,16 @@ AccordionMenu.defaults = {
 /*!*******************************!*\
   !*** ./js/foundation.core.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Foundation: function() { return /* binding */ Foundation; }
+/* harmony export */   Foundation: () => (/* binding */ Foundation)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.registry */ "./js/foundation.util.registry.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 
 
 
@@ -2217,16 +1987,16 @@ var Foundation = {
    * Defines a Foundation plugin, adding it to the `Foundation` namespace and the list of plugins to initialize when reflowing.
    * @param {Object} plugin - The constructor of the plugin.
    */
-  plugin: function plugin(_plugin, name) {
+  plugin: function (plugin, name) {
     // Object key to use when adding to global Foundation object
     // Examples: Foundation.Reveal, Foundation.OffCanvas
-    var className = name || functionName(_plugin);
+    var className = name || functionName(plugin);
     // Object key to use when storing the plugin, also used to create the identifying data attribute for the plugin
     // Examples: data-reveal, data-off-canvas
     var attrName = hyphenate(className);
 
     // Add to the Foundation object and the plugins list (for reflowing)
-    this._plugins[attrName] = this[className] = _plugin;
+    this._plugins[attrName] = this[className] = plugin;
   },
   /**
    * @function
@@ -2237,15 +2007,15 @@ var Foundation = {
    * @param {String} name - the name of the plugin, passed as a camelCased string.
    * @fires Plugin#init
    */
-  registerPlugin: function registerPlugin(plugin, name) {
+  registerPlugin: function (plugin, name) {
     var pluginName = name ? hyphenate(name) : functionName(plugin.constructor).toLowerCase();
     plugin.uuid = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, pluginName);
 
     // 7.0 terminal form: the element write, the Registry entry and the
     // real, bubbling init event (the Plugin base class does the same).
     var el = plugin.$element && plugin.$element.nodeType === 1 ? plugin.$element : plugin.$element[0];
-    if (!el.getAttribute("data-".concat(pluginName))) {
-      el.setAttribute("data-".concat(pluginName), plugin.uuid);
+    if (!el.getAttribute(`data-${pluginName}`)) {
+      el.setAttribute(`data-${pluginName}`, plugin.uuid);
     }
     if (el && !_foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.has(el)) {
       _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.setInstance(el, plugin);
@@ -2254,7 +2024,7 @@ var Foundation = {
      * Fires when the plugin has initialized.
      * @event Plugin#init
      */
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, "init.zf.".concat(pluginName));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, `init.zf.${pluginName}`);
     this._uuids.push(plugin.uuid);
     return;
   },
@@ -2266,17 +2036,17 @@ var Foundation = {
    * @param {Object} plugin - an instance of a plugin, usually `this` in context.
    * @fires Plugin#destroyed
    */
-  unregisterPlugin: function unregisterPlugin(plugin) {
+  unregisterPlugin: function (plugin) {
     var el = plugin.$element && plugin.$element.nodeType === 1 ? plugin.$element : plugin.$element[0];
     var pluginName = hyphenate(functionName(_foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.getInstance(el).constructor));
     this._uuids.splice(this._uuids.indexOf(plugin.uuid), 1);
-    el.removeAttribute("data-".concat(pluginName));
+    el.removeAttribute(`data-${pluginName}`);
     _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.removeInstance(el);
     /**
      * Fires when the plugin has been destroyed.
      * @event Plugin#destroyed
      */
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, "destroyed.zf.".concat(pluginName));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, `destroyed.zf.${pluginName}`);
     for (var prop in plugin) {
       if (typeof plugin[prop] === 'function') {
         plugin[prop] = null; //clean up script to prep for garbage collection.
@@ -2290,7 +2060,7 @@ var Foundation = {
    * @param {Element|String|Array} plugins - a native element (or, legacy, a jQuery collection) holding the plugin, a string of a plugin class i.e. `'dropdown'`, or an array of such strings.
    * @default If no argument is passed, reflow all currently active plugins.
    */
-  reInit: function reInit(plugins) {
+  reInit: function (plugins) {
     // 7.0 terminal form: an element (or a collection, legacy shape) holds
     // the instance to re-init; strings name plugin classes to sweep.
     var isElement = typeof Element !== 'undefined' && plugins instanceof Element;
@@ -2305,9 +2075,9 @@ var Foundation = {
           }
         });
       } else {
-        var type = _typeof(plugins),
+        var type = typeof plugins,
           _this = this;
-        var reInitByName = function reInitByName(name) {
+        var reInitByName = function (name) {
           document.querySelectorAll('[data-' + name + ']').forEach(function (el) {
             var instance = _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.getInstance(el);
             if (instance) {
@@ -2336,7 +2106,7 @@ var Foundation = {
    * @param {Element|Document|String|Object} elem - native element or document to scan, a selector string, or (legacy, mixed state) a jQuery object.
    * @param {String|Array} plugins - A list of plugins to initialize. Leave this out to initialize everything.
    */
-  reflow: function reflow(elem, plugins) {
+  reflow: function (elem, plugins) {
     // If plugins is undefined, just grab everything
     if (typeof plugins === 'undefined') {
       plugins = Object.keys(this._plugins);
@@ -2376,8 +2146,7 @@ var Foundation = {
       } else {
         candidates = [];
         rootEls.forEach(function (rootEl) {
-          var _candidates;
-          (_candidates = candidates).push.apply(_candidates, _toConsumableArray(Array.from(rootEl.querySelectorAll('[data-' + name + ']'))));
+          candidates.push(...Array.from(rootEl.querySelectorAll('[data-' + name + ']')));
           if (rootEl.matches('[data-' + name + ']')) {
             candidates.push(rootEl);
           }
@@ -2416,7 +2185,7 @@ var Foundation = {
    * @param {Element|Document|String} [root=document] - where to scan for plugins: an element, the document, or a selector string.
    * @returns {Element|Document|String} the root that was initialized.
    */
-  init: function init(root) {
+  init: function (root) {
     root = root || document;
     document.querySelectorAll('.no-js').forEach(function (el) {
       el.classList.remove('no-js');
@@ -2434,7 +2203,7 @@ Foundation.util = {
    * @param {Number} delay - Time in ms to delay the call of `func`.
    * @returns function
    */
-  throttle: function throttle(func, delay) {
+  throttle: function (func, delay) {
     var timer = null;
     return function () {
       var context = this,
@@ -2479,21 +2248,15 @@ function hyphenate(str) {
 /*!**************************************!*\
   !*** ./js/foundation.core.plugin.js ***!
   \**************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Plugin: function() { return /* binding */ Plugin; }
+/* harmony export */   Plugin: () => (/* binding */ Plugin)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.registry */ "./js/foundation.util.registry.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 
@@ -2510,15 +2273,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // obligation events go through the native event layer as real, bubbling
 // events - the still-on-jQuery listeners keep receiving them (white
 // absorption), so the obligation is unchanged for every consumer shape.
-var Plugin = /*#__PURE__*/function () {
-  function Plugin(element, options) {
-    _classCallCheck(this, Plugin);
+class Plugin {
+  constructor(element, options) {
     this._setup(element, options);
     var pluginName = getPluginName(this);
     this.uuid = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, pluginName);
     var el = this.$element.nodeType === 1 ? this.$element : this.$element[0];
-    if (!el.getAttribute("data-".concat(pluginName))) {
-      el.setAttribute("data-".concat(pluginName), this.uuid);
+    if (!el.getAttribute(`data-${pluginName}`)) {
+      el.setAttribute(`data-${pluginName}`, this.uuid);
     }
     if (el && !_foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.has(el)) {
       _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.setInstance(el, this);
@@ -2527,31 +2289,30 @@ var Plugin = /*#__PURE__*/function () {
      * Fires when the plugin has initialized.
      * @event Plugin#init
      */
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, "init.zf.".concat(pluginName));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, `init.zf.${pluginName}`);
   }
-  return _createClass(Plugin, [{
-    key: "destroy",
-    value: function destroy() {
-      this._destroy();
-      var pluginName = getPluginName(this);
-      var el = this.$element.nodeType === 1 ? this.$element : this.$element[0];
-      el.removeAttribute("data-".concat(pluginName));
-      if (el) {
-        _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.removeInstance(el);
-      }
-      /**
-       * Fires when the plugin has been destroyed.
-       * @event Plugin#destroyed
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, "destroyed.zf.".concat(pluginName));
-      for (var prop in this) {
-        if (this.hasOwnProperty(prop)) {
-          this[prop] = null; //clean up script to prep for garbage collection.
-        }
+  destroy() {
+    this._destroy();
+    var pluginName = getPluginName(this);
+    var el = this.$element.nodeType === 1 ? this.$element : this.$element[0];
+    el.removeAttribute(`data-${pluginName}`);
+    if (el) {
+      _foundation_util_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.removeInstance(el);
+    }
+    /**
+     * Fires when the plugin has been destroyed.
+     * @event Plugin#destroyed
+     */
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(el, `destroyed.zf.${pluginName}`);
+    for (var prop in this) {
+      if (this.hasOwnProperty(prop)) {
+        this[prop] = null; //clean up script to prep for garbage collection.
       }
     }
-  }]);
-}(); // Convert PascalCase to kebab-case
+  }
+}
+
+// Convert PascalCase to kebab-case
 // Thank you: http://stackoverflow.com/a/8955580
 function hyphenate(str) {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -2567,16 +2328,16 @@ function getPluginName(obj) {
 /*!*************************************!*\
   !*** ./js/foundation.core.utils.js ***!
   \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   GetYoDigits: function() { return /* binding */ GetYoDigits; },
-/* harmony export */   RegExpEscape: function() { return /* binding */ RegExpEscape; },
-/* harmony export */   ignoreMousedisappear: function() { return /* binding */ ignoreMousedisappear; },
-/* harmony export */   onLoad: function() { return /* binding */ onLoad; },
-/* harmony export */   rtl: function() { return /* binding */ rtl; },
-/* harmony export */   transitionend: function() { return /* binding */ transitionend; }
+/* harmony export */   GetYoDigits: () => (/* binding */ GetYoDigits),
+/* harmony export */   RegExpEscape: () => (/* binding */ RegExpEscape),
+/* harmony export */   ignoreMousedisappear: () => (/* binding */ ignoreMousedisappear),
+/* harmony export */   onLoad: () => (/* binding */ onLoad),
+/* harmony export */   rtl: () => (/* binding */ rtl),
+/* harmony export */   transitionend: () => (/* binding */ transitionend)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 
@@ -2586,6 +2347,13 @@ __webpack_require__.r(__webpack_exports__);
 // Accepts both the jQuery objects un-migrated callers still pass and plain
 // elements, so the helper survives the line-A migration unchanged.
 function toElement(obj) {
+  // window is array-like too - window[0] is the first frame's Window, and
+  // unwrapping it hands back a (possibly cross-origin) iframe window that
+  // throws on the next property read. Every onLoad(window, ...) call on a
+  // page that already contains an iframe hit this.
+  if (obj === window) {
+    return obj;
+  }
   // nodeType marks a real node: never unwrap it, even when it is itself
   // array-like (HTMLSelectElement exposes its first option as [0]).
   return obj && obj.nodeType === undefined && obj[0] !== undefined ? obj[0] : obj;
@@ -2607,15 +2375,15 @@ function rtl() {
  * @returns {String} - unique id
  */
 function GetYoDigits() {
-  var length = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 6;
-  var namespace = arguments.length > 1 ? arguments[1] : undefined;
-  var str = '';
-  var chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-  var charsLength = chars.length;
-  for (var i = 0; i < length; i++) {
+  let length = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 6;
+  let namespace = arguments.length > 1 ? arguments[1] : undefined;
+  let str = '';
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+  const charsLength = chars.length;
+  for (let i = 0; i < length; i++) {
     str += chars[Math.floor(Math.random() * charsLength)];
   }
-  return namespace ? "".concat(str, "-").concat(namespace) : str;
+  return namespace ? `${str}-${namespace}` : str;
 }
 
 /**
@@ -2638,7 +2406,7 @@ function transitionend($elem) {
   };
   var elem = document.createElement('div'),
     end;
-  for (var transition in transitions) {
+  for (let transition in transitions) {
     if (typeof elem.style[transition] !== 'undefined') {
       end = transitions[transition];
     }
@@ -2650,7 +2418,7 @@ function transitionend($elem) {
     // browsers). Dual dispatch like the Triggers util: the native layer for
     // migrated consumers, jQuery's filtered triggerHandler for the
     // `.one(transitionend($elem), ...)` listeners of un-migrated ones.
-    var el = toElement($elem);
+    let el = toElement($elem);
     setTimeout(function () {
       _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.triggerHandler(el, 'transitionend', [el]);
     }, 1);
@@ -2671,16 +2439,14 @@ function transitionend($elem) {
  * @returns {String} - event type that should or will be triggered.
  */
 function onLoad($elem, handler) {
-  var didLoad = document.readyState === 'complete';
-  var eventType = (didLoad ? '_didLoad' : 'load') + '.zf.util.onLoad';
+  const didLoad = document.readyState === 'complete';
+  const eventType = (didLoad ? '_didLoad' : 'load') + '.zf.util.onLoad';
   if ($elem) {
-    var el = toElement($elem);
+    const el = toElement($elem);
     // Local, native-only dispatch: the handler is registered right below on
     // the native layer, and a real echoed 'load' on window would re-notify
     // third-party window-load listeners.
-    var cb = function cb() {
-      return _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.triggerHandler(el, eventType);
-    };
+    const cb = () => _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.triggerHandler(el, eventType);
     if (handler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.one(el, eventType, handler);
     if (didLoad) setTimeout(cb);else _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.one(window, 'load', cb);
   }
@@ -2706,16 +2472,15 @@ function onLoad($elem, handler) {
  * @returns {Function} - filtered handler to use to listen on the `mouseleave` event.
  */
 function ignoreMousedisappear(handler) {
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-    _ref$ignoreLeaveWindo = _ref.ignoreLeaveWindow,
-    ignoreLeaveWindow = _ref$ignoreLeaveWindo === void 0 ? false : _ref$ignoreLeaveWindo,
-    _ref$ignoreReappear = _ref.ignoreReappear,
-    ignoreReappear = _ref$ignoreReappear === void 0 ? false : _ref$ignoreReappear;
+  let {
+    ignoreLeaveWindow = false,
+    ignoreReappear = false
+  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   return function leaveEventHandler(eLeave) {
     for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       rest[_key - 1] = arguments[_key];
     }
-    var callback = handler.bind.apply(handler, [this, eLeave].concat(rest));
+    const callback = handler.bind(this, eLeave, ...rest);
 
     // The mouse left: call the given callback if the mouse entered elsewhere
     if (eLeave.relatedTarget !== null) {
@@ -2751,11 +2516,11 @@ function ignoreMousedisappear(handler) {
 /*!************************************!*\
   !*** ./js/foundation.drilldown.js ***!
   \************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Drilldown: function() { return /* binding */ Drilldown; }
+/* harmony export */   Drilldown: () => (/* binding */ Drilldown)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.nest */ "./js/foundation.util.nest.js");
@@ -2765,19 +2530,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_box__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.box */ "./js/foundation.util.box.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -2794,774 +2546,706 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.nest
  * @requires foundation.util.box
  */
-var Drilldown = /*#__PURE__*/function (_Plugin) {
-  function Drilldown() {
-    _classCallCheck(this, Drilldown);
-    return _callSuper(this, Drilldown, arguments);
+
+class Drilldown extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__.Plugin {
+  /**
+   * Creates a new instance of a drilldown menu.
+   * @class
+   * @name Drilldown
+   * @param {jQuery} element - jQuery object to make into an accordion menu.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Drilldown.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Drilldown'; // ie9 back compat
+
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Drilldown', {
+      'ENTER': 'open',
+      'SPACE': 'open',
+      'ARROW_RIGHT': 'next',
+      'ARROW_UP': 'up',
+      'ARROW_DOWN': 'down',
+      'ARROW_LEFT': 'previous',
+      'ESCAPE': 'close'
+    });
   }
-  _inherits(Drilldown, _Plugin);
-  return _createClass(Drilldown, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a drilldown menu.
-     * @class
-     * @name Drilldown
-     * @param {jQuery} element - jQuery object to make into an accordion menu.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Drilldown.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Drilldown'; // ie9 back compat
 
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Drilldown', {
-        'ENTER': 'open',
-        'SPACE': 'open',
-        'ARROW_RIGHT': 'next',
-        'ARROW_UP': 'up',
-        'ARROW_DOWN': 'down',
-        'ARROW_LEFT': 'previous',
-        'ESCAPE': 'close'
-      });
+  /**
+   * Initializes the drilldown by creating jQuery collections of elements
+   * @private
+   */
+  _init() {
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Feather(this.$element, 'drilldown');
+    if (this.options.autoApplyClass) {
+      this.$element.classList.add('drilldown');
     }
+    this.$element.setAttribute('aria-multiselectable', 'false');
+    this.$submenuAnchors = Array.from(this.$element.querySelectorAll('li.is-drilldown-submenu-parent > a'));
+    this.$submenus = this.$submenuAnchors.map(a => a.parentElement.querySelector(':scope > [data-submenu]'));
+    this.$submenus.forEach(sub => sub.setAttribute('role', 'group'));
+    this.$menuItems = Array.from(this.$element.querySelectorAll('li:not(.js-drilldown-back) a'));
 
-    /**
-     * Initializes the drilldown by creating jQuery collections of elements
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Feather(this.$element, 'drilldown');
-      if (this.options.autoApplyClass) {
-        this.$element.classList.add('drilldown');
+    // Set the main menu as current by default (unless a submenu is selected)
+    // Used to set the wrapper height when the drilldown is closed/reopened from any (sub)menu
+    this.$currentMenu = this.$element;
+    this.$element.setAttribute('data-mutate', this.$element.getAttribute('data-drilldown') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'drilldown'));
+    this._prepareMenu();
+    this._registerEvents();
+    this._keyboardEvents();
+  }
+
+  /**
+   * prepares drilldown menu by setting attributes to links and elements
+   * sets a min height to prevent content jumping
+   * wraps the element if not already wrapped
+   * @private
+   * @function
+   */
+  _prepareMenu() {
+    var _this = this;
+    this.$submenuAnchors.forEach(function (link) {
+      var sub = link.parentElement;
+      if (_this.options.parentLink) {
+        // $link.clone().prependTo($sub.children('[data-submenu]')).wrap('<li .../>')
+        const submenu = sub.querySelector(':scope > [data-submenu]');
+        const wrapper = document.createElement('li');
+        wrapper.setAttribute('data-is-parent-link', '');
+        wrapper.className = 'is-submenu-parent-item is-submenu-item is-drilldown-submenu-item';
+        wrapper.setAttribute('role', 'none');
+        const cloned = link.cloneNode(true);
+        wrapper.appendChild(cloned);
+        submenu.insertBefore(wrapper, submenu.firstChild);
       }
-      this.$element.setAttribute('aria-multiselectable', 'false');
-      this.$submenuAnchors = Array.from(this.$element.querySelectorAll('li.is-drilldown-submenu-parent > a'));
-      this.$submenus = this.$submenuAnchors.map(function (a) {
-        return a.parentElement.querySelector(':scope > [data-submenu]');
-      });
-      this.$submenus.forEach(function (sub) {
-        return sub.setAttribute('role', 'group');
-      });
-      this.$menuItems = Array.from(this.$element.querySelectorAll('li:not(.js-drilldown-back) a'));
-
-      // Set the main menu as current by default (unless a submenu is selected)
-      // Used to set the wrapper height when the drilldown is closed/reopened from any (sub)menu
-      this.$currentMenu = this.$element;
-      this.$element.setAttribute('data-mutate', this.$element.getAttribute('data-drilldown') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'drilldown'));
-      this._prepareMenu();
-      this._registerEvents();
-      this._keyboardEvents();
-    }
-
-    /**
-     * prepares drilldown menu by setting attributes to links and elements
-     * sets a min height to prevent content jumping
-     * wraps the element if not already wrapped
-     * @private
-     * @function
-     */
-  }, {
-    key: "_prepareMenu",
-    value: function _prepareMenu() {
-      var _this = this;
-      this.$submenuAnchors.forEach(function (link) {
-        var sub = link.parentElement;
-        if (_this.options.parentLink) {
-          // $link.clone().prependTo($sub.children('[data-submenu]')).wrap('<li .../>')
-          var submenu = sub.querySelector(':scope > [data-submenu]');
-          var wrapper = document.createElement('li');
-          wrapper.setAttribute('data-is-parent-link', '');
-          wrapper.className = 'is-submenu-parent-item is-submenu-item is-drilldown-submenu-item';
-          wrapper.setAttribute('role', 'none');
-          var cloned = link.cloneNode(true);
-          wrapper.appendChild(cloned);
-          submenu.insertBefore(wrapper, submenu.firstChild);
+      // the savedHref rode jQuery's data cache (DOM-invisible); the expando
+      // property keeps it invisible
+      link.zfSavedHref = link.getAttribute('href');
+      link.removeAttribute('href');
+      link.setAttribute('tabindex', '0');
+      Array.from(link.children).forEach(function (child) {
+        if (child.matches('[data-submenu]')) {
+          child.setAttribute('aria-hidden', 'true');
+          child.setAttribute('tabindex', '0');
+          child.setAttribute('role', 'group');
         }
-        // the savedHref rode jQuery's data cache (DOM-invisible); the expando
-        // property keeps it invisible
-        link.zfSavedHref = link.getAttribute('href');
-        link.removeAttribute('href');
-        link.setAttribute('tabindex', '0');
-        Array.from(link.children).forEach(function (child) {
-          if (child.matches('[data-submenu]')) {
-            child.setAttribute('aria-hidden', 'true');
-            child.setAttribute('tabindex', '0');
-            child.setAttribute('role', 'group');
-          }
-        });
-        _this._events(link);
       });
-      this.$submenus.forEach(function (menu) {
-        var back = menu.querySelector('.js-drilldown-back');
-        if (!back) {
-          switch (_this.options.backButtonPosition) {
-            case "bottom":
-              menu.insertAdjacentHTML('beforeend', _this.options.backButton);
-              break;
-            case "top":
-              menu.insertAdjacentHTML('afterbegin', _this.options.backButton);
-              break;
-            default:
-              console.error("Unsupported backButtonPosition value '" + _this.options.backButtonPosition + "'");
-          }
-        }
-        _this._back(menu);
-      });
-      this.$submenus.forEach(function (sub) {
-        return sub.classList.add('invisible');
-      });
-      if (!this.options.autoHeight) {
-        this.$submenus.forEach(function (sub) {
-          return sub.classList.add('drilldown-submenu-cover-previous');
-        });
-      }
-
-      // create a wrapper on element if it doesn't exist.
-      this.wasWrapped = this.$element.parentElement.classList.contains('is-drilldown');
-      if (!this.wasWrapped) {
-        // the wrapper option is markup (7.0 terminal form: built and inserted)
-        var probe = document.createElement('template');
-        probe.innerHTML = this.options.wrapper.trim();
-        var wrapperEl = probe.content.firstElementChild;
-        wrapperEl.classList.add('is-drilldown');
-        if (this.options.animateHeight) wrapperEl.classList.add('animate-height');
-        this.$element.parentElement.insertBefore(wrapperEl, this.$element);
-        wrapperEl.appendChild(this.$element);
-      }
-      // set wrapper
-      this.$wrapper = this.$element.parentElement;
-      this._applyMaxDims(this._getMaxDims());
-    }
-  }, {
-    key: "_resize",
-    value: function _resize() {
-      this.$wrapper.style.maxWidth = 'none';
-      this.$wrapper.style.minHeight = 'none';
-      // _getMaxDims has side effects (boo) but calling it should update all other necessary heights & widths
-      this._applyMaxDims(this._getMaxDims());
-    }
-
-    // css(map) write helper (the 6.x jQuery .css(object) form)
-  }, {
-    key: "_applyMaxDims",
-    value: function _applyMaxDims(dims) {
-      var _this2 = this;
-      Object.keys(dims).forEach(function (prop) {
-        _this2.$wrapper.style[prop === 'min-height' ? 'minHeight' : prop === 'max-width' ? 'maxWidth' : prop] = dims[prop];
-      });
-    }
-
-    /**
-     * Adds event handlers to elements in the menu.
-     * @function
-     * @private
-     * @param {jQuery} $elem - the current menu item to add handlers to.
-     */
-  }, {
-    key: "_events",
-    value: function _events(link) {
-      var _this = this;
-
-      // S9: the submenu-anchor click consumer runs on the native event layer
-      // - real clicks arrive directly and jQuery-synthesized clicks on
-      // non-link elements ride the `.click()` shortcut bridge (reveal-native
-      // precedent; jQuery suppresses that shortcut for link anchors).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'click.zf.drilldown');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'click.zf.drilldown', function (e) {
-        // $(target).parentsUntil('ul', 'li') hasClass check: the nearest li
-        // ancestor strictly below a <ul>
-        var li = e.target.parentElement;
-        while (li && li.tagName !== 'UL') {
-          if (li.matches('li.is-drilldown-submenu-parent')) {
+      _this._events(link);
+    });
+    this.$submenus.forEach(function (menu) {
+      var back = menu.querySelector('.js-drilldown-back');
+      if (!back) {
+        switch (_this.options.backButtonPosition) {
+          case "bottom":
+            menu.insertAdjacentHTML('beforeend', _this.options.backButton);
             break;
-          }
-          li = li.parentElement;
+          case "top":
+            menu.insertAdjacentHTML('afterbegin', _this.options.backButton);
+            break;
+          default:
+            console.error("Unsupported backButtonPosition value '" + _this.options.backButtonPosition + "'");
         }
-        if (li && li.tagName !== 'UL' && li.matches('li.is-drilldown-submenu-parent')) {
-          e.preventDefault();
-        }
-
-        // if(e.target !== e.currentTarget.firstElementChild){
-        //   return false;
-        // }
-        _this._show(link.parentElement);
-        if (_this.options.closeOnClick) {
-          var body = document.body;
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(body, '.zf.drilldown');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(body, 'click.zf.drilldown', function (ev) {
-            if (ev.target === _this.$element || _this.$element.contains(ev.target)) {
-              return;
-            }
-            ev.preventDefault();
-            _this._hideAll();
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(body, '.zf.drilldown');
-          });
-        }
-      });
-    }
-
-    /**
-     * Adds event handlers to the menu element.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_registerEvents",
-    value: function _registerEvents() {
-      if (this.options.scrollTop) {
-        // S9: the self-consumer runs with its producers - the four state
-        // events arrive as real events on the native layer.
-        this._bindHandler = this._scrollTop.bind(this);
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
       }
-      // S10 group flip: the mutateme consumer is native since the group flip.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'mutateme.zf.trigger', this._resize.bind(this));
+      _this._back(menu);
+    });
+    this.$submenus.forEach(sub => sub.classList.add('invisible'));
+    if (!this.options.autoHeight) {
+      this.$submenus.forEach(sub => sub.classList.add('drilldown-submenu-cover-previous'));
     }
 
-    /**
-     * Scroll to Top of Element or data-scroll-top-element
-     * @function
-     * @fires Drilldown#scrollme
-     */
-  }, {
-    key: "_scrollTop",
-    value: function _scrollTop() {
-      var _this = this;
-      var scrollTopElement = _this.options.scrollTopElement !== '' ? document.querySelector(_this.options.scrollTopElement) : _this.$element,
-        scrollPos = parseInt(scrollTopElement.getBoundingClientRect().top + window.pageYOffset + _this.options.scrollTopOffset, 10);
-      // fx 方案 A: the scroll tween runs on Motion's native primitive with
-      // the stop(true) debounce (clearQueue) semantics riding along. 6.x
-      // animated html AND body (two callbacks) and fired scrollme only on the
-      // html one; the native single viewport tween delivers the callback once,
-      // so the guard collapses to an unconditional trigger (ledger ②).
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.stop(document.documentElement, true);
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
-        scrollTop: scrollPos
-      }, _this.options.animationDuration, _this.options.animationEasing, function () {
-        /**
-          * Fires after the menu has scrolled
-          * @event Drilldown#scrollme
-          */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'scrollme.zf.drilldown');
-      });
+    // create a wrapper on element if it doesn't exist.
+    this.wasWrapped = this.$element.parentElement.classList.contains('is-drilldown');
+    if (!this.wasWrapped) {
+      // the wrapper option is markup (7.0 terminal form: built and inserted)
+      var probe = document.createElement('template');
+      probe.innerHTML = this.options.wrapper.trim();
+      var wrapperEl = probe.content.firstElementChild;
+      wrapperEl.classList.add('is-drilldown');
+      if (this.options.animateHeight) wrapperEl.classList.add('animate-height');
+      this.$element.parentElement.insertBefore(wrapperEl, this.$element);
+      wrapperEl.appendChild(this.$element);
     }
+    // set wrapper
+    this.$wrapper = this.$element.parentElement;
+    this._applyMaxDims(this._getMaxDims());
+  }
+  _resize() {
+    this.$wrapper.style.maxWidth = 'none';
+    this.$wrapper.style.minHeight = 'none';
+    // _getMaxDims has side effects (boo) but calling it should update all other necessary heights & widths
+    this._applyMaxDims(this._getMaxDims());
+  }
 
-    /**
-     * Adds keydown event listener to `li`'s in the menu.
-     * @private
-     */
-  }, {
-    key: "_keyboardEvents",
-    value: function _keyboardEvents() {
-      var _this = this;
+  // css(map) write helper (the 6.x jQuery .css(object) form)
+  _applyMaxDims(dims) {
+    Object.keys(dims).forEach(prop => {
+      this.$wrapper.style[prop === 'min-height' ? 'minHeight' : prop === 'max-width' ? 'maxWidth' : prop] = dims[prop];
+    });
+  }
 
-      // 7.0 terminal form: the keydown listener runs on the native event
-      // layer (the coarse suite's mocks dispatch real KeyboardEvents since
-      // the S16 migration), on every menu link and back/parent-link anchor
-      // like the collection-wide .on() did. The transitionend follow-ups are
-      // Events.one waits now - the coarse suite drives them through the
-      // native triggerHandler (updated with this flip).
-      var links = this.$menuItems.concat(Array.from(this.$element.querySelectorAll('.js-drilldown-back > a, .is-submenu-parent-item > a')));
-      links.forEach(function (link) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'keydown.zf.drilldown');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'keydown.zf.drilldown', function (e) {
-          var element = this,
-            menuUl = element.parentElement.parentElement,
-            elements = Array.from(menuUl.querySelectorAll(':scope > li > a')),
-            prevElement,
-            nextElement;
-          var i = elements.indexOf(element);
-          prevElement = elements[Math.max(0, i - 1)];
-          nextElement = elements[Math.min(i + 1, elements.length - 1)];
-          var parentLi = element.parentElement;
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Drilldown', {
-            next: function next() {
-              if (_this.$submenuAnchors.indexOf(element) !== -1) {
-                _this._show(parentLi);
-                _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi), function () {
-                  // jQuery's find('ul li a') scoped the subtree (the item's
-                  // own anchor never matched); the native form takes the
-                  // anchors INSIDE a submenu
-                  var focusables = Array.from(parentLi.querySelectorAll('a')).filter(function (a) {
-                    return a.closest('[data-submenu]') && !a.closest('.js-drilldown-back');
-                  });
-                  if (focusables[0]) {
-                    focusables[0].focus();
-                  }
-                });
-                return true;
+  /**
+   * Adds event handlers to elements in the menu.
+   * @function
+   * @private
+   * @param {jQuery} $elem - the current menu item to add handlers to.
+   */
+  _events(link) {
+    var _this = this;
+
+    // S9: the submenu-anchor click consumer runs on the native event layer
+    // - real clicks arrive directly and jQuery-synthesized clicks on
+    // non-link elements ride the `.click()` shortcut bridge (reveal-native
+    // precedent; jQuery suppresses that shortcut for link anchors).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'click.zf.drilldown');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'click.zf.drilldown', function (e) {
+      // $(target).parentsUntil('ul', 'li') hasClass check: the nearest li
+      // ancestor strictly below a <ul>
+      var li = e.target.parentElement;
+      while (li && li.tagName !== 'UL') {
+        if (li.matches('li.is-drilldown-submenu-parent')) {
+          break;
+        }
+        li = li.parentElement;
+      }
+      if (li && li.tagName !== 'UL' && li.matches('li.is-drilldown-submenu-parent')) {
+        e.preventDefault();
+      }
+
+      // if(e.target !== e.currentTarget.firstElementChild){
+      //   return false;
+      // }
+      _this._show(link.parentElement);
+      if (_this.options.closeOnClick) {
+        var body = document.body;
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(body, '.zf.drilldown');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(body, 'click.zf.drilldown', function (ev) {
+          if (ev.target === _this.$element || _this.$element.contains(ev.target)) {
+            return;
+          }
+          ev.preventDefault();
+          _this._hideAll();
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(body, '.zf.drilldown');
+        });
+      }
+    });
+  }
+
+  /**
+   * Adds event handlers to the menu element.
+   * @function
+   * @private
+   */
+  _registerEvents() {
+    if (this.options.scrollTop) {
+      // S9: the self-consumer runs with its producers - the four state
+      // events arrive as real events on the native layer.
+      this._bindHandler = this._scrollTop.bind(this);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
+    }
+    // S10 group flip: the mutateme consumer is native since the group flip.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'mutateme.zf.trigger', this._resize.bind(this));
+  }
+
+  /**
+   * Scroll to Top of Element or data-scroll-top-element
+   * @function
+   * @fires Drilldown#scrollme
+   */
+  _scrollTop() {
+    var _this = this;
+    var scrollTopElement = _this.options.scrollTopElement !== '' ? document.querySelector(_this.options.scrollTopElement) : _this.$element,
+      scrollPos = parseInt(scrollTopElement.getBoundingClientRect().top + window.pageYOffset + _this.options.scrollTopOffset, 10);
+    // fx 方案 A: the scroll tween runs on Motion's native primitive with
+    // the stop(true) debounce (clearQueue) semantics riding along. 6.x
+    // animated html AND body (two callbacks) and fired scrollme only on the
+    // html one; the native single viewport tween delivers the callback once,
+    // so the guard collapses to an unconditional trigger (ledger ②).
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.stop(document.documentElement, true);
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
+      scrollTop: scrollPos
+    }, _this.options.animationDuration, _this.options.animationEasing, function () {
+      /**
+        * Fires after the menu has scrolled
+        * @event Drilldown#scrollme
+        */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'scrollme.zf.drilldown');
+    });
+  }
+
+  /**
+   * Adds keydown event listener to `li`'s in the menu.
+   * @private
+   */
+  _keyboardEvents() {
+    var _this = this;
+
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration), on every menu link and back/parent-link anchor
+    // like the collection-wide .on() did. The transitionend follow-ups are
+    // Events.one waits now - the coarse suite drives them through the
+    // native triggerHandler (updated with this flip).
+    var links = this.$menuItems.concat(Array.from(this.$element.querySelectorAll('.js-drilldown-back > a, .is-submenu-parent-item > a')));
+    links.forEach(function (link) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'keydown.zf.drilldown');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'keydown.zf.drilldown', function (e) {
+        var element = this,
+          menuUl = element.parentElement.parentElement,
+          elements = Array.from(menuUl.querySelectorAll(':scope > li > a')),
+          prevElement,
+          nextElement;
+        var i = elements.indexOf(element);
+        prevElement = elements[Math.max(0, i - 1)];
+        nextElement = elements[Math.min(i + 1, elements.length - 1)];
+        var parentLi = element.parentElement;
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Drilldown', {
+          next: function () {
+            if (_this.$submenuAnchors.indexOf(element) !== -1) {
+              _this._show(parentLi);
+              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi), function () {
+                // jQuery's find('ul li a') scoped the subtree (the item's
+                // own anchor never matched); the native form takes the
+                // anchors INSIDE a submenu
+                var focusables = Array.from(parentLi.querySelectorAll('a')).filter(a => a.closest('[data-submenu]') && !a.closest('.js-drilldown-back'));
+                if (focusables[0]) {
+                  focusables[0].focus();
+                }
+              });
+              return true;
+            }
+          },
+          previous: function () {
+            _this._hide(menuUl);
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(menuUl, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(menuUl), function () {
+              setTimeout(function () {
+                var outerLink = menuUl.parentElement.querySelector(':scope > a');
+                if (outerLink) {
+                  outerLink.focus();
+                }
+              }, 1);
+            });
+            return true;
+          },
+          up: function () {
+            if (prevElement) prevElement.focus();
+            // Don't tap focus on first element in root ul
+            return !(element === _this.$element.querySelector(':scope > li:first-child > a'));
+          },
+          down: function () {
+            if (nextElement) nextElement.focus();
+            // Don't tap focus on last element in root ul
+            return !(element === _this.$element.querySelector(':scope > li:last-child > a'));
+          },
+          close: function () {
+            // Don't close on element in root ul
+            if (_this.$element.querySelector(':scope > li > a') !== element) {
+              _this._hide(element.parentElement.parentElement);
+              var siblingLink = element.parentElement.parentElement.querySelector(':scope > a');
+              if (siblingLink) {
+                siblingLink.focus();
               }
-            },
-            previous: function previous() {
-              _this._hide(menuUl);
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(menuUl, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(menuUl), function () {
+            }
+          },
+          open: function () {
+            if (_this.options.parentLink && element.getAttribute('href')) {
+              // Link with href
+              return false;
+            } else if (_this.$menuItems.indexOf(element) === -1) {
+              // not menu item means back button
+              _this._hide(parentLi.parentElement);
+              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi.parentElement, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi.parentElement), function () {
                 setTimeout(function () {
-                  var outerLink = menuUl.parentElement.querySelector(':scope > a');
+                  var outerLink = parentLi.parentElement.parentElement.querySelector(':scope > a');
                   if (outerLink) {
                     outerLink.focus();
                   }
                 }, 1);
               });
               return true;
-            },
-            up: function up() {
-              if (prevElement) prevElement.focus();
-              // Don't tap focus on first element in root ul
-              return !(element === _this.$element.querySelector(':scope > li:first-child > a'));
-            },
-            down: function down() {
-              if (nextElement) nextElement.focus();
-              // Don't tap focus on last element in root ul
-              return !(element === _this.$element.querySelector(':scope > li:last-child > a'));
-            },
-            close: function close() {
-              // Don't close on element in root ul
-              if (_this.$element.querySelector(':scope > li > a') !== element) {
-                _this._hide(element.parentElement.parentElement);
-                var siblingLink = element.parentElement.parentElement.querySelector(':scope > a');
-                if (siblingLink) {
-                  siblingLink.focus();
+            } else if (_this.$submenuAnchors.indexOf(element) !== -1) {
+              // Sub menu item
+              _this._show(parentLi);
+              _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi), function () {
+                var focusables = Array.from(parentLi.querySelectorAll('a')).filter(a => a.closest('[data-submenu]') && !a.closest('.js-drilldown-back'));
+                if (focusables[0]) {
+                  focusables[0].focus();
                 }
-              }
-            },
-            open: function open() {
-              if (_this.options.parentLink && element.getAttribute('href')) {
-                // Link with href
-                return false;
-              } else if (_this.$menuItems.indexOf(element) === -1) {
-                // not menu item means back button
-                _this._hide(parentLi.parentElement);
-                _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi.parentElement, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi.parentElement), function () {
-                  setTimeout(function () {
-                    var outerLink = parentLi.parentElement.parentElement.querySelector(':scope > a');
-                    if (outerLink) {
-                      outerLink.focus();
-                    }
-                  }, 1);
-                });
-                return true;
-              } else if (_this.$submenuAnchors.indexOf(element) !== -1) {
-                // Sub menu item
-                _this._show(parentLi);
-                _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(parentLi, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(parentLi), function () {
-                  var focusables = Array.from(parentLi.querySelectorAll('a')).filter(function (a) {
-                    return a.closest('[data-submenu]') && !a.closest('.js-drilldown-back');
-                  });
-                  if (focusables[0]) {
-                    focusables[0].focus();
-                  }
-                });
-                return true;
-              }
-            },
-            handled: function handled(preventDefault) {
-              if (preventDefault) {
-                e.preventDefault();
-              }
+              });
+              return true;
             }
-          });
-        });
-      }); // end keyboardAccess
-    }
-
-    /**
-     * Closes all open elements, and returns to root menu.
-     * @function
-     * @fires Drilldown#close
-     * @fires Drilldown#closed
-     */
-  }, {
-    key: "_hideAll",
-    value: function _hideAll() {
-      var _this3 = this;
-      // 6.x: the FIRST active submenu drove the class flips and the height
-      var elem = this.$element.querySelector('.is-drilldown-submenu.is-active');
-      var outerUl = elem && elem.parentElement ? elem.parentElement.closest('ul') : null;
-      if (elem) {
-        elem.classList.add('is-closing');
-      }
-      if (outerUl) {
-        outerUl.classList.remove('invisible');
-      }
-      if (this.options.autoHeight && outerUl) {
-        var calcHeight = outerUl.zfCalcHeight;
-        this.$wrapper.style.height = (calcHeight || 0) + 'px';
-      }
-
-      /**
-       * Fires when the menu is closing.
-       * @event Drilldown#close
-       */
-      // S9: state production through the native event layer; still-on-jQuery
-      // listeners receive the real bubbling event (white absorption).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'close.zf.drilldown');
-
-      // 7.0 terminal form: the transitionend wait is an Events.one - the
-      // coarse suite drives it through the native triggerHandler.
-      if (elem) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(elem, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(elem), function () {
-          elem.classList.remove('is-active', 'is-closing');
-
-          /**
-           * Fires when the menu is fully closed.
-           * @event Drilldown#closed
-           */
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this3.$element, 'closed.zf.drilldown');
-        });
-      } else {
-        // nothing was open: the 6.x empty-collection .one() never armed, and
-        // the coarse suite fires closed.zf.drilldown by driving the wait on
-        // whatever element it holds - keep the event contract total by
-        // firing it immediately
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'closed.zf.drilldown');
-      }
-    }
-
-    /**
-     * Adds event listener for each `back` button, and closes open menus.
-     * @function
-     * @fires Drilldown#back
-     * @param {jQuery} $elem - the current sub-menu to add `back` event.
-     */
-  }, {
-    key: "_back",
-    value: function _back(menu) {
-      var _this = this;
-      var back = menu.querySelector(':scope > .js-drilldown-back');
-      if (!back) {
-        return;
-      }
-      // S9: the back-button click consumer runs on the native event layer.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(back, 'click.zf.drilldown');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(back, 'click.zf.drilldown', function () {
-        _this._hide(menu);
-
-        // If there is a parent submenu, call show
-        var outerUl = menu.parentElement.parentElement;
-        var parentSubMenu = outerUl ? outerUl.parentElement : null;
-        if (parentSubMenu && parentSubMenu.matches('li')) {
-          _this._show(parentSubMenu);
-        } else {
-          _this.$currentMenu = _this.$element;
-        }
-      });
-    }
-
-    /**
-     * Adds event listener to menu items w/o submenus to close open menus on click.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_menuLinkEvents",
-    value: function _menuLinkEvents() {
-      var _this = this;
-      this.$menuItems.filter(function (a) {
-        return !a.matches('.is-drilldown-submenu-parent');
-      }).forEach(function (link) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'click.zf.drilldown');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'click.zf.drilldown', function () {
-          setTimeout(function () {
-            _this._hideAll();
-          }, 0);
-        });
-      });
-    }
-
-    /**
-     * Sets the CSS classes for submenu to show it.
-     * @function
-     * @private
-     * @param {jQuery} $elem - the target submenu (`ul` tag)
-     * @param {boolean} trigger - trigger drilldown event
-     */
-  }, {
-    key: "_setShowSubMenuClasses",
-    value: function _setShowSubMenuClasses(elem, trigger) {
-      elem = elem.nodeType === 1 ? elem : elem[0];
-      // S9: class/ARIA state flips natively.
-      elem.classList.add('is-active');
-      elem.classList.remove('invisible');
-      elem.setAttribute('aria-hidden', 'false');
-      if (elem.parentElement) {
-        elem.parentElement.setAttribute('aria-expanded', 'true');
-      }
-      if (trigger === true) {
-        // Terminal form: the forwarded submenu is the plain element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'open.zf.drilldown', [elem]);
-      }
-    }
-
-    /**
-     * Sets the CSS classes for submenu to hide it.
-     * @function
-     * @private
-     * @param {jQuery} $elem - the target submenu (`ul` tag)
-     * @param {boolean} trigger - trigger drilldown event
-     */
-  }, {
-    key: "_setHideSubMenuClasses",
-    value: function _setHideSubMenuClasses(elem, trigger) {
-      elem = elem.nodeType === 1 ? elem : elem[0];
-      // S9: class/ARIA state flips natively.
-      elem.classList.remove('is-active');
-      elem.classList.add('invisible');
-      elem.setAttribute('aria-hidden', 'true');
-      if (elem.parentElement) {
-        elem.parentElement.setAttribute('aria-expanded', 'false');
-      }
-      if (trigger === true) {
-        // Terminal form: the forwarded submenu is the plain element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(elem, 'hide.zf.drilldown', [elem]);
-      }
-    }
-
-    /**
-     * Opens a specific drilldown (sub)menu no matter which (sub)menu in it is currently visible.
-     * Compared to _show() this lets you jump into any submenu without clicking through every submenu on the way to it.
-     * @function
-     * @fires Drilldown#open
-     * @param {jQuery} $elem - the target (sub)menu (`ul` tag)
-     * @param {boolean} autoFocus - if true the first link in the target (sub)menu gets auto focused
-     */
-  }, {
-    key: "_showMenu",
-    value: function _showMenu(elem, autoFocus) {
-      var _this = this;
-      elem = elem && elem.nodeType === 1 ? elem : elem[0];
-
-      // Reset drilldown
-      var expandedSubmenus = Array.from(this.$element.querySelectorAll('li[aria-expanded="true"] > ul[data-submenu]'));
-      expandedSubmenus.forEach(function (sub) {
-        _this._setHideSubMenuClasses(sub);
-      });
-
-      // Save the menu as the currently displayed one.
-      this.$currentMenu = elem;
-
-      // If target menu is root, focus first link & exit
-      if (elem.matches('[data-drilldown]')) {
-        if (autoFocus === true) {
-          var rootLink = elem.querySelector('li > a');
-          if (rootLink) {
-            rootLink.focus();
+          },
+          handled: function (preventDefault) {
+            if (preventDefault) {
+              e.preventDefault();
+            }
           }
-        }
-        if (this.options.autoHeight) this.$wrapper.style.height = elem.zfCalcHeight + 'px';
-        return;
-      }
-
-      // Find all submenus on way to root incl. the element itself:
-      // jQuery's parentsUntil(root, sel) - the [data-submenu] ancestors
-      // strictly below the drilldown root
-      var submenus = [];
-      var anc = elem.firstElementChild ? elem.firstElementChild.parentElement : elem;
-      anc = elem.querySelector(':scope > *') ? elem.querySelector(':scope > *').parentElement : elem;
-      var walker = elem.firstElementChild;
-      while (walker && walker !== this.$element) {
-        if (walker.matches('[data-submenu]')) {
-          submenus.push(walker);
-        }
-        walker = walker.parentElement;
-      }
-
-      // Open target menu and all submenus on its way to root
-      submenus.forEach(function (submenu, index) {
-        // Update height of first child (target menu) if autoHeight option true
-        if (index === 0 && _this.options.autoHeight) {
-          _this.$wrapper.style.height = submenu.zfCalcHeight + 'px';
-        }
-        var isLastChild = index === submenus.length - 1;
-
-        // Add transitionsend listener to last child (root due to reverse order) to open target menu's first link
-        // Last child makes sure the event gets always triggered even if going through several menus
-        if (isLastChild === true) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(submenu, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(submenu), function () {
-            if (autoFocus === true) {
-              var link = elem.querySelector('li > a');
-              if (link) {
-                link.focus();
-              }
-            }
-          });
-        }
-        _this._setShowSubMenuClasses(submenu, isLastChild);
+        });
       });
+    }); // end keyboardAccess
+  }
+
+  /**
+   * Closes all open elements, and returns to root menu.
+   * @function
+   * @fires Drilldown#close
+   * @fires Drilldown#closed
+   */
+  _hideAll() {
+    // 6.x: the FIRST active submenu drove the class flips and the height
+    var elem = this.$element.querySelector('.is-drilldown-submenu.is-active');
+    var outerUl = elem && elem.parentElement ? elem.parentElement.closest('ul') : null;
+    if (elem) {
+      elem.classList.add('is-closing');
+    }
+    if (outerUl) {
+      outerUl.classList.remove('invisible');
+    }
+    if (this.options.autoHeight && outerUl) {
+      const calcHeight = outerUl.zfCalcHeight;
+      this.$wrapper.style.height = (calcHeight || 0) + 'px';
     }
 
     /**
-     * Opens a submenu.
-     * @function
-     * @fires Drilldown#open
-     * @param {jQuery} $elem - the current element with a submenu to open, i.e. the `li` tag.
+     * Fires when the menu is closing.
+     * @event Drilldown#close
      */
-  }, {
-    key: "_show",
-    value: function _show(elem) {
-      elem = elem.nodeType === 1 ? elem : elem[0];
-      var submenu = elem.querySelector(':scope > [data-submenu]');
+    // S9: state production through the native event layer; still-on-jQuery
+    // listeners receive the real bubbling event (white absorption).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'close.zf.drilldown');
 
-      // S9: class/ARIA state flips natively.
-      elem.setAttribute('aria-expanded', 'true');
-      this.$currentMenu = submenu;
+    // 7.0 terminal form: the transitionend wait is an Events.one - the
+    // coarse suite drives it through the native triggerHandler.
+    if (elem) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(elem, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(elem), () => {
+        elem.classList.remove('is-active', 'is-closing');
 
-      //hide drilldown parent menu when submenu is open
-      // this removes it from the dom so that the tab key will take the user to the next visible element
-      var parentUl = elem.parentElement.closest('ul');
-      if (parentUl) {
-        parentUl.classList.add('invisible');
+        /**
+         * Fires when the menu is fully closed.
+         * @event Drilldown#closed
+         */
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'closed.zf.drilldown');
+      });
+    } else {
+      // nothing was open: the 6.x empty-collection .one() never armed, and
+      // the coarse suite fires closed.zf.drilldown by driving the wait on
+      // whatever element it holds - keep the event contract total by
+      // firing it immediately
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'closed.zf.drilldown');
+    }
+  }
+
+  /**
+   * Adds event listener for each `back` button, and closes open menus.
+   * @function
+   * @fires Drilldown#back
+   * @param {jQuery} $elem - the current sub-menu to add `back` event.
+   */
+  _back(menu) {
+    var _this = this;
+    const back = menu.querySelector(':scope > .js-drilldown-back');
+    if (!back) {
+      return;
+    }
+    // S9: the back-button click consumer runs on the native event layer.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(back, 'click.zf.drilldown');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(back, 'click.zf.drilldown', function () {
+      _this._hide(menu);
+
+      // If there is a parent submenu, call show
+      var outerUl = menu.parentElement.parentElement;
+      let parentSubMenu = outerUl ? outerUl.parentElement : null;
+      if (parentSubMenu && parentSubMenu.matches('li')) {
+        _this._show(parentSubMenu);
+      } else {
+        _this.$currentMenu = _this.$element;
       }
+    });
+  }
 
-      // add visible class to submenu to override invisible class above
-      if (submenu) {
-        submenu.classList.add('is-active', 'visible');
-        submenu.classList.remove('invisible');
-        submenu.setAttribute('aria-hidden', 'false');
-      }
-      if (this.options.autoHeight && submenu) {
-        this.$wrapper.style.height = submenu.zfCalcHeight + 'px';
-      }
+  /**
+   * Adds event listener to menu items w/o submenus to close open menus on click.
+   * @function
+   * @private
+   */
+  _menuLinkEvents() {
+    var _this = this;
+    this.$menuItems.filter(a => !a.matches('.is-drilldown-submenu-parent')).forEach(function (link) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(link, 'click.zf.drilldown');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(link, 'click.zf.drilldown', function () {
+        setTimeout(function () {
+          _this._hideAll();
+        }, 0);
+      });
+    });
+  }
 
-      /**
-       * Fires when the submenu has opened.
-       * @event Drilldown#open
-       */
-      // S9: state production through the native layer; the terminal form
-      // forwards the plain li element.
+  /**
+   * Sets the CSS classes for submenu to show it.
+   * @function
+   * @private
+   * @param {jQuery} $elem - the target submenu (`ul` tag)
+   * @param {boolean} trigger - trigger drilldown event
+   */
+  _setShowSubMenuClasses(elem, trigger) {
+    elem = elem.nodeType === 1 ? elem : elem[0];
+    // S9: class/ARIA state flips natively.
+    elem.classList.add('is-active');
+    elem.classList.remove('invisible');
+    elem.setAttribute('aria-hidden', 'false');
+    if (elem.parentElement) {
+      elem.parentElement.setAttribute('aria-expanded', 'true');
+    }
+    if (trigger === true) {
+      // Terminal form: the forwarded submenu is the plain element.
       _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'open.zf.drilldown', [elem]);
     }
+  }
 
-    /**
-     * Hides a submenu
-     * @function
-     * @fires Drilldown#hide
-     * @param {jQuery} $elem - the current sub-menu to hide, i.e. the `ul` tag.
-     */
-  }, {
-    key: "_hide",
-    value: function _hide(elem) {
-      elem = elem.nodeType === 1 ? elem : elem[0];
-      var outerUl = elem.parentElement ? elem.parentElement.closest('ul') : null;
-      if (this.options.autoHeight && outerUl) this.$wrapper.style.height = outerUl.zfCalcHeight + 'px';
-      if (outerUl) {
-        outerUl.classList.remove('invisible');
-      }
-      if (elem.parentElement) {
-        elem.parentElement.setAttribute('aria-expanded', 'false');
-      }
-      // S9: class/ARIA state flips natively.
-      elem.setAttribute('aria-hidden', 'true');
-      elem.classList.add('is-closing');
-      // 7.0 terminal form: the transitionend wait is an Events.one - the
-      // coarse suite drives it through the native triggerHandler.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(elem, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(elem), function () {
-        elem.classList.remove('is-active', 'is-closing', 'visible');
-        elem.blur();
-        elem.classList.add('invisible');
-      });
-      /**
-       * Fires when the submenu has closed.
-       * @event Drilldown#hide
-       */
+  /**
+   * Sets the CSS classes for submenu to hide it.
+   * @function
+   * @private
+   * @param {jQuery} $elem - the target submenu (`ul` tag)
+   * @param {boolean} trigger - trigger drilldown event
+   */
+  _setHideSubMenuClasses(elem, trigger) {
+    elem = elem.nodeType === 1 ? elem : elem[0];
+    // S9: class/ARIA state flips natively.
+    elem.classList.remove('is-active');
+    elem.classList.add('invisible');
+    elem.setAttribute('aria-hidden', 'true');
+    if (elem.parentElement) {
+      elem.parentElement.setAttribute('aria-expanded', 'false');
+    }
+    if (trigger === true) {
       // Terminal form: the forwarded submenu is the plain element.
       _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(elem, 'hide.zf.drilldown', [elem]);
     }
+  }
 
-    /**
-     * Iterates through the nested menus to calculate the min-height, and max-width for the menu.
-     * Prevents content jumping.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_getMaxDims",
-    value: function _getMaxDims() {
-      var maxHeight = 0,
-        result = {},
-        _this = this;
+  /**
+   * Opens a specific drilldown (sub)menu no matter which (sub)menu in it is currently visible.
+   * Compared to _show() this lets you jump into any submenu without clicking through every submenu on the way to it.
+   * @function
+   * @fires Drilldown#open
+   * @param {jQuery} $elem - the target (sub)menu (`ul` tag)
+   * @param {boolean} autoFocus - if true the first link in the target (sub)menu gets auto focused
+   */
+  _showMenu(elem, autoFocus) {
+    var _this = this;
+    elem = elem && elem.nodeType === 1 ? elem : elem[0];
 
-      // Recalculate menu heights and total max height
-      var measured = this.$submenus.concat([this.$element]);
-      measured.forEach(function (el) {
-        var height = _foundation_util_box__WEBPACK_IMPORTED_MODULE_5__.Box.GetDimensions(el).height;
-        maxHeight = height > maxHeight ? height : maxHeight;
-        if (_this.options.autoHeight) {
-          // the calcHeight rode jQuery's data cache (DOM-invisible); the
-          // expando property keeps it invisible
-          el.zfCalcHeight = height;
+    // Reset drilldown
+    var expandedSubmenus = Array.from(this.$element.querySelectorAll('li[aria-expanded="true"] > ul[data-submenu]'));
+    expandedSubmenus.forEach(function (sub) {
+      _this._setHideSubMenuClasses(sub);
+    });
+
+    // Save the menu as the currently displayed one.
+    this.$currentMenu = elem;
+
+    // If target menu is root, focus first link & exit
+    if (elem.matches('[data-drilldown]')) {
+      if (autoFocus === true) {
+        var rootLink = elem.querySelector('li > a');
+        if (rootLink) {
+          rootLink.focus();
         }
-      });
-      if (this.options.autoHeight) result.height = (this.$currentMenu.zfCalcHeight || 0) + 'px';else result['min-height'] = "".concat(maxHeight, "px");
-      result['max-width'] = "".concat(this.$element.getBoundingClientRect().width, "px");
-      return result;
+      }
+      if (this.options.autoHeight) this.$wrapper.style.height = elem.zfCalcHeight + 'px';
+      return;
+    }
+
+    // Find all submenus on way to root incl. the element itself:
+    // jQuery's parentsUntil(root, sel) - the [data-submenu] ancestors
+    // strictly below the drilldown root
+    var submenus = [];
+    var walker = elem.firstElementChild;
+    while (walker && walker !== this.$element) {
+      if (walker.matches('[data-submenu]')) {
+        submenus.push(walker);
+      }
+      walker = walker.parentElement;
+    }
+
+    // Open target menu and all submenus on its way to root
+    submenus.forEach(function (submenu, index) {
+      // Update height of first child (target menu) if autoHeight option true
+      if (index === 0 && _this.options.autoHeight) {
+        _this.$wrapper.style.height = submenu.zfCalcHeight + 'px';
+      }
+      var isLastChild = index === submenus.length - 1;
+
+      // Add transitionsend listener to last child (root due to reverse order) to open target menu's first link
+      // Last child makes sure the event gets always triggered even if going through several menus
+      if (isLastChild === true) {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(submenu, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(submenu), () => {
+          if (autoFocus === true) {
+            var link = elem.querySelector('li > a');
+            if (link) {
+              link.focus();
+            }
+          }
+        });
+      }
+      _this._setShowSubMenuClasses(submenu, isLastChild);
+    });
+  }
+
+  /**
+   * Opens a submenu.
+   * @function
+   * @fires Drilldown#open
+   * @param {jQuery} $elem - the current element with a submenu to open, i.e. the `li` tag.
+   */
+  _show(elem) {
+    elem = elem.nodeType === 1 ? elem : elem[0];
+    const submenu = elem.querySelector(':scope > [data-submenu]');
+
+    // S9: class/ARIA state flips natively.
+    elem.setAttribute('aria-expanded', 'true');
+    this.$currentMenu = submenu;
+
+    //hide drilldown parent menu when submenu is open
+    // this removes it from the dom so that the tab key will take the user to the next visible element
+    var parentUl = elem.parentElement.closest('ul');
+    if (parentUl) {
+      parentUl.classList.add('invisible');
+    }
+
+    // add visible class to submenu to override invisible class above
+    if (submenu) {
+      submenu.classList.add('is-active', 'visible');
+      submenu.classList.remove('invisible');
+      submenu.setAttribute('aria-hidden', 'false');
+    }
+    if (this.options.autoHeight && submenu) {
+      this.$wrapper.style.height = submenu.zfCalcHeight + 'px';
     }
 
     /**
-     * Destroys the Drilldown Menu
-     * @function
+     * Fires when the submenu has opened.
+     * @event Drilldown#open
      */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The plugin-namespaced listeners on the body, element and anchors -
-      // the library's own table only (third-party listeners survive, the 7.0
-      // ownership semantics).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, '.zf.drilldown');
-      if (this.options.scrollTop) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
-      }
-      this._hideAll();
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'mutateme.zf.trigger');
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Burn(this.$element, 'drilldown');
-      if (!this.wasWrapped) {
-        // .unwrap(): the wrapper is replaced by its children
-        var wrapper = this.$element.parentElement;
-        while (wrapper.firstChild) {
-          wrapper.parentElement.insertBefore(wrapper.firstChild, wrapper);
-        }
-        wrapper.remove();
-      }
-      this.$element.querySelectorAll('.js-drilldown-back, .is-submenu-parent-item').forEach(function (el) {
-        return el.remove();
-      });
-      this.$element.querySelectorAll('.is-active, .is-closing, .is-drilldown-submenu').forEach(function (el) {
-        el.classList.remove('is-active', 'is-closing', 'is-drilldown-submenu');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'transitionend otransitionend webkitTransitionEnd');
-      });
-      this.$element.querySelectorAll('[data-submenu]').forEach(function (el) {
-        el.removeAttribute('aria-hidden');
-        el.removeAttribute('tabindex');
-        el.removeAttribute('role');
-      });
-      this.$submenuAnchors.forEach(function (anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(anchor, '.zf.drilldown');
-      });
-      this.$element.querySelectorAll('[data-is-parent-link]').forEach(function (el) {
-        return el.remove();
-      });
-      this.$submenus.forEach(function (sub) {
-        return sub.classList.remove('drilldown-submenu-cover-previous', 'invisible');
-      });
-      this.$element.querySelectorAll('a').forEach(function (link) {
-        link.removeAttribute('tabindex');
-        if (link.zfSavedHref) {
-          link.setAttribute('href', link.zfSavedHref);
-          link.zfSavedHref = null;
-        } else {
-          return;
-        }
-      });
+    // S9: state production through the native layer; the terminal form
+    // forwards the plain li element.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'open.zf.drilldown', [elem]);
+  }
+
+  /**
+   * Hides a submenu
+   * @function
+   * @fires Drilldown#hide
+   * @param {jQuery} $elem - the current sub-menu to hide, i.e. the `ul` tag.
+   */
+  _hide(elem) {
+    elem = elem.nodeType === 1 ? elem : elem[0];
+    var outerUl = elem.parentElement ? elem.parentElement.closest('ul') : null;
+    if (this.options.autoHeight && outerUl) this.$wrapper.style.height = outerUl.zfCalcHeight + 'px';
+    if (outerUl) {
+      outerUl.classList.remove('invisible');
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__.Plugin);
+    if (elem.parentElement) {
+      elem.parentElement.setAttribute('aria-expanded', 'false');
+    }
+    // S9: class/ARIA state flips natively.
+    elem.setAttribute('aria-hidden', 'true');
+    elem.classList.add('is-closing');
+    // 7.0 terminal form: the transitionend wait is an Events.one - the
+    // coarse suite drives it through the native triggerHandler.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(elem, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.transitionend)(elem), function () {
+      elem.classList.remove('is-active', 'is-closing', 'visible');
+      elem.blur();
+      elem.classList.add('invisible');
+    });
+    /**
+     * Fires when the submenu has closed.
+     * @event Drilldown#hide
+     */
+    // Terminal form: the forwarded submenu is the plain element.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(elem, 'hide.zf.drilldown', [elem]);
+  }
+
+  /**
+   * Iterates through the nested menus to calculate the min-height, and max-width for the menu.
+   * Prevents content jumping.
+   * @function
+   * @private
+   */
+  _getMaxDims() {
+    var maxHeight = 0,
+      result = {},
+      _this = this;
+
+    // Recalculate menu heights and total max height
+    var measured = this.$submenus.concat([this.$element]);
+    measured.forEach(function (el) {
+      var height = _foundation_util_box__WEBPACK_IMPORTED_MODULE_5__.Box.GetDimensions(el).height;
+      maxHeight = height > maxHeight ? height : maxHeight;
+      if (_this.options.autoHeight) {
+        // the calcHeight rode jQuery's data cache (DOM-invisible); the
+        // expando property keeps it invisible
+        el.zfCalcHeight = height;
+      }
+    });
+    if (this.options.autoHeight) result.height = (this.$currentMenu.zfCalcHeight || 0) + 'px';else result['min-height'] = `${maxHeight}px`;
+    result['max-width'] = `${this.$element.getBoundingClientRect().width}px`;
+    return result;
+  }
+
+  /**
+   * Destroys the Drilldown Menu
+   * @function
+   */
+  _destroy() {
+    // The plugin-namespaced listeners on the body, element and anchors -
+    // the library's own table only (third-party listeners survive, the 7.0
+    // ownership semantics).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, '.zf.drilldown');
+    if (this.options.scrollTop) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'open.zf.drilldown hide.zf.drilldown close.zf.drilldown closed.zf.drilldown', this._bindHandler);
+    }
+    this._hideAll();
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'mutateme.zf.trigger');
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_1__.Nest.Burn(this.$element, 'drilldown');
+    if (!this.wasWrapped) {
+      // .unwrap(): the wrapper is replaced by its children
+      const wrapper = this.$element.parentElement;
+      while (wrapper.firstChild) {
+        wrapper.parentElement.insertBefore(wrapper.firstChild, wrapper);
+      }
+      wrapper.remove();
+    }
+    this.$element.querySelectorAll('.js-drilldown-back, .is-submenu-parent-item').forEach(el => el.remove());
+    this.$element.querySelectorAll('.is-active, .is-closing, .is-drilldown-submenu').forEach(el => {
+      el.classList.remove('is-active', 'is-closing', 'is-drilldown-submenu');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(el, 'transitionend otransitionend webkitTransitionEnd');
+    });
+    this.$element.querySelectorAll('[data-submenu]').forEach(el => {
+      el.removeAttribute('aria-hidden');
+      el.removeAttribute('tabindex');
+      el.removeAttribute('role');
+    });
+    this.$submenuAnchors.forEach(anchor => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(anchor, '.zf.drilldown');
+    });
+    this.$element.querySelectorAll('[data-is-parent-link]').forEach(el => el.remove());
+    this.$submenus.forEach(sub => sub.classList.remove('drilldown-submenu-cover-previous', 'invisible'));
+    this.$element.querySelectorAll('a').forEach(function (link) {
+      link.removeAttribute('tabindex');
+      if (link.zfSavedHref) {
+        link.setAttribute('href', link.zfSavedHref);
+        link.zfSavedHref = null;
+      } else {
+        return;
+      }
+    });
+  }
+}
 Drilldown.defaults = {
   /**
    * Drilldowns depend on styles in order to function properly; in the default build of Foundation these are
@@ -3666,11 +3350,11 @@ Drilldown.defaults = {
 /*!***********************************!*\
   !*** ./js/foundation.dropdown.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Dropdown: function() { return /* binding */ Dropdown; }
+/* harmony export */   Dropdown: () => (/* binding */ Dropdown)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -3679,22 +3363,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_positionable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.positionable */ "./js/foundation.positionable.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 /* harmony import */ var _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.touch */ "./js/foundation.util.touch.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _superPropGet(t, e, o, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), e, o); return 2 & r && "function" == typeof p ? function (t) { return p.apply(o, t); } : p; }
-function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
-function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -3711,403 +3379,368 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.touch
  * @requires foundation.util.triggers
  */
-var Dropdown = /*#__PURE__*/function (_Positionable) {
-  function Dropdown() {
-    _classCallCheck(this, Dropdown);
-    return _callSuper(this, Dropdown, arguments);
+class Dropdown extends _foundation_positionable__WEBPACK_IMPORTED_MODULE_4__.Positionable {
+  /**
+   * Creates a new instance of a dropdown.
+   * @class
+   * @name Dropdown
+   * @param {jQuery} element - jQuery object to make into a dropdown.
+   *        Object should be of the dropdown panel, rather than its anchor.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Dropdown.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
+    this.className = 'Dropdown'; // ie9 back compat
+
+    // Touch and Triggers init are idempotent, just need to make sure they are initialized
+    _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.init();
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Dropdown', {
+      'ENTER': 'toggle',
+      'SPACE': 'toggle',
+      'ESCAPE': 'close'
+    });
   }
-  _inherits(Dropdown, _Positionable);
-  return _createClass(Dropdown, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a dropdown.
-     * @class
-     * @name Dropdown
-     * @param {jQuery} element - jQuery object to make into a dropdown.
-     *        Object should be of the dropdown panel, rather than its anchor.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Dropdown.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
-      this.className = 'Dropdown'; // ie9 back compat
 
-      // Touch and Triggers init are idempotent, just need to make sure they are initialized
-      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.init();
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Dropdown', {
-        'ENTER': 'toggle',
-        'SPACE': 'toggle',
-        'ESCAPE': 'close'
-      });
+  /**
+   * Initializes the plugin by setting/checking options and attributes, adding helper variables, and saving the anchor.
+   * @function
+   * @private
+   */
+  _init() {
+    var id = this.$element.getAttribute('id');
+    var toggleAnchors = Array.from(document.querySelectorAll(`[data-toggle="${id}"]`));
+    this.$anchors = toggleAnchors.length ? toggleAnchors : Array.from(document.querySelectorAll(`[data-open="${id}"]`));
+    this.$anchors.forEach(function (anchor) {
+      anchor.setAttribute('aria-controls', id);
+      anchor.setAttribute('data-is-focus', 'false');
+      anchor.setAttribute('data-yeti-box', id);
+      anchor.setAttribute('aria-haspopup', 'true');
+      anchor.setAttribute('aria-expanded', 'false');
+    });
+    this._setCurrentAnchor(this.$anchors[0]);
+    if (this.options.parentClass) {
+      this.$parent = this.$element.closest('.' + this.options.parentClass);
+    } else {
+      this.$parent = null;
     }
 
-    /**
-     * Initializes the plugin by setting/checking options and attributes, adding helper variables, and saving the anchor.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var id = this.$element.getAttribute('id');
-      var toggleAnchors = Array.from(document.querySelectorAll("[data-toggle=\"".concat(id, "\"]")));
-      this.$anchors = toggleAnchors.length ? toggleAnchors : Array.from(document.querySelectorAll("[data-open=\"".concat(id, "\"]")));
-      this.$anchors.forEach(function (anchor) {
-        anchor.setAttribute('aria-controls', id);
-        anchor.setAttribute('data-is-focus', 'false');
-        anchor.setAttribute('data-yeti-box', id);
-        anchor.setAttribute('aria-haspopup', 'true');
-        anchor.setAttribute('aria-expanded', 'false');
-      });
-      this._setCurrentAnchor(this.$anchors[0]);
-      if (this.options.parentClass) {
-        this.$parent = this.$element.closest('.' + this.options.parentClass);
-      } else {
-        this.$parent = null;
+    // Set [aria-labelledby] on the Dropdown if it is not set
+    if (this.$element.getAttribute('aria-labelledby') === null) {
+      // Get the anchor ID or create one
+      if (this.$currentAnchor.getAttribute('id') === null) {
+        this.$currentAnchor.setAttribute('id', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'dd-anchor'));
       }
+      this.$element.setAttribute('aria-labelledby', this.$currentAnchor.getAttribute('id'));
+    }
+    this.$element.setAttribute('aria-hidden', 'true');
+    this.$element.setAttribute('data-yeti-box', id);
+    this.$element.setAttribute('data-resize', id);
+    super._init();
+    this._events();
+  }
+  _getDefaultPosition() {
+    // handle legacy classnames
+    var position = this.$element.className.match(/(top|left|right|bottom)/g);
+    if (position) {
+      return position[0];
+    } else {
+      return 'bottom';
+    }
+  }
+  _getDefaultAlignment() {
+    // handle legacy float approach
+    var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.getAttribute('class'));
+    if (horizontalPosition) {
+      return horizontalPosition[1];
+    }
+    return super._getDefaultAlignment();
+  }
 
-      // Set [aria-labelledby] on the Dropdown if it is not set
-      if (this.$element.getAttribute('aria-labelledby') === null) {
-        // Get the anchor ID or create one
-        if (this.$currentAnchor.getAttribute('id') === null) {
-          this.$currentAnchor.setAttribute('id', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'dd-anchor'));
+  /**
+   * Sets the position and orientation of the dropdown pane, checks for collisions if allow-overlap is not true.
+   * Recursively calls itself if a collision is detected, with a new position class.
+   * @function
+   * @private
+   */
+  _setPosition() {
+    this.$element.classList.remove(`has-position-${this.position}`, `has-alignment-${this.alignment}`);
+    super._setPosition(this.$currentAnchor, this.$element, this.$parent);
+    this.$element.classList.add(`has-position-${this.position}`, `has-alignment-${this.alignment}`);
+  }
+
+  /**
+   * Make it a current anchor.
+   * Current anchor as the reference for the position of Dropdown panes.
+   * @param {HTML} el - DOM element of the anchor.
+   * @function
+   * @private
+   */
+  _setCurrentAnchor(el) {
+    this.$currentAnchor = el.nodeType === 1 ? el : el[0];
+  }
+
+  /**
+   * Adds event listeners to the element utilizing the triggers utility library.
+   * @function
+   * @private
+   */
+  _events() {
+    var _this = this,
+      hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined',
+      element = this.$element;
+
+    // S9: the four zf.trigger consumers flip to the native event layer -
+    // open/toggle arrive as element-local dual dispatches and close as a
+    // real bubbling event from the Triggers util (S4), resizeme as the
+    // native resize broadcast.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'open.zf.trigger', this.open.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'close.zf.trigger', this.close.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'resizeme.zf.trigger', this._setPosition.bind(this));
+
+    // S9: the anchor click consumer flips to the native event layer - real
+    // clicks reach it directly, jQuery-synthesized clicks ride the `.click()`
+    // native shortcut bridge (reveal-native precedent; jQuery suppresses
+    // that shortcut for link anchors, so jQuery-synthesized clicks on `<a>`
+    // anchors stay undelivered - a real click is the user contract).
+    this.$anchors.forEach(anchor => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'click.zf.trigger');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'click.zf.trigger', function (e) {
+        _this._setCurrentAnchor(this);
+        if (
+        // if forceFollow false, always prevent default action
+        _this.options.forceFollow === false ||
+        // if forceFollow true and hover option true, only prevent default action on 1st click
+        // on 2nd click (dropown opened) the default action (e.g. follow a href) gets executed
+        hasTouch && _this.options.hover && !_this.$element.classList.contains('is-open')) {
+          e.preventDefault();
         }
-        this.$element.setAttribute('aria-labelledby', this.$currentAnchor.getAttribute('id'));
-      }
-      this.$element.setAttribute('aria-hidden', 'true');
-      this.$element.setAttribute('data-yeti-box', id);
-      this.$element.setAttribute('data-resize', id);
-      _superPropGet(Dropdown, "_init", this, 3)([]);
-      this._events();
-    }
-  }, {
-    key: "_getDefaultPosition",
-    value: function _getDefaultPosition() {
-      // handle legacy classnames
-      var position = this.$element.className.match(/(top|left|right|bottom)/g);
-      if (position) {
-        return position[0];
-      } else {
-        return 'bottom';
-      }
-    }
-  }, {
-    key: "_getDefaultAlignment",
-    value: function _getDefaultAlignment() {
-      // handle legacy float approach
-      var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.getAttribute('class'));
-      if (horizontalPosition) {
-        return horizontalPosition[1];
-      }
-      return _superPropGet(Dropdown, "_getDefaultAlignment", this, 3)([]);
-    }
+      });
+    });
 
-    /**
-     * Sets the position and orientation of the dropdown pane, checks for collisions if allow-overlap is not true.
-     * Recursively calls itself if a collision is detected, with a new position class.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_setPosition",
-    value: function _setPosition() {
-      this.$element.classList.remove("has-position-".concat(this.position), "has-alignment-".concat(this.alignment));
-      _superPropGet(Dropdown, "_setPosition", this, 3)([this.$currentAnchor, this.$element, this.$parent]);
-      this.$element.classList.add("has-position-".concat(this.position), "has-alignment-".concat(this.alignment));
-    }
-
-    /**
-     * Make it a current anchor.
-     * Current anchor as the reference for the position of Dropdown panes.
-     * @param {HTML} el - DOM element of the anchor.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_setCurrentAnchor",
-    value: function _setCurrentAnchor(el) {
-      this.$currentAnchor = el.nodeType === 1 ? el : el[0];
-    }
-
-    /**
-     * Adds event listeners to the element utilizing the triggers utility library.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this,
-        hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined',
-        element = this.$element;
-
-      // S9: the four zf.trigger consumers flip to the native event layer -
-      // open/toggle arrive as element-local dual dispatches and close as a
-      // real bubbling event from the Triggers util (S4), resizeme as the
-      // native resize broadcast.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'open.zf.trigger', this.open.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'close.zf.trigger', this.close.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(element, 'resizeme.zf.trigger', this._setPosition.bind(this));
-
-      // S9: the anchor click consumer flips to the native event layer - real
-      // clicks reach it directly, jQuery-synthesized clicks ride the `.click()`
-      // native shortcut bridge (reveal-native precedent; jQuery suppresses
-      // that shortcut for link anchors, so jQuery-synthesized clicks on `<a>`
-      // anchors stay undelivered - a real click is the user contract).
-      this.$anchors.forEach(function (anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'click.zf.trigger');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'click.zf.trigger', function (e) {
+    // 7.0 terminal form: hover runs on the native layer. jQuery's
+    // mouseenter/mouseleave are synthesized from real mouseover/mouseout
+    // with a within-element filter - the native port listens for the real
+    // events and applies the same entering/leaving test, so both real
+    // hovers and programmatic 'mouseover' dispatches reach it. The
+    // what-input read is the attribute what-input maintains.
+    if (this.options.hover) {
+      var hoverFilter = function (handler) {
+        return function (e) {
+          // mouseenter semantics: only when the pointer entered from
+          // outside (or from nowhere, like a synthetic dispatch)
+          if (e.relatedTarget && this.contains(e.relatedTarget)) {
+            return;
+          }
+          handler.call(this, e);
+        };
+      };
+      this.$anchors.forEach(anchor => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'mouseover.zf.dropdown mouseout.zf.dropdown');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'mouseover.zf.dropdown', hoverFilter(function () {
           _this._setCurrentAnchor(this);
-          if (
-          // if forceFollow false, always prevent default action
-          _this.options.forceFollow === false ||
-          // if forceFollow true and hover option true, only prevent default action on 1st click
-          // on 2nd click (dropown opened) the default action (e.g. follow a href) gets executed
-          hasTouch && _this.options.hover && !_this.$element.classList.contains('is-open')) {
-            e.preventDefault();
+          var whatInput = document.body.getAttribute('data-whatinput');
+          if (whatInput === null || whatInput === 'mouse') {
+            clearTimeout(_this.timeout);
+            _this.timeout = setTimeout(function () {
+              _this.open();
+              // the 6.x hover flag rode jQuery's data cache (DOM-invisible);
+              // the expando property keeps it invisible
+              _this.$anchors[0].zfDropdownHover = true;
+            }, _this.options.hoverDelay);
+          }
+        }));
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'mouseout.zf.dropdown', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
+          clearTimeout(_this.timeout);
+          _this.timeout = setTimeout(function () {
+            _this.close();
+            _this.$anchors[0].zfDropdownHover = false;
+          }, _this.options.hoverDelay);
+        }));
+      });
+      if (this.options.hoverPane) {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'mouseover.zf.dropdown mouseout.zf.dropdown');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(this.$element, 'mouseover.zf.dropdown', hoverFilter(function () {
+          clearTimeout(_this.timeout);
+        }));
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(this.$element, 'mouseout.zf.dropdown', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
+          clearTimeout(_this.timeout);
+          _this.timeout = setTimeout(function () {
+            _this.close();
+            _this.$anchors[0].zfDropdownHover = false;
+          }, _this.options.hoverDelay);
+        }));
+      }
+    }
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    this.$anchors.concat([this.$element]).forEach(bound => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(bound, 'keydown.zf.dropdown');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(bound, 'keydown.zf.dropdown', function (e) {
+        var target = this;
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Dropdown', {
+          open: function () {
+            if (_this.$anchors.indexOf(target) !== -1 && !target.matches('input, textarea')) {
+              _this.open();
+              _this.$element.setAttribute('tabindex', '-1');
+              _this.$element.focus();
+              e.preventDefault();
+            }
+          },
+          close: function () {
+            _this.close();
+            // the collection .focus() focused the first anchor
+            if (_this.$anchors[0]) {
+              _this.$anchors[0].focus();
+            }
           }
         });
       });
+    });
+  }
 
-      // 7.0 terminal form: hover runs on the native layer. jQuery's
-      // mouseenter/mouseleave are synthesized from real mouseover/mouseout
-      // with a within-element filter - the native port listens for the real
-      // events and applies the same entering/leaving test, so both real
-      // hovers and programmatic 'mouseover' dispatches reach it. The
-      // what-input read is the attribute what-input maintains.
-      if (this.options.hover) {
-        var hoverFilter = function hoverFilter(handler) {
-          return function (e) {
-            // mouseenter semantics: only when the pointer entered from
-            // outside (or from nowhere, like a synthetic dispatch)
-            if (e.relatedTarget && this.contains(e.relatedTarget)) {
-              return;
-            }
-            handler.call(this, e);
-          };
-        };
-        this.$anchors.forEach(function (anchor) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, 'mouseover.zf.dropdown mouseout.zf.dropdown');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'mouseover.zf.dropdown', hoverFilter(function () {
-            _this._setCurrentAnchor(this);
-            var whatInput = document.body.getAttribute('data-whatinput');
-            if (whatInput === null || whatInput === 'mouse') {
-              clearTimeout(_this.timeout);
-              _this.timeout = setTimeout(function () {
-                _this.open();
-                // the 6.x hover flag rode jQuery's data cache (DOM-invisible);
-                // the expando property keeps it invisible
-                _this.$anchors[0].zfDropdownHover = true;
-              }, _this.options.hoverDelay);
-            }
-          }));
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(anchor, 'mouseout.zf.dropdown', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
-            clearTimeout(_this.timeout);
-            _this.timeout = setTimeout(function () {
-              _this.close();
-              _this.$anchors[0].zfDropdownHover = false;
-            }, _this.options.hoverDelay);
-          }));
-        });
-        if (this.options.hoverPane) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'mouseover.zf.dropdown mouseout.zf.dropdown');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(this.$element, 'mouseover.zf.dropdown', hoverFilter(function () {
-            clearTimeout(_this.timeout);
-          }));
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(this.$element, 'mouseout.zf.dropdown', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
-            clearTimeout(_this.timeout);
-            _this.timeout = setTimeout(function () {
-              _this.close();
-              _this.$anchors[0].zfDropdownHover = false;
-            }, _this.options.hoverDelay);
-          }));
-        }
+  /**
+   * Adds an event handler to the body to close any dropdowns on a click.
+   * @function
+   * @private
+   */
+  _addBodyHandler() {
+    var body = document.body,
+      _this = this;
+    var bodyHandler = function (e) {
+      if (_this.$anchors.indexOf(e.target) !== -1 || _this.$anchors.some(a => a.contains(e.target))) {
+        return;
       }
-      // 7.0 terminal form: the keydown listener runs on the native event
-      // layer (the coarse suite's mocks dispatch real KeyboardEvents since
-      // the S16 migration).
-      this.$anchors.concat([this.$element]).forEach(function (bound) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(bound, 'keydown.zf.dropdown');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(bound, 'keydown.zf.dropdown', function (e) {
-          var target = this;
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Dropdown', {
-            open: function open() {
-              if (_this.$anchors.indexOf(target) !== -1 && !target.matches('input, textarea')) {
-                _this.open();
-                _this.$element.setAttribute('tabindex', '-1');
-                _this.$element.focus();
-                e.preventDefault();
-              }
-            },
-            close: function close() {
-              _this.close();
-              // the collection .focus() focused the first anchor
-              if (_this.$anchors[0]) {
-                _this.$anchors[0].focus();
-              }
-            }
-          });
-        });
-      });
+      if (_this.$element === e.target || _this.$element.contains(e.target)) {
+        return;
+      }
+      _this.close();
+      _this._removeBodyHandler();
+    };
+    this._removeBodyHandler();
+    // S13: the tap half flips with the Touch util - 'tap' is a real,
+    // bubbling event on the touched element now, so this native body
+    // listener hears it (real clicks arrived through this layer since S9).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(body, 'click.zf.dropdown tap.zf.dropdown', bodyHandler);
+  }
+
+  /**
+   * Removes the body click/tap handler added by `_addBodyHandler`.
+   * @function
+   * @private
+   */
+  _removeBodyHandler() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, 'click.zf.dropdown tap.zf.dropdown');
+  }
+
+  /**
+   * Opens the dropdown pane, and fires a bubbling event to close other dropdowns.
+   * @function
+   * @fires Dropdown#closeme
+   * @fires Dropdown#show
+   */
+  open() {
+    // var _this = this;
+    /**
+     * Fires to close other open dropdowns, typically when dropdown is opening
+     * @event Dropdown#closeme
+     */
+    // S13: the closeme production flipped with the Triggers listener -
+    // a real, bubbling event whose detail carries the plugin id.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'closeme.zf.dropdown', [this.$element.getAttribute('id')]);
+
+    // S9: class/ARIA state flips natively.
+    this.$anchors.forEach(anchor => {
+      anchor.classList.add('hover');
+      anchor.setAttribute('aria-expanded', 'true');
+    });
+    this.$element.classList.add('is-opening');
+    this._setPosition();
+    this.$element.classList.remove('is-opening');
+    this.$element.classList.add('is-open');
+    this.$element.setAttribute('aria-hidden', 'false');
+    if (this.options.autoFocus) {
+      const focusable = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.findFocusable(this.$element);
+      if (focusable.length) {
+        focusable[0].focus();
+      }
+    }
+    if (this.options.closeOnClick) {
+      this._addBodyHandler();
+    }
+    if (this.options.trapFocus) {
+      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.trapFocus(this.$element);
     }
 
     /**
-     * Adds an event handler to the body to close any dropdowns on a click.
-     * @function
-     * @private
+     * Fires once the dropdown is visible.
+     * @event Dropdown#show
      */
-  }, {
-    key: "_addBodyHandler",
-    value: function _addBodyHandler() {
-      var body = document.body,
-        _this = this;
-      var bodyHandler = function bodyHandler(e) {
-        if (_this.$anchors.indexOf(e.target) !== -1 || _this.$anchors.some(function (a) {
-          return a.contains(e.target);
-        })) {
-          return;
-        }
-        if (_this.$element === e.target || _this.$element.contains(e.target)) {
-          return;
-        }
-        _this.close();
-        _this._removeBodyHandler();
-      };
-      this._removeBodyHandler();
-      // S13: the tap half flips with the Touch util - 'tap' is a real,
-      // bubbling event on the touched element now, so this native body
-      // listener hears it (real clicks arrived through this layer since S9).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(body, 'click.zf.dropdown tap.zf.dropdown', bodyHandler);
+    // S9: state production through the native event layer; the terminal
+    // form forwards the plain element.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'show.zf.dropdown', [this.$element]);
+  }
+
+  /**
+   * Closes the open dropdown pane.
+   * @function
+   * @fires Dropdown#hide
+   */
+  close() {
+    if (!this.$element.classList.contains('is-open')) {
+      return false;
     }
+    // S9: class/ARIA state flips natively.
+    this.$element.classList.remove('is-open');
+    this.$element.setAttribute('aria-hidden', 'true');
+    this.$anchors.forEach(anchor => {
+      anchor.classList.remove('hover');
+      anchor.setAttribute('aria-expanded', 'false');
+    });
 
     /**
-     * Removes the body click/tap handler added by `_addBodyHandler`.
-     * @function
-     * @private
+     * Fires once the dropdown is no longer visible.
+     * @event Dropdown#hide
      */
-  }, {
-    key: "_removeBodyHandler",
-    value: function _removeBodyHandler() {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, 'click.zf.dropdown tap.zf.dropdown');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'hide.zf.dropdown', [this.$element]);
+    if (this.options.trapFocus) {
+      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.releaseFocus(this.$element);
     }
+  }
 
-    /**
-     * Opens the dropdown pane, and fires a bubbling event to close other dropdowns.
-     * @function
-     * @fires Dropdown#closeme
-     * @fires Dropdown#show
-     */
-  }, {
-    key: "open",
-    value: function open() {
-      // var _this = this;
-      /**
-       * Fires to close other open dropdowns, typically when dropdown is opening
-       * @event Dropdown#closeme
-       */
-      // S13: the closeme production flipped with the Triggers listener -
-      // a real, bubbling event whose detail carries the plugin id.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'closeme.zf.dropdown', [this.$element.getAttribute('id')]);
-
-      // S9: class/ARIA state flips natively.
-      this.$anchors.forEach(function (anchor) {
-        anchor.classList.add('hover');
-        anchor.setAttribute('aria-expanded', 'true');
-      });
-      this.$element.classList.add('is-opening');
-      this._setPosition();
-      this.$element.classList.remove('is-opening');
-      this.$element.classList.add('is-open');
-      this.$element.setAttribute('aria-hidden', 'false');
-      if (this.options.autoFocus) {
-        var focusable = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.findFocusable(this.$element);
-        if (focusable.length) {
-          focusable[0].focus();
-        }
-      }
-      if (this.options.closeOnClick) {
-        this._addBodyHandler();
-      }
-      if (this.options.trapFocus) {
-        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.trapFocus(this.$element);
-      }
-
-      /**
-       * Fires once the dropdown is visible.
-       * @event Dropdown#show
-       */
-      // S9: state production through the native event layer; the terminal
-      // form forwards the plain element.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'show.zf.dropdown', [this.$element]);
+  /**
+   * Toggles the dropdown pane's visibility.
+   * @function
+   */
+  toggle() {
+    if (this.$element.classList.contains('is-open')) {
+      if (this.$anchors[0] && this.$anchors[0].zfDropdownHover) return;
+      this.close();
+    } else {
+      this.open();
     }
+  }
 
-    /**
-     * Closes the open dropdown pane.
-     * @function
-     * @fires Dropdown#hide
-     */
-  }, {
-    key: "close",
-    value: function close() {
-      if (!this.$element.classList.contains('is-open')) {
-        return false;
-      }
-      // S9: class/ARIA state flips natively.
-      this.$element.classList.remove('is-open');
-      this.$element.setAttribute('aria-hidden', 'true');
-      this.$anchors.forEach(function (anchor) {
-        anchor.classList.remove('hover');
-        anchor.setAttribute('aria-expanded', 'false');
-      });
-
-      /**
-       * Fires once the dropdown is no longer visible.
-       * @event Dropdown#hide
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'hide.zf.dropdown', [this.$element]);
-      if (this.options.trapFocus) {
-        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.releaseFocus(this.$element);
-      }
-    }
-
-    /**
-     * Toggles the dropdown pane's visibility.
-     * @function
-     */
-  }, {
-    key: "toggle",
-    value: function toggle() {
-      if (this.$element.classList.contains('is-open')) {
-        if (this.$anchors[0] && this.$anchors[0].zfDropdownHover) return;
-        this.close();
-      } else {
-        this.open();
-      }
-    }
-
-    /**
-     * Destroys the dropdown.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The zf.trigger listeners on the pane and the dropdown listeners on
-      // the anchors, by bare namespaces; the destroy cleanup hides the pane.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, '.zf.trigger');
-      this.$anchors.forEach(function (anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, '.zf.dropdown');
-      });
-      this._removeBodyHandler();
-      this.$element.style.display = 'none';
-    }
-  }]);
-}(_foundation_positionable__WEBPACK_IMPORTED_MODULE_4__.Positionable);
+  /**
+   * Destroys the dropdown.
+   * @function
+   */
+  _destroy() {
+    // The zf.trigger listeners on the pane and the dropdown listeners on
+    // the anchors, by bare namespaces; the destroy cleanup hides the pane.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, '.zf.trigger');
+    this.$anchors.forEach(anchor => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(anchor, '.zf.dropdown');
+    });
+    this._removeBodyHandler();
+    this.$element.style.display = 'none';
+  }
+}
 Dropdown.defaults = {
   /**
    * Class that designates bounding container of Dropdown (default: window)
@@ -4218,11 +3851,11 @@ Dropdown.defaults = {
 /*!***************************************!*\
   !*** ./js/foundation.dropdownMenu.js ***!
   \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DropdownMenu: function() { return /* binding */ DropdownMenu; }
+/* harmony export */   DropdownMenu: () => (/* binding */ DropdownMenu)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -4232,19 +3865,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_nest__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.nest */ "./js/foundation.util.nest.js");
 /* harmony import */ var _foundation_util_box__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.box */ "./js/foundation.util.box.js");
 /* harmony import */ var _foundation_util_touch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.util.touch */ "./js/foundation.util.touch.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -4262,553 +3882,507 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.nest
  * @requires foundation.util.touch
  */
-var DropdownMenu = /*#__PURE__*/function (_Plugin) {
-  function DropdownMenu() {
-    _classCallCheck(this, DropdownMenu);
-    return _callSuper(this, DropdownMenu, arguments);
+
+class DropdownMenu extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of DropdownMenu.
+   * @class
+   * @name DropdownMenu
+   * @fires DropdownMenu#init
+   * @param {jQuery} element - jQuery object to make into a dropdown menu.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, DropdownMenu.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
+    this.className = 'DropdownMenu'; // ie9 back compat
+
+    _foundation_util_touch__WEBPACK_IMPORTED_MODULE_7__.Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
+
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('DropdownMenu', {
+      'ENTER': 'open',
+      'SPACE': 'open',
+      'ARROW_RIGHT': 'next',
+      'ARROW_UP': 'up',
+      'ARROW_DOWN': 'down',
+      'ARROW_LEFT': 'previous',
+      'ESCAPE': 'close'
+    });
   }
-  _inherits(DropdownMenu, _Plugin);
-  return _createClass(DropdownMenu, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of DropdownMenu.
-     * @class
-     * @name DropdownMenu
-     * @fires DropdownMenu#init
-     * @param {jQuery} element - jQuery object to make into a dropdown menu.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, DropdownMenu.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
-      this.className = 'DropdownMenu'; // ie9 back compat
 
-      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_7__.Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
-
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('DropdownMenu', {
-        'ENTER': 'open',
-        'SPACE': 'open',
-        'ARROW_RIGHT': 'next',
-        'ARROW_UP': 'up',
-        'ARROW_DOWN': 'down',
-        'ARROW_LEFT': 'previous',
-        'ESCAPE': 'close'
+  /**
+   * Initializes the plugin, and calls _prepareMenu
+   * @private
+   * @function
+   */
+  _init() {
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_5__.Nest.Feather(this.$element, 'dropdown');
+    var subs = Array.from(this.$element.querySelectorAll('li.is-dropdown-submenu-parent'));
+    this.$element.querySelectorAll(':scope > .is-dropdown-submenu-parent > .is-dropdown-submenu').forEach(el => {
+      el.classList.add('first-sub');
+    });
+    this.$menuItems = Array.from(this.$element.querySelectorAll('li[role="none"]'));
+    this.$tabs = Array.from(this.$element.querySelectorAll(':scope > li[role="none"]'));
+    this.$tabs.forEach(tab => {
+      tab.querySelectorAll('ul.is-dropdown-submenu').forEach(ul => {
+        ul.classList.add(this.options.verticalClass);
       });
-    }
-
-    /**
-     * Initializes the plugin, and calls _prepareMenu
-     * @private
-     * @function
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this2 = this;
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_5__.Nest.Feather(this.$element, 'dropdown');
-      var subs = Array.from(this.$element.querySelectorAll('li.is-dropdown-submenu-parent'));
-      this.$element.querySelectorAll(':scope > .is-dropdown-submenu-parent > .is-dropdown-submenu').forEach(function (el) {
-        el.classList.add('first-sub');
-      });
-      this.$menuItems = Array.from(this.$element.querySelectorAll('li[role="none"]'));
-      this.$tabs = Array.from(this.$element.querySelectorAll(':scope > li[role="none"]'));
-      this.$tabs.forEach(function (tab) {
-        tab.querySelectorAll('ul.is-dropdown-submenu').forEach(function (ul) {
-          ul.classList.add(_this2.options.verticalClass);
-        });
-      });
-      if (this.options.alignment === 'auto') {
-        // .parents('.top-bar-right').is('*'): any matching ancestor
-        var inTopBarRight = false,
-          anc = this.$element.parentElement;
-        while (anc && anc.nodeType === 1) {
-          if (anc.matches('.top-bar-right')) {
-            inTopBarRight = true;
-            break;
-          }
-          anc = anc.parentElement;
+    });
+    if (this.options.alignment === 'auto') {
+      // .parents('.top-bar-right').is('*'): any matching ancestor
+      var inTopBarRight = false,
+        anc = this.$element.parentElement;
+      while (anc && anc.nodeType === 1) {
+        if (anc.matches('.top-bar-right')) {
+          inTopBarRight = true;
+          break;
         }
-        if (this.$element.classList.contains(this.options.rightClass) || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.rtl)() || inTopBarRight) {
-          this.options.alignment = 'right';
-          subs.forEach(function (el) {
-            return el.classList.add('opens-left');
-          });
-        } else {
-          this.options.alignment = 'left';
-          subs.forEach(function (el) {
-            return el.classList.add('opens-right');
-          });
-        }
+        anc = anc.parentElement;
+      }
+      if (this.$element.classList.contains(this.options.rightClass) || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.rtl)() || inTopBarRight) {
+        this.options.alignment = 'right';
+        subs.forEach(el => el.classList.add('opens-left'));
       } else {
-        if (this.options.alignment === 'right') {
-          subs.forEach(function (el) {
-            return el.classList.add('opens-left');
-          });
-        } else {
-          subs.forEach(function (el) {
-            return el.classList.add('opens-right');
-          });
-        }
+        this.options.alignment = 'left';
+        subs.forEach(el => el.classList.add('opens-right'));
       }
-      this.changed = false;
-      this._events();
+    } else {
+      if (this.options.alignment === 'right') {
+        subs.forEach(el => el.classList.add('opens-left'));
+      } else {
+        subs.forEach(el => el.classList.add('opens-right'));
+      }
     }
-  }, {
-    key: "_isVertical",
-    value: function _isVertical() {
-      // jQuery .css(): the computed value
-      return window.getComputedStyle(this.$tabs[0]).display === 'block' || window.getComputedStyle(this.$element).flexDirection === 'column';
-    }
-  }, {
-    key: "_isRtl",
-    value: function _isRtl() {
-      return this.$element.classList.contains('align-right') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.rtl)() && !this.$element.classList.contains('align-left');
-    }
+    this.changed = false;
+    this._events();
+  }
+  _isVertical() {
+    // jQuery .css(): the computed value
+    return window.getComputedStyle(this.$tabs[0]).display === 'block' || window.getComputedStyle(this.$element).flexDirection === 'column';
+  }
+  _isRtl() {
+    return this.$element.classList.contains('align-right') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.rtl)() && !this.$element.classList.contains('align-left');
+  }
 
-    /**
-     * Adds event listeners to elements within the menu
-     * @private
-     * @function
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this,
-        hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined',
-        parClass = 'is-dropdown-submenu-parent';
+  /**
+   * Adds event listeners to elements within the menu
+   * @private
+   * @function
+   */
+  _events() {
+    var _this = this,
+      hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined',
+      parClass = 'is-dropdown-submenu-parent';
 
-      // used for onClick and in the keyboard handlers
-      var handleClickFn = function handleClickFn(e) {
-        // $(target).parentsUntil('ul', '.parClass'): the nearest ancestor
-        // matching the class, walking up but not past a <ul>
-        var elem = e.target.parentElement;
-        while (elem && elem.tagName !== 'UL') {
-          if (elem.matches(".".concat(parClass))) {
-            break;
-          }
-          elem = elem.parentElement;
+    // used for onClick and in the keyboard handlers
+    var handleClickFn = function (e) {
+      // $(target).parentsUntil('ul', '.parClass'): the nearest ancestor
+      // matching the class, walking up but not past a <ul>
+      var elem = e.target.parentElement;
+      while (elem && elem.tagName !== 'UL') {
+        if (elem.matches(`.${parClass}`)) {
+          break;
         }
-        var found = elem && elem.tagName !== 'UL' && elem.matches(".".concat(parClass)) ? elem : null,
-          hasSub = !!found,
-          hasClicked = found && found.getAttribute('data-is-click') === 'true',
-          sub = found && found.querySelector(':scope > .is-dropdown-submenu');
-        if (hasSub) {
-          if (hasClicked) {
-            if (!_this.options.closeOnClick || !_this.options.clickOpen && !hasTouch || _this.options.forceFollow && hasTouch) {
-              return;
-            }
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            _this._hide(found);
-          } else {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            _this._show(sub);
-            // S9: the click-state attribute flips natively.
-            var chain = [found];
-            var anc = found.parentElement;
-            while (anc && anc !== _this.$element) {
-              if (anc.matches(".".concat(parClass))) {
-                chain.push(anc);
-              }
-              anc = anc.parentElement;
-            }
-            chain.forEach(function (el) {
-              return el.setAttribute('data-is-click', 'true');
-            });
-          }
-        }
-      };
-      if (this.options.clickOpen || hasTouch) {
-        // S9: the click (and real touchstart) consumer flips to the native
-        // event layer - real events reach it directly and jQuery-synthesized
-        // clicks on non-link items ride the `.click()` shortcut bridge
-        // (reveal-native precedent; jQuery suppresses that shortcut for link
-        // anchors, so a jQuery-synthesized click on the `<a>` itself stays
-        // undelivered - a real click is the user contract). The library itself
-        // has no jQuery-synthesized touchstart producer left (the Touch util
-        // makes 'tap').
-        this.$menuItems.forEach(function (item) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
-        });
+        elem = elem.parentElement;
       }
-
-      // Handle Leaf element Clicks
-      if (_this.options.closeOnClickInside) {
-        this.$menuItems.forEach(function (item) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'click.zf.dropdownMenu', function () {
-            if (!this.classList.contains(parClass)) {
-              _this._hide();
-            }
-          });
-        });
-      }
-      if (hasTouch && this.options.disableHoverOnTouch) this.options.disableHover = true;
-
-      // 7.0 terminal form: hover intent runs on the native layer. jQuery's
-      // mouseenter/mouseleave are real mouseover/mouseout with the
-      // within-element filter; the delay timers ride an expando like jQuery's
-      // DOM-invisible data cache.
-      if (!this.options.disableHover) {
-        var hoverFilter = function hoverFilter(handler) {
-          return function (e) {
-            if (e.relatedTarget && this.contains(e.relatedTarget)) {
-              return;
-            }
-            handler.call(this, e);
-          };
-        };
-        this.$menuItems.forEach(function (item) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(item, 'mouseover.zf.dropdownMenu mouseout.zf.dropdownMenu');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'mouseover.zf.dropdownMenu', hoverFilter(function () {
-            if (this.classList.contains(parClass)) {
-              clearTimeout(this.zfMenuDelay);
-              var el = this;
-              el.zfMenuDelay = setTimeout(function () {
-                _this._show(el.querySelector(':scope > .is-dropdown-submenu'));
-              }, _this.options.hoverDelay);
-            }
-          }));
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'mouseout.zf.dropdownMenu', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
-            if (this.classList.contains(parClass) && _this.options.autoclose) {
-              if (this.getAttribute('data-is-click') === 'true' && _this.options.clickOpen) {
-                return false;
-              }
-              clearTimeout(this.zfMenuDelay);
-              var el = this;
-              el.zfMenuDelay = setTimeout(function () {
-                _this._hide(el);
-              }, _this.options.closingTime);
-            }
-          }));
-        });
-      }
-      // 7.0 terminal form: the keydown listener runs on the native event
-      // layer (the coarse suite's mocks dispatch real KeyboardEvents since
-      // the S16 migration).
-      this.$menuItems.forEach(function (menuItem) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(menuItem, 'keydown.zf.dropdownMenu');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(menuItem, 'keydown.zf.dropdownMenu', function (e) {
-          // $(target).parentsUntil('ul', '[role="none"]'): the nearest
-          // role="none" li ancestor, not walking past a <ul>
-          var element = e.target.parentElement;
-          while (element && element.tagName !== 'UL') {
-            if (element.matches('[role="none"]')) {
-              break;
-            }
-            element = element.parentElement;
-          }
-          element = element && element.tagName !== 'UL' && element.matches('[role="none"]') ? element : null;
-          if (!element) {
+      var found = elem && elem.tagName !== 'UL' && elem.matches(`.${parClass}`) ? elem : null,
+        hasSub = !!found,
+        hasClicked = found && found.getAttribute('data-is-click') === 'true',
+        sub = found && found.querySelector(':scope > .is-dropdown-submenu');
+      if (hasSub) {
+        if (hasClicked) {
+          if (!_this.options.closeOnClick || !_this.options.clickOpen && !hasTouch || _this.options.forceFollow && hasTouch) {
             return;
           }
-          var isTab = _this.$tabs.indexOf(element) > -1,
-            // jQuery .siblings('li').add($element) sorts into document order:
-            // the parent's li children including the element itself
-            elements = isTab ? _this.$tabs : Array.from(element.parentElement.children).filter(function (el) {
-              return el.matches('li');
-            }),
-            prevElement,
-            nextElement;
-          var i = elements.indexOf(element);
-          prevElement = elements[i - 1];
-          nextElement = elements[i + 1];
-          var nextSibling = function nextSibling() {
-              if (nextElement) nextElement.querySelector(':scope > a').focus();
-              e.preventDefault();
-            },
-            prevSibling = function prevSibling() {
-              if (prevElement) prevElement.querySelector(':scope > a').focus();
-              e.preventDefault();
-            },
-            openSub = function openSub() {
-              var sub = element.querySelector(':scope > ul.is-dropdown-submenu');
-              if (sub) {
-                _this._show(sub);
-                // jQuery's find('li > a:first') scoped the child combinator to
-                // the subtree (the item's own anchor never matched); the first
-                // anchor inside the submenu is the focused one
-                sub.querySelector('a').focus();
-                e.preventDefault();
-              } else {
-                return;
-              }
-            },
-            closeSub = function closeSub() {
-              //if ($element.is(':first-child')) {
-              var close = element.parentElement.parentElement;
-              if (close.matches('li')) {
-                var link = close.querySelector(':scope > a');
-                if (link) link.focus();
-                _this._hide(close);
-              }
-              e.preventDefault();
-              //}
-            };
-          var functions = {
-            open: openSub,
-            close: function close() {
-              _this._hide(_this.$element);
-              var firstLink = _this.$menuItems[0].querySelector(':scope > a');
-              if (firstLink) firstLink.focus(); // focus to first element
-              e.preventDefault();
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          _this._hide(found);
+        } else {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          _this._show(sub);
+          // S9: the click-state attribute flips natively.
+          var chain = [found];
+          var anc = found.parentElement;
+          while (anc && anc !== _this.$element) {
+            if (anc.matches(`.${parClass}`)) {
+              chain.push(anc);
             }
-          };
-          if (isTab) {
-            if (_this._isVertical()) {
-              // vertical menu
-              if (_this._isRtl()) {
-                // right aligned
-                Object.assign(functions, {
-                  down: nextSibling,
-                  up: prevSibling,
-                  next: closeSub,
-                  previous: openSub
-                });
-              } else {
-                // left aligned
-                Object.assign(functions, {
-                  down: nextSibling,
-                  up: prevSibling,
-                  next: openSub,
-                  previous: closeSub
-                });
-              }
+            anc = anc.parentElement;
+          }
+          chain.forEach(el => el.setAttribute('data-is-click', 'true'));
+        }
+      }
+    };
+    if (this.options.clickOpen || hasTouch) {
+      // S9: the click (and real touchstart) consumer flips to the native
+      // event layer - real events reach it directly and jQuery-synthesized
+      // clicks on non-link items ride the `.click()` shortcut bridge
+      // (reveal-native precedent; jQuery suppresses that shortcut for link
+      // anchors, so a jQuery-synthesized click on the `<a>` itself stays
+      // undelivered - a real click is the user contract). The library itself
+      // has no jQuery-synthesized touchstart producer left (the Touch util
+      // makes 'tap').
+      this.$menuItems.forEach(item => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
+      });
+    }
+
+    // Handle Leaf element Clicks
+    if (_this.options.closeOnClickInside) {
+      this.$menuItems.forEach(item => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'click.zf.dropdownMenu', function () {
+          if (!this.classList.contains(parClass)) {
+            _this._hide();
+          }
+        });
+      });
+    }
+    if (hasTouch && this.options.disableHoverOnTouch) this.options.disableHover = true;
+
+    // 7.0 terminal form: hover intent runs on the native layer. jQuery's
+    // mouseenter/mouseleave are real mouseover/mouseout with the
+    // within-element filter; the delay timers ride an expando like jQuery's
+    // DOM-invisible data cache.
+    if (!this.options.disableHover) {
+      var hoverFilter = function (handler) {
+        return function (e) {
+          if (e.relatedTarget && this.contains(e.relatedTarget)) {
+            return;
+          }
+          handler.call(this, e);
+        };
+      };
+      this.$menuItems.forEach(item => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(item, 'mouseover.zf.dropdownMenu mouseout.zf.dropdownMenu');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'mouseover.zf.dropdownMenu', hoverFilter(function () {
+          if (this.classList.contains(parClass)) {
+            clearTimeout(this.zfMenuDelay);
+            const el = this;
+            el.zfMenuDelay = setTimeout(function () {
+              _this._show(el.querySelector(':scope > .is-dropdown-submenu'));
+            }, _this.options.hoverDelay);
+          }
+        }));
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(item, 'mouseout.zf.dropdownMenu', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.ignoreMousedisappear)(function () {
+          if (this.classList.contains(parClass) && _this.options.autoclose) {
+            if (this.getAttribute('data-is-click') === 'true' && _this.options.clickOpen) {
+              return false;
+            }
+            clearTimeout(this.zfMenuDelay);
+            const el = this;
+            el.zfMenuDelay = setTimeout(function () {
+              _this._hide(el);
+            }, _this.options.closingTime);
+          }
+        }));
+      });
+    }
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    this.$menuItems.forEach(menuItem => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(menuItem, 'keydown.zf.dropdownMenu');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(menuItem, 'keydown.zf.dropdownMenu', function (e) {
+        // $(target).parentsUntil('ul', '[role="none"]'): the nearest
+        // role="none" li ancestor, not walking past a <ul>
+        var element = e.target.parentElement;
+        while (element && element.tagName !== 'UL') {
+          if (element.matches('[role="none"]')) {
+            break;
+          }
+          element = element.parentElement;
+        }
+        element = element && element.tagName !== 'UL' && element.matches('[role="none"]') ? element : null;
+        if (!element) {
+          return;
+        }
+        var isTab = _this.$tabs.indexOf(element) > -1,
+          // jQuery .siblings('li').add($element) sorts into document order:
+          // the parent's li children including the element itself
+          elements = isTab ? _this.$tabs : Array.from(element.parentElement.children).filter(el => el.matches('li')),
+          prevElement,
+          nextElement;
+        var i = elements.indexOf(element);
+        prevElement = elements[i - 1];
+        nextElement = elements[i + 1];
+        var nextSibling = function () {
+            if (nextElement) nextElement.querySelector(':scope > a').focus();
+            e.preventDefault();
+          },
+          prevSibling = function () {
+            if (prevElement) prevElement.querySelector(':scope > a').focus();
+            e.preventDefault();
+          },
+          openSub = function () {
+            var sub = element.querySelector(':scope > ul.is-dropdown-submenu');
+            if (sub) {
+              _this._show(sub);
+              // jQuery's find('li > a:first') scoped the child combinator to
+              // the subtree (the item's own anchor never matched); the first
+              // anchor inside the submenu is the focused one
+              sub.querySelector('a').focus();
+              e.preventDefault();
             } else {
-              // horizontal menu
-              if (_this._isRtl()) {
-                // right aligned
-                Object.assign(functions, {
-                  next: prevSibling,
-                  previous: nextSibling,
-                  down: openSub,
-                  up: closeSub
-                });
-              } else {
-                // left aligned
-                Object.assign(functions, {
-                  next: nextSibling,
-                  previous: prevSibling,
-                  down: openSub,
-                  up: closeSub
-                });
-              }
+              return;
             }
-          } else {
-            // not tabs -> one sub
+          },
+          closeSub = function () {
+            //if ($element.is(':first-child')) {
+            var close = element.parentElement.parentElement;
+            if (close.matches('li')) {
+              var link = close.querySelector(':scope > a');
+              if (link) link.focus();
+              _this._hide(close);
+            }
+            e.preventDefault();
+            //}
+          };
+        var functions = {
+          open: openSub,
+          close: function () {
+            _this._hide(_this.$element);
+            var firstLink = _this.$menuItems[0].querySelector(':scope > a');
+            if (firstLink) firstLink.focus(); // focus to first element
+            e.preventDefault();
+          }
+        };
+        if (isTab) {
+          if (_this._isVertical()) {
+            // vertical menu
             if (_this._isRtl()) {
               // right aligned
               Object.assign(functions, {
-                next: closeSub,
-                previous: openSub,
                 down: nextSibling,
-                up: prevSibling
+                up: prevSibling,
+                next: closeSub,
+                previous: openSub
               });
             } else {
               // left aligned
               Object.assign(functions, {
-                next: openSub,
-                previous: closeSub,
                 down: nextSibling,
-                up: prevSibling
+                up: prevSibling,
+                next: openSub,
+                previous: closeSub
+              });
+            }
+          } else {
+            // horizontal menu
+            if (_this._isRtl()) {
+              // right aligned
+              Object.assign(functions, {
+                next: prevSibling,
+                previous: nextSibling,
+                down: openSub,
+                up: closeSub
+              });
+            } else {
+              // left aligned
+              Object.assign(functions, {
+                next: nextSibling,
+                previous: prevSibling,
+                down: openSub,
+                up: closeSub
               });
             }
           }
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'DropdownMenu', functions);
+        } else {
+          // not tabs -> one sub
+          if (_this._isRtl()) {
+            // right aligned
+            Object.assign(functions, {
+              next: closeSub,
+              previous: openSub,
+              down: nextSibling,
+              up: prevSibling
+            });
+          } else {
+            // left aligned
+            Object.assign(functions, {
+              next: openSub,
+              previous: closeSub,
+              down: nextSibling,
+              up: prevSibling
+            });
+          }
+        }
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'DropdownMenu', functions);
+      });
+    });
+  }
+
+  /**
+   * Adds an event handler to the body to close any dropdowns on a click.
+   * @function
+   * @private
+   */
+  _addBodyHandler() {
+    const body = document.body;
+    this._removeBodyHandler();
+    const bodyHandler = e => {
+      // $(target).closest($element): the element or any descendant
+      var isItself = e.target === this.$element || this.$element.contains(e.target);
+      if (isItself) return;
+      this._hide();
+      this._removeBodyHandler();
+    };
+    // S13: the tap half flips with the Touch util - 'tap' is a real,
+    // bubbling event on the touched element now, so this native body
+    // listener hears it (real clicks arrived through this layer since S9).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(body, 'click.zf.dropdownMenu tap.zf.dropdownMenu', bodyHandler);
+  }
+
+  /**
+   * Remove the body event handler. See `_addBodyHandler`.
+   * @function
+   * @private
+   */
+  _removeBodyHandler() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, 'click.zf.dropdownMenu tap.zf.dropdownMenu');
+  }
+
+  /**
+   * Opens a dropdown pane, and checks for collisions first.
+   * @param {jQuery} $sub - ul element that is a submenu to show
+   * @function
+   * @private
+   * @fires DropdownMenu#show
+   */
+  _show(sub) {
+    sub = sub.nodeType === 1 ? sub : sub[0];
+    // which top-level tab owns this submenu
+    var ownerTab = sub.closest('li[role="none"]');
+    while (ownerTab && ownerTab.parentElement !== this.$element) {
+      ownerTab = ownerTab.parentElement ? ownerTab.parentElement.closest('li[role="none"]') : null;
+    }
+    var idx = ownerTab ? this.$tabs.indexOf(ownerTab) : -1;
+    var parentLi = sub.parentElement && sub.parentElement.matches('li.is-dropdown-submenu-parent') ? sub.parentElement : null;
+    var sibs = parentLi ? Array.from(parentLi.parentElement.children).filter(el => el.matches('li.is-dropdown-submenu-parent')) : [];
+    this._hide(sibs, idx);
+    // S9: class/inline-style state flips natively.
+    sub.style.visibility = 'hidden';
+    sub.classList.add('js-dropdown-active');
+    if (parentLi) {
+      parentLi.classList.add('is-active');
+    }
+    // S13: the Box util reads plain elements.
+    var clear = _foundation_util_box__WEBPACK_IMPORTED_MODULE_6__.Box.ImNotTouchingYou(sub, null, true);
+    if (!clear) {
+      var oldClass = this.options.alignment === 'left' ? '-right' : '-left';
+      if (parentLi) {
+        parentLi.classList.remove(`opens${oldClass}`);
+        parentLi.classList.add(`opens-${this.options.alignment}`);
+      }
+      clear = _foundation_util_box__WEBPACK_IMPORTED_MODULE_6__.Box.ImNotTouchingYou(sub, null, true);
+      if (!clear && parentLi) {
+        parentLi.classList.remove(`opens-${this.options.alignment}`);
+        parentLi.classList.add('opens-inner');
+      }
+      this.changed = true;
+    }
+    sub.style.visibility = '';
+    if (this.options.closeOnClick) {
+      this._addBodyHandler();
+    }
+    /**
+     * Fires when the new dropdown pane is visible.
+     * @event DropdownMenu#show
+     */
+    // S9: state production through the native event layer; the terminal
+    // form forwards the plain element.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'show.zf.dropdownMenu', [sub]);
+  }
+
+  /**
+   * Hides a single, currently open dropdown pane, if passed a parameter, otherwise, hides everything.
+   * @function
+   * @param {jQuery} $elem - element with a submenu to hide
+   * @param {Number} idx - index of the $tabs collection to hide
+   * @fires DropdownMenu#hide
+   * @private
+   */
+  _hide(elem, idx) {
+    // Accepts an element, a collection, a NodeList or an array.
+    var toClose;
+    if (elem) {
+      toClose = elem.nodeType === 1 ? [elem] : Array.from(elem);
+    } else if (typeof idx !== 'undefined') {
+      toClose = this.$tabs.filter(function (tab, i) {
+        return i !== idx;
+      });
+    } else {
+      toClose = [this.$element];
+    }
+    var root = toClose[0];
+    var somethingToClose = toClose.some(el => el.classList.contains('is-active')) || !!root.querySelector('.is-active');
+    if (somethingToClose) {
+      var activeItems = Array.from(root.querySelectorAll('li.is-active'));
+      // S9: class/data state flips natively.
+      toClose.concat(activeItems).forEach(el => {
+        el.setAttribute('data-is-click', 'false');
+        el.classList.remove('is-active');
+      });
+      toClose.forEach(closeRoot => {
+        closeRoot.querySelectorAll('ul.js-dropdown-active').forEach(ul => {
+          ul.classList.remove('js-dropdown-active');
         });
       });
-    }
 
-    /**
-     * Adds an event handler to the body to close any dropdowns on a click.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_addBodyHandler",
-    value: function _addBodyHandler() {
-      var _this3 = this;
-      var body = document.body;
+      // the original find('opens-inner') was a selector typo in 6.x - it
+      // never matched anything (class selectors need the dot); the changed
+      // flag carried the real condition
+      if (this.changed) {
+        var oldClass = this.options.alignment === 'left' ? 'right' : 'left';
+        toClose.forEach(closeRoot => {
+          closeRoot.querySelectorAll('li.is-dropdown-submenu-parent').concat(closeRoot.matches('li.is-dropdown-submenu-parent') ? [closeRoot] : []).forEach(el => {
+            el.classList.remove('opens-inner', `opens-${this.options.alignment}`);
+            el.classList.add(`opens-${oldClass}`);
+          });
+        });
+        this.changed = false;
+      }
+      activeItems.forEach(el => {
+        clearTimeout(el.zfMenuDelay);
+      });
+      if (root.zfMenuDelay) {
+        clearTimeout(root.zfMenuDelay);
+      }
       this._removeBodyHandler();
-      var bodyHandler = function bodyHandler(e) {
-        // $(target).closest($element): the element or any descendant
-        var isItself = e.target === _this3.$element || _this3.$element.contains(e.target);
-        if (isItself) return;
-        _this3._hide();
-        _this3._removeBodyHandler();
-      };
-      // S13: the tap half flips with the Touch util - 'tap' is a real,
-      // bubbling event on the touched element now, so this native body
-      // listener hears it (real clicks arrived through this layer since S9).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(body, 'click.zf.dropdownMenu tap.zf.dropdownMenu', bodyHandler);
-    }
 
-    /**
-     * Remove the body event handler. See `_addBodyHandler`.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_removeBodyHandler",
-    value: function _removeBodyHandler() {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, 'click.zf.dropdownMenu tap.zf.dropdownMenu');
-    }
-
-    /**
-     * Opens a dropdown pane, and checks for collisions first.
-     * @param {jQuery} $sub - ul element that is a submenu to show
-     * @function
-     * @private
-     * @fires DropdownMenu#show
-     */
-  }, {
-    key: "_show",
-    value: function _show(sub) {
-      sub = sub.nodeType === 1 ? sub : sub[0];
-      // which top-level tab owns this submenu
-      var ownerTab = sub.closest('li[role="none"]');
-      while (ownerTab && ownerTab.parentElement !== this.$element) {
-        ownerTab = ownerTab.parentElement ? ownerTab.parentElement.closest('li[role="none"]') : null;
-      }
-      var idx = ownerTab ? this.$tabs.indexOf(ownerTab) : -1;
-      var parentLi = sub.parentElement && sub.parentElement.matches('li.is-dropdown-submenu-parent') ? sub.parentElement : null;
-      var sibs = parentLi ? Array.from(parentLi.parentElement.children).filter(function (el) {
-        return el.matches('li.is-dropdown-submenu-parent');
-      }) : [];
-      this._hide(sibs, idx);
-      // S9: class/inline-style state flips natively.
-      sub.style.visibility = 'hidden';
-      sub.classList.add('js-dropdown-active');
-      if (parentLi) {
-        parentLi.classList.add('is-active');
-      }
-      // S13: the Box util reads plain elements.
-      var clear = _foundation_util_box__WEBPACK_IMPORTED_MODULE_6__.Box.ImNotTouchingYou(sub, null, true);
-      if (!clear) {
-        var oldClass = this.options.alignment === 'left' ? '-right' : '-left';
-        if (parentLi) {
-          parentLi.classList.remove("opens".concat(oldClass));
-          parentLi.classList.add("opens-".concat(this.options.alignment));
-        }
-        clear = _foundation_util_box__WEBPACK_IMPORTED_MODULE_6__.Box.ImNotTouchingYou(sub, null, true);
-        if (!clear && parentLi) {
-          parentLi.classList.remove("opens-".concat(this.options.alignment));
-          parentLi.classList.add('opens-inner');
-        }
-        this.changed = true;
-      }
-      sub.style.visibility = '';
-      if (this.options.closeOnClick) {
-        this._addBodyHandler();
-      }
       /**
-       * Fires when the new dropdown pane is visible.
-       * @event DropdownMenu#show
+       * Fires when the open menus are closed.
+       * @event DropdownMenu#hide
        */
       // S9: state production through the native event layer; the terminal
-      // form forwards the plain element.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'show.zf.dropdownMenu', [sub]);
+      // form forwards the element array.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'hide.zf.dropdownMenu', [toClose]);
     }
+  }
 
-    /**
-     * Hides a single, currently open dropdown pane, if passed a parameter, otherwise, hides everything.
-     * @function
-     * @param {jQuery} $elem - element with a submenu to hide
-     * @param {Number} idx - index of the $tabs collection to hide
-     * @fires DropdownMenu#hide
-     * @private
-     */
-  }, {
-    key: "_hide",
-    value: function _hide(elem, idx) {
-      var _this4 = this;
-      // Accepts an element, a collection, a NodeList or an array.
-      var toClose;
-      if (elem) {
-        toClose = elem.nodeType === 1 ? [elem] : Array.from(elem);
-      } else if (typeof idx !== 'undefined') {
-        toClose = this.$tabs.filter(function (tab, i) {
-          return i !== idx;
-        });
-      } else {
-        toClose = [this.$element];
-      }
-      var root = toClose[0];
-      var somethingToClose = toClose.some(function (el) {
-        return el.classList.contains('is-active');
-      }) || !!root.querySelector('.is-active');
-      if (somethingToClose) {
-        var activeItems = Array.from(root.querySelectorAll('li.is-active'));
-        // S9: class/data state flips natively.
-        toClose.concat(activeItems).forEach(function (el) {
-          el.setAttribute('data-is-click', 'false');
-          el.classList.remove('is-active');
-        });
-        toClose.forEach(function (closeRoot) {
-          closeRoot.querySelectorAll('ul.js-dropdown-active').forEach(function (ul) {
-            ul.classList.remove('js-dropdown-active');
-          });
-        });
+  /**
+   * Destroys the plugin.
+   * @function
+   */
+  _destroy() {
+    // The listeners by bare namespace, the state attributes and the
+    // orientation classes reset.
+    this.$menuItems.forEach(item => _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(item, '.zf.dropdownMenu'));
+    this.$menuItems.forEach(item => {
+      item.removeAttribute('data-is-click');
+      item.classList.remove('is-right-arrow', 'is-left-arrow', 'is-down-arrow', 'opens-right', 'opens-left', 'opens-inner');
+    });
+    this._removeBodyHandler();
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, '.zf.dropdownMenu');
+    _foundation_util_nest__WEBPACK_IMPORTED_MODULE_5__.Nest.Burn(this.$element, 'dropdown');
+  }
+}
 
-        // the original find('opens-inner') was a selector typo in 6.x - it
-        // never matched anything (class selectors need the dot); the changed
-        // flag carried the real condition
-        if (this.changed) {
-          var oldClass = this.options.alignment === 'left' ? 'right' : 'left';
-          toClose.forEach(function (closeRoot) {
-            closeRoot.querySelectorAll('li.is-dropdown-submenu-parent').concat(closeRoot.matches('li.is-dropdown-submenu-parent') ? [closeRoot] : []).forEach(function (el) {
-              el.classList.remove('opens-inner', "opens-".concat(_this4.options.alignment));
-              el.classList.add("opens-".concat(oldClass));
-            });
-          });
-          this.changed = false;
-        }
-        activeItems.forEach(function (el) {
-          clearTimeout(el.zfMenuDelay);
-        });
-        if (root.zfMenuDelay) {
-          clearTimeout(root.zfMenuDelay);
-        }
-        this._removeBodyHandler();
-
-        /**
-         * Fires when the open menus are closed.
-         * @event DropdownMenu#hide
-         */
-        // S9: state production through the native event layer; the terminal
-        // form forwards the element array.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'hide.zf.dropdownMenu', [toClose]);
-      }
-    }
-
-    /**
-     * Destroys the plugin.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The listeners by bare namespace, the state attributes and the
-      // orientation classes reset.
-      this.$menuItems.forEach(function (item) {
-        return _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(item, '.zf.dropdownMenu');
-      });
-      this.$menuItems.forEach(function (item) {
-        item.removeAttribute('data-is-click');
-        item.classList.remove('is-right-arrow', 'is-left-arrow', 'is-down-arrow', 'opens-right', 'opens-left', 'opens-inner');
-      });
-      this._removeBodyHandler();
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(document.body, '.zf.dropdownMenu');
-      _foundation_util_nest__WEBPACK_IMPORTED_MODULE_5__.Nest.Burn(this.$element, 'dropdown');
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
 /**
  * Default settings for plugin
  */
@@ -4907,11 +4481,11 @@ DropdownMenu.defaults = {
 /*!************************************!*\
   !*** ./js/foundation.equalizer.js ***!
   \************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Equalizer: function() { return /* binding */ Equalizer; }
+/* harmony export */   Equalizer: () => (/* binding */ Equalizer)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.imageLoader */ "./js/foundation.util.imageLoader.js");
@@ -4919,19 +4493,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -4945,355 +4506,320 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.imageLoader if equalizer contains images
  */
-var Equalizer = /*#__PURE__*/function (_Plugin) {
-  function Equalizer() {
-    _classCallCheck(this, Equalizer);
-    return _callSuper(this, Equalizer, arguments);
+
+class Equalizer extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__.Plugin {
+  /**
+   * Creates a new instance of Equalizer.
+   * @class
+   * @name Equalizer
+   * @fires Equalizer#init
+   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Equalizer.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Equalizer'; // ie9 back compat
+
+    this._init();
   }
-  _inherits(Equalizer, _Plugin);
-  return _createClass(Equalizer, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Equalizer.
-     * @class
-     * @name Equalizer
-     * @fires Equalizer#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Equalizer.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Equalizer'; // ie9 back compat
 
-      this._init();
-    }
-
-    /**
-     * Initializes the Equalizer plugin and calls functions to get equalizer functioning on load.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var eqId = this.$element.getAttribute('data-equalizer') || '';
-      var watched = Array.from(this.$element.querySelectorAll("[data-equalizer-watch=\"".concat(eqId, "\"]")));
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
-      this.$watched = watched.length ? watched : Array.from(this.$element.querySelectorAll('[data-equalizer-watch]'));
-      // State attributes go through the native layer (7.0 line A, S8).
-      this.$element.setAttribute('data-resize', eqId || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'eq'));
-      this.$element.setAttribute('data-mutate', eqId || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'eq'));
-      this.hasNested = this.$element.querySelectorAll('[data-equalizer]').length > 0;
-      // jQuery parentsUntil(document.body, sel): the ancestors strictly below
-      // body matching the selector
-      this.isNested = function () {
-        var p = this.$element.parentElement;
-        while (p && p !== document.body) {
-          if (p.matches('[data-equalizer]')) {
-            return true;
-          }
-          p = p.parentElement;
+  /**
+   * Initializes the Equalizer plugin and calls functions to get equalizer functioning on load.
+   * @private
+   */
+  _init() {
+    var eqId = this.$element.getAttribute('data-equalizer') || '';
+    var watched = Array.from(this.$element.querySelectorAll(`[data-equalizer-watch="${eqId}"]`));
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
+    this.$watched = watched.length ? watched : Array.from(this.$element.querySelectorAll('[data-equalizer-watch]'));
+    // State attributes go through the native layer (7.0 line A, S8).
+    this.$element.setAttribute('data-resize', eqId || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'eq'));
+    this.$element.setAttribute('data-mutate', eqId || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'eq'));
+    this.hasNested = this.$element.querySelectorAll('[data-equalizer]').length > 0;
+    // jQuery parentsUntil(document.body, sel): the ancestors strictly below
+    // body matching the selector
+    this.isNested = function () {
+      var p = this.$element.parentElement;
+      while (p && p !== document.body) {
+        if (p.matches('[data-equalizer]')) {
+          return true;
         }
-        return false;
-      }.call(this);
-      this.isOn = false;
-      this._bindHandler = {
-        onResizeMeBound: this._onResizeMe.bind(this),
-        onPostEqualizedBound: this._onPostEqualized.bind(this),
-        onCheckMQBound: this._checkMQ.bind(this)
-      };
-      var imgs = this.$element.querySelectorAll('img');
-      var tooSmall;
-      if (this.options.equalizeOn) {
-        tooSmall = this._checkMQ();
-        // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-        // bubbling window event on the native layer now, so this consumer
-        // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
-        // responsiveAccordionTabs/offcanvas all flipped with the producer in
-        // the same move).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
+        p = p.parentElement;
+      }
+      return false;
+    }.call(this);
+    this.isOn = false;
+    this._bindHandler = {
+      onResizeMeBound: this._onResizeMe.bind(this),
+      onPostEqualizedBound: this._onPostEqualized.bind(this),
+      onCheckMQBound: this._checkMQ.bind(this)
+    };
+    var imgs = this.$element.querySelectorAll('img');
+    var tooSmall;
+    if (this.options.equalizeOn) {
+      tooSmall = this._checkMQ();
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs/offcanvas all flipped with the producer in
+      // the same move).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
+    } else {
+      this._events();
+    }
+    if (typeof tooSmall !== 'undefined' && tooSmall === false || typeof tooSmall === 'undefined') {
+      if (imgs.length) {
+        (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_1__.onImagesLoaded)(imgs, this._reflow.bind(this));
       } else {
-        this._events();
-      }
-      if (typeof tooSmall !== 'undefined' && tooSmall === false || typeof tooSmall === 'undefined') {
-        if (imgs.length) {
-          (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_1__.onImagesLoaded)(imgs, this._reflow.bind(this));
-        } else {
-          this._reflow();
-        }
-      }
-    }
-
-    /**
-     * Removes event listeners if the breakpoint is too small.
-     * @private
-     */
-  }, {
-    key: "_pauseEvents",
-    value: function _pauseEvents() {
-      this.isOn = false;
-      // Native side: the mediaquery consumer (S13 flip), the resizeme and
-      // mutateme consumers (S4 producers) and the equalizer lifecycle
-      // listeners drop in one pass each. The mutateme consumer flipped
-      // together with its last producers in the S10 group flip (Tabs forward,
-      // ResponsiveToggle animated half).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
-    }
-
-    /**
-     * function to handle $elements resizeme.zf.trigger, with bound this on _bindHandler.onResizeMeBound
-     * @private
-     */
-  }, {
-    key: "_onResizeMe",
-    value: function _onResizeMe() {
-      this._reflow();
-    }
-
-    /**
-     * function to handle $elements postequalized.zf.equalizer, with bound this on _bindHandler.onPostEqualizedBound
-     * @private
-     */
-  }, {
-    key: "_onPostEqualized",
-    value: function _onPostEqualized(e) {
-      if (e.target !== this.$element) {
         this._reflow();
       }
     }
+  }
 
-    /**
-     * Initializes events for Equalizer.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      this._pauseEvents();
-      if (this.hasNested) {
-        // S8: the postequalized consumer flips together with its producer
-        // (applyHeight below) in the same commit - both sides of the nested
-        // equalizer chain live on the native event layer now.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
-      } else {
-        // S8: the resizeme consumer flips to the native event layer; the
-        // producer in the Triggers util has dispatched real element-local
-        // events since S4, so this seam closes on the consumer half alone.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
-        // S10 group flip: the mutateme consumer joins the native event layer
-        // together with its last jQuery-synthesized producers - the Tabs
-        // forward and the ResponsiveToggle animated half flip in the same
-        // commit, so every element listens on exactly one side and nothing
-        // double-fires.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
-      }
-      this.isOn = true;
+  /**
+   * Removes event listeners if the breakpoint is too small.
+   * @private
+   */
+  _pauseEvents() {
+    this.isOn = false;
+    // Native side: the mediaquery consumer (S13 flip), the resizeme and
+    // mutateme consumers (S4 producers) and the equalizer lifecycle
+    // listeners drop in one pass each. The mutateme consumer flipped
+    // together with its last producers in the S10 group flip (Tabs forward,
+    // ResponsiveToggle animated half).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(window, 'changed.zf.mediaquery', this._bindHandler.onCheckMQBound);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'mutateme.zf.trigger resizeme.zf.trigger .zf.equalizer');
+  }
+
+  /**
+   * function to handle $elements resizeme.zf.trigger, with bound this on _bindHandler.onResizeMeBound
+   * @private
+   */
+  _onResizeMe() {
+    this._reflow();
+  }
+
+  /**
+   * function to handle $elements postequalized.zf.equalizer, with bound this on _bindHandler.onPostEqualizedBound
+   * @private
+   */
+  _onPostEqualized(e) {
+    if (e.target !== this.$element) {
+      this._reflow();
     }
+  }
 
-    /**
-     * Checks the current breakpoint to the minimum required size.
-     * @private
-     */
-  }, {
-    key: "_checkMQ",
-    value: function _checkMQ() {
-      var tooSmall = !_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.is(this.options.equalizeOn);
-      if (tooSmall) {
-        if (this.isOn) {
-          this._pauseEvents();
-          this.$watched.forEach(function (el) {
-            el.style.height = 'auto';
-          });
-        }
-      } else {
-        if (!this.isOn) {
-          this._events();
-        }
-      }
-      return tooSmall;
+  /**
+   * Initializes events for Equalizer.
+   * @private
+   */
+  _events() {
+    this._pauseEvents();
+    if (this.hasNested) {
+      // S8: the postequalized consumer flips together with its producer
+      // (applyHeight below) in the same commit - both sides of the nested
+      // equalizer chain live on the native event layer now.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'postequalized.zf.equalizer', this._bindHandler.onPostEqualizedBound);
+    } else {
+      // S8: the resizeme consumer flips to the native event layer; the
+      // producer in the Triggers util has dispatched real element-local
+      // events since S4, so this seam closes on the consumer half alone.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'resizeme.zf.trigger', this._bindHandler.onResizeMeBound);
+      // S10 group flip: the mutateme consumer joins the native event layer
+      // together with its last jQuery-synthesized producers - the Tabs
+      // forward and the ResponsiveToggle animated half flip in the same
+      // commit, so every element listens on exactly one side and nothing
+      // double-fires.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'mutateme.zf.trigger', this._bindHandler.onResizeMeBound);
     }
+    this.isOn = true;
+  }
 
-    /**
-     * A noop version for the plugin
-     * @private
-     */
-  }, {
-    key: "_killswitch",
-    value: function _killswitch() {
-      return;
-    }
-
-    /**
-     * Calls necessary functions to update Equalizer upon DOM change
-     * @private
-     */
-  }, {
-    key: "_reflow",
-    value: function _reflow() {
-      if (!this.options.equalizeOnStack) {
-        if (this._isStacked()) {
-          this.$watched.forEach(function (el) {
-            el.style.height = 'auto';
-          });
-          return false;
-        }
-      }
-      if (this.options.equalizeByRow) {
-        this.getHeightsByRow(this.applyHeightByRow.bind(this));
-      } else {
-        this.getHeights(this.applyHeight.bind(this));
-      }
-    }
-
-    /**
-     * Manually determines if the first 2 elements are *NOT* stacked.
-     * @private
-     */
-  }, {
-    key: "_isStacked",
-    value: function _isStacked() {
-      if (!this.$watched[0] || !this.$watched[1]) {
-        return true;
-      }
-      return this.$watched[0].getBoundingClientRect().top !== this.$watched[1].getBoundingClientRect().top;
-    }
-
-    /**
-     * Finds the outer heights of children contained within an Equalizer parent and returns them in an array
-     * @param {Function} cb - A non-optional callback to return the heights array to.
-     * @returns {Array} heights - An array of heights of children within Equalizer container
-     */
-  }, {
-    key: "getHeights",
-    value: function getHeights(cb) {
-      var heights = [];
-      for (var i = 0, len = this.$watched.length; i < len; i++) {
-        this.$watched[i].style.height = 'auto';
-        heights.push(this.$watched[i].offsetHeight);
-      }
-      cb(heights);
-    }
-
-    /**
-     * Finds the outer heights of children contained within an Equalizer parent and returns them in an array
-     * @param {Function} cb - A non-optional callback to return the heights array to.
-     * @returns {Array} groups - An array of heights of children within Equalizer container grouped by row with element,height and max as last child
-     */
-  }, {
-    key: "getHeightsByRow",
-    value: function getHeightsByRow(cb) {
-      // jQuery offset(): document-coordinates top of the first watched item
-      var lastElTopOffset = this.$watched.length ? this.$watched[0].getBoundingClientRect().top + window.pageYOffset : 0,
-        groups = [],
-        group = 0;
-      //group by Row
-      groups[group] = [];
-      for (var i = 0, len = this.$watched.length; i < len; i++) {
-        this.$watched[i].style.height = 'auto';
-        //maybe could use this.$watched[i].offsetTop
-        var elOffsetTop = this.$watched[i].getBoundingClientRect().top + window.pageYOffset;
-        if (elOffsetTop !== lastElTopOffset) {
-          group++;
-          groups[group] = [];
-          lastElTopOffset = elOffsetTop;
-        }
-        groups[group].push([this.$watched[i], this.$watched[i].offsetHeight]);
-      }
-      for (var j = 0, ln = groups.length; j < ln; j++) {
-        var heights = groups[j].map(function (item) {
-          return item[1];
+  /**
+   * Checks the current breakpoint to the minimum required size.
+   * @private
+   */
+  _checkMQ() {
+    var tooSmall = !_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.is(this.options.equalizeOn);
+    if (tooSmall) {
+      if (this.isOn) {
+        this._pauseEvents();
+        this.$watched.forEach(el => {
+          el.style.height = 'auto';
         });
-        var max = Math.max.apply(null, heights);
-        groups[j].push(max);
       }
-      cb(groups);
+    } else {
+      if (!this.isOn) {
+        this._events();
+      }
     }
+    return tooSmall;
+  }
 
-    /**
-     * Changes the CSS height property of each child in an Equalizer parent to match the tallest
-     * @param {array} heights - An array of heights of children within Equalizer container
-     * @fires Equalizer#preequalized
-     * @fires Equalizer#postequalized
-     */
-  }, {
-    key: "applyHeight",
-    value: function applyHeight(heights) {
+  /**
+   * A noop version for the plugin
+   * @private
+   */
+  _killswitch() {
+    return;
+  }
+
+  /**
+   * Calls necessary functions to update Equalizer upon DOM change
+   * @private
+   */
+  _reflow() {
+    if (!this.options.equalizeOnStack) {
+      if (this._isStacked()) {
+        this.$watched.forEach(el => {
+          el.style.height = 'auto';
+        });
+        return false;
+      }
+    }
+    if (this.options.equalizeByRow) {
+      this.getHeightsByRow(this.applyHeightByRow.bind(this));
+    } else {
+      this.getHeights(this.applyHeight.bind(this));
+    }
+  }
+
+  /**
+   * Manually determines if the first 2 elements are *NOT* stacked.
+   * @private
+   */
+  _isStacked() {
+    if (!this.$watched[0] || !this.$watched[1]) {
+      return true;
+    }
+    return this.$watched[0].getBoundingClientRect().top !== this.$watched[1].getBoundingClientRect().top;
+  }
+
+  /**
+   * Finds the outer heights of children contained within an Equalizer parent and returns them in an array
+   * @param {Function} cb - A non-optional callback to return the heights array to.
+   * @returns {Array} heights - An array of heights of children within Equalizer container
+   */
+  getHeights(cb) {
+    var heights = [];
+    for (var i = 0, len = this.$watched.length; i < len; i++) {
+      this.$watched[i].style.height = 'auto';
+      heights.push(this.$watched[i].offsetHeight);
+    }
+    cb(heights);
+  }
+
+  /**
+   * Finds the outer heights of children contained within an Equalizer parent and returns them in an array
+   * @param {Function} cb - A non-optional callback to return the heights array to.
+   * @returns {Array} groups - An array of heights of children within Equalizer container grouped by row with element,height and max as last child
+   */
+  getHeightsByRow(cb) {
+    // jQuery offset(): document-coordinates top of the first watched item
+    var lastElTopOffset = this.$watched.length ? this.$watched[0].getBoundingClientRect().top + window.pageYOffset : 0,
+      groups = [],
+      group = 0;
+    //group by Row
+    groups[group] = [];
+    for (var i = 0, len = this.$watched.length; i < len; i++) {
+      this.$watched[i].style.height = 'auto';
+      //maybe could use this.$watched[i].offsetTop
+      var elOffsetTop = this.$watched[i].getBoundingClientRect().top + window.pageYOffset;
+      if (elOffsetTop !== lastElTopOffset) {
+        group++;
+        groups[group] = [];
+        lastElTopOffset = elOffsetTop;
+      }
+      groups[group].push([this.$watched[i], this.$watched[i].offsetHeight]);
+    }
+    for (var j = 0, ln = groups.length; j < ln; j++) {
+      var heights = groups[j].map(function (item) {
+        return item[1];
+      });
       var max = Math.max.apply(null, heights);
-      /**
-       * Fires before the heights are applied
-       * @event Equalizer#preequalized
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalized.zf.equalizer');
-      this.$watched.forEach(function (el) {
-        el.style.height = max + 'px';
-      });
-
-      /**
-       * Fires when the heights have been applied
-       * @event Equalizer#postequalized
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalized.zf.equalizer');
+      groups[j].push(max);
     }
+    cb(groups);
+  }
+
+  /**
+   * Changes the CSS height property of each child in an Equalizer parent to match the tallest
+   * @param {array} heights - An array of heights of children within Equalizer container
+   * @fires Equalizer#preequalized
+   * @fires Equalizer#postequalized
+   */
+  applyHeight(heights) {
+    var max = Math.max.apply(null, heights);
+    /**
+     * Fires before the heights are applied
+     * @event Equalizer#preequalized
+     */
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalized.zf.equalizer');
+    this.$watched.forEach(el => {
+      el.style.height = max + 'px';
+    });
 
     /**
-     * Changes the CSS height property of each child in an Equalizer parent to match the tallest by row
-     * @param {array} groups - An array of heights of children within Equalizer container grouped by row with element,height and max as last child
-     * @fires Equalizer#preequalized
-     * @fires Equalizer#preequalizedrow
-     * @fires Equalizer#postequalizedrow
-     * @fires Equalizer#postequalized
+     * Fires when the heights have been applied
+     * @event Equalizer#postequalized
      */
-  }, {
-    key: "applyHeightByRow",
-    value: function applyHeightByRow(groups) {
-      /**
-       * Fires before the heights are applied
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalized.zf.equalizer');
-      for (var i = 0, len = groups.length; i < len; i++) {
-        var groupsILength = groups[i].length,
-          max = groups[i][groupsILength - 1];
-        if (groupsILength <= 2) {
-          groups[i][0][0].style.height = 'auto';
-          continue;
-        }
-        /**
-          * Fires before the heights per row are applied
-          * @event Equalizer#preequalizedrow
-          */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalizedrow.zf.equalizer');
-        for (var j = 0, lenJ = groupsILength - 1; j < lenJ; j++) {
-          groups[i][j][0].style.height = max + 'px';
-        }
-        /**
-          * Fires when the heights per row have been applied
-          * @event Equalizer#postequalizedrow
-          */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalizedrow.zf.equalizer');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalized.zf.equalizer');
+  }
+
+  /**
+   * Changes the CSS height property of each child in an Equalizer parent to match the tallest by row
+   * @param {array} groups - An array of heights of children within Equalizer container grouped by row with element,height and max as last child
+   * @fires Equalizer#preequalized
+   * @fires Equalizer#preequalizedrow
+   * @fires Equalizer#postequalizedrow
+   * @fires Equalizer#postequalized
+   */
+  applyHeightByRow(groups) {
+    /**
+     * Fires before the heights are applied
+     */
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalized.zf.equalizer');
+    for (var i = 0, len = groups.length; i < len; i++) {
+      var groupsILength = groups[i].length,
+        max = groups[i][groupsILength - 1];
+      if (groupsILength <= 2) {
+        groups[i][0][0].style.height = 'auto';
+        continue;
       }
       /**
-       * Fires when the heights have been applied
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalized.zf.equalizer');
+        * Fires before the heights per row are applied
+        * @event Equalizer#preequalizedrow
+        */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'preequalizedrow.zf.equalizer');
+      for (var j = 0, lenJ = groupsILength - 1; j < lenJ; j++) {
+        groups[i][j][0].style.height = max + 'px';
+      }
+      /**
+        * Fires when the heights per row have been applied
+        * @event Equalizer#postequalizedrow
+        */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalizedrow.zf.equalizer');
     }
-
     /**
-     * Destroys an instance of Equalizer.
-     * @function
+     * Fires when the heights have been applied
      */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      this._pauseEvents();
-      this.$watched.forEach(function (el) {
-        el.style.height = 'auto';
-      });
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__.Plugin);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(this.$element, 'postequalized.zf.equalizer');
+  }
+
+  /**
+   * Destroys an instance of Equalizer.
+   * @function
+   */
+  _destroy() {
+    this._pauseEvents();
+    this.$watched.forEach(el => {
+      el.style.height = 'auto';
+    });
+  }
+}
+
 /**
  * Default settings for plugin
  */
@@ -5328,11 +4854,11 @@ Equalizer.defaults = {
 /*!**************************************!*\
   !*** ./js/foundation.interchange.js ***!
   \**************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Interchange: function() { return /* binding */ Interchange; }
+/* harmony export */   Interchange: () => (/* binding */ Interchange)
 /* harmony export */ });
 /* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core */ "./js/foundation.core.js");
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
@@ -5341,19 +4867,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -5367,255 +4880,228 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @module foundation.interchange
  * @requires foundation.util.mediaQuery
  */
-var Interchange = /*#__PURE__*/function (_Plugin) {
-  function Interchange() {
-    _classCallCheck(this, Interchange);
-    return _callSuper(this, Interchange, arguments);
+
+class Interchange extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.Plugin {
+  /**
+   * Creates a new instance of Interchange.
+   * @class
+   * @name Interchange
+   * @fires Interchange#init
+   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A, slice S16: the plugin works on the native element; the
+    // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = Object.assign({}, Interchange.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
+    this.rules = [];
+    this.currentPath = '';
+    this.className = 'Interchange'; // ie9 back compat
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_4__.Triggers.init();
+    this._init();
+    this._events();
   }
-  _inherits(Interchange, _Plugin);
-  return _createClass(Interchange, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Interchange.
-     * @class
-     * @name Interchange
-     * @fires Interchange#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A, slice S16: the plugin works on the native element; the
-      // jQuery collection the mixed-state reflow still feeds in is unwrapped.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = Object.assign({}, Interchange.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
-      this.rules = [];
-      this.currentPath = '';
-      this.className = 'Interchange'; // ie9 back compat
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_4__.Triggers.init();
-      this._init();
-      this._events();
+  /**
+   * Initializes the Interchange plugin and calls functions to get interchange functioning on load.
+   * @function
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery._init();
+    var element = this.$element;
+    var id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_3__.GetYoDigits)(6, 'interchange');
+    // State attributes go through the native layer (7.0 line A, S12).
+    element.setAttribute('data-resize', id);
+    element.setAttribute('id', id);
+    this._parseOptions();
+    this._addBreakpoints();
+    this._generateRules();
+    this._reflow();
+  }
+
+  /**
+   * Initializes events for Interchange.
+   * @function
+   * @private
+   */
+  _events() {
+    // S12: the resizeme consumer flips to the native event layer; the
+    // producer in the Triggers util has dispatched real element-local
+    // events since S4, so this seam closes on the consumer half alone.
+    const element = this.$element;
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(element, 'resizeme.zf.trigger');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(element, 'resizeme.zf.trigger', () => this._reflow());
+  }
+
+  /**
+   * Calls necessary functions to update Interchange upon DOM change
+   * @function
+   * @private
+   */
+  _reflow() {
+    var match;
+
+    // Iterate through each rule, but only save the last match
+    for (var i in this.rules) {
+      if (this.rules.hasOwnProperty(i)) {
+        var rule = this.rules[i];
+        if (window.matchMedia(rule.query).matches) {
+          match = rule;
+        }
+      }
+    }
+    if (match) {
+      this.replace(match.path);
+    }
+  }
+
+  /**
+   * Check options valifity and set defaults for:
+   * - `data-interchange-type`: if set, enforce the type of replacement (auto, src, background or html)
+   * @function
+   * @private
+   */
+  _parseOptions() {
+    var types = ['auto', 'src', 'background', 'html'];
+    if (typeof this.options.type === 'undefined') this.options.type = 'auto';else if (types.indexOf(this.options.type) === -1) {
+      console.warn(`Warning: invalid value "${this.options.type}" for Interchange option "type"`);
+      this.options.type = 'auto';
+    }
+  }
+
+  /**
+   * Gets the Foundation breakpoints and adds them to the Interchange.SPECIAL_QUERIES object.
+   * @function
+   * @private
+   */
+  _addBreakpoints() {
+    for (var i in _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries) {
+      if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries.hasOwnProperty(i)) {
+        var query = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries[i];
+        Interchange.SPECIAL_QUERIES[query.name] = query.value;
+      }
+    }
+  }
+
+  /**
+   * Checks the Interchange element for the provided media query + content pairings
+   * @function
+   * @private
+   * @returns {Array} scenarios - Array of objects that have 'mq' and 'path' keys with corresponding keys
+   */
+  _generateRules() {
+    var rulesList = [];
+    var rules;
+    if (this.options.rules) {
+      rules = this.options.rules;
+    } else {
+      // Read the attribute directly: identical to the former
+      // `.data('interchange')` for every string rule list (the value is not
+      // valid JSON, so jQuery's data parsing never converted it either).
+      rules = this.$element.getAttribute('data-interchange');
+    }
+    rules = typeof rules === 'string' ? rules.match(/\[.*?, .*?\]/g) : rules;
+    for (var i in rules) {
+      if (rules.hasOwnProperty(i)) {
+        var rule = rules[i].slice(1, -1).split(', ');
+        var path = rule.slice(0, -1).join('');
+        var query = rule[rule.length - 1];
+        if (Interchange.SPECIAL_QUERIES[query]) {
+          query = Interchange.SPECIAL_QUERIES[query];
+        }
+        rulesList.push({
+          path: path,
+          query: query
+        });
+      }
+    }
+    this.rules = rulesList;
+  }
+
+  /**
+   * Update the `src` property of an image, or change the HTML of a container, to the specified path.
+   * @function
+   * @param {String} path - Path to the image or HTML partial.
+   * @fires Interchange#replaced
+   */
+  replace(path) {
+    if (this.currentPath === path) return;
+    var trigger = 'replaced.zf.interchange';
+    var element = this.$element;
+    var type = this.options.type;
+    if (type === 'auto') {
+      if (element.nodeName === 'IMG') type = 'src';else if (path.match(/\.(gif|jpe?g|png|svg|tiff)([?#].*)?/i)) type = 'background';else type = 'html';
     }
 
-    /**
-     * Initializes the Interchange plugin and calls functions to get interchange functioning on load.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery._init();
-      var element = this.$element;
-      var id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_3__.GetYoDigits)(6, 'interchange');
-      // State attributes go through the native layer (7.0 line A, S12).
-      element.setAttribute('data-resize', id);
-      element.setAttribute('id', id);
-      this._parseOptions();
-      this._addBreakpoints();
-      this._generateRules();
-      this._reflow();
+    // Replacing images
+    if (type === 'src') {
+      // The M1 fix shape is kept byte-for-byte: a one-time load listener per
+      // replace, so listeners stop accumulating across replaces (the S12
+      // native form of the former `.one('load')`).
+      element.setAttribute('src', path);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.one(element, 'load', () => {
+        this.currentPath = path;
+      });
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
     }
-
-    /**
-     * Initializes events for Interchange.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      // S12: the resizeme consumer flips to the native event layer; the
-      // producer in the Triggers util has dispatched real element-local
-      // events since S4, so this seam closes on the consumer half alone.
-      var element = this.$element;
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(element, 'resizeme.zf.trigger');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(element, 'resizeme.zf.trigger', function () {
-        return _this._reflow();
+    // Replacing background images
+    else if (type === 'background') {
+      path = path.replace(/\(/g, '%28').replace(/\)/g, '%29');
+      element.style.backgroundImage = 'url(' + path + ')';
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
+    }
+    // Replacing HTML
+    else if (type === 'html') {
+      // Native fetch (7.0 line A, S14): the former `$.get(path, callback)`.
+      // Error semantics aligned to the 6.x observed behavior: `$.get` only
+      // called back on HTTP 2xx (its internal success filter), so a failure
+      // was SILENT - no event, no state change, a console error from the
+      // failed request itself. `fetch` resolves on any status, so `res.ok`
+      // reproduces that filter: a non-2xx response drops the promise's
+      // result exactly like the dropped jQuery callback (fetch additionally
+      // logs its own failed-request console error, as jQuery did).
+      fetch(path).then(res => {
+        if (!res.ok) {
+          return;
+        }
+        return res.text();
+      }).then(response => {
+        if (response === undefined) {
+          return;
+        }
+        // Native html injection (7.0 line A, S12): the assignment re-parses
+        // `response` in place, exactly like the former `.html()`.
+        element.innerHTML = response;
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
+        // Initialize plugins in the inserted content (it is a re-parsed copy
+        // of `response`, so initializing `$(response)` would hit detached nodes)
+        _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.reflow(this.$element);
+        this.currentPath = path;
       });
     }
 
     /**
-     * Calls necessary functions to update Interchange upon DOM change
-     * @function
-     * @private
+     * Fires when content in an Interchange element is done being loaded.
+     * @event Interchange#replaced
      */
-  }, {
-    key: "_reflow",
-    value: function _reflow() {
-      var match;
+    // this.$element.trigger('replaced.zf.interchange');
+  }
 
-      // Iterate through each rule, but only save the last match
-      for (var i in this.rules) {
-        if (this.rules.hasOwnProperty(i)) {
-          var rule = this.rules[i];
-          if (window.matchMedia(rule.query).matches) {
-            match = rule;
-          }
-        }
-      }
-      if (match) {
-        this.replace(match.path);
-      }
-    }
+  /**
+   * Destroys an instance of interchange.
+   * @function
+   */
+  _destroy() {
+    // The resizeme consumer lives on the native event layer only now
+    // (Equalizer S8 precedent for fully flipped consumers).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'resizeme.zf.trigger');
+  }
+}
 
-    /**
-     * Check options valifity and set defaults for:
-     * - `data-interchange-type`: if set, enforce the type of replacement (auto, src, background or html)
-     * @function
-     * @private
-     */
-  }, {
-    key: "_parseOptions",
-    value: function _parseOptions() {
-      var types = ['auto', 'src', 'background', 'html'];
-      if (typeof this.options.type === 'undefined') this.options.type = 'auto';else if (types.indexOf(this.options.type) === -1) {
-        console.warn("Warning: invalid value \"".concat(this.options.type, "\" for Interchange option \"type\""));
-        this.options.type = 'auto';
-      }
-    }
-
-    /**
-     * Gets the Foundation breakpoints and adds them to the Interchange.SPECIAL_QUERIES object.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_addBreakpoints",
-    value: function _addBreakpoints() {
-      for (var i in _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries) {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries.hasOwnProperty(i)) {
-          var query = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery.queries[i];
-          Interchange.SPECIAL_QUERIES[query.name] = query.value;
-        }
-      }
-    }
-
-    /**
-     * Checks the Interchange element for the provided media query + content pairings
-     * @function
-     * @private
-     * @returns {Array} scenarios - Array of objects that have 'mq' and 'path' keys with corresponding keys
-     */
-  }, {
-    key: "_generateRules",
-    value: function _generateRules() {
-      var rulesList = [];
-      var rules;
-      if (this.options.rules) {
-        rules = this.options.rules;
-      } else {
-        // Read the attribute directly: identical to the former
-        // `.data('interchange')` for every string rule list (the value is not
-        // valid JSON, so jQuery's data parsing never converted it either).
-        rules = this.$element.getAttribute('data-interchange');
-      }
-      rules = typeof rules === 'string' ? rules.match(/\[.*?, .*?\]/g) : rules;
-      for (var i in rules) {
-        if (rules.hasOwnProperty(i)) {
-          var rule = rules[i].slice(1, -1).split(', ');
-          var path = rule.slice(0, -1).join('');
-          var query = rule[rule.length - 1];
-          if (Interchange.SPECIAL_QUERIES[query]) {
-            query = Interchange.SPECIAL_QUERIES[query];
-          }
-          rulesList.push({
-            path: path,
-            query: query
-          });
-        }
-      }
-      this.rules = rulesList;
-    }
-
-    /**
-     * Update the `src` property of an image, or change the HTML of a container, to the specified path.
-     * @function
-     * @param {String} path - Path to the image or HTML partial.
-     * @fires Interchange#replaced
-     */
-  }, {
-    key: "replace",
-    value: function replace(path) {
-      var _this2 = this;
-      if (this.currentPath === path) return;
-      var trigger = 'replaced.zf.interchange';
-      var element = this.$element;
-      var type = this.options.type;
-      if (type === 'auto') {
-        if (element.nodeName === 'IMG') type = 'src';else if (path.match(/\.(gif|jpe?g|png|svg|tiff)([?#].*)?/i)) type = 'background';else type = 'html';
-      }
-
-      // Replacing images
-      if (type === 'src') {
-        // The M1 fix shape is kept byte-for-byte: a one-time load listener per
-        // replace, so listeners stop accumulating across replaces (the S12
-        // native form of the former `.one('load')`).
-        element.setAttribute('src', path);
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.one(element, 'load', function () {
-          _this2.currentPath = path;
-        });
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
-      }
-      // Replacing background images
-      else if (type === 'background') {
-        path = path.replace(/\(/g, '%28').replace(/\)/g, '%29');
-        element.style.backgroundImage = 'url(' + path + ')';
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
-      }
-      // Replacing HTML
-      else if (type === 'html') {
-        // Native fetch (7.0 line A, S14): the former `$.get(path, callback)`.
-        // Error semantics aligned to the 6.x observed behavior: `$.get` only
-        // called back on HTTP 2xx (its internal success filter), so a failure
-        // was SILENT - no event, no state change, a console error from the
-        // failed request itself. `fetch` resolves on any status, so `res.ok`
-        // reproduces that filter: a non-2xx response drops the promise's
-        // result exactly like the dropped jQuery callback (fetch additionally
-        // logs its own failed-request console error, as jQuery did).
-        fetch(path).then(function (res) {
-          if (!res.ok) {
-            return;
-          }
-          return res.text();
-        }).then(function (response) {
-          if (response === undefined) {
-            return;
-          }
-          // Native html injection (7.0 line A, S12): the assignment re-parses
-          // `response` in place, exactly like the former `.html()`.
-          element.innerHTML = response;
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(element, trigger);
-          // Initialize plugins in the inserted content (it is a re-parsed copy
-          // of `response`, so initializing `$(response)` would hit detached nodes)
-          _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.reflow(_this2.$element);
-          _this2.currentPath = path;
-        });
-      }
-
-      /**
-       * Fires when content in an Interchange element is done being loaded.
-       * @event Interchange#replaced
-       */
-      // this.$element.trigger('replaced.zf.interchange');
-    }
-
-    /**
-     * Destroys an instance of interchange.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The resizeme consumer lives on the native event layer only now
-      // (Equalizer S8 precedent for fully flipped consumers).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'resizeme.zf.trigger');
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.Plugin);
 /**
  * Default settings for plugin
  */
@@ -5652,11 +5138,11 @@ Interchange.SPECIAL_QUERIES = {
 /*!***********************************!*\
   !*** ./js/foundation.magellan.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Magellan: function() { return /* binding */ Magellan; }
+/* harmony export */   Magellan: () => (/* binding */ Magellan)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -5664,19 +5150,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_smoothScroll__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.smoothScroll */ "./js/foundation.smoothScroll.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -5690,266 +5163,276 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.smoothScroll
  * @requires foundation.util.triggers
  */
-var Magellan = /*#__PURE__*/function (_Plugin) {
-  function Magellan() {
-    _classCallCheck(this, Magellan);
-    return _callSuper(this, Magellan, arguments);
+
+class Magellan extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of Magellan.
+   * @class
+   * @name Magellan
+   * @fires Magellan#init
+   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Magellan.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Magellan'; // ie9 back compat
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
+    this._init();
+    this.calcPoints();
   }
-  _inherits(Magellan, _Plugin);
-  return _createClass(Magellan, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Magellan.
-     * @class
-     * @name Magellan
-     * @fires Magellan#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Magellan.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Magellan'; // ie9 back compat
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
-      this._init();
-      this.calcPoints();
+  /**
+   * Initializes the Magellan plugin and calls functions to get equalizer functioning on load.
+   * @private
+   */
+  _init() {
+    var element = this.$element;
+    var id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'magellan');
+    this.id = id;
+    this.targets = Array.from(document.querySelectorAll('[data-magellan-target]'));
+    this.links = Array.from(element.querySelectorAll('a'));
+    element.setAttribute('data-resize', id);
+    element.setAttribute('data-scroll', id);
+    element.id = id;
+    this.active = [];
+    this.scrollPos = parseInt(window.pageYOffset, 10);
+    this._events();
+  }
+
+  /**
+   * Calculates an array of pixel values that are the demarcation lines between locations on the page.
+   * Can be invoked if new elements are added or the size of a location changes.
+   * @function
+   */
+  // The link list is not frozen at _setup: arm() re-reads it (late scripts
+  // build nav lists), and the re-read is exposed as a method so the contract
+  // itself is pinnable.
+  _readLinks() {
+    this.links = Array.from(this.$element.querySelectorAll('a'));
+  }
+  calcPoints() {
+    var _this = this,
+      body = document.body,
+      html = document.documentElement;
+    this.points = [];
+    this.winHeight = Math.round(Math.max(window.innerHeight, html.clientHeight));
+    this.docHeight = Math.round(Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight));
+    this.targets.forEach(function (tar) {
+      // jQuery offset(): the document-coordinates top (rect + page scroll)
+      var pt = Math.round(tar.getBoundingClientRect().top + window.pageYOffset - _this.options.threshold);
+      tar.targetPoint = pt;
+      _this.points.push(pt);
+    });
+  }
+
+  /**
+   * Initializes events for Magellan.
+   * @private
+   */
+  _events() {
+    var _this = this;
+
+    // Interactions arm at DOM-ready, not window load: a hung third-party
+    // resource (the docs site's video iframe) would otherwise leave the
+    // scroll spy and the nav-link clicks dead for as long as window load
+    // is stalled. The 6.x load-time re-measure stays - images settle after
+    // DOM-ready and the points need their final dimensions.
+    var arm = function () {
+      // A late callback can land after destroy() nulled the instance state
+      // (the same post-destroy window the S6 slider guards cover; jQuery's
+      // $(null) tolerance hid this in 6.x).
+      if (!_this.$element) {
+        return;
+      }
+      if (_this.options.deepLinking) {
+        if (location.hash) {
+          _this.scrollToLoc(location.hash);
+        }
+      }
+      // Re-read the links: DOMContentLoaded runs after every synchronous
+      // page script, so nav lists a late script builds (the docs sidebar's
+      // generated subnav) are present now but were not at _setup time.
+      _this._readLinks();
+      _this.calcPoints();
+      _this._updateActive();
+      // S7: the resizeme/scrollme consumers flip to the native event layer.
+      // Both producers in the Triggers util have dispatched real element-
+      // local events since S4, so this seam closes on the consumer half
+      // alone; the delegated link clicks join them on the same layer.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(_this.$element, 'resizeme.zf.trigger', _this.reflow.bind(_this));
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(_this.$element, 'scrollme.zf.trigger', _this._updateActive.bind(_this));
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(_this.$element, 'click.zf.magellan', 'a[href^="#"]', function (e) {
+        e.preventDefault();
+        _this.scrollToLoc(this.getAttribute('href'));
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', arm);
+    } else {
+      arm();
     }
 
-    /**
-     * Initializes the Magellan plugin and calls functions to get equalizer functioning on load.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var element = this.$element;
-      var id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'magellan');
-      this.id = id;
-      this.targets = Array.from(document.querySelectorAll('[data-magellan-target]'));
-      this.links = Array.from(element.querySelectorAll('a'));
-      element.setAttribute('data-resize', id);
-      element.setAttribute('data-scroll', id);
-      element.id = id;
+    // The load-time re-measure: images and late layout settle after
+    // DOM-ready, so the demarcation points are recalculated once the
+    // document has fully loaded.
+    this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
+      if (!_this.$element) {
+        return;
+      }
+      _this.calcPoints();
+      _this._updateActive();
+    });
+    this._deepLinkScroll = function () {
+      if (_this.options.deepLinking) {
+        _this.scrollToLoc(window.location.hash);
+      }
+    };
+
+    // S7: the deep-link hashchange moves to the native event layer under the
+    // per-instance namespace shape introduced for Reveal's hashchange, so
+    // the destroy path can drop it precisely. Real hashchange events are
+    // unaffected by the namespace.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, `hashchange.zf.magellan:${this.id}`, this._deepLinkScroll);
+  }
+
+  /**
+   * Function to scroll to a given location on the page.
+   * @param {String} loc - a properly formatted jQuery id selector. Example: '#foo'
+   * @function
+   */
+  scrollToLoc(loc) {
+    this._inTransition = true;
+    var _this = this;
+    var options = {
+      animationEasing: this.options.animationEasing,
+      animationDuration: this.options.animationDuration,
+      threshold: this.options.threshold,
+      offset: this.options.offset
+    };
+    _foundation_smoothScroll__WEBPACK_IMPORTED_MODULE_4__.SmoothScroll.scrollToLoc(loc, options, function () {
+      _this._inTransition = false;
+    });
+  }
+
+  /**
+   * Calls necessary functions to update Magellan upon DOM change
+   * @function
+   */
+  reflow() {
+    this.calcPoints();
+    this._updateActive();
+  }
+
+  /**
+   * Updates the visibility of an active location link, and updates the url hash for the page, if deepLinking enabled.
+   * @private
+   * @function
+   * @fires Magellan#update
+   */
+  _updateActive(/*event, elem, scrollPos*/
+  ) {
+    if (this._inTransition) return;
+    const newScrollPos = parseInt(window.pageYOffset, 10);
+    const isScrollingUp = this.scrollPos > newScrollPos;
+    this.scrollPos = newScrollPos;
+    let activeIdx;
+    // Before the first point: no link
+    if (newScrollPos < this.points[0] - this.options.offset - (isScrollingUp ? this.options.threshold : 0)) {/* do nothing */}
+    // At the bottom of the page: last link
+    else if (newScrollPos + this.winHeight === this.docHeight) {
+      activeIdx = this.points.length - 1;
+    }
+    // Otherwhise, use the last visible link
+    else {
+      const visibleLinks = this.points.filter(p => {
+        return p - this.options.offset - (isScrollingUp ? this.options.threshold : 0) <= newScrollPos;
+      });
+      activeIdx = visibleLinks.length ? visibleLinks.length - 1 : 0;
+    }
+
+    // Get the new active link
+    const oldActive = this.active;
+    let activeHash = '';
+    if (typeof activeIdx !== 'undefined') {
+      // 6.x filtered $links by [href="#<target>"]; the data read is the raw
+      // attribute (jQuery's .data would convert numbers, the attribute
+      // values here are ids)
+      const targetName = this.targets[activeIdx] ? this.targets[activeIdx].getAttribute('data-magellan-target') : null;
+      this.active = targetName === null ? [] : this.links.filter(function (link) {
+        return link.getAttribute('href') === '#' + targetName;
+      });
+      if (this.active.length) activeHash = this.active[0].getAttribute('href');
+    } else {
       this.active = [];
-      this.scrollPos = parseInt(window.pageYOffset, 10);
-      this._events();
     }
+    // jQuery's .is() between collections: any overlap counts as same
+    const overlaps = this.active.some(function (el) {
+      return oldActive.indexOf(el) !== -1;
+    });
+    const isNewActive = !(!this.active.length && !oldActive.length) && !overlaps;
+    const isNewHash = activeHash !== window.location.hash;
 
-    /**
-     * Calculates an array of pixel values that are the demarcation lines between locations on the page.
-     * Can be invoked if new elements are added or the size of a location changes.
-     * @function
-     */
-  }, {
-    key: "calcPoints",
-    value: function calcPoints() {
-      var _this = this,
-        body = document.body,
-        html = document.documentElement;
-      this.points = [];
-      this.winHeight = Math.round(Math.max(window.innerHeight, html.clientHeight));
-      this.docHeight = Math.round(Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight));
-      this.targets.forEach(function (tar) {
-        // jQuery offset(): the document-coordinates top (rect + page scroll)
-        var pt = Math.round(tar.getBoundingClientRect().top + window.pageYOffset - _this.options.threshold);
-        tar.targetPoint = pt;
-        _this.points.push(pt);
-      });
-    }
-
-    /**
-     * Initializes events for Magellan.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      _this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-        // A load callback can land after destroy() nulled the instance state
-        // (the same post-destroy window the S6 slider guards cover; jQuery's
-        // $(null) tolerance hid this in 6.x).
-        if (!_this.$element) {
-          return;
-        }
-        if (_this.options.deepLinking) {
-          if (location.hash) {
-            _this.scrollToLoc(location.hash);
-          }
-        }
-        _this.calcPoints();
-        _this._updateActive();
-        // S7: the resizeme/scrollme consumers flip to the native event layer.
-        // Both producers in the Triggers util have dispatched real element-
-        // local events since S4, so this seam closes on the consumer half
-        // alone; the delegated link clicks join them on the same layer.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(_this.$element, 'resizeme.zf.trigger', _this.reflow.bind(_this));
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(_this.$element, 'scrollme.zf.trigger', _this._updateActive.bind(_this));
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(_this.$element, 'click.zf.magellan', 'a[href^="#"]', function (e) {
-          e.preventDefault();
-          _this.scrollToLoc(this.getAttribute('href'));
-        });
-      });
-      this._deepLinkScroll = function () {
-        if (_this.options.deepLinking) {
-          _this.scrollToLoc(window.location.hash);
-        }
-      };
-
-      // S7: the deep-link hashchange moves to the native event layer under the
-      // per-instance namespace shape introduced for Reveal's hashchange, so
-      // the destroy path can drop it precisely. Real hashchange events are
-      // unaffected by the namespace.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, "hashchange.zf.magellan:".concat(this.id), this._deepLinkScroll);
-    }
-
-    /**
-     * Function to scroll to a given location on the page.
-     * @param {String} loc - a properly formatted jQuery id selector. Example: '#foo'
-     * @function
-     */
-  }, {
-    key: "scrollToLoc",
-    value: function scrollToLoc(loc) {
-      this._inTransition = true;
-      var _this = this;
-      var options = {
-        animationEasing: this.options.animationEasing,
-        animationDuration: this.options.animationDuration,
-        threshold: this.options.threshold,
-        offset: this.options.offset
-      };
-      _foundation_smoothScroll__WEBPACK_IMPORTED_MODULE_4__.SmoothScroll.scrollToLoc(loc, options, function () {
-        _this._inTransition = false;
-      });
-    }
-
-    /**
-     * Calls necessary functions to update Magellan upon DOM change
-     * @function
-     */
-  }, {
-    key: "reflow",
-    value: function reflow() {
-      this.calcPoints();
-      this._updateActive();
-    }
-
-    /**
-     * Updates the visibility of an active location link, and updates the url hash for the page, if deepLinking enabled.
-     * @private
-     * @function
-     * @fires Magellan#update
-     */
-  }, {
-    key: "_updateActive",
-    value: function _updateActive(/*event, elem, scrollPos*/
-    ) {
-      var _this2 = this;
-      if (this._inTransition) return;
-      var newScrollPos = parseInt(window.pageYOffset, 10);
-      var isScrollingUp = this.scrollPos > newScrollPos;
-      this.scrollPos = newScrollPos;
-      var activeIdx;
-      // Before the first point: no link
-      if (newScrollPos < this.points[0] - this.options.offset - (isScrollingUp ? this.options.threshold : 0)) {/* do nothing */}
-      // At the bottom of the page: last link
-      else if (newScrollPos + this.winHeight === this.docHeight) {
-        activeIdx = this.points.length - 1;
-      }
-      // Otherwhise, use the last visible link
-      else {
-        var visibleLinks = this.points.filter(function (p) {
-          return p - _this2.options.offset - (isScrollingUp ? _this2.options.threshold : 0) <= newScrollPos;
-        });
-        activeIdx = visibleLinks.length ? visibleLinks.length - 1 : 0;
-      }
-
-      // Get the new active link
-      var oldActive = this.active;
-      var activeHash = '';
-      if (typeof activeIdx !== 'undefined') {
-        // 6.x filtered $links by [href="#<target>"]; the data read is the raw
-        // attribute (jQuery's .data would convert numbers, the attribute
-        // values here are ids)
-        var targetName = this.targets[activeIdx] ? this.targets[activeIdx].getAttribute('data-magellan-target') : null;
-        this.active = targetName === null ? [] : this.links.filter(function (link) {
-          return link.getAttribute('href') === '#' + targetName;
-        });
-        if (this.active.length) activeHash = this.active[0].getAttribute('href');
-      } else {
-        this.active = [];
-      }
-      // jQuery's .is() between collections: any overlap counts as same
-      var overlaps = this.active.some(function (el) {
-        return oldActive.indexOf(el) !== -1;
-      });
-      var isNewActive = !(!this.active.length && !oldActive.length) && !overlaps;
-      var isNewHash = activeHash !== window.location.hash;
-
-      // Update the active link element (native classList, 7.0 line A S7)
-      if (isNewActive) {
-        oldActive.forEach(function (el) {
-          el.classList.remove(this.options.activeClass);
-        }, this);
-        this.active.forEach(function (el) {
-          el.classList.add(this.options.activeClass);
-        }, this);
-      }
-
-      // Update the hash (it may have changed with the same active link)
-      if (this.options.deepLinking && isNewHash) {
-        if (window.history.pushState) {
-          // Set or remove the hash (see: https://stackoverflow.com/a/5298684/4317384
-          var url = activeHash ? activeHash : window.location.pathname + window.location.search;
-          if (this.options.updateHistory) {
-            window.history.pushState({}, '', url);
-          } else {
-            window.history.replaceState({}, '', url);
-          }
-        } else {
-          window.location.hash = activeHash;
-        }
-      }
-      if (isNewActive) {
-        /**
-         * Fires when magellan is finished updating to the new active element.
-         * @event Magellan#update
-         */
-        // S7: real, bubbling CustomEvent - native listeners receive it
-        // directly, still-on-jQuery listeners through the real-event pass-
-        // through (the forwarded $active rides in event.originalEvent.detail
-        // for them).
-        // 7.0 terminal form: the forwarded active links are the native
-        // element array (6.x forwarded the jQuery collection).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'update.zf.magellan', [this.active]);
-      }
-    }
-
-    /**
-     * Destroys an instance of Magellan and resets the url of the window.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The bare-namespace forms drop the resizeme/scrollme and delegated
-      // click listeners in one pass each, and the deep-link hashchange goes
-      // with its per-instance namespace.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.magellan');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, "hashchange.zf.magellan:".concat(this.id));
-      if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
-      // Reset the active link classes (the 6.x destroy cleanup).
-      this.$element.querySelectorAll(".".concat(this.options.activeClass)).forEach(function (el) {
+    // Update the active link element (native classList, 7.0 line A S7)
+    if (isNewActive) {
+      oldActive.forEach(function (el) {
         el.classList.remove(this.options.activeClass);
       }, this);
+      this.active.forEach(function (el) {
+        el.classList.add(this.options.activeClass);
+      }, this);
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+
+    // Update the hash (it may have changed with the same active link)
+    if (this.options.deepLinking && isNewHash) {
+      if (window.history.pushState) {
+        // Set or remove the hash (see: https://stackoverflow.com/a/5298684/4317384
+        const url = activeHash ? activeHash : window.location.pathname + window.location.search;
+        if (this.options.updateHistory) {
+          window.history.pushState({}, '', url);
+        } else {
+          window.history.replaceState({}, '', url);
+        }
+      } else {
+        window.location.hash = activeHash;
+      }
+    }
+    if (isNewActive) {
+      /**
+       * Fires when magellan is finished updating to the new active element.
+       * @event Magellan#update
+       */
+      // S7: real, bubbling CustomEvent - native listeners receive it
+      // directly, still-on-jQuery listeners through the real-event pass-
+      // through (the forwarded $active rides in event.originalEvent.detail
+      // for them).
+      // 7.0 terminal form: the forwarded active links are the native
+      // element array (6.x forwarded the jQuery collection).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'update.zf.magellan', [this.active]);
+    }
+  }
+
+  /**
+   * Destroys an instance of Magellan and resets the url of the window.
+   * @function
+   */
+  _destroy() {
+    // The bare-namespace forms drop the resizeme/scrollme and delegated
+    // click listeners in one pass each, and the deep-link hashchange goes
+    // with its per-instance namespace.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.magellan');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, `hashchange.zf.magellan:${this.id}`);
+    if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+    // Reset the active link classes (the 6.x destroy cleanup).
+    this.$element.querySelectorAll(`.${this.options.activeClass}`).forEach(function (el) {
+      el.classList.remove(this.options.activeClass);
+    }, this);
+  }
+}
+
 /**
  * Default settings for plugin
  */
@@ -6013,11 +5496,11 @@ Magellan.defaults = {
 /*!************************************!*\
   !*** ./js/foundation.offcanvas.js ***!
   \************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   OffCanvas: function() { return /* binding */ OffCanvas; }
+/* harmony export */   OffCanvas: () => (/* binding */ OffCanvas)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -6026,19 +5509,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -6054,674 +5524,617 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.triggers
  */
-var OffCanvas = /*#__PURE__*/function (_Plugin) {
-  function OffCanvas() {
-    _classCallCheck(this, OffCanvas);
-    return _callSuper(this, OffCanvas, arguments);
+
+class OffCanvas extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of an off-canvas wrapper.
+   * @class
+   * @name OffCanvas
+   * @fires OffCanvas#init
+   * @param {Object} element - jQuery object to initialize.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    this.className = 'OffCanvas'; // ie9 back compat
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, OffCanvas.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.contentClasses = {
+      base: [],
+      reveal: []
+    };
+    this.$lastTrigger = null;
+    this.$triggers = [];
+    this.position = 'left';
+    this.$content = null;
+    this.nested = !!this.options.nested;
+    this.$sticky = [];
+    this.isInCanvas = false;
+
+    // Defines the CSS transition/position classes of the off-canvas content container.
+    ['push', 'overlap'].forEach(val => {
+      this.contentClasses.base.push('has-transition-' + val);
+    });
+    ['left', 'right', 'top', 'bottom'].forEach(val => {
+      this.contentClasses.base.push('has-position-' + val);
+      this.contentClasses.reveal.push('has-reveal-' + val);
+    });
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_6__.Triggers.init();
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
+    this._init();
+    this._events();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('OffCanvas', {
+      'ESCAPE': 'close'
+    });
   }
-  _inherits(OffCanvas, _Plugin);
-  return _createClass(OffCanvas, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of an off-canvas wrapper.
-     * @class
-     * @name OffCanvas
-     * @fires OffCanvas#init
-     * @param {Object} element - jQuery object to initialize.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      var _this2 = this;
-      this.className = 'OffCanvas'; // ie9 back compat
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, OffCanvas.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.contentClasses = {
-        base: [],
-        reveal: []
-      };
-      this.$lastTrigger = null;
-      this.$triggers = [];
-      this.position = 'left';
-      this.$content = null;
-      this.nested = !!this.options.nested;
-      this.$sticky = [];
-      this.isInCanvas = false;
 
-      // Defines the CSS transition/position classes of the off-canvas content container.
-      ['push', 'overlap'].forEach(function (val) {
-        _this2.contentClasses.base.push('has-transition-' + val);
-      });
-      ['left', 'right', 'top', 'bottom'].forEach(function (val) {
-        _this2.contentClasses.base.push('has-position-' + val);
-        _this2.contentClasses.reveal.push('has-reveal-' + val);
-      });
+  /**
+   * Initializes the off-canvas wrapper by adding the exit overlay (if needed).
+   * @function
+   * @private
+   */
+  _init() {
+    var id = this.$element.getAttribute('id');
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_6__.Triggers.init();
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
-      this._init();
-      this._events();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('OffCanvas', {
-        'ESCAPE': 'close'
-      });
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    this.$element.setAttribute('aria-hidden', 'true');
+
+    // Find off-canvas content, either by ID (if specified), by siblings or by closest selector (fallback)
+    if (this.options.contentId) {
+      this.$content = document.getElementById(this.options.contentId);
+    } else {
+      var siblingContent = Array.from(this.$element.parentElement.children).filter(el => el !== this.$element && el.matches('[data-off-canvas-content]'));
+      this.$content = siblingContent[0] || this.$element.closest('[data-off-canvas-content]');
+    }
+    if (!this.options.contentId) {
+      // Assume that the off-canvas element is nested if it isn't a sibling of the content
+      this.nested = !(this.$content && this.$content.parentElement === this.$element.parentElement);
+    } else if (this.options.contentId && this.options.nested === null) {
+      // Warning if using content ID without setting the nested option
+      // Once the element is nested it is required to work properly in this case
+      console.warn('Remember to use the nested option if using the content ID option!');
+    }
+    if (this.nested === true) {
+      // Force transition overlap if nested
+      this.options.transition = 'overlap';
+      // Remove appropriate classes if already assigned in markup
+      this.$element.classList.remove('is-transition-push');
+    }
+    this.$element.classList.add(`is-transition-${this.options.transition}`, 'is-closed');
+
+    // Find triggers that affect this element and add aria-expanded to them
+    this.$triggers = Array.from(document.querySelectorAll(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`));
+    this.$triggers.forEach(function (el) {
+      el.setAttribute('aria-expanded', 'false');
+      el.setAttribute('aria-controls', id);
+    });
+
+    // Get position by checking for related CSS class
+    this.position = this.$element.matches('.position-left, .position-top, .position-right, .position-bottom') ? this.$element.className.match(/position\-(left|top|right|bottom)/)[1] : this.position;
+
+    // Add an overlay over the content if necessary
+    if (this.options.contentOverlay === true) {
+      var overlay = document.createElement('div');
+      var overlayPosition = window.getComputedStyle(this.$element).position === 'fixed' ? 'is-overlay-fixed' : 'is-overlay-absolute';
+      overlay.setAttribute('class', 'js-off-canvas-overlay ' + overlayPosition);
+      this.$overlay = overlay;
+      if (overlayPosition === 'is-overlay-fixed') {
+        this.$element.after(overlay);
+      } else {
+        this.$content.appendChild(overlay);
+      }
     }
 
-    /**
-     * Initializes the off-canvas wrapper by adding the exit overlay (if needed).
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this3 = this;
-      var id = this.$element.getAttribute('id');
+    // Get the revealOn option from the class.
+    var revealOnRegExp = new RegExp((0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.RegExpEscape)(this.options.revealClass) + '([^\\s]+)', 'g');
+    var revealOnClass = revealOnRegExp.exec(this.$element.className);
+    if (revealOnClass) {
+      this.options.isRevealed = true;
+      this.options.revealOn = this.options.revealOn || revealOnClass[1];
+    }
 
-      // State attributes and classes go through the native layer (7.0 line A, S10).
-      this.$element.setAttribute('aria-hidden', 'true');
+    // Ensure the `reveal-on-*` class is set.
+    if (this.options.isRevealed === true && this.options.revealOn) {
+      this.$element.classList.add(`${this.options.revealClass}${this.options.revealOn}`);
+      this._setMQChecker();
+    }
+    if (this.options.transitionTime) {
+      this.$element.style.transitionDuration = this.options.transitionTime;
+    }
 
-      // Find off-canvas content, either by ID (if specified), by siblings or by closest selector (fallback)
-      if (this.options.contentId) {
-        this.$content = document.getElementById(this.options.contentId);
-      } else {
-        var siblingContent = Array.from(this.$element.parentElement.children).filter(function (el) {
-          return el !== _this3.$element && el.matches('[data-off-canvas-content]');
-        });
-        this.$content = siblingContent[0] || this.$element.closest('[data-off-canvas-content]');
-      }
-      if (!this.options.contentId) {
-        // Assume that the off-canvas element is nested if it isn't a sibling of the content
-        this.nested = !(this.$content && this.$content.parentElement === this.$element.parentElement);
-      } else if (this.options.contentId && this.options.nested === null) {
-        // Warning if using content ID without setting the nested option
-        // Once the element is nested it is required to work properly in this case
-        console.warn('Remember to use the nested option if using the content ID option!');
-      }
-      if (this.nested === true) {
-        // Force transition overlap if nested
-        this.options.transition = 'overlap';
-        // Remove appropriate classes if already assigned in markup
-        this.$element.classList.remove('is-transition-push');
-      }
-      this.$element.classList.add("is-transition-".concat(this.options.transition), 'is-closed');
+    // Find fixed elements that should stay fixed while off-canvas is opened
+    this.$sticky = this.$content ? Array.from(this.$content.querySelectorAll('[data-off-canvas-sticky]')) : [];
+    if (this.$sticky.length > 0 && this.options.transition === 'push') {
+      // If there's at least one match force contentScroll:false because the absolute top value doesn't get recalculated on scroll
+      // Limit to push transition since there's no transform scope for overlap
+      this.options.contentScroll = false;
+    }
+    let inCanvasFor = this.$element.className.match(/\bin-canvas-for-(\w+)/);
+    if (inCanvasFor && inCanvasFor.length === 2) {
+      // Set `inCanvasOn` option if found in-canvas-for-[BREAKPONT] CSS class
+      this.options.inCanvasOn = inCanvasFor[1];
+    } else if (this.options.inCanvasOn) {
+      // Ensure the CSS class is set
+      this.$element.classList.add(`in-canvas-for-${this.options.inCanvasOn}`);
+    }
+    if (this.options.inCanvasOn) {
+      this._checkInCanvas();
+    }
 
-      // Find triggers that affect this element and add aria-expanded to them
-      this.$triggers = Array.from(document.querySelectorAll("[data-open=\"".concat(id, "\"], [data-close=\"").concat(id, "\"], [data-toggle=\"").concat(id, "\"]")));
-      this.$triggers.forEach(function (el) {
-        el.setAttribute('aria-expanded', 'false');
-        el.setAttribute('aria-controls', id);
-      });
+    // Initally remove all transition/position CSS classes from off-canvas content container.
+    this._removeContentClasses();
+  }
 
-      // Get position by checking for related CSS class
-      this.position = this.$element.matches('.position-left, .position-top, .position-right, .position-bottom') ? this.$element.className.match(/position\-(left|top|right|bottom)/)[1] : this.position;
+  /**
+   * Adds event handlers to the off-canvas wrapper and the exit overlay.
+   * @function
+   * @private
+   */
+  _events() {
+    // S10: the open/close/toggle consumers run on the native event layer;
+    // the Triggers producers dispatch element-local on both transports
+    // since S4 (dispatchLocal), so exactly one layer holds the listener and
+    // nothing double-fires.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger close.zf.trigger toggle.zf.trigger');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'open.zf.trigger', this.open.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'close.zf.trigger', this.close.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
 
-      // Add an overlay over the content if necessary
-      if (this.options.contentOverlay === true) {
-        var overlay = document.createElement('div');
-        var overlayPosition = window.getComputedStyle(this.$element).position === 'fixed' ? 'is-overlay-fixed' : 'is-overlay-absolute';
-        overlay.setAttribute('class', 'js-off-canvas-overlay ' + overlayPosition);
-        this.$overlay = overlay;
-        if (overlayPosition === 'is-overlay-fixed') {
-          this.$element.after(overlay);
-        } else {
-          this.$content.appendChild(overlay);
-        }
-      }
-
-      // Get the revealOn option from the class.
-      var revealOnRegExp = new RegExp((0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.RegExpEscape)(this.options.revealClass) + '([^\\s]+)', 'g');
-      var revealOnClass = revealOnRegExp.exec(this.$element.className);
-      if (revealOnClass) {
-        this.options.isRevealed = true;
-        this.options.revealOn = this.options.revealOn || revealOnClass[1];
-      }
-
-      // Ensure the `reveal-on-*` class is set.
-      if (this.options.isRevealed === true && this.options.revealOn) {
-        this.$element.classList.add("".concat(this.options.revealClass).concat(this.options.revealOn));
-        this._setMQChecker();
-      }
-      if (this.options.transitionTime) {
-        this.$element.style.transitionDuration = this.options.transitionTime;
-      }
-
-      // Find fixed elements that should stay fixed while off-canvas is opened
-      this.$sticky = this.$content ? Array.from(this.$content.querySelectorAll('[data-off-canvas-sticky]')) : [];
-      if (this.$sticky.length > 0 && this.options.transition === 'push') {
-        // If there's at least one match force contentScroll:false because the absolute top value doesn't get recalculated on scroll
-        // Limit to push transition since there's no transform scope for overlap
-        this.options.contentScroll = false;
-      }
-      var inCanvasFor = this.$element.className.match(/\bin-canvas-for-(\w+)/);
-      if (inCanvasFor && inCanvasFor.length === 2) {
-        // Set `inCanvasOn` option if found in-canvas-for-[BREAKPONT] CSS class
-        this.options.inCanvasOn = inCanvasFor[1];
-      } else if (this.options.inCanvasOn) {
-        // Ensure the CSS class is set
-        this.$element.classList.add("in-canvas-for-".concat(this.options.inCanvasOn));
-      }
-      if (this.options.inCanvasOn) {
+    // 7.0 terminal form: the keydown consumer runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'keydown.zf.offCanvas');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'keydown.zf.offCanvas', this._handleKeyboard.bind(this));
+    if (this.options.closeOnClick === true) {
+      var target = this.options.contentOverlay ? this.$overlay : this.$content;
+      // S10: the close-on-click consumer runs on the native event layer -
+      // real clicks arrive directly and jQuery-synthesized clicks on the
+      // overlay/content ride the `.click()` shortcut bridge (reveal-native
+      // precedent).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(target, 'click.zf.offCanvas');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(target, 'click.zf.offCanvas', this.close.bind(this));
+    }
+    if (this.options.inCanvasOn) {
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs all flipped with the producer in the same
+      // move).
+      if (this._inCanvasMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
+      this._inCanvasMqHandler = () => {
         this._checkInCanvas();
-      }
-
-      // Initally remove all transition/position CSS classes from off-canvas content container.
-      this._removeContentClasses();
+      };
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
     }
+  }
 
-    /**
-     * Adds event handlers to the off-canvas wrapper and the exit overlay.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this4 = this;
-      // S10: the open/close/toggle consumers run on the native event layer;
-      // the Triggers producers dispatch element-local on both transports
-      // since S4 (dispatchLocal), so exactly one layer holds the listener and
-      // nothing double-fires.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger close.zf.trigger toggle.zf.trigger');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'open.zf.trigger', this.open.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'close.zf.trigger', this.close.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
-
-      // 7.0 terminal form: the keydown consumer runs on the native event
-      // layer (the coarse suite's mocks dispatch real KeyboardEvents since
-      // the S16 migration).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'keydown.zf.offCanvas');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'keydown.zf.offCanvas', this._handleKeyboard.bind(this));
-      if (this.options.closeOnClick === true) {
-        var target = this.options.contentOverlay ? this.$overlay : this.$content;
-        // S10: the close-on-click consumer runs on the native event layer -
-        // real clicks arrive directly and jQuery-synthesized clicks on the
-        // overlay/content ride the `.click()` shortcut bridge (reveal-native
-        // precedent).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(target, 'click.zf.offCanvas');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(target, 'click.zf.offCanvas', this.close.bind(this));
+  /**
+   * Applies event listener for elements that will reveal at certain breakpoints.
+   * @private
+   */
+  _setMQChecker() {
+    var _this = this;
+    this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
+      if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(_this.options.revealOn)) {
+        _this.reveal(true);
       }
-      if (this.options.inCanvasOn) {
-        // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-        // bubbling window event on the native layer now, so this consumer
-        // binds there (equalizer/tabs/responsiveToggle/responsiveMenu/
-        // responsiveAccordionTabs all flipped with the producer in the same
-        // move).
-        if (this._inCanvasMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
-        this._inCanvasMqHandler = function () {
-          _this4._checkInCanvas();
+    });
+
+    // S13 flip: the reveal-on-breakpoint watcher binds to the real
+    // changed.zf.mediaquery broadcast on the native layer (see _events).
+    if (this._revealMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
+    this._revealMqHandler = function () {
+      if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(_this.options.revealOn)) {
+        _this.reveal(true);
+      } else {
+        _this.reveal(false);
+      }
+    };
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, 'changed.zf.mediaquery', this._revealMqHandler);
+  }
+
+  /**
+   * Checks if InCanvas on current breakpoint and adjust off-canvas accordingly
+   * @private
+   */
+  _checkInCanvas() {
+    this.isInCanvas = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(this.options.inCanvasOn);
+    if (this.isInCanvas === true) {
+      this.close();
+    }
+  }
+
+  /**
+   * Removes the CSS transition/position classes of the off-canvas content container.
+   * Removing the classes is important when another off-canvas gets opened that uses the same content container.
+   * @param {Boolean} hasReveal - true if related off-canvas element is revealed.
+   * @private
+   */
+  _removeContentClasses(hasReveal) {
+    // State classes go through the native layer (7.0 line A, S10).
+    if (typeof hasReveal !== 'boolean') {
+      this.contentClasses.base.forEach(token => this.$content.classList.remove(token));
+    } else if (hasReveal === false) {
+      this.$content.classList.remove(`has-reveal-${this.position}`);
+    }
+  }
+
+  /**
+   * Adds the CSS transition/position classes of the off-canvas content container, based on the opening off-canvas element.
+   * Beforehand any transition/position class gets removed.
+   * @param {Boolean} hasReveal - true if related off-canvas element is revealed.
+   * @private
+   */
+  _addContentClasses(hasReveal) {
+    this._removeContentClasses(hasReveal);
+    if (typeof hasReveal !== 'boolean') {
+      this.$content.classList.add(`has-transition-${this.options.transition}`, `has-position-${this.position}`);
+    } else if (hasReveal === true) {
+      this.$content.classList.add(`has-reveal-${this.position}`);
+    }
+  }
+
+  /**
+   * Preserves the fixed behavior of sticky elements on opening an off-canvas with push transition.
+   * Since the off-canvas container has got a transform scope in such a case, it is done by calculating position absolute values.
+   * @private
+   */
+  _fixStickyElements() {
+    this.$sticky.forEach(el => {
+      // If sticky element is currently fixed, adjust its top value to match absolute position due to transform scope
+      // Limit to push transition because postion:fixed works without problems for overlap (no transform scope)
+      if (window.getComputedStyle(el).position === 'fixed') {
+        // Save current inline styling to restore it if undoing the absolute fixing
+        // (the 6.x save rode jQuery's data cache; the expando keeps it invisible)
+        let topVal = parseInt(window.getComputedStyle(el).top, 10);
+        el.zfOffCanvasSticky = {
+          top: topVal
         };
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
+        let absoluteTopVal = window.pageYOffset + topVal;
+        el.style.top = `${absoluteTopVal}px`;
+        el.style.width = '100%';
+        el.style.transition = 'none';
+      }
+    });
+  }
+
+  /**
+   * Restores the original fixed styling of sticky elements after having closed an off-canvas that got pseudo fixed beforehand.
+   * This reverts the changes of _fixStickyElements()
+   * @private
+   */
+  _unfixStickyElements() {
+    this.$sticky.forEach(el => {
+      let stickyData = el.zfOffCanvasSticky;
+
+      // If sticky element has got data object with prior values (meaning it was originally fixed) restore these values once off-canvas is closed
+      if (typeof stickyData === 'object') {
+        el.style.top = `${stickyData.top}px`;
+        el.style.width = '';
+        el.style.transition = '';
+        el.zfOffCanvasSticky = '';
+      }
+    });
+  }
+
+  /**
+   * Handles the revealing/hiding the off-canvas at breakpoints, not the same as open.
+   * @param {Boolean} isRevealed - true if element should be revealed.
+   * @function
+   */
+  reveal(isRevealed) {
+    if (isRevealed) {
+      this.close();
+      this.isRevealed = true;
+      this.$element.setAttribute('aria-hidden', 'false');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger toggle.zf.trigger');
+      this.$element.classList.remove('is-closed');
+    } else {
+      this.isRevealed = false;
+      this.$element.setAttribute('aria-hidden', 'true');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger toggle.zf.trigger');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'open.zf.trigger', this.open.bind(this));
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
+      this.$element.classList.add('is-closed');
+    }
+    this._addContentClasses(isRevealed);
+  }
+
+  /**
+   * Stops scrolling of the body when OffCanvas is open on mobile Safari and other troublesome browsers.
+   * @function
+   * @private
+   */
+  _stopScrolling() {
+    return false;
+  }
+
+  /**
+   * Save current finger y-position
+   * @param event
+   * @private
+   */
+  _recordScrollable(event) {
+    const elem = this;
+    elem.lastY = event.touches[0].pageY;
+  }
+
+  /**
+   * Prevent further scrolling when it hits the edges
+   * @param event
+   * @private
+   */
+  _preventDefaultAtEdges(event) {
+    // bound with the plugin instance as `this._edgesBound`'s target arg
+    const elem = this;
+    const _this = event.data || event.currentTarget.zfOffCanvas || this;
+    const delta = elem.lastY - event.touches[0].pageY;
+    elem.lastY = event.touches[0].pageY;
+    if (!_this._canScroll(delta, elem)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Handle continuous scrolling of scrollbox
+   * Don't bubble up to _preventDefaultAtEdges
+   * @param event
+   * @private
+   */
+  _scrollboxTouchMoved(event) {
+    const elem = this;
+    const _this = event.data;
+    const parent = elem.closest('[data-off-canvas], [data-off-canvas-scrollbox-outer]');
+    const delta = elem.lastY - event.touches[0].pageY;
+    parent.lastY = elem.lastY = event.touches[0].pageY;
+    event.stopPropagation();
+    if (!_this._canScroll(delta, elem)) {
+      if (!_this._canScroll(delta, parent)) {
+        event.preventDefault();
+      } else {
+        parent.scrollTop += delta;
       }
     }
+  }
 
-    /**
-     * Applies event listener for elements that will reveal at certain breakpoints.
-     * @private
-     */
-  }, {
-    key: "_setMQChecker",
-    value: function _setMQChecker() {
-      var _this = this;
-      this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(_this.options.revealOn)) {
-          _this.reveal(true);
-        }
-      });
+  /**
+   * Detect possibility of scrolling
+   * @param delta
+   * @param elem
+   * @returns boolean
+   * @private
+   */
+  _canScroll(delta, elem) {
+    const up = delta < 0;
+    const down = delta > 0;
+    const allowUp = elem.scrollTop > 0;
+    const allowDown = elem.scrollTop < elem.scrollHeight - elem.clientHeight;
+    return up && allowUp || down && allowDown;
+  }
 
-      // S13 flip: the reveal-on-breakpoint watcher binds to the real
-      // changed.zf.mediaquery broadcast on the native layer (see _events).
-      if (this._revealMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
-      this._revealMqHandler = function () {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(_this.options.revealOn)) {
-          _this.reveal(true);
-        } else {
-          _this.reveal(false);
+  /**
+   * Opens the off-canvas menu.
+   * @function
+   * @param {Object} event - Event object passed from listener.
+   * @param {jQuery} trigger - element that triggered the off-canvas to open.
+   * @fires OffCanvas#opened
+   * @todo also trigger 'open' event?
+   */
+  open(event, trigger) {
+    if (this.$element.classList.contains('is-open') || this.isRevealed || this.isInCanvas) {
+      return;
+    }
+    if (trigger) {
+      this.$lastTrigger = trigger;
+    }
+    if (this.options.forceTo === 'top') {
+      window.scrollTo(0, 0);
+    } else if (this.options.forceTo === 'bottom') {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    Array.from(this.$element.parentElement.children).forEach(sib => {
+      if (sib !== this.$element && sib.matches('[data-off-canvas-content]')) {
+        sib.style.transitionDuration = this.options.transitionTime && this.options.transition !== 'overlap' ? this.options.transitionTime : '';
+      }
+    });
+
+    // State classes and ARIA go through the native layer (7.0 line A, S10).
+    this.$element.classList.add('is-open');
+    this.$element.classList.remove('is-closed');
+    this.$triggers.forEach(function (el) {
+      el.setAttribute('aria-expanded', 'true');
+    });
+    this.$element.setAttribute('aria-hidden', 'false');
+    this.$content.classList.add('is-open-' + this.position);
+
+    // If `contentScroll` is set to false, add class and disable scrolling on touch devices.
+    // 7.0 terminal form: the touch guards run on the native event layer;
+    // jQuery's event.data binding becomes a closure binding on the element
+    // (the delegated scrollbox listeners keep the delegate form).
+    if (this.options.contentScroll === false) {
+      document.body.classList.add('is-off-canvas-open');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(document.body, 'touchmove.zf.offCanvas', this._stopScrolling);
+      this._edgesBound = event => {
+        this._preventDefaultAtEdges.call(event.currentTarget, event);
+      };
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'touchstart.zf.offCanvas', this._recordScrollable);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'touchmove.zf.offCanvas', this._edgesBound);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(this.$element, 'touchstart.zf.offCanvas', '[data-off-canvas-scrollbox]', this._recordScrollable);
+      this._scrollboxBound = event => {
+        const box = event.target.closest('[data-off-canvas-scrollbox]');
+        if (box) {
+          this._scrollboxTouchMoved.call(box, event);
         }
       };
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, 'changed.zf.mediaquery', this._revealMqHandler);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(this.$element, 'touchmove.zf.offCanvas', '[data-off-canvas-scrollbox]', this._scrollboxBound);
     }
-
-    /**
-     * Checks if InCanvas on current breakpoint and adjust off-canvas accordingly
-     * @private
-     */
-  }, {
-    key: "_checkInCanvas",
-    value: function _checkInCanvas() {
-      this.isInCanvas = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.atLeast(this.options.inCanvasOn);
-      if (this.isInCanvas === true) {
-        this.close();
-      }
+    if (this.options.contentOverlay === true) {
+      this.$overlay.classList.add('is-visible');
     }
-
-    /**
-     * Removes the CSS transition/position classes of the off-canvas content container.
-     * Removing the classes is important when another off-canvas gets opened that uses the same content container.
-     * @param {Boolean} hasReveal - true if related off-canvas element is revealed.
-     * @private
-     */
-  }, {
-    key: "_removeContentClasses",
-    value: function _removeContentClasses(hasReveal) {
-      var _this5 = this;
-      // State classes go through the native layer (7.0 line A, S10).
-      if (typeof hasReveal !== 'boolean') {
-        this.contentClasses.base.forEach(function (token) {
-          return _this5.$content.classList.remove(token);
-        });
-      } else if (hasReveal === false) {
-        this.$content.classList.remove("has-reveal-".concat(this.position));
-      }
+    if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
+      this.$overlay.classList.add('is-closable');
     }
-
-    /**
-     * Adds the CSS transition/position classes of the off-canvas content container, based on the opening off-canvas element.
-     * Beforehand any transition/position class gets removed.
-     * @param {Boolean} hasReveal - true if related off-canvas element is revealed.
-     * @private
-     */
-  }, {
-    key: "_addContentClasses",
-    value: function _addContentClasses(hasReveal) {
-      this._removeContentClasses(hasReveal);
-      if (typeof hasReveal !== 'boolean') {
-        this.$content.classList.add("has-transition-".concat(this.options.transition), "has-position-".concat(this.position));
-      } else if (hasReveal === true) {
-        this.$content.classList.add("has-reveal-".concat(this.position));
-      }
-    }
-
-    /**
-     * Preserves the fixed behavior of sticky elements on opening an off-canvas with push transition.
-     * Since the off-canvas container has got a transform scope in such a case, it is done by calculating position absolute values.
-     * @private
-     */
-  }, {
-    key: "_fixStickyElements",
-    value: function _fixStickyElements() {
-      this.$sticky.forEach(function (el) {
-        // If sticky element is currently fixed, adjust its top value to match absolute position due to transform scope
-        // Limit to push transition because postion:fixed works without problems for overlap (no transform scope)
-        if (window.getComputedStyle(el).position === 'fixed') {
-          // Save current inline styling to restore it if undoing the absolute fixing
-          // (the 6.x save rode jQuery's data cache; the expando keeps it invisible)
-          var topVal = parseInt(window.getComputedStyle(el).top, 10);
-          el.zfOffCanvasSticky = {
-            top: topVal
-          };
-          var absoluteTopVal = window.pageYOffset + topVal;
-          el.style.top = "".concat(absoluteTopVal, "px");
-          el.style.width = '100%';
-          el.style.transition = 'none';
+    if (this.options.autoFocus === true) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), function () {
+        if (!this.classList.contains('is-open')) {
+          return; // exit if prematurely closed
         }
-      });
-    }
-
-    /**
-     * Restores the original fixed styling of sticky elements after having closed an off-canvas that got pseudo fixed beforehand.
-     * This reverts the changes of _fixStickyElements()
-     * @private
-     */
-  }, {
-    key: "_unfixStickyElements",
-    value: function _unfixStickyElements() {
-      this.$sticky.forEach(function (el) {
-        var stickyData = el.zfOffCanvasSticky;
-
-        // If sticky element has got data object with prior values (meaning it was originally fixed) restore these values once off-canvas is closed
-        if (_typeof(stickyData) === 'object') {
-          el.style.top = "".concat(stickyData.top, "px");
-          el.style.width = '';
-          el.style.transition = '';
-          el.zfOffCanvasSticky = '';
-        }
-      });
-    }
-
-    /**
-     * Handles the revealing/hiding the off-canvas at breakpoints, not the same as open.
-     * @param {Boolean} isRevealed - true if element should be revealed.
-     * @function
-     */
-  }, {
-    key: "reveal",
-    value: function reveal(isRevealed) {
-      if (isRevealed) {
-        this.close();
-        this.isRevealed = true;
-        this.$element.setAttribute('aria-hidden', 'false');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger toggle.zf.trigger');
-        this.$element.classList.remove('is-closed');
-      } else {
-        this.isRevealed = false;
-        this.$element.setAttribute('aria-hidden', 'true');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'open.zf.trigger toggle.zf.trigger');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'open.zf.trigger', this.open.bind(this));
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
-        this.$element.classList.add('is-closed');
-      }
-      this._addContentClasses(isRevealed);
-    }
-
-    /**
-     * Stops scrolling of the body when OffCanvas is open on mobile Safari and other troublesome browsers.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_stopScrolling",
-    value: function _stopScrolling() {
-      return false;
-    }
-
-    /**
-     * Save current finger y-position
-     * @param event
-     * @private
-     */
-  }, {
-    key: "_recordScrollable",
-    value: function _recordScrollable(event) {
-      var elem = this;
-      elem.lastY = event.touches[0].pageY;
-    }
-
-    /**
-     * Prevent further scrolling when it hits the edges
-     * @param event
-     * @private
-     */
-  }, {
-    key: "_preventDefaultAtEdges",
-    value: function _preventDefaultAtEdges(event) {
-      // bound with the plugin instance as `this._edgesBound`'s target arg
-      var elem = this;
-      var _this = event.data || event.currentTarget.zfOffCanvas || this;
-      var delta = elem.lastY - event.touches[0].pageY;
-      elem.lastY = event.touches[0].pageY;
-      if (!_this._canScroll(delta, elem)) {
-        event.preventDefault();
-      }
-    }
-
-    /**
-     * Handle continuous scrolling of scrollbox
-     * Don't bubble up to _preventDefaultAtEdges
-     * @param event
-     * @private
-     */
-  }, {
-    key: "_scrollboxTouchMoved",
-    value: function _scrollboxTouchMoved(event) {
-      var elem = this;
-      var _this = event.data;
-      var parent = elem.closest('[data-off-canvas], [data-off-canvas-scrollbox-outer]');
-      var delta = elem.lastY - event.touches[0].pageY;
-      parent.lastY = elem.lastY = event.touches[0].pageY;
-      event.stopPropagation();
-      if (!_this._canScroll(delta, elem)) {
-        if (!_this._canScroll(delta, parent)) {
-          event.preventDefault();
+        var canvasFocus = this.querySelector('[data-autofocus]');
+        if (canvasFocus) {
+          canvasFocus.focus();
         } else {
-          parent.scrollTop += delta;
+          var firstLink = this.querySelector('a, button');
+          if (firstLink) {
+            firstLink.focus();
+          }
         }
-      }
+      });
+    }
+    if (this.options.trapFocus === true) {
+      this.$content.setAttribute('tabindex', '-1');
+      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(this.$element);
+    }
+    if (this.options.transition === 'push') {
+      this._fixStickyElements();
+    }
+    this._addContentClasses();
+
+    /**
+     * Fires when the off-canvas menu opens.
+     * @event OffCanvas#opened
+     */
+    // S10: real, bubbling CustomEvent.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'opened.zf.offCanvas');
+
+    /**
+     * Fires when the off-canvas menu open transition is done.
+     * @event OffCanvas#openedEnd
+     */
+    // 7.0 terminal form: the transitionend wait is an Events.one (the
+    // coarse suite drives it through the native triggerHandler).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), () => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'openedEnd.zf.offCanvas');
+    });
+  }
+
+  /**
+   * Closes the off-canvas menu.
+   * @function
+   * @param {Function} cb - optional cb to fire after closure.
+   * @fires OffCanvas#close
+   * @fires OffCanvas#closed
+   */
+  close() {
+    if (!this.$element.classList.contains('is-open') || this.isRevealed) {
+      return;
     }
 
     /**
-     * Detect possibility of scrolling
-     * @param delta
-     * @param elem
-     * @returns boolean
-     * @private
+     * Fires when the off-canvas menu closes.
+     * @event OffCanvas#close
      */
-  }, {
-    key: "_canScroll",
-    value: function _canScroll(delta, elem) {
-      var up = delta < 0;
-      var down = delta > 0;
-      var allowUp = elem.scrollTop > 0;
-      var allowDown = elem.scrollTop < elem.scrollHeight - elem.clientHeight;
-      return up && allowUp || down && allowDown;
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'close.zf.offCanvas');
+    this.$element.classList.remove('is-open');
+    this.$element.setAttribute('aria-hidden', 'true');
+    this.$content.classList.remove('is-open-left', 'is-open-top', 'is-open-right', 'is-open-bottom');
+    if (this.options.contentOverlay === true) {
+      this.$overlay.classList.remove('is-visible');
     }
+    if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
+      this.$overlay.classList.remove('is-closable');
+    }
+    this.$triggers.forEach(function (el) {
+      el.setAttribute('aria-expanded', 'false');
+    });
 
-    /**
-     * Opens the off-canvas menu.
-     * @function
-     * @param {Object} event - Event object passed from listener.
-     * @param {jQuery} trigger - element that triggered the off-canvas to open.
-     * @fires OffCanvas#opened
-     * @todo also trigger 'open' event?
-     */
-  }, {
-    key: "open",
-    value: function open(event, trigger) {
-      var _this6 = this;
-      if (this.$element.classList.contains('is-open') || this.isRevealed || this.isInCanvas) {
-        return;
+    // Listen to transitionEnd: add class, re-enable scrolling and release focus when done.
+    // 7.0 terminal form: the transitionend wait is an Events.one (the
+    // coarse suite drives it through the native triggerHandler).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), () => {
+      this.$element.classList.add('is-closed');
+      this._removeContentClasses();
+      if (this.options.transition === 'push') {
+        this._unfixStickyElements();
       }
-      if (trigger) {
-        this.$lastTrigger = trigger;
-      }
-      if (this.options.forceTo === 'top') {
-        window.scrollTo(0, 0);
-      } else if (this.options.forceTo === 'bottom') {
-        window.scrollTo(0, document.body.scrollHeight);
-      }
-      Array.from(this.$element.parentElement.children).forEach(function (sib) {
-        if (sib !== _this6.$element && sib.matches('[data-off-canvas-content]')) {
-          sib.style.transitionDuration = _this6.options.transitionTime && _this6.options.transition !== 'overlap' ? _this6.options.transitionTime : '';
-        }
-      });
 
-      // State classes and ARIA go through the native layer (7.0 line A, S10).
-      this.$element.classList.add('is-open');
-      this.$element.classList.remove('is-closed');
-      this.$triggers.forEach(function (el) {
-        el.setAttribute('aria-expanded', 'true');
-      });
-      this.$element.setAttribute('aria-hidden', 'false');
-      this.$content.classList.add('is-open-' + this.position);
-
-      // If `contentScroll` is set to false, add class and disable scrolling on touch devices.
-      // 7.0 terminal form: the touch guards run on the native event layer;
-      // jQuery's event.data binding becomes a closure binding on the element
-      // (the delegated scrollbox listeners keep the delegate form).
+      // If `contentScroll` is set to false, remove class and re-enable scrolling on touch devices.
       if (this.options.contentScroll === false) {
-        document.body.classList.add('is-off-canvas-open');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(document.body, 'touchmove.zf.offCanvas', this._stopScrolling);
-        this._edgesBound = function (event) {
-          _this6._preventDefaultAtEdges.call(event.currentTarget, event);
-        };
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'touchstart.zf.offCanvas', this._recordScrollable);
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'touchmove.zf.offCanvas', this._edgesBound);
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(this.$element, 'touchstart.zf.offCanvas', '[data-off-canvas-scrollbox]', this._recordScrollable);
-        this._scrollboxBound = function (event) {
-          var box = event.target.closest('[data-off-canvas-scrollbox]');
-          if (box) {
-            _this6._scrollboxTouchMoved.call(box, event);
-          }
-        };
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(this.$element, 'touchmove.zf.offCanvas', '[data-off-canvas-scrollbox]', this._scrollboxBound);
-      }
-      if (this.options.contentOverlay === true) {
-        this.$overlay.classList.add('is-visible');
-      }
-      if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
-        this.$overlay.classList.add('is-closable');
-      }
-      if (this.options.autoFocus === true) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), function () {
-          if (!this.classList.contains('is-open')) {
-            return; // exit if prematurely closed
-          }
-          var canvasFocus = this.querySelector('[data-autofocus]');
-          if (canvasFocus) {
-            canvasFocus.focus();
-          } else {
-            var firstLink = this.querySelector('a, button');
-            if (firstLink) {
-              firstLink.focus();
-            }
-          }
-        });
+        document.body.classList.remove('is-off-canvas-open');
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(document.body, 'touchmove.zf.offCanvas', this._stopScrolling);
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'touchstart.zf.offCanvas touchmove.zf.offCanvas');
       }
       if (this.options.trapFocus === true) {
-        this.$content.setAttribute('tabindex', '-1');
-        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(this.$element);
-      }
-      if (this.options.transition === 'push') {
-        this._fixStickyElements();
-      }
-      this._addContentClasses();
-
-      /**
-       * Fires when the off-canvas menu opens.
-       * @event OffCanvas#opened
-       */
-      // S10: real, bubbling CustomEvent.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'opened.zf.offCanvas');
-
-      /**
-       * Fires when the off-canvas menu open transition is done.
-       * @event OffCanvas#openedEnd
-       */
-      // 7.0 terminal form: the transitionend wait is an Events.one (the
-      // coarse suite drives it through the native triggerHandler).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), function () {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(_this6.$element, 'openedEnd.zf.offCanvas');
-      });
-    }
-
-    /**
-     * Closes the off-canvas menu.
-     * @function
-     * @param {Function} cb - optional cb to fire after closure.
-     * @fires OffCanvas#close
-     * @fires OffCanvas#closed
-     */
-  }, {
-    key: "close",
-    value: function close() {
-      var _this7 = this;
-      if (!this.$element.classList.contains('is-open') || this.isRevealed) {
-        return;
+        this.$content.removeAttribute('tabindex');
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.releaseFocus(this.$element);
       }
 
       /**
-       * Fires when the off-canvas menu closes.
-       * @event OffCanvas#close
+       * Fires when the off-canvas menu close transition is done.
+       * @event OffCanvas#closed
        */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'close.zf.offCanvas');
-      this.$element.classList.remove('is-open');
-      this.$element.setAttribute('aria-hidden', 'true');
-      this.$content.classList.remove('is-open-left', 'is-open-top', 'is-open-right', 'is-open-bottom');
-      if (this.options.contentOverlay === true) {
-        this.$overlay.classList.remove('is-visible');
-      }
-      if (this.options.closeOnClick === true && this.options.contentOverlay === true) {
-        this.$overlay.classList.remove('is-closable');
-      }
-      this.$triggers.forEach(function (el) {
-        el.setAttribute('aria-expanded', 'false');
-      });
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'closed.zf.offCanvas');
+    });
+  }
 
-      // Listen to transitionEnd: add class, re-enable scrolling and release focus when done.
-      // 7.0 terminal form: the transitionend wait is an Events.one (the
-      // coarse suite drives it through the native triggerHandler).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.one(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element), function () {
-        _this7.$element.classList.add('is-closed');
-        _this7._removeContentClasses();
-        if (_this7.options.transition === 'push') {
-          _this7._unfixStickyElements();
-        }
-
-        // If `contentScroll` is set to false, remove class and re-enable scrolling on touch devices.
-        if (_this7.options.contentScroll === false) {
-          document.body.classList.remove('is-off-canvas-open');
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(document.body, 'touchmove.zf.offCanvas', _this7._stopScrolling);
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(_this7.$element, 'touchstart.zf.offCanvas touchmove.zf.offCanvas');
-        }
-        if (_this7.options.trapFocus === true) {
-          _this7.$content.removeAttribute('tabindex');
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.releaseFocus(_this7.$element);
-        }
-
-        /**
-         * Fires when the off-canvas menu close transition is done.
-         * @event OffCanvas#closed
-         */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(_this7.$element, 'closed.zf.offCanvas');
-      });
+  /**
+   * Toggles the off-canvas menu open or closed.
+   * @function
+   * @param {Object} event - Event object passed from listener.
+   * @param {jQuery} trigger - element that triggered the off-canvas to open.
+   */
+  toggle(event, trigger) {
+    if (this.$element.classList.contains('is-open')) {
+      this.close(event, trigger);
+    } else {
+      this.open(event, trigger);
     }
+  }
 
-    /**
-     * Toggles the off-canvas menu open or closed.
-     * @function
-     * @param {Object} event - Event object passed from listener.
-     * @param {jQuery} trigger - element that triggered the off-canvas to open.
-     */
-  }, {
-    key: "toggle",
-    value: function toggle(event, trigger) {
-      if (this.$element.classList.contains('is-open')) {
-        this.close(event, trigger);
-      } else {
-        this.open(event, trigger);
-      }
-    }
-
-    /**
-     * Handles keyboard input when detected. When the escape key is pressed, the off-canvas menu closes, and focus is restored to the element that opened the menu.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_handleKeyboard",
-    value: function _handleKeyboard(e) {
-      var _this8 = this;
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'OffCanvas', {
-        close: function close() {
-          _this8.close();
-          // the empty-collection .focus() was a silent no-op in 6.x
-          if (_this8.$lastTrigger) {
-            _this8.$lastTrigger.focus();
-          }
-          return true;
-        },
-        handled: function handled() {
-          e.preventDefault();
+  /**
+   * Handles keyboard input when detected. When the escape key is pressed, the off-canvas menu closes, and focus is restored to the element that opened the menu.
+   * @function
+   * @private
+   */
+  _handleKeyboard(e) {
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'OffCanvas', {
+      close: () => {
+        this.close();
+        // the empty-collection .focus() was a silent no-op in 6.x
+        if (this.$lastTrigger) {
+          this.$lastTrigger.focus();
         }
-      });
-    }
-
-    /**
-     * Destroys the OffCanvas plugin.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      this.close();
-      // The zf-namespaced listeners on the element and overlay (the native
-      // table the library owns), plus the namespaceless transitionend waits -
-      // a late real transitionend would dereference the nulled instance.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.offCanvas');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element));
-      if (this.$overlay) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay, '.zf.offCanvas');
+        return true;
+      },
+      handled: () => {
+        e.preventDefault();
       }
-      if (this._inCanvasMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
-      if (this._revealMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
-      if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+    });
+  }
+
+  /**
+   * Destroys the OffCanvas plugin.
+   * @function
+   */
+  _destroy() {
+    this.close();
+    // The zf-namespaced listeners on the element and overlay (the native
+    // table the library owns), plus the namespaceless transitionend waits -
+    // a late real transitionend would dereference the nulled instance.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.offCanvas');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.transitionend)(this.$element));
+    if (this.$overlay) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay, '.zf.offCanvas');
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+    if (this._inCanvasMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._inCanvasMqHandler);
+    if (this._revealMqHandler) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, 'changed.zf.mediaquery', this._revealMqHandler);
+    if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+  }
+}
 OffCanvas.defaults = {
   /**
    * Allow the user to click outside of the menu to close it.
@@ -6831,11 +6244,11 @@ OffCanvas.defaults = {
 /*!********************************!*\
   !*** ./js/foundation.orbit.js ***!
   \********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Orbit: function() { return /* binding */ Orbit; }
+/* harmony export */   Orbit: () => (/* binding */ Orbit)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
@@ -6846,19 +6259,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./foundation.util.touch */ "./js/foundation.util.touch.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -6878,540 +6278,486 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.imageLoader
  * @requires foundation.util.touch
  */
-var Orbit = /*#__PURE__*/function (_Plugin) {
-  function Orbit() {
-    _classCallCheck(this, Orbit);
-    return _callSuper(this, Orbit, arguments);
-  }
-  _inherits(Orbit, _Plugin);
-  return _createClass(Orbit, [{
-    key: "_setup",
-    value:
-    /**
-    * Creates a new instance of an orbit carousel.
-    * @class
-    * @name Orbit
-    * @param {jQuery} element - jQuery object to make into an Orbit Carousel.
-    * @param {Object} options - Overrides to the default plugin settings.
-    */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.deepMerge)({}, Orbit.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
-      this.className = 'Orbit'; // ie9 back compat
 
-      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__.Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
+class Orbit extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__.Plugin {
+  /**
+  * Creates a new instance of an orbit carousel.
+  * @class
+  * @name Orbit
+  * @param {jQuery} element - jQuery object to make into an Orbit Carousel.
+  * @param {Object} options - Overrides to the default plugin settings.
+  */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.deepMerge)({}, Orbit.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
+    this.className = 'Orbit'; // ie9 back compat
 
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Orbit', {
-        'ltr': {
-          'ARROW_RIGHT': 'next',
-          'ARROW_LEFT': 'previous'
-        },
-        'rtl': {
-          'ARROW_LEFT': 'next',
-          'ARROW_RIGHT': 'previous'
-        }
-      });
-    }
+    _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__.Touch.init(); // Touch init is idempotent, we just need to make sure it's initialied.
 
-    /**
-    * Initializes the plugin by creating jQuery collections, setting attributes, and starting the animation.
-    * @function
-    * @private
-    */
-  }, {
-    key: "_init",
-    value: function _init() {
-      // @TODO: consider discussion on PR #9278 about DOM pollution by changeSlide
-      this._reset();
-      this.$wrapper = this.$element.querySelector(".".concat(this.options.containerClass));
-      this.$slides = Array.from(this.$element.querySelectorAll(".".concat(this.options.slideClass)));
-      var images = this.$element.querySelectorAll('img'),
-        initActive = this.$slides.filter(function (slide) {
-          return slide.classList.contains('is-active');
-        }),
-        id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_4__.GetYoDigits)(6, 'orbit');
-
-      // State attributes and classes go through the native layer (7.0 line A, S10).
-      this.$element.setAttribute('data-resize', id);
-      this.$element.id = id;
-      if (!initActive.length && this.$slides.length) {
-        this.$slides[0].classList.add('is-active');
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Orbit', {
+      'ltr': {
+        'ARROW_RIGHT': 'next',
+        'ARROW_LEFT': 'previous'
+      },
+      'rtl': {
+        'ARROW_LEFT': 'next',
+        'ARROW_RIGHT': 'previous'
       }
-      if (!this.options.useMUI) {
-        this.$slides.forEach(function (slide) {
-          return slide.classList.add('no-motionui');
+    });
+  }
+
+  /**
+  * Initializes the plugin by creating jQuery collections, setting attributes, and starting the animation.
+  * @function
+  * @private
+  */
+  _init() {
+    // @TODO: consider discussion on PR #9278 about DOM pollution by changeSlide
+    this._reset();
+    this.$wrapper = this.$element.querySelector(`.${this.options.containerClass}`);
+    this.$slides = Array.from(this.$element.querySelectorAll(`.${this.options.slideClass}`));
+    var images = this.$element.querySelectorAll('img'),
+      initActive = this.$slides.filter(slide => slide.classList.contains('is-active')),
+      id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_4__.GetYoDigits)(6, 'orbit');
+
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    this.$element.setAttribute('data-resize', id);
+    this.$element.id = id;
+    if (!initActive.length && this.$slides.length) {
+      this.$slides[0].classList.add('is-active');
+    }
+    if (!this.options.useMUI) {
+      this.$slides.forEach(slide => slide.classList.add('no-motionui'));
+    }
+    if (images.length) {
+      (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_3__.onImagesLoaded)(images, this._prepareForOrbit.bind(this));
+    } else {
+      this._prepareForOrbit(); //hehe
+    }
+    if (this.options.bullets) {
+      this._loadBullets();
+    }
+    this._events();
+    if (this.options.autoPlay && this.$slides.length > 1) {
+      this.geoSync();
+    }
+    if (this.options.accessible) {
+      // allow wrapper to be focusable to enable arrow navigation
+      this.$wrapper.setAttribute('tabindex', 0);
+    }
+  }
+
+  /**
+  * Creates a jQuery collection of bullets, if they are being used.
+  * @function
+  * @private
+  */
+  _loadBullets() {
+    this.$bullets = Array.from(this.$element.querySelectorAll(`.${this.options.boxOfBullets} button`));
+  }
+
+  /**
+  * Sets a `timer` object on the orbit, and starts the counter for the next slide.
+  * @function
+  */
+  geoSync() {
+    var _this = this;
+    this.timer = new _foundation_util_timer__WEBPACK_IMPORTED_MODULE_2__.Timer(this.$element, {
+      duration: this.options.timerDelay,
+      infinite: false
+    }, function () {
+      _this.changeSlide(true);
+    }, 'orbit');
+    this.timer.start();
+  }
+
+  /**
+  * Sets wrapper and slide heights for the orbit.
+  * @function
+  * @private
+  */
+  _prepareForOrbit() {
+    this._setWrapperHeight();
+  }
+
+  /**
+  * Calulates the height of each slide in the collection, and uses the tallest one for the wrapper height.
+  * @function
+  * @private
+  * @param {Function} cb - a callback function to fire when complete.
+  */
+  _setWrapperHeight(cb) {
+    //rewrite this to `for` loop
+    var max = 0,
+      temp,
+      counter = 0,
+      _this = this;
+    this.$slides.forEach(function (slide) {
+      temp = slide.getBoundingClientRect().height;
+      slide.setAttribute('data-slide', counter);
+
+      // hide all slides but the active one
+      if (!/mui/g.test(slide.className) && _this.$slides.filter(s => s.classList.contains('is-active'))[0] !== _this.$slides[counter]) {
+        slide.style.display = 'none';
+      }
+      max = temp > max ? temp : max;
+      counter++;
+    });
+    if (counter === this.$slides.length) {
+      this.$wrapper.style.height = max + 'px'; //only change the wrapper height property once.
+      if (cb) {
+        cb(max);
+      } //fire callback with max height dimension.
+    }
+  }
+
+  /**
+  * Sets the max-height of each slide.
+  * @function
+  * @private
+  */
+  _setSlideHeight(height) {
+    this.$slides.forEach(function (slide) {
+      slide.style.maxHeight = height + 'px';
+    });
+  }
+
+  /**
+  * Adds event listeners to basically everything within the element.
+  * @function
+  * @private
+  */
+  _events() {
+    var _this = this;
+
+    //***************************************
+    //**Now using custom event - thanks to:**
+    //**      Yohai Ararat of Toronto      **
+    //***************************************
+    //
+    // S10: the resizeme consumer runs on the native event layer; the
+    // producer in the Triggers util has dispatched real element-local
+    // events since S4.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'resizeme.zf.trigger');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'resizeme.zf.trigger', this._prepareForOrbit.bind(this));
+    if (this.$slides.length > 1) {
+      if (this.options.swipe) {
+        // S13: the swipe consumers flip with the Touch util - swipeleft/
+        // swiperight are real, bubbling events on the slide now, so these
+        // listeners live on the native event layer.
+        this.$slides.forEach(slide => {
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(slide, 'swipeleft.zf.orbit swiperight.zf.orbit');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'swipeleft.zf.orbit', function (e) {
+            e.preventDefault();
+            _this.changeSlide(true);
+          });
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'swiperight.zf.orbit', function (e) {
+            e.preventDefault();
+            _this.changeSlide(false);
+          });
         });
       }
-      if (images.length) {
-        (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_3__.onImagesLoaded)(images, this._prepareForOrbit.bind(this));
-      } else {
-        this._prepareForOrbit(); //hehe
+      //***************************************
+
+      if (this.options.autoPlay) {
+        // S10: the slide click consumer runs on the native event layer -
+        // real clicks arrive directly and jQuery-synthesized clicks on
+        // slides ride the `.click()` shortcut bridge (reveal-native
+        // precedent). The clickedOn bookkeeping rides an expando (the 6.x
+        // jQuery data cache was DOM-invisible).
+        this.$slides.forEach(slide => {
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(slide, 'click.zf.orbit');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'click.zf.orbit', function () {
+            _this.$element.zfOrbitClickedOn = !_this.$element.zfOrbitClickedOn;
+            _this.timer[_this.$element.zfOrbitClickedOn ? 'pause' : 'start']();
+          });
+        });
+        if (this.options.pauseOnHover) {
+          // 7.0 terminal form: hover on real mouseover/mouseout with the
+          // entering/leaving filter (jQuery's mouseenter synthesis port).
+          var hoverFilter = function (handler) {
+            return function (e) {
+              if (e.relatedTarget && this.contains(e.relatedTarget)) {
+                return;
+              }
+              handler.call(this, e);
+            };
+          };
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'mouseover.zf.orbit mouseout.zf.orbit');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'mouseover.zf.orbit', hoverFilter(function () {
+            _this.timer.pause();
+          }));
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'mouseout.zf.orbit', hoverFilter(function () {
+            if (!_this.$element.zfOrbitClickedOn) {
+              _this.timer.start();
+            }
+          }));
+        }
+      }
+      if (this.options.navButtons) {
+        var controls = Array.from(this.$element.querySelectorAll(`.${this.options.nextClass}, .${this.options.prevClass}`));
+        // S10: the nav-button click consumers run on the native event
+        // layer; the tabindex write goes native with it.
+        controls.forEach(control => {
+          control.setAttribute('tabindex', 0);
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(control, 'click.zf.orbit touchend.zf.orbit');
+          //also need to handle enter/return and spacebar key presses
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(control, 'click.zf.orbit touchend.zf.orbit', function (e) {
+            e.preventDefault();
+            _this.changeSlide(this.classList.contains(_this.options.nextClass));
+          });
+        });
       }
       if (this.options.bullets) {
-        this._loadBullets();
-      }
-      this._events();
-      if (this.options.autoPlay && this.$slides.length > 1) {
-        this.geoSync();
+        // S10: the bullet click consumers run on the native event layer
+        // (real clicks; jQuery-synthesized clicks on buttons ride the
+        // `.click()` shortcut bridge). The data reads are the numeric
+        // attribute parses jQuery's .data() performed.
+        this.$bullets.forEach(bullet => {
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(bullet, 'click.zf.orbit touchend.zf.orbit');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(bullet, 'click.zf.orbit touchend.zf.orbit', function () {
+            if (/is-active/g.test(this.className)) {
+              return false;
+            } //if this is active, kick out of function.
+            var idx = parseInt(this.getAttribute('data-slide'), 10),
+              activeSlide = _this.$slides.filter(s => s.classList.contains('is-active'))[0],
+              ltr = activeSlide ? idx > parseInt(activeSlide.getAttribute('data-slide'), 10) : true,
+              slide = _this.$slides[idx];
+            _this.changeSlide(ltr, slide, idx);
+          });
+        });
       }
       if (this.options.accessible) {
-        // allow wrapper to be focusable to enable arrow navigation
-        this.$wrapper.setAttribute('tabindex', 0);
-      }
-    }
-
-    /**
-    * Creates a jQuery collection of bullets, if they are being used.
-    * @function
-    * @private
-    */
-  }, {
-    key: "_loadBullets",
-    value: function _loadBullets() {
-      this.$bullets = Array.from(this.$element.querySelectorAll(".".concat(this.options.boxOfBullets, " button")));
-    }
-
-    /**
-    * Sets a `timer` object on the orbit, and starts the counter for the next slide.
-    * @function
-    */
-  }, {
-    key: "geoSync",
-    value: function geoSync() {
-      var _this = this;
-      this.timer = new _foundation_util_timer__WEBPACK_IMPORTED_MODULE_2__.Timer(this.$element, {
-        duration: this.options.timerDelay,
-        infinite: false
-      }, function () {
-        _this.changeSlide(true);
-      }, 'orbit');
-      this.timer.start();
-    }
-
-    /**
-    * Sets wrapper and slide heights for the orbit.
-    * @function
-    * @private
-    */
-  }, {
-    key: "_prepareForOrbit",
-    value: function _prepareForOrbit() {
-      this._setWrapperHeight();
-    }
-
-    /**
-    * Calulates the height of each slide in the collection, and uses the tallest one for the wrapper height.
-    * @function
-    * @private
-    * @param {Function} cb - a callback function to fire when complete.
-    */
-  }, {
-    key: "_setWrapperHeight",
-    value: function _setWrapperHeight(cb) {
-      //rewrite this to `for` loop
-      var max = 0,
-        temp,
-        counter = 0,
-        _this = this;
-      this.$slides.forEach(function (slide) {
-        temp = slide.getBoundingClientRect().height;
-        slide.setAttribute('data-slide', counter);
-
-        // hide all slides but the active one
-        if (!/mui/g.test(slide.className) && _this.$slides.filter(function (s) {
-          return s.classList.contains('is-active');
-        })[0] !== _this.$slides[counter]) {
-          slide.style.display = 'none';
-        }
-        max = temp > max ? temp : max;
-        counter++;
-      });
-      if (counter === this.$slides.length) {
-        this.$wrapper.style.height = max + 'px'; //only change the wrapper height property once.
-        if (cb) {
-          cb(max);
-        } //fire callback with max height dimension.
-      }
-    }
-
-    /**
-    * Sets the max-height of each slide.
-    * @function
-    * @private
-    */
-  }, {
-    key: "_setSlideHeight",
-    value: function _setSlideHeight(height) {
-      this.$slides.forEach(function (slide) {
-        slide.style.maxHeight = height + 'px';
-      });
-    }
-
-    /**
-    * Adds event listeners to basically everything within the element.
-    * @function
-    * @private
-    */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-
-      //***************************************
-      //**Now using custom event - thanks to:**
-      //**      Yohai Ararat of Toronto      **
-      //***************************************
-      //
-      // S10: the resizeme consumer runs on the native event layer; the
-      // producer in the Triggers util has dispatched real element-local
-      // events since S4.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'resizeme.zf.trigger');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'resizeme.zf.trigger', this._prepareForOrbit.bind(this));
-      if (this.$slides.length > 1) {
-        if (this.options.swipe) {
-          // S13: the swipe consumers flip with the Touch util - swipeleft/
-          // swiperight are real, bubbling events on the slide now, so these
-          // listeners live on the native event layer.
-          this.$slides.forEach(function (slide) {
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(slide, 'swipeleft.zf.orbit swiperight.zf.orbit');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'swipeleft.zf.orbit', function (e) {
-              e.preventDefault();
-              _this.changeSlide(true);
-            });
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'swiperight.zf.orbit', function (e) {
-              e.preventDefault();
-              _this.changeSlide(false);
-            });
-          });
-        }
-        //***************************************
-
-        if (this.options.autoPlay) {
-          // S10: the slide click consumer runs on the native event layer -
-          // real clicks arrive directly and jQuery-synthesized clicks on
-          // slides ride the `.click()` shortcut bridge (reveal-native
-          // precedent). The clickedOn bookkeeping rides an expando (the 6.x
-          // jQuery data cache was DOM-invisible).
-          this.$slides.forEach(function (slide) {
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(slide, 'click.zf.orbit');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(slide, 'click.zf.orbit', function () {
-              _this.$element.zfOrbitClickedOn = !_this.$element.zfOrbitClickedOn;
-              _this.timer[_this.$element.zfOrbitClickedOn ? 'pause' : 'start']();
-            });
-          });
-          if (this.options.pauseOnHover) {
-            // 7.0 terminal form: hover on real mouseover/mouseout with the
-            // entering/leaving filter (jQuery's mouseenter synthesis port).
-            var hoverFilter = function hoverFilter(handler) {
-              return function (e) {
-                if (e.relatedTarget && this.contains(e.relatedTarget)) {
-                  return;
-                }
-                handler.call(this, e);
-              };
-            };
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, 'mouseover.zf.orbit mouseout.zf.orbit');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'mouseover.zf.orbit', hoverFilter(function () {
-              _this.timer.pause();
-            }));
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(this.$element, 'mouseout.zf.orbit', hoverFilter(function () {
-              if (!_this.$element.zfOrbitClickedOn) {
-                _this.timer.start();
-              }
-            }));
-          }
-        }
-        if (this.options.navButtons) {
-          var controls = Array.from(this.$element.querySelectorAll(".".concat(this.options.nextClass, ", .").concat(this.options.prevClass)));
-          // S10: the nav-button click consumers run on the native event
-          // layer; the tabindex write goes native with it.
-          controls.forEach(function (control) {
-            control.setAttribute('tabindex', 0);
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(control, 'click.zf.orbit touchend.zf.orbit');
-            //also need to handle enter/return and spacebar key presses
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(control, 'click.zf.orbit touchend.zf.orbit', function (e) {
-              e.preventDefault();
-              _this.changeSlide(this.classList.contains(_this.options.nextClass));
-            });
-          });
-        }
-        if (this.options.bullets) {
-          // S10: the bullet click consumers run on the native event layer
-          // (real clicks; jQuery-synthesized clicks on buttons ride the
-          // `.click()` shortcut bridge). The data reads are the numeric
-          // attribute parses jQuery's .data() performed.
-          this.$bullets.forEach(function (bullet) {
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(bullet, 'click.zf.orbit touchend.zf.orbit');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(bullet, 'click.zf.orbit touchend.zf.orbit', function () {
-              if (/is-active/g.test(this.className)) {
-                return false;
-              } //if this is active, kick out of function.
-              var idx = parseInt(this.getAttribute('data-slide'), 10),
-                activeSlide = _this.$slides.filter(function (s) {
-                  return s.classList.contains('is-active');
-                })[0],
-                ltr = activeSlide ? idx > parseInt(activeSlide.getAttribute('data-slide'), 10) : true,
-                slide = _this.$slides[idx];
-              _this.changeSlide(ltr, slide, idx);
-            });
-          });
-        }
-        if (this.options.accessible) {
-          // 7.0 terminal form: the keydown listener runs on the native event
-          // layer (the coarse suite's mocks dispatch real KeyboardEvents
-          // since the S16 migration), on the wrapper and every bullet like
-          // the collection-wide .on() did.
-          [this.$wrapper].concat(this.$bullets).filter(Boolean).forEach(function (bound) {
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(bound, 'keydown.zf.orbit');
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(bound, 'keydown.zf.orbit', function (e) {
-              // handle keyboard event with keyboard util
-              _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Orbit', {
-                next: function next() {
-                  _this.changeSlide(true);
-                },
-                previous: function previous() {
-                  _this.changeSlide(false);
-                },
-                handled: function handled() {
-                  // if bullet is focused, make sure focus moves
-                  if (_this.$bullets.indexOf(e.target) !== -1) {
-                    // the collection .focus() focused the first active bullet
-                    var activeBullet = _this.$bullets.filter(function (b) {
-                      return b.classList.contains('is-active');
-                    })[0];
-                    if (activeBullet) {
-                      activeBullet.focus();
-                    }
+        // 7.0 terminal form: the keydown listener runs on the native event
+        // layer (the coarse suite's mocks dispatch real KeyboardEvents
+        // since the S16 migration), on the wrapper and every bullet like
+        // the collection-wide .on() did.
+        [this.$wrapper].concat(this.$bullets).filter(Boolean).forEach(bound => {
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(bound, 'keydown.zf.orbit');
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.on(bound, 'keydown.zf.orbit', function (e) {
+            // handle keyboard event with keyboard util
+            _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Orbit', {
+              next: function () {
+                _this.changeSlide(true);
+              },
+              previous: function () {
+                _this.changeSlide(false);
+              },
+              handled: function () {
+                // if bullet is focused, make sure focus moves
+                if (_this.$bullets.indexOf(e.target) !== -1) {
+                  // the collection .focus() focused the first active bullet
+                  var activeBullet = _this.$bullets.filter(b => b.classList.contains('is-active'))[0];
+                  if (activeBullet) {
+                    activeBullet.focus();
                   }
                 }
-              });
+              }
             });
           });
-        }
+        });
       }
     }
+  }
 
-    /**
-     * Resets Orbit so it can be reinitialized
-     */
-  }, {
-    key: "_reset",
-    value: function _reset() {
-      // Don't do anything if there are no slides (first run)
-      if (typeof this.$slides === 'undefined') {
-        return;
+  /**
+   * Resets Orbit so it can be reinitialized
+   */
+  _reset() {
+    // Don't do anything if there are no slides (first run)
+    if (typeof this.$slides === 'undefined') {
+      return;
+    }
+    if (this.$slides.length > 1) {
+      // Remove old events (S10/S13): the native wipe drops the click, swipe,
+      // keydown and hover listeners on the element and its descendants.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, '.zf.orbit');
+      Array.from(this.$element.querySelectorAll('*')).forEach(el => _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(el, '.zf.orbit'));
+
+      // Restart timer if autoPlay is enabled
+      if (this.options.autoPlay) {
+        this.timer.restart();
       }
-      if (this.$slides.length > 1) {
-        // Remove old events (S10/S13): the native wipe drops the click, swipe,
-        // keydown and hover listeners on the element and its descendants.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, '.zf.orbit');
-        Array.from(this.$element.querySelectorAll('*')).forEach(function (el) {
-          return _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(el, '.zf.orbit');
-        });
 
-        // Restart timer if autoPlay is enabled
-        if (this.options.autoPlay) {
+      // Reset all slides
+      this.$slides.forEach(function (slide) {
+        slide.classList.remove('is-active', 'is-in');
+        slide.removeAttribute('aria-live');
+        slide.style.display = 'none';
+      });
+
+      // Show the first slide
+      this.$slides[0].classList.add('is-active');
+      this.$slides[0].style.display = '';
+
+      // Triggers when the slide has finished animating
+      // S10: real, bubbling CustomEvent; the terminal form forwards the
+      // plain slide element.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'slidechange.zf.orbit', [this.$slides[0]]);
+
+      // Select first bullet if bullets are present
+      if (this.options.bullets) {
+        this._updateBullets(0);
+      }
+    }
+  }
+
+  /**
+  * Changes the current slide to a new one.
+  * @function
+  * @param {Boolean} isLTR - if true the slide moves from right to left, if false the slide moves from left to right.
+  * @param {jQuery} chosenSlide - the jQuery element of the slide to show next, if one is selected.
+  * @param {Number} idx - the index of the new slide in its collection, if one chosen.
+  * @fires Orbit#slidechange
+  */
+  changeSlide(isLTR, chosenSlide, idx) {
+    if (!this.$slides) {
+      return;
+    } // Don't freak out if we're in the middle of cleanup
+    // Accepts the plain element (the 7.0 contract) or a collection.
+    if (chosenSlide && chosenSlide.nodeType !== 1) {
+      chosenSlide = chosenSlide[0];
+    }
+    var curSlide = this.$slides.filter(s => s.classList.contains('is-active'))[0];
+    if (/mui/g.test(curSlide.className)) {
+      return false;
+    } //if the slide is currently animating, kick out of the function
+
+    var firstSlide = this.$slides[0],
+      lastSlide = this.$slides[this.$slides.length - 1],
+      dirIn = isLTR ? 'Right' : 'Left',
+      dirOut = isLTR ? 'Left' : 'Right',
+      _this = this,
+      newSlide;
+    var sibling = function (el, dir) {
+      var next = dir === 'next' ? el.nextElementSibling : el.previousElementSibling;
+      return next && next.matches(`.${_this.options.slideClass}`) ? next : null;
+    };
+    if (!chosenSlide) {
+      //most of the time, this will be auto played or clicked from the navButtons.
+      newSlide = isLTR ?
+      //if wrapping enabled, check to see if there is a `next` or `prev` sibling, if not, select the first or last slide to fill in. if wrapping not enabled, attempt to select `next` or `prev`, if there's nothing there, the function will kick out on next step. CRAZY NESTED TERNARIES!!!!!
+      this.options.infiniteWrap ? sibling(curSlide, 'next') || firstSlide : sibling(curSlide, 'next') //pick next slide if moving left to right
+      : this.options.infiniteWrap ? sibling(curSlide, 'prev') || lastSlide : sibling(curSlide, 'prev'); //pick prev slide if moving right to left
+    } else {
+      newSlide = chosenSlide;
+    }
+    if (newSlide) {
+      /**
+      * Triggers before the next slide starts animating in and only if a next slide has been found.
+      * @event Orbit#beforeslidechange
+      */
+      // Terminal form: the forwarded slides are plain elements.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'beforeslidechange.zf.orbit', [curSlide, newSlide]);
+      if (this.options.bullets) {
+        idx = idx || this.$slides.indexOf(newSlide); //grab index to update bullets
+        this._updateBullets(idx);
+      }
+      if (this.options.useMUI && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(this.$element)) {
+        newSlide.classList.add('is-active');
+        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateIn(newSlide, this.options[`animInFrom${dirIn}`], function () {
+          newSlide.style.display = 'block';
+          newSlide.setAttribute('aria-live', 'polite');
+        });
+        curSlide.classList.remove('is-active');
+        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateOut(curSlide, this.options[`animOutTo${dirOut}`], function () {
+          curSlide.removeAttribute('aria-live');
+          if (_this.options.autoPlay && !_this.timer.isPaused) {
+            _this.timer.restart();
+          }
+          //do stuff?
+        });
+      } else {
+        curSlide.classList.remove('is-active', 'is-in');
+        curSlide.removeAttribute('aria-live');
+        curSlide.style.display = 'none';
+        newSlide.classList.add('is-active', 'is-in');
+        newSlide.setAttribute('aria-live', 'polite');
+        newSlide.style.display = '';
+        if (this.options.autoPlay && !this.timer.isPaused) {
           this.timer.restart();
         }
+      }
+      /**
+      * Triggers when the slide has finished animating in.
+      * @event Orbit#slidechange
+      */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'slidechange.zf.orbit', [newSlide]);
+    }
+  }
 
-        // Reset all slides
-        this.$slides.forEach(function (slide) {
-          slide.classList.remove('is-active', 'is-in');
-          slide.removeAttribute('aria-live');
-          slide.style.display = 'none';
-        });
+  /**
+  * Updates the active state of the bullets, if displayed.
+  * Move the descriptor of the current slide `[data-slide-active-label]` to the newly active bullet.
+  * If no `[data-slide-active-label]` is set, will move the exceeding `span` element.
+  *
+  * @function
+  * @private
+  * @param {Number} idx - the index of the current slide.
+  */
+  _updateBullets(idx) {
+    var oldBullet = this.$bullets.filter(b => b.classList.contains('is-active'))[0];
+    var othersBullets = this.$bullets.filter(b => !b.classList.contains('is-active'));
+    var newBullet = this.$bullets[idx];
+    if (oldBullet) {
+      oldBullet.classList.remove('is-active');
+      oldBullet.blur();
+    }
+    if (newBullet) {
+      newBullet.classList.add('is-active');
+    }
+    if (!oldBullet || !newBullet) {
+      return;
+    }
 
-        // Show the first slide
-        this.$slides[0].classList.add('is-active');
-        this.$slides[0].style.display = '';
+    // Find the descriptor for the current slide to move it to the new slide button
+    var labeled = Array.from(oldBullet.querySelectorAll(':scope > [data-slide-active-label]'));
+    var activeStateDescriptor = labeled[labeled.length - 1];
 
-        // Triggers when the slide has finished animating
-        // S10: real, bubbling CustomEvent; the terminal form forwards the
-        // plain slide element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'slidechange.zf.orbit', [this.$slides[0]]);
+    // If not explicitely given, search for the last "exceeding" span element (compared to others bullets).
+    if (!activeStateDescriptor) {
+      var spans = Array.from(oldBullet.querySelectorAll(':scope > span'));
+      var spanCountInOthersBullets = othersBullets.map(b => b.querySelectorAll(':scope > span').length);
 
-        // Select first bullet if bullets are present
-        if (this.options.bullets) {
-          this._updateBullets(0);
-        }
+      // If there is an exceeding span element, use it as current slide descriptor
+      if (spanCountInOthersBullets.every(count => count < spans.length)) {
+        activeStateDescriptor = spans[spans.length - 1];
+        activeStateDescriptor.setAttribute('data-slide-active-label', '');
       }
     }
 
-    /**
-    * Changes the current slide to a new one.
-    * @function
-    * @param {Boolean} isLTR - if true the slide moves from right to left, if false the slide moves from left to right.
-    * @param {jQuery} chosenSlide - the jQuery element of the slide to show next, if one is selected.
-    * @param {Number} idx - the index of the new slide in its collection, if one chosen.
-    * @fires Orbit#slidechange
-    */
-  }, {
-    key: "changeSlide",
-    value: function changeSlide(isLTR, chosenSlide, idx) {
-      if (!this.$slides) {
-        return;
-      } // Don't freak out if we're in the middle of cleanup
-      // Accepts the plain element (the 7.0 contract) or a collection.
-      if (chosenSlide && chosenSlide.nodeType !== 1) {
-        chosenSlide = chosenSlide[0];
-      }
-      var curSlide = this.$slides.filter(function (s) {
-        return s.classList.contains('is-active');
-      })[0];
-      if (/mui/g.test(curSlide.className)) {
-        return false;
-      } //if the slide is currently animating, kick out of the function
-
-      var firstSlide = this.$slides[0],
-        lastSlide = this.$slides[this.$slides.length - 1],
-        dirIn = isLTR ? 'Right' : 'Left',
-        dirOut = isLTR ? 'Left' : 'Right',
-        _this = this,
-        newSlide;
-      var sibling = function sibling(el, dir) {
-        var next = dir === 'next' ? el.nextElementSibling : el.previousElementSibling;
-        return next && next.matches(".".concat(_this.options.slideClass)) ? next : null;
-      };
-      if (!chosenSlide) {
-        //most of the time, this will be auto played or clicked from the navButtons.
-        newSlide = isLTR ?
-        //if wrapping enabled, check to see if there is a `next` or `prev` sibling, if not, select the first or last slide to fill in. if wrapping not enabled, attempt to select `next` or `prev`, if there's nothing there, the function will kick out on next step. CRAZY NESTED TERNARIES!!!!!
-        this.options.infiniteWrap ? sibling(curSlide, 'next') || firstSlide : sibling(curSlide, 'next') //pick next slide if moving left to right
-        : this.options.infiniteWrap ? sibling(curSlide, 'prev') || lastSlide : sibling(curSlide, 'prev'); //pick prev slide if moving right to left
-      } else {
-        newSlide = chosenSlide;
-      }
-      if (newSlide) {
-        /**
-        * Triggers before the next slide starts animating in and only if a next slide has been found.
-        * @event Orbit#beforeslidechange
-        */
-        // Terminal form: the forwarded slides are plain elements.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'beforeslidechange.zf.orbit', [curSlide, newSlide]);
-        if (this.options.bullets) {
-          idx = idx || this.$slides.indexOf(newSlide); //grab index to update bullets
-          this._updateBullets(idx);
-        }
-        if (this.options.useMUI && (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(this.$element)) {
-          newSlide.classList.add('is-active');
-          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateIn(newSlide, this.options["animInFrom".concat(dirIn)], function () {
-            newSlide.style.display = 'block';
-            newSlide.setAttribute('aria-live', 'polite');
-          });
-          curSlide.classList.remove('is-active');
-          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateOut(curSlide, this.options["animOutTo".concat(dirOut)], function () {
-            curSlide.removeAttribute('aria-live');
-            if (_this.options.autoPlay && !_this.timer.isPaused) {
-              _this.timer.restart();
-            }
-            //do stuff?
-          });
-        } else {
-          curSlide.classList.remove('is-active', 'is-in');
-          curSlide.removeAttribute('aria-live');
-          curSlide.style.display = 'none';
-          newSlide.classList.add('is-active', 'is-in');
-          newSlide.setAttribute('aria-live', 'polite');
-          newSlide.style.display = '';
-          if (this.options.autoPlay && !this.timer.isPaused) {
-            this.timer.restart();
-          }
-        }
-        /**
-        * Triggers when the slide has finished animating in.
-        * @event Orbit#slidechange
-        */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.trigger(this.$element, 'slidechange.zf.orbit', [newSlide]);
-      }
+    // Move the current slide descriptor to the new slide button
+    if (activeStateDescriptor) {
+      // .detach() + .append(): appendChild moves it (the descriptor carried
+      // no per-element listeners)
+      newBullet.appendChild(activeStateDescriptor);
     }
+  }
 
-    /**
-    * Updates the active state of the bullets, if displayed.
-    * Move the descriptor of the current slide `[data-slide-active-label]` to the newly active bullet.
-    * If no `[data-slide-active-label]` is set, will move the exceeding `span` element.
-    *
-    * @function
-    * @private
-    * @param {Number} idx - the index of the current slide.
-    */
-  }, {
-    key: "_updateBullets",
-    value: function _updateBullets(idx) {
-      var oldBullet = this.$bullets.filter(function (b) {
-        return b.classList.contains('is-active');
-      })[0];
-      var othersBullets = this.$bullets.filter(function (b) {
-        return !b.classList.contains('is-active');
-      });
-      var newBullet = this.$bullets[idx];
-      if (oldBullet) {
-        oldBullet.classList.remove('is-active');
-        oldBullet.blur();
-      }
-      if (newBullet) {
-        newBullet.classList.add('is-active');
-      }
-      if (!oldBullet || !newBullet) {
-        return;
-      }
-
-      // Find the descriptor for the current slide to move it to the new slide button
-      var labeled = Array.from(oldBullet.querySelectorAll(':scope > [data-slide-active-label]'));
-      var activeStateDescriptor = labeled[labeled.length - 1];
-
-      // If not explicitely given, search for the last "exceeding" span element (compared to others bullets).
-      if (!activeStateDescriptor) {
-        var spans = Array.from(oldBullet.querySelectorAll(':scope > span'));
-        var spanCountInOthersBullets = othersBullets.map(function (b) {
-          return b.querySelectorAll(':scope > span').length;
-        });
-
-        // If there is an exceeding span element, use it as current slide descriptor
-        if (spanCountInOthersBullets.every(function (count) {
-          return count < spans.length;
-        })) {
-          activeStateDescriptor = spans[spans.length - 1];
-          activeStateDescriptor.setAttribute('data-slide-active-label', '');
-        }
-      }
-
-      // Move the current slide descriptor to the new slide button
-      if (activeStateDescriptor) {
-        // .detach() + .append(): appendChild moves it (the descriptor carried
-        // no per-element listeners)
-        newBullet.appendChild(activeStateDescriptor);
-      }
+  /**
+  * Destroys the carousel and hides the element.
+  * @function
+  */
+  _destroy() {
+    // The native wipe drops every plugin-namespaced listener on the element
+    // and its descendants (like _reset), then the destroy cleanup hides it.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, '.zf.orbit');
+    Array.from(this.$element.querySelectorAll('*')).forEach(el => _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(el, '.zf.orbit'));
+    this.$element.style.display = 'none';
+    // Guarded (S14): the timer only exists when geoSync ran - autoPlay on
+    // AND more than one slide. 6.x threw a TypeError on every destroy of a
+    // single-slide or non-autoplay carousel; the guard keeps the M1 fix
+    // (destroy stops the timer) for the instances that have one.
+    if (this.timer) {
+      this.timer.pause();
     }
-
-    /**
-    * Destroys the carousel and hides the element.
-    * @function
-    */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The native wipe drops every plugin-namespaced listener on the element
-      // and its descendants (like _reset), then the destroy cleanup hides it.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(this.$element, '.zf.orbit');
-      Array.from(this.$element.querySelectorAll('*')).forEach(function (el) {
-        return _foundation_util_events__WEBPACK_IMPORTED_MODULE_6__.Events.off(el, '.zf.orbit');
-      });
-      this.$element.style.display = 'none';
-      // Guarded (S14): the timer only exists when geoSync ran - autoPlay on
-      // AND more than one slide. 6.x threw a TypeError on every destroy of a
-      // single-slide or non-autoplay carousel; the guard keeps the M1 fix
-      // (destroy stops the timer) for the instances that have one.
-      if (this.timer) {
-        this.timer.pause();
-      }
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_7__.Plugin);
+  }
+}
 Orbit.defaults = {
   /**
   * Tells the JS to look for and loadBullets.
@@ -7549,35 +6895,22 @@ Orbit.defaults = {
 /*!***************************************!*\
   !*** ./js/foundation.positionable.js ***!
   \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Positionable: function() { return /* binding */ Positionable; }
+/* harmony export */   Positionable: () => (/* binding */ Positionable)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.box */ "./js/foundation.util.box.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
-var POSITIONS = ['left', 'right', 'top', 'bottom'];
-var VERTICAL_ALIGNMENTS = ['top', 'bottom', 'center'];
-var HORIZONTAL_ALIGNMENTS = ['left', 'right', 'center'];
-var ALIGNMENTS = {
+const POSITIONS = ['left', 'right', 'top', 'bottom'];
+const VERTICAL_ALIGNMENTS = ['top', 'bottom', 'center'];
+const HORIZONTAL_ALIGNMENTS = ['left', 'right', 'center'];
+const ALIGNMENTS = {
   'left': VERTICAL_ALIGNMENTS,
   'right': VERTICAL_ALIGNMENTS,
   'top': HORIZONTAL_ALIGNMENTS,
@@ -7597,180 +6930,151 @@ function nextItem(item, array) {
 // page offset + its current computed top/left (robust to any offsetParent;
 // static elements get position:relative first, exactly like jQuery).
 function setOffset(el, coords) {
-  var cs = window.getComputedStyle(el);
+  const cs = window.getComputedStyle(el);
   if (cs.position === 'static') {
     el.style.position = 'relative';
   }
-  var curTop = parseFloat(cs.top) || 0;
-  var curLeft = parseFloat(cs.left) || 0;
-  var rect = el.getBoundingClientRect();
+  const curTop = parseFloat(cs.top) || 0;
+  const curLeft = parseFloat(cs.left) || 0;
+  const rect = el.getBoundingClientRect();
   el.style.top = coords.top - (rect.top + window.pageYOffset) + curTop + 'px';
   el.style.left = coords.left - (rect.left + window.pageXOffset) + curLeft + 'px';
 }
-var Positionable = /*#__PURE__*/function (_Plugin) {
-  function Positionable() {
-    _classCallCheck(this, Positionable);
-    return _callSuper(this, Positionable, arguments);
+class Positionable extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.Plugin {
+  /**
+   * Abstract class encapsulating the tether-like explicit positioning logic
+   * including repositioning based on overlap.
+   * Expects classes to define defaults for vOffset, hOffset, position,
+   * alignment, allowOverlap, and allowBottomOverlap. They can do this by
+   * extending the defaults, or (for now recommended due to the way docs are
+   * generated) by explicitly declaring them.
+   *
+   **/
+
+  _init() {
+    this.triedPositions = {};
+    this.position = this.options.position === 'auto' ? this._getDefaultPosition() : this.options.position;
+    this.alignment = this.options.alignment === 'auto' ? this._getDefaultAlignment() : this.options.alignment;
+    this.originalPosition = this.position;
+    this.originalAlignment = this.alignment;
   }
-  _inherits(Positionable, _Plugin);
-  return _createClass(Positionable, [{
-    key: "_init",
-    value:
-    /**
-     * Abstract class encapsulating the tether-like explicit positioning logic
-     * including repositioning based on overlap.
-     * Expects classes to define defaults for vOffset, hOffset, position,
-     * alignment, allowOverlap, and allowBottomOverlap. They can do this by
-     * extending the defaults, or (for now recommended due to the way docs are
-     * generated) by explicitly declaring them.
-     *
-     **/
+  _getDefaultPosition() {
+    return 'bottom';
+  }
+  _getDefaultAlignment() {
+    switch (this.position) {
+      case 'bottom':
+      case 'top':
+        return (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.rtl)() ? 'right' : 'left';
+      case 'left':
+      case 'right':
+        return 'bottom';
+    }
+  }
 
-    function _init() {
-      this.triedPositions = {};
-      this.position = this.options.position === 'auto' ? this._getDefaultPosition() : this.options.position;
-      this.alignment = this.options.alignment === 'auto' ? this._getDefaultAlignment() : this.options.alignment;
-      this.originalPosition = this.position;
-      this.originalAlignment = this.alignment;
+  /**
+   * Adjusts the positionable possible positions by iterating through alignments
+   * and positions.
+   * @function
+   * @private
+   */
+  _reposition() {
+    if (this._alignmentsExhausted(this.position)) {
+      this.position = nextItem(this.position, POSITIONS);
+      this.alignment = ALIGNMENTS[this.position][0];
+    } else {
+      this._realign();
     }
-  }, {
-    key: "_getDefaultPosition",
-    value: function _getDefaultPosition() {
-      return 'bottom';
-    }
-  }, {
-    key: "_getDefaultAlignment",
-    value: function _getDefaultAlignment() {
-      switch (this.position) {
-        case 'bottom':
-        case 'top':
-          return (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.rtl)() ? 'right' : 'left';
-        case 'left':
-        case 'right':
-          return 'bottom';
-      }
-    }
+  }
 
-    /**
-     * Adjusts the positionable possible positions by iterating through alignments
-     * and positions.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_reposition",
-    value: function _reposition() {
-      if (this._alignmentsExhausted(this.position)) {
-        this.position = nextItem(this.position, POSITIONS);
-        this.alignment = ALIGNMENTS[this.position][0];
-      } else {
-        this._realign();
-      }
+  /**
+   * Adjusts the dropdown pane possible positions by iterating through alignments
+   * on the current position.
+   * @function
+   * @private
+   */
+  _realign() {
+    this._addTriedPosition(this.position, this.alignment);
+    this.alignment = nextItem(this.alignment, ALIGNMENTS[this.position]);
+  }
+  _addTriedPosition(position, alignment) {
+    this.triedPositions[position] = this.triedPositions[position] || [];
+    this.triedPositions[position].push(alignment);
+  }
+  _positionsExhausted() {
+    var isExhausted = true;
+    for (var i = 0; i < POSITIONS.length; i++) {
+      isExhausted = isExhausted && this._alignmentsExhausted(POSITIONS[i]);
     }
+    return isExhausted;
+  }
+  _alignmentsExhausted(position) {
+    return this.triedPositions[position] && this.triedPositions[position].length === ALIGNMENTS[position].length;
+  }
 
-    /**
-     * Adjusts the dropdown pane possible positions by iterating through alignments
-     * on the current position.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_realign",
-    value: function _realign() {
-      this._addTriedPosition(this.position, this.alignment);
-      this.alignment = nextItem(this.alignment, ALIGNMENTS[this.position]);
+  // When we're trying to center, we don't want to apply offset that's going to
+  // take us just off center, so wrap around to return 0 for the appropriate
+  // offset in those alignments.  TODO: Figure out if we want to make this
+  // configurable behavior... it feels more intuitive, especially for tooltips, but
+  // it's possible someone might actually want to start from center and then nudge
+  // slightly off.
+  _getVOffset() {
+    return this.options.vOffset;
+  }
+  _getHOffset() {
+    return this.options.hOffset;
+  }
+
+  // 7.0 line A terminal form: plain elements (un-migrated callers hand in
+  // jQuery collections, unwrapped here).
+  _setPosition(anchor, element, parent) {
+    anchor = anchor.nodeType === 1 ? anchor : anchor[0];
+    element = element.nodeType === 1 ? element : element[0];
+    if (parent) {
+      parent = parent.nodeType === 1 ? parent : parent[0];
     }
-  }, {
-    key: "_addTriedPosition",
-    value: function _addTriedPosition(position, alignment) {
-      this.triedPositions[position] = this.triedPositions[position] || [];
-      this.triedPositions[position].push(alignment);
+    if (anchor.getAttribute('aria-expanded') === 'false') {
+      return false;
     }
-  }, {
-    key: "_positionsExhausted",
-    value: function _positionsExhausted() {
-      var isExhausted = true;
-      for (var i = 0; i < POSITIONS.length; i++) {
-        isExhausted = isExhausted && this._alignmentsExhausted(POSITIONS[i]);
-      }
-      return isExhausted;
-    }
-  }, {
-    key: "_alignmentsExhausted",
-    value: function _alignmentsExhausted(position) {
-      return this.triedPositions[position] && this.triedPositions[position].length === ALIGNMENTS[position].length;
+    if (!this.options.allowOverlap) {
+      // restore original position & alignment before checking overlap
+      this.position = this.originalPosition;
+      this.alignment = this.originalAlignment;
     }
 
-    // When we're trying to center, we don't want to apply offset that's going to
-    // take us just off center, so wrap around to return 0 for the appropriate
-    // offset in those alignments.  TODO: Figure out if we want to make this
-    // configurable behavior... it feels more intuitive, especially for tooltips, but
-    // it's possible someone might actually want to start from center and then nudge
-    // slightly off.
-  }, {
-    key: "_getVOffset",
-    value: function _getVOffset() {
-      return this.options.vOffset;
-    }
-  }, {
-    key: "_getHOffset",
-    value: function _getHOffset() {
-      return this.options.hOffset;
-    }
-
-    // 7.0 line A terminal form: plain elements (un-migrated callers hand in
-    // jQuery collections, unwrapped here).
-  }, {
-    key: "_setPosition",
-    value: function _setPosition(anchor, element, parent) {
-      anchor = anchor.nodeType === 1 ? anchor : anchor[0];
-      element = element.nodeType === 1 ? element : element[0];
-      if (parent) {
-        parent = parent.nodeType === 1 ? parent : parent[0];
-      }
-      if (anchor.getAttribute('aria-expanded') === 'false') {
-        return false;
-      }
-      if (!this.options.allowOverlap) {
-        // restore original position & alignment before checking overlap
-        this.position = this.originalPosition;
-        this.alignment = this.originalAlignment;
-      }
-
-      // S13: the Box util reads plain elements; the offset write below is
-      // the native port of jQuery's `.offset({top,left})` setter.
-      setOffset(element, _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
-      if (!this.options.allowOverlap) {
-        var minOverlap = 100000000;
-        // default coordinates to how we start, in case we can't figure out better
-        var minCoordinates = {
-          position: this.position,
-          alignment: this.alignment
-        };
-        while (!this._positionsExhausted()) {
-          var overlap = _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.OverlapArea(element, parent || null, false, false, this.options.allowBottomOverlap);
-          if (overlap === 0) {
-            return;
-          }
-          if (overlap < minOverlap) {
-            minOverlap = overlap;
-            minCoordinates = {
-              position: this.position,
-              alignment: this.alignment
-            };
-          }
-          this._reposition();
-          setOffset(element, _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+    // S13: the Box util reads plain elements; the offset write below is
+    // the native port of jQuery's `.offset({top,left})` setter.
+    setOffset(element, _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+    if (!this.options.allowOverlap) {
+      var minOverlap = 100000000;
+      // default coordinates to how we start, in case we can't figure out better
+      var minCoordinates = {
+        position: this.position,
+        alignment: this.alignment
+      };
+      while (!this._positionsExhausted()) {
+        let overlap = _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.OverlapArea(element, parent || null, false, false, this.options.allowBottomOverlap);
+        if (overlap === 0) {
+          return;
         }
-        // If we get through the entire loop, there was no non-overlapping
-        // position available. Pick the version with least overlap.
-        this.position = minCoordinates.position;
-        this.alignment = minCoordinates.alignment;
+        if (overlap < minOverlap) {
+          minOverlap = overlap;
+          minCoordinates = {
+            position: this.position,
+            alignment: this.alignment
+          };
+        }
+        this._reposition();
         setOffset(element, _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
       }
+      // If we get through the entire loop, there was no non-overlapping
+      // position available. Pick the version with least overlap.
+      this.position = minCoordinates.position;
+      this.alignment = minCoordinates.alignment;
+      setOffset(element, _foundation_util_box__WEBPACK_IMPORTED_MODULE_0__.Box.GetExplicitOffsets(element, anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.Plugin);
+  }
+}
 Positionable.defaults = {
   /**
    * Position of positionable relative to anchor. Can be left, right, bottom, top, or auto.
@@ -7827,11 +7131,11 @@ Positionable.defaults = {
 /*!**************************************************!*\
   !*** ./js/foundation.responsiveAccordionTabs.js ***!
   \**************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ResponsiveAccordionTabs: function() { return /* binding */ ResponsiveAccordionTabs; }
+/* harmony export */   ResponsiveAccordionTabs: () => (/* binding */ ResponsiveAccordionTabs)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
@@ -7840,19 +7144,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_accordion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.accordion */ "./js/foundation.accordion.js");
 /* harmony import */ var _foundation_tabs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.tabs */ "./js/foundation.tabs.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -7866,24 +7157,16 @@ var MenuPlugins = {
   tabs: {
     cssClass: 'tabs',
     plugin: _foundation_tabs__WEBPACK_IMPORTED_MODULE_6__.Tabs,
-    open: function open(plugin, target) {
-      return plugin.selectTab(target);
-    },
+    open: (plugin, target) => plugin.selectTab(target),
     close: null /* not supported */,
     toggle: null /* not supported */
   },
   accordion: {
     cssClass: 'accordion',
     plugin: _foundation_accordion__WEBPACK_IMPORTED_MODULE_5__.Accordion,
-    open: function open(plugin, target) {
-      return plugin.down(target);
-    },
-    close: function close(plugin, target) {
-      return plugin.up(target);
-    },
-    toggle: function toggle(plugin, target) {
-      return plugin.toggle(target);
-    }
+    open: (plugin, target) => plugin.down(target),
+    close: (plugin, target) => plugin.up(target),
+    toggle: (plugin, target) => plugin.toggle(target)
   }
 };
 
@@ -7905,344 +7188,305 @@ var MenuPlugins = {
 // phantom keys are no longer written; the wrapper registers itself in the
 // Registry like every plugin (S2), and the inner ctor/destroy dance around
 // the registry slot mirrors the old zfPlugin guard/reoccupy machine.
-var ResponsiveAccordionTabs = /*#__PURE__*/function (_Plugin) {
-  function ResponsiveAccordionTabs() {
-    _classCallCheck(this, ResponsiveAccordionTabs);
-    return _callSuper(this, ResponsiveAccordionTabs, arguments);
+class ResponsiveAccordionTabs extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin {
+  /**
+   * Creates a new instance of a responsive accordion tabs.
+   * @class
+   * @name ResponsiveAccordionTabs
+   * @fires ResponsiveAccordionTabs#init
+   * @param {jQuery} element - jQuery object to make into Responsive Accordion Tabs.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, ResponsiveAccordionTabs.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$element), options);
+    this.rules = this.$element.getAttribute('data-responsive-accordion-tabs');
+    this.currentMq = null;
+    this.currentRule = null;
+    this.currentPlugin = null;
+    this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
+    if (!this.$element.getAttribute('id')) {
+      this.$element.setAttribute('id', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'responsiveaccordiontabs'));
+    }
+    this._init();
+    this._events();
   }
-  _inherits(ResponsiveAccordionTabs, _Plugin);
-  return _createClass(ResponsiveAccordionTabs, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a responsive accordion tabs.
-     * @class
-     * @name ResponsiveAccordionTabs
-     * @fires ResponsiveAccordionTabs#init
-     * @param {jQuery} element - jQuery object to make into Responsive Accordion Tabs.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, ResponsiveAccordionTabs.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$element), options);
-      this.rules = this.$element.getAttribute('data-responsive-accordion-tabs');
-      this.currentMq = null;
-      this.currentRule = null;
-      this.currentPlugin = null;
-      this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
-      if (!this.$element.getAttribute('id')) {
-        this.$element.setAttribute('id', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'responsiveaccordiontabs'));
-      }
-      this._init();
-      this._events();
-    }
 
-    /**
-     * Initializes the Menu by parsing the classes from the 'data-responsive-accordion-tabs' attribute on the element.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
+  /**
+   * Initializes the Menu by parsing the classes from the 'data-responsive-accordion-tabs' attribute on the element.
+   * @function
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
 
-      // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
-      if (typeof this.rules === 'string') {
-        var rulesTree = {};
+    // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
+    if (typeof this.rules === 'string') {
+      let rulesTree = {};
 
-        // Parse rules from "classes" pulled from data attribute
-        var rules = this.rules.split(' ');
+      // Parse rules from "classes" pulled from data attribute
+      let rules = this.rules.split(' ');
 
-        // Iterate through every rule found
-        for (var i = 0; i < rules.length; i++) {
-          var rule = rules[i].split('-');
-          var ruleSize = rule.length > 1 ? rule[0] : 'small';
-          var rulePlugin = rule.length > 1 ? rule[1] : rule[0];
-          if (MenuPlugins[rulePlugin] !== null) {
-            rulesTree[ruleSize] = MenuPlugins[rulePlugin];
-          }
+      // Iterate through every rule found
+      for (let i = 0; i < rules.length; i++) {
+        let rule = rules[i].split('-');
+        let ruleSize = rule.length > 1 ? rule[0] : 'small';
+        let rulePlugin = rule.length > 1 ? rule[1] : rule[0];
+        if (MenuPlugins[rulePlugin] !== null) {
+          rulesTree[ruleSize] = MenuPlugins[rulePlugin];
         }
-        this.rules = rulesTree;
       }
-      this._getAllOptions();
-      if (Object.keys(this.rules).length !== 0) {
-        this._checkMediaQueries();
-      }
+      this.rules = rulesTree;
     }
-  }, {
-    key: "_getAllOptions",
-    value: function _getAllOptions() {
-      //get all defaults and options
-      var _this = this;
-      _this.allOptions = {};
-      for (var key in MenuPlugins) {
-        if (MenuPlugins.hasOwnProperty(key)) {
-          var obj = MenuPlugins[key];
-          try {
-            // a detached probe element (the 6.x $('<ul></ul>') was detached
-            // too - the inner plugins tolerate it through their guards)
-            var dummyPlugin = document.createElement('ul');
-            var tmpPlugin = new obj.plugin(dummyPlugin, _this.options);
-            for (var keyKey in tmpPlugin.options) {
-              if (tmpPlugin.options.hasOwnProperty(keyKey) && keyKey !== 'zfPlugin') {
-                var objObj = tmpPlugin.options[keyKey];
-                _this.allOptions[keyKey] = objObj;
-              }
+    this._getAllOptions();
+    if (Object.keys(this.rules).length !== 0) {
+      this._checkMediaQueries();
+    }
+  }
+  _getAllOptions() {
+    //get all defaults and options
+    var _this = this;
+    _this.allOptions = {};
+    for (var key in MenuPlugins) {
+      if (MenuPlugins.hasOwnProperty(key)) {
+        var obj = MenuPlugins[key];
+        try {
+          // a detached probe element (the 6.x $('<ul></ul>') was detached
+          // too - the inner plugins tolerate it through their guards)
+          var dummyPlugin = document.createElement('ul');
+          var tmpPlugin = new obj.plugin(dummyPlugin, _this.options);
+          for (var keyKey in tmpPlugin.options) {
+            if (tmpPlugin.options.hasOwnProperty(keyKey) && keyKey !== 'zfPlugin') {
+              var objObj = tmpPlugin.options[keyKey];
+              _this.allOptions[keyKey] = objObj;
             }
-            tmpPlugin.destroy();
-          } catch (e) {
-            console.warn("Warning: Problems getting Accordion/Tab options: ".concat(e));
           }
+          tmpPlugin.destroy();
+        } catch (e) {
+          console.warn(`Warning: Problems getting Accordion/Tab options: ${e}`);
         }
       }
     }
+  }
 
-    /**
-     * Initializes events for the Menu.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-      // bubbling window event on the native layer now, so this consumer binds
-      // there (equalizer/tabs/responsiveToggle/responsiveMenu/offcanvas all
-      // flipped with the producer in the same move).
-      this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+  /**
+   * Initializes events for the Menu.
+   * @function
+   * @private
+   */
+  _events() {
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer binds
+    // there (equalizer/tabs/responsiveToggle/responsiveMenu/offcanvas all
+    // flipped with the producer in the same move).
+    this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+  }
+
+  /**
+   * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
+   * @function
+   * @private
+   */
+  _checkMediaQueries() {
+    var matchedMq = null;
+    var element = this.$element;
+
+    // Iterate through each rule and find the last matching rule
+    Object.keys(this.rules).forEach(function (key) {
+      if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(key)) {
+        matchedMq = key;
+      }
+    });
+
+    // No match? No dice
+    if (!matchedMq) return;
+
+    // Plugin already initialized? We good
+    if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
+
+    // Remove existing plugin-specific CSS classes
+    Object.keys(MenuPlugins).forEach(function (key) {
+      element.classList.remove(MenuPlugins[key].cssClass);
+    });
+
+    // Add the CSS class for the new plugin
+    element.classList.add(this.rules[matchedMq].cssClass);
+
+    // mq switch = explicit rebuild (see the class comment): tear the current
+    // inner instance down, convert the markup for the new type, construct
+    // the new inner. The rebuilt inner writes its own uuid attr and takes
+    // over the registry slot the base destroy just freed - the same state
+    // machine the 6.x zfPlugin key ran.
+    if (this.currentPlugin) this.currentPlugin.destroy();
+    this._handleMarkup(this.rules[matchedMq].cssClass);
+    this.currentRule = this.rules[matchedMq];
+    this.currentPlugin = new this.currentRule.plugin(this.$element, this.options);
+  }
+
+  // 7.0 terminal form: the 6.x markup conversion moved nodes through
+  // jQuery collection ops; each step is the same move on plain elements.
+  _handleMarkup(toSet) {
+    var _this = this,
+      fromString = 'accordion';
+    var elementId = this.$element.getAttribute('id');
+    var panelsContainer = document.querySelector(`[data-tabs-content=${elementId}]`);
+    if (panelsContainer) fromString = 'tabs';
+    if (fromString === toSet) {
+      return;
     }
-
-    /**
-     * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_checkMediaQueries",
-    value: function _checkMediaQueries() {
-      var matchedMq = null;
-      var element = this.$element;
-
-      // Iterate through each rule and find the last matching rule
-      Object.keys(this.rules).forEach(function (key) {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(key)) {
-          matchedMq = key;
+    var tabsTitle = _this.allOptions.linkClass ? _this.allOptions.linkClass : 'tabs-title';
+    var tabsPanel = _this.allOptions.panelClass ? _this.allOptions.panelClass : 'tabs-panel';
+    this.$element.removeAttribute('role');
+    var liHeads = Array.from(this.$element.children).filter(el => el.matches(`.${tabsTitle},[data-accordion-item]`));
+    liHeads.forEach(li => {
+      li.classList.remove(tabsTitle, 'accordion-item');
+      li.removeAttribute('data-accordion-item');
+    });
+    var liHeadsA = liHeads.map(li => li.querySelector(':scope > a'));
+    liHeadsA.forEach(a => a && a.classList.remove('accordion-title'));
+    var panels;
+    if (fromString === 'tabs') {
+      panels = Array.from(panelsContainer.querySelectorAll(`:scope > .${tabsPanel}`));
+      panels.forEach(panel => {
+        panel.classList.remove(tabsPanel);
+        panel.removeAttribute('role');
+        panel.removeAttribute('aria-hidden');
+        panel.removeAttribute('aria-labelledby');
+        var link = panel.querySelector(':scope > a');
+        if (link) {
+          link.removeAttribute('role');
+          link.removeAttribute('aria-controls');
+          link.removeAttribute('aria-selected');
         }
       });
-
-      // No match? No dice
-      if (!matchedMq) return;
-
-      // Plugin already initialized? We good
-      if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
-
-      // Remove existing plugin-specific CSS classes
-      Object.keys(MenuPlugins).forEach(function (key) {
-        element.classList.remove(MenuPlugins[key].cssClass);
-      });
-
-      // Add the CSS class for the new plugin
-      element.classList.add(this.rules[matchedMq].cssClass);
-
-      // mq switch = explicit rebuild (see the class comment): tear the current
-      // inner instance down, convert the markup for the new type, construct
-      // the new inner. The rebuilt inner writes its own uuid attr and takes
-      // over the registry slot the base destroy just freed - the same state
-      // machine the 6.x zfPlugin key ran.
-      if (this.currentPlugin) this.currentPlugin.destroy();
-      this._handleMarkup(this.rules[matchedMq].cssClass);
-      this.currentRule = this.rules[matchedMq];
-      this.currentPlugin = new this.currentRule.plugin(this.$element, this.options);
+    } else {
+      panels = liHeads.map(li => li.querySelector(':scope > [data-tab-content]')).filter(Boolean);
+      panels.forEach(panel => panel.classList.remove('accordion-content'));
     }
-
-    // 7.0 terminal form: the 6.x markup conversion moved nodes through
-    // jQuery collection ops; each step is the same move on plain elements.
-  }, {
-    key: "_handleMarkup",
-    value: function _handleMarkup(toSet) {
-      var _this = this,
-        fromString = 'accordion';
-      var elementId = this.$element.getAttribute('id');
-      var panelsContainer = document.querySelector("[data-tabs-content=".concat(elementId, "]"));
-      if (panelsContainer) fromString = 'tabs';
-      if (fromString === toSet) {
-        return;
-      }
-      var tabsTitle = _this.allOptions.linkClass ? _this.allOptions.linkClass : 'tabs-title';
-      var tabsPanel = _this.allOptions.panelClass ? _this.allOptions.panelClass : 'tabs-panel';
-      this.$element.removeAttribute('role');
-      var liHeads = Array.from(this.$element.children).filter(function (el) {
-        return el.matches(".".concat(tabsTitle, ",[data-accordion-item]"));
+    panels.forEach(panel => {
+      panel.style.display = '';
+      panel.style.visibility = '';
+    });
+    liHeads.forEach(li => {
+      li.style.display = '';
+      li.style.visibility = '';
+    });
+    if (toSet === 'accordion') {
+      panels.forEach(function (panel, key) {
+        var head = liHeads[key];
+        head.appendChild(panel);
+        panel.classList.add('accordion-content');
+        panel.setAttribute('data-tab-content', '');
+        panel.classList.remove('is-active');
+        panel.style.height = '';
+        head.classList.add('accordion-item');
+        head.setAttribute('data-accordion-item', '');
+        var link = liHeadsA[key];
+        if (link) {
+          link.classList.add('accordion-title');
+        }
       });
-      liHeads.forEach(function (li) {
-        li.classList.remove(tabsTitle, 'accordion-item');
-        li.removeAttribute('data-accordion-item');
-      });
-      var liHeadsA = liHeads.map(function (li) {
-        return li.querySelector(':scope > a');
-      });
-      liHeadsA.forEach(function (a) {
-        return a && a.classList.remove('accordion-title');
-      });
-      var panels;
-      if (fromString === 'tabs') {
-        panels = Array.from(panelsContainer.querySelectorAll(":scope > .".concat(tabsPanel)));
-        panels.forEach(function (panel) {
-          panel.classList.remove(tabsPanel);
-          panel.removeAttribute('role');
-          panel.removeAttribute('aria-hidden');
-          panel.removeAttribute('aria-labelledby');
-          var link = panel.querySelector(':scope > a');
-          if (link) {
-            link.removeAttribute('role');
-            link.removeAttribute('aria-controls');
-            link.removeAttribute('aria-selected');
-          }
-        });
+      // .after(placeholder).detach(): a marker div takes the tabs-content
+      // container's place for the trip back to tabs. The 6.x form ran this
+      // inside the loop, but the first detach left the later .after() calls
+      // silent no-ops - one placeholder, once.
+      var placeholder = document.createElement('div');
+      placeholder.id = 'tabs-placeholder-' + elementId;
+      panelsContainer.parentElement.insertBefore(placeholder, panelsContainer.nextSibling);
+      panelsContainer.remove();
+    } else if (toSet === 'tabs') {
+      var tabsContent = document.querySelector(`[data-tabs-content=${elementId}]`);
+      // A distinct name from the accordion branch's `placeholder`: two
+      // function-scoped vars of the same name confused the binding context
+      // (block-scoped-var).
+      var tabsPlaceholder = document.getElementById('tabs-placeholder-' + elementId);
+      if (tabsPlaceholder) {
+        tabsContent = document.createElement('div');
+        tabsContent.className = 'tabs-content';
+        tabsPlaceholder.parentElement.insertBefore(tabsContent, tabsPlaceholder.nextSibling);
+        tabsContent.setAttribute('data-tabs-content', elementId);
+        tabsPlaceholder.remove();
       } else {
-        panels = liHeads.map(function (li) {
-          return li.querySelector(':scope > [data-tab-content]');
-        }).filter(Boolean);
-        panels.forEach(function (panel) {
-          return panel.classList.remove('accordion-content');
-        });
+        tabsContent = document.createElement('div');
+        tabsContent.className = 'tabs-content';
+        this.$element.parentElement.insertBefore(tabsContent, this.$element.nextSibling);
+        tabsContent.setAttribute('data-tabs-content', elementId);
       }
-      panels.forEach(function (panel) {
-        panel.style.display = '';
-        panel.style.visibility = '';
-      });
-      liHeads.forEach(function (li) {
-        li.style.display = '';
-        li.style.visibility = '';
-      });
-      if (toSet === 'accordion') {
-        panels.forEach(function (panel, key) {
-          var head = liHeads[key];
-          head.appendChild(panel);
-          panel.classList.add('accordion-content');
-          panel.setAttribute('data-tab-content', '');
-          panel.classList.remove('is-active');
-          panel.style.height = '';
-          head.classList.add('accordion-item');
-          head.setAttribute('data-accordion-item', '');
-          var link = liHeadsA[key];
-          if (link) {
-            link.classList.add('accordion-title');
+      panels.forEach(function (panel, key) {
+        var link = liHeadsA[key];
+        tabsContent.appendChild(panel);
+        panel.classList.add(tabsPanel);
+        var hash = link.hash.slice(1);
+        var id = panel.getAttribute('id') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'accordion');
+        if (hash !== id) {
+          if (hash !== '') {
+            panel.setAttribute('id', hash);
+          } else {
+            hash = id;
+            panel.setAttribute('id', hash);
+            link.setAttribute('href', link.getAttribute('href').replace('#', '') + '#' + hash);
           }
-        });
-        // .after(placeholder).detach(): a marker div takes the tabs-content
-        // container's place for the trip back to tabs. The 6.x form ran this
-        // inside the loop, but the first detach left the later .after() calls
-        // silent no-ops - one placeholder, once.
-        var placeholder = document.createElement('div');
-        placeholder.id = 'tabs-placeholder-' + elementId;
-        panelsContainer.parentElement.insertBefore(placeholder, panelsContainer.nextSibling);
-        panelsContainer.remove();
-      } else if (toSet === 'tabs') {
-        var tabsContent = document.querySelector("[data-tabs-content=".concat(elementId, "]"));
-        var placeholder = document.getElementById('tabs-placeholder-' + elementId);
-        if (placeholder) {
-          tabsContent = document.createElement('div');
-          tabsContent.className = 'tabs-content';
-          placeholder.parentElement.insertBefore(tabsContent, placeholder.nextSibling);
-          tabsContent.setAttribute('data-tabs-content', elementId);
-          placeholder.remove();
-        } else {
-          tabsContent = document.createElement('div');
-          tabsContent.className = 'tabs-content';
-          this.$element.parentElement.insertBefore(tabsContent, this.$element.nextSibling);
-          tabsContent.setAttribute('data-tabs-content', elementId);
         }
-        panels.forEach(function (panel, key) {
-          var link = liHeadsA[key];
-          tabsContent.appendChild(panel);
-          panel.classList.add(tabsPanel);
-          var hash = link.hash.slice(1);
-          var id = panel.getAttribute('id') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'accordion');
-          if (hash !== id) {
-            if (hash !== '') {
-              panel.setAttribute('id', hash);
-            } else {
-              hash = id;
-              panel.setAttribute('id', hash);
-              link.setAttribute('href', link.getAttribute('href').replace('#', '') + '#' + hash);
-            }
-          }
-          var isActive = liHeads[key].classList.contains('is-active');
-          if (isActive) {
-            panel.classList.add('is-active');
-          }
-        });
-        liHeads.forEach(function (li) {
-          return li.classList.add(tabsTitle);
-        });
-      }
-      ;
+        var isActive = liHeads[key].classList.contains('is-active');
+        if (isActive) {
+          panel.classList.add('is-active');
+        }
+      });
+      liHeads.forEach(li => li.classList.add(tabsTitle));
     }
+    ;
+  }
 
-    /**
-     * Opens the plugin pane defined by `target`.
-     * @param {jQuery | String} target - jQuery object or string of the id of the pane to open.
-     * @see Accordion.down
-     * @see Tabs.selectTab
-     * @function
-     */
-  }, {
-    key: "open",
-    value: function open() {
-      if (this.currentRule && typeof this.currentRule.open === 'function') {
-        var _this$currentRule;
-        return (_this$currentRule = this.currentRule).open.apply(_this$currentRule, [this.currentPlugin].concat(Array.prototype.slice.call(arguments)));
-      }
+  /**
+   * Opens the plugin pane defined by `target`.
+   * @param {jQuery | String} target - jQuery object or string of the id of the pane to open.
+   * @see Accordion.down
+   * @see Tabs.selectTab
+   * @function
+   */
+  open() {
+    if (this.currentRule && typeof this.currentRule.open === 'function') {
+      return this.currentRule.open(this.currentPlugin, ...arguments);
     }
+  }
 
-    /**
-     * Closes the plugin pane defined by `target`. Not availaible for Tabs.
-     * @param {jQuery | String} target - jQuery object or string of the id of the pane to close.
-     * @see Accordion.up
-     * @function
-     */
-  }, {
-    key: "close",
-    value: function close() {
-      if (this.currentRule && typeof this.currentRule.close === 'function') {
-        var _this$currentRule2;
-        return (_this$currentRule2 = this.currentRule).close.apply(_this$currentRule2, [this.currentPlugin].concat(Array.prototype.slice.call(arguments)));
-      }
+  /**
+   * Closes the plugin pane defined by `target`. Not availaible for Tabs.
+   * @param {jQuery | String} target - jQuery object or string of the id of the pane to close.
+   * @see Accordion.up
+   * @function
+   */
+  close() {
+    if (this.currentRule && typeof this.currentRule.close === 'function') {
+      return this.currentRule.close(this.currentPlugin, ...arguments);
     }
+  }
 
-    /**
-     * Toggles the plugin pane defined by `target`. Not availaible for Tabs.
-     * @param {jQuery | String} target - jQuery object or string of the id of the pane to toggle.
-     * @see Accordion.toggle
-     * @function
-     */
-  }, {
-    key: "toggle",
-    value: function toggle() {
-      if (this.currentRule && typeof this.currentRule.toggle === 'function') {
-        var _this$currentRule3;
-        return (_this$currentRule3 = this.currentRule).toggle.apply(_this$currentRule3, [this.currentPlugin].concat(Array.prototype.slice.call(arguments)));
-      }
+  /**
+   * Toggles the plugin pane defined by `target`. Not availaible for Tabs.
+   * @param {jQuery | String} target - jQuery object or string of the id of the pane to toggle.
+   * @see Accordion.toggle
+   * @function
+   */
+  toggle() {
+    if (this.currentRule && typeof this.currentRule.toggle === 'function') {
+      return this.currentRule.toggle(this.currentPlugin, ...arguments);
     }
+  }
 
-    /**
-     * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The inner plugin cleans its own listeners/state (S8/S9 double-off
-      // discipline); the wrapper only owns the mq seam listener (S13 flip).
-      if (this.currentPlugin) this.currentPlugin.destroy();
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin);
+  /**
+   * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
+   * @function
+   */
+  _destroy() {
+    // The inner plugin cleans its own listeners/state (S8/S9 double-off
+    // discipline); the wrapper only owns the mq seam listener (S13 flip).
+    if (this.currentPlugin) this.currentPlugin.destroy();
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+  }
+}
 ResponsiveAccordionTabs.defaults = {};
 
 
@@ -8252,11 +7496,11 @@ ResponsiveAccordionTabs.defaults = {};
 /*!*****************************************!*\
   !*** ./js/foundation.responsiveMenu.js ***!
   \*****************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ResponsiveMenu: function() { return /* binding */ ResponsiveMenu; }
+/* harmony export */   ResponsiveMenu: () => (/* binding */ ResponsiveMenu)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
@@ -8265,19 +7509,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_dropdownMenu__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.dropdownMenu */ "./js/foundation.dropdownMenu.js");
 /* harmony import */ var _foundation_drilldown__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.drilldown */ "./js/foundation.drilldown.js");
 /* harmony import */ var _foundation_accordionMenu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.accordionMenu */ "./js/foundation.accordionMenu.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -8285,7 +7516,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 
 
 
-var MenuPlugins = {
+let MenuPlugins = {
   dropdown: {
     cssClass: 'dropdown',
     plugin: _foundation_dropdownMenu__WEBPACK_IMPORTED_MODULE_4__.DropdownMenu
@@ -8314,139 +7545,122 @@ var MenuPlugins = {
 // element - all three sub-plugins (DropdownMenu, AccordionMenu, Drilldown)
 // are native since S9 and register their own instance/attrs beside the
 // wrapper's, like the 6.x zfPlugin guard let them.
-var ResponsiveMenu = /*#__PURE__*/function (_Plugin) {
-  function ResponsiveMenu() {
-    _classCallCheck(this, ResponsiveMenu);
-    return _callSuper(this, ResponsiveMenu, arguments);
+class ResponsiveMenu extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin {
+  /**
+   * Creates a new instance of a responsive menu.
+   * @class
+   * @name ResponsiveMenu
+   * @fires ResponsiveMenu#init
+   * @param {jQuery} element - jQuery object to make into a dropdown menu.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element) {
+    // 7.0 line A terminal form: the element (constructor contracts hand in
+    // either shape during the mixed state).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.rules = this.$element.getAttribute('data-responsive-menu');
+    this.currentMq = null;
+    this.currentPlugin = null;
+    this.className = 'ResponsiveMenu'; // ie9 back compat
+
+    this._init();
+    this._events();
   }
-  _inherits(ResponsiveMenu, _Plugin);
-  return _createClass(ResponsiveMenu, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a responsive menu.
-     * @class
-     * @name ResponsiveMenu
-     * @fires ResponsiveMenu#init
-     * @param {jQuery} element - jQuery object to make into a dropdown menu.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element) {
-      // 7.0 line A terminal form: the element (constructor contracts hand in
-      // either shape during the mixed state).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.rules = this.$element.getAttribute('data-responsive-menu');
-      this.currentMq = null;
-      this.currentPlugin = null;
-      this.className = 'ResponsiveMenu'; // ie9 back compat
 
-      this._init();
-      this._events();
-    }
+  /**
+   * Initializes the Menu by parsing the classes from the 'data-ResponsiveMenu' attribute on the element.
+   * @function
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
+    // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
+    if (typeof this.rules === 'string') {
+      let rulesTree = {};
 
-    /**
-     * Initializes the Menu by parsing the classes from the 'data-ResponsiveMenu' attribute on the element.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
-      // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
-      if (typeof this.rules === 'string') {
-        var rulesTree = {};
+      // Parse rules from "classes" pulled from data attribute
+      let rules = this.rules.split(' ');
 
-        // Parse rules from "classes" pulled from data attribute
-        var rules = this.rules.split(' ');
-
-        // Iterate through every rule found
-        for (var i = 0; i < rules.length; i++) {
-          var rule = rules[i].split('-');
-          var ruleSize = rule.length > 1 ? rule[0] : 'small';
-          var rulePlugin = rule.length > 1 ? rule[1] : rule[0];
-          if (MenuPlugins[rulePlugin] !== null) {
-            rulesTree[ruleSize] = MenuPlugins[rulePlugin];
-          }
+      // Iterate through every rule found
+      for (let i = 0; i < rules.length; i++) {
+        let rule = rules[i].split('-');
+        let ruleSize = rule.length > 1 ? rule[0] : 'small';
+        let rulePlugin = rule.length > 1 ? rule[1] : rule[0];
+        if (MenuPlugins[rulePlugin] !== null) {
+          rulesTree[ruleSize] = MenuPlugins[rulePlugin];
         }
-        this.rules = rulesTree;
       }
-      if (Object.keys(this.rules).length !== 0) {
-        this._checkMediaQueries();
+      this.rules = rulesTree;
+    }
+    if (Object.keys(this.rules).length !== 0) {
+      this._checkMediaQueries();
+    }
+    // Add data-mutate since children may need it.
+    if (!this.$element.getAttribute('data-mutate')) {
+      this.$element.setAttribute('data-mutate', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'responsive-menu'));
+    }
+  }
+
+  /**
+   * Initializes events for the Menu.
+   * @function
+   * @private
+   */
+  _events() {
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer binds
+    // there (equalizer/tabs/responsiveToggle/responsiveAccordionTabs/
+    // offcanvas all flipped with the producer in the same move).
+    this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+  }
+
+  /**
+   * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
+   * @function
+   * @private
+   */
+  _checkMediaQueries() {
+    var matchedMq = null;
+    var element = this.$element;
+
+    // Iterate through each rule and find the last matching rule
+    Object.keys(this.rules).forEach(function (key) {
+      if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(key)) {
+        matchedMq = key;
       }
-      // Add data-mutate since children may need it.
-      if (!this.$element.getAttribute('data-mutate')) {
-        this.$element.setAttribute('data-mutate', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'responsive-menu'));
-      }
-    }
+    });
 
-    /**
-     * Initializes events for the Menu.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-      // bubbling window event on the native layer now, so this consumer binds
-      // there (equalizer/tabs/responsiveToggle/responsiveAccordionTabs/
-      // offcanvas all flipped with the producer in the same move).
-      this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
-    }
+    // No match? No dice
+    if (!matchedMq) return;
 
-    /**
-     * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_checkMediaQueries",
-    value: function _checkMediaQueries() {
-      var matchedMq = null;
-      var element = this.$element;
+    // Plugin already initialized? We good
+    if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
 
-      // Iterate through each rule and find the last matching rule
-      Object.keys(this.rules).forEach(function (key) {
-        if (_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(key)) {
-          matchedMq = key;
-        }
-      });
+    // Remove existing plugin-specific CSS classes
+    Object.keys(MenuPlugins).forEach(function (key) {
+      element.classList.remove(MenuPlugins[key].cssClass);
+    });
 
-      // No match? No dice
-      if (!matchedMq) return;
+    // Add the CSS class for the new plugin
+    element.classList.add(this.rules[matchedMq].cssClass);
 
-      // Plugin already initialized? We good
-      if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
+    // The swap is destroy + construct: the outgoing sub-plugin runs its own
+    // destroy (listeners, feather, wrapper - each S9 plugin cleans its own
+    // layer), then the new type is built on the same element.
+    if (this.currentPlugin) this.currentPlugin.destroy();
+    this.currentPlugin = new this.rules[matchedMq].plugin(this.$element, {});
+  }
 
-      // Remove existing plugin-specific CSS classes
-      Object.keys(MenuPlugins).forEach(function (key) {
-        element.classList.remove(MenuPlugins[key].cssClass);
-      });
-
-      // Add the CSS class for the new plugin
-      element.classList.add(this.rules[matchedMq].cssClass);
-
-      // The swap is destroy + construct: the outgoing sub-plugin runs its own
-      // destroy (listeners, feather, wrapper - each S9 plugin cleans its own
-      // layer), then the new type is built on the same element.
-      if (this.currentPlugin) this.currentPlugin.destroy();
-      this.currentPlugin = new this.rules[matchedMq].plugin(this.$element, {});
-    }
-
-    /**
-     * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      if (this.currentPlugin) this.currentPlugin.destroy();
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin);
+  /**
+   * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
+   * @function
+   */
+  _destroy() {
+    if (this.currentPlugin) this.currentPlugin.destroy();
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(window, 'changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+  }
+}
 ResponsiveMenu.defaults = {};
 
 
@@ -8456,30 +7670,17 @@ ResponsiveMenu.defaults = {};
 /*!*******************************************!*\
   !*** ./js/foundation.responsiveToggle.js ***!
   \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ResponsiveToggle: function() { return /* binding */ ResponsiveToggle; }
+/* harmony export */   ResponsiveToggle: () => (/* binding */ ResponsiveToggle)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -8492,225 +7693,201 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.motion
  */
-var ResponsiveToggle = /*#__PURE__*/function (_Plugin) {
-  function ResponsiveToggle() {
-    _classCallCheck(this, ResponsiveToggle);
-    return _callSuper(this, ResponsiveToggle, arguments);
+
+class ResponsiveToggle extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.Plugin {
+  /**
+   * Creates a new instance of Tab Bar.
+   * @class
+   * @name ResponsiveToggle
+   * @fires ResponsiveToggle#init
+   * @param {jQuery} element - jQuery object to attach tab bar functionality to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, ResponsiveToggle.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$element), options);
+    this.className = 'ResponsiveToggle'; // ie9 back compat
+
+    this._init();
+    this._events();
   }
-  _inherits(ResponsiveToggle, _Plugin);
-  return _createClass(ResponsiveToggle, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Tab Bar.
-     * @class
-     * @name ResponsiveToggle
-     * @fires ResponsiveToggle#init
-     * @param {jQuery} element - jQuery object to attach tab bar functionality to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, ResponsiveToggle.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$element), options);
-      this.className = 'ResponsiveToggle'; // ie9 back compat
 
-      this._init();
-      this._events();
+  /**
+   * Initializes the tab bar by finding the target element, toggling element, and running update().
+   * @function
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
+    var targetID = this.options.responsiveToggle;
+    if (!targetID) {
+      console.error('Your tab bar needs an ID of a Menu as the value of data-tab-bar.');
     }
 
-    /**
-     * Initializes the tab bar by finding the target element, toggling element, and running update().
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery._init();
-      var targetID = this.options.responsiveToggle;
-      if (!targetID) {
-        console.error('Your tab bar needs an ID of a Menu as the value of data-tab-bar.');
-      }
+    // A missing target stays a null element (the 6.x $(null) tolerance;
+    // the show/hide helpers below guard for it).
+    this.$targetMenu = document.getElementById(targetID);
+    this.$toggler = Array.from(this.$element.querySelectorAll('[data-toggle]')).filter(function (el) {
+      var target = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(el).toggle;
+      return target === targetID || target === "";
+    });
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, this.options, this.$targetMenu ? (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$targetMenu) : {});
 
-      // A missing target stays a null element (the 6.x $(null) tolerance;
-      // the show/hide helpers below guard for it).
-      this.$targetMenu = document.getElementById(targetID);
-      this.$toggler = Array.from(this.$element.querySelectorAll('[data-toggle]')).filter(function (el) {
-        var target = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(el).toggle;
-        return target === targetID || target === "";
-      });
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.deepMerge)({}, this.options, this.$targetMenu ? (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.datasetOptions)(this.$targetMenu) : {});
+    // If they were set, parse the animation classes
+    if (this.options.animate) {
+      let input = this.options.animate.split(' ');
+      this.animationIn = input[0];
+      this.animationOut = input[1] || null;
+    }
+    this._update();
+  }
 
-      // If they were set, parse the animation classes
-      if (this.options.animate) {
-        var input = this.options.animate.split(' ');
-        this.animationIn = input[0];
-        this.animationOut = input[1] || null;
-      }
-      this._update();
+  /**
+   * Adds necessary event handlers for the tab bar to work.
+   * @function
+   * @private
+   */
+  _events() {
+    // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+    // bubbling window event on the native layer now, so this consumer
+    // binds there (equalizer/tabs/responsiveMenu/responsiveAccordionTabs/
+    // offcanvas all flipped with the producer in the same move).
+    this._updateMqHandler = this._update.bind(this);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, 'changed.zf.mediaquery', this._updateMqHandler);
+
+    // The toggler clicks are real browser events: they register on the
+    // native event layer, on every element of the filtered collection like
+    // jQuery's collection-wide .on() did.
+    this._toggleMenuHandler = this.toggleMenu.bind(this);
+    this.$toggler.forEach(el => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(el, 'click.zf.responsiveToggle', this._toggleMenuHandler);
+    });
+  }
+
+  /**
+   * Native stand-in for jQuery's `.show()`: clears an inline display
+   * override and, when the stylesheet still hides the element, falls back to
+   * the default display of a block element - what jQuery's
+   * getDefaultDisplay resolved to for everything this plugin shows (the
+   * `.title-bar` markup carries its own `display: flex`, so the fallback is
+   * only reached for stylesheet-hidden menus).
+   * @function
+   * @private
+   */
+  _show(element) {
+    if (!element) {
+      return;
+    }
+    element.style.display = '';
+    if (window.getComputedStyle(element).display === 'none') {
+      element.style.display = 'block';
+    }
+  }
+
+  /**
+   * Native stand-in for jQuery's `.hide()`: an inline `display: none`.
+   * @function
+   * @private
+   */
+  _hide(element) {
+    if (!element) {
+      return;
+    }
+    element.style.display = 'none';
+  }
+
+  /**
+   * Checks the current media query to determine if the tab bar should be visible or hidden.
+   * @function
+   * @private
+   */
+  _update() {
+    var element = this.$element;
+    var targetMenu = this.$targetMenu;
+
+    // Mobile
+    if (!_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(this.options.hideFor)) {
+      this._show(element);
+      this._hide(targetMenu);
     }
 
-    /**
-     * Adds necessary event handlers for the tab bar to work.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-      // bubbling window event on the native layer now, so this consumer
-      // binds there (equalizer/tabs/responsiveMenu/responsiveAccordionTabs/
-      // offcanvas all flipped with the producer in the same move).
-      this._updateMqHandler = this._update.bind(this);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, 'changed.zf.mediaquery', this._updateMqHandler);
-
-      // The toggler clicks are real browser events: they register on the
-      // native event layer, on every element of the filtered collection like
-      // jQuery's collection-wide .on() did.
-      this._toggleMenuHandler = this.toggleMenu.bind(this);
-      this.$toggler.forEach(function (el) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(el, 'click.zf.responsiveToggle', _this._toggleMenuHandler);
-      });
+    // Desktop
+    else {
+      this._hide(element);
+      this._show(targetMenu);
     }
+  }
 
-    /**
-     * Native stand-in for jQuery's `.show()`: clears an inline display
-     * override and, when the stylesheet still hides the element, falls back to
-     * the default display of a block element - what jQuery's
-     * getDefaultDisplay resolved to for everything this plugin shows (the
-     * `.title-bar` markup carries its own `display: flex`, so the fallback is
-     * only reached for stylesheet-hidden menus).
-     * @function
-     * @private
-     */
-  }, {
-    key: "_show",
-    value: function _show(element) {
-      if (!element) {
-        return;
-      }
-      element.style.display = '';
-      if (window.getComputedStyle(element).display === 'none') {
-        element.style.display = 'block';
-      }
-    }
-
-    /**
-     * Native stand-in for jQuery's `.hide()`: an inline `display: none`.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_hide",
-    value: function _hide(element) {
-      if (!element) {
-        return;
-      }
-      element.style.display = 'none';
-    }
-
-    /**
-     * Checks the current media query to determine if the tab bar should be visible or hidden.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_update",
-    value: function _update() {
-      var element = this.$element;
+  /**
+   * Toggles the element attached to the tab bar. The toggle only happens if the screen is small enough to allow it.
+   * @function
+   * @fires ResponsiveToggle#toggled
+   */
+  toggleMenu() {
+    if (!_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(this.options.hideFor)) {
       var targetMenu = this.$targetMenu;
 
-      // Mobile
-      if (!_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(this.options.hideFor)) {
-        this._show(element);
-        this._hide(targetMenu);
-      }
-
-      // Desktop
-      else {
-        this._hide(element);
-        this._show(targetMenu);
-      }
-    }
-
-    /**
-     * Toggles the element attached to the tab bar. The toggle only happens if the screen is small enough to allow it.
-     * @function
-     * @fires ResponsiveToggle#toggled
-     */
-  }, {
-    key: "toggleMenu",
-    value: function toggleMenu() {
-      var _this2 = this;
-      if (!_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_0__.MediaQuery.atLeast(this.options.hideFor)) {
-        var targetMenu = this.$targetMenu;
-
-        /**
-         * Fires when the element attached to the tab bar toggles.
-         * @event ResponsiveToggle#toggled
-         */
-        if (this.options.animate) {
-          // `:hidden` replacement: Dom's visible() carries the narrow
-          // display-based semantics decided for the 7.0 line (S3). An empty
-          // target counts as shown, like jQuery's `.is(':hidden')` did.
-          var menuHidden = targetMenu ? !(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.visible)(targetMenu) : false;
-          if (menuHidden) {
-            _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateIn(this.$targetMenu, this.animationIn, function () {
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this2.$element, 'toggled.zf.responsiveToggle');
-              // S10 group flip: the animated half of the mutateme forwarding
-              // joins the native event layer. It keeps the 6.x triggerHandler
-              // form - element-local and non-bubbling, the Triggers
-              // dispatchLocal ruling (a bubbling dispatch would over-deliver
-              // to ancestor listeners) - and the last jQuery-side consumers
-              // (Equalizer, Drilldown, Sticky) flip in the same commit.
-              var mutated = targetMenu.querySelectorAll('[data-mutate]');
-              for (var i = 0; i < mutated.length; i++) {
-                _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.triggerHandler(mutated[i], 'mutateme.zf.trigger');
-              }
-            });
-          } else {
-            _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateOut(this.$targetMenu, this.animationOut, function () {
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this2.$element, 'toggled.zf.responsiveToggle');
-            });
-          }
-        } else {
-          // The 6.x `.toggle(0)` display flip, without the legacy fx tween
-          // (a size/opacity "grow" that completed asynchronously; the display
-          // and event contracts never depended on it - same ruling as the S6
-          // Reveal showDelay tween). The synchronous order below is kept:
-          // display flip, mutateme, toggled.
-          if (targetMenu) {
-            if ((0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.visible)(targetMenu)) {
-              this._hide(targetMenu);
-            } else {
-              this._show(targetMenu);
-            }
+      /**
+       * Fires when the element attached to the tab bar toggles.
+       * @event ResponsiveToggle#toggled
+       */
+      if (this.options.animate) {
+        // `:hidden` replacement: Dom's visible() carries the narrow
+        // display-based semantics decided for the 7.0 line (S3). An empty
+        // target counts as shown, like jQuery's `.is(':hidden')` did.
+        var menuHidden = targetMenu ? !(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.visible)(targetMenu) : false;
+        if (menuHidden) {
+          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateIn(this.$targetMenu, this.animationIn, () => {
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
+            // S10 group flip: the animated half of the mutateme forwarding
+            // joins the native event layer. It keeps the 6.x triggerHandler
+            // form - element-local and non-bubbling, the Triggers
+            // dispatchLocal ruling (a bubbling dispatch would over-deliver
+            // to ancestor listeners) - and the last jQuery-side consumers
+            // (Equalizer, Drilldown, Sticky) flip in the same commit.
             var mutated = targetMenu.querySelectorAll('[data-mutate]');
             for (var i = 0; i < mutated.length; i++) {
-              // Bubbling production on the native event layer; the still-on-
-              // jQuery consumers receive the real event pass-through.
-              _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
+              _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.triggerHandler(mutated[i], 'mutateme.zf.trigger');
             }
-          }
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
+          });
+        } else {
+          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateOut(this.$targetMenu, this.animationOut, () => {
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
+          });
         }
+      } else {
+        // The 6.x `.toggle(0)` display flip, without the legacy fx tween
+        // (a size/opacity "grow" that completed asynchronously; the display
+        // and event contracts never depended on it - same ruling as the S6
+        // Reveal showDelay tween). The synchronous order below is kept:
+        // display flip, mutateme, toggled.
+        if (targetMenu) {
+          if ((0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_4__.visible)(targetMenu)) {
+            this._hide(targetMenu);
+          } else {
+            this._show(targetMenu);
+          }
+          var mutated = targetMenu.querySelectorAll('[data-mutate]');
+          for (var i = 0; i < mutated.length; i++) {
+            // Bubbling production on the native event layer; the still-on-
+            // jQuery consumers receive the real event pass-through.
+            _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
+          }
+        }
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'toggled.zf.responsiveToggle');
       }
     }
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // The mq consumer (S13 flip) and the toggler click listeners, by bare
-      // namespace.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, 'changed.zf.mediaquery', this._updateMqHandler);
-      this.$toggler.forEach(function (el) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(el, '.zf.responsiveToggle');
-      });
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_2__.Plugin);
+  }
+  _destroy() {
+    // The mq consumer (S13 flip) and the toggler click listeners, by bare
+    // namespace.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, 'changed.zf.mediaquery', this._updateMqHandler);
+    this.$toggler.forEach(el => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(el, '.zf.responsiveToggle');
+    });
+  }
+}
 ResponsiveToggle.defaults = {
   /**
    * The breakpoint after which the menu is always shown, and the tab bar is hidden.
@@ -8735,11 +7912,11 @@ ResponsiveToggle.defaults = {
 /*!*********************************!*\
   !*** ./js/foundation.reveal.js ***!
   \*********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Reveal: function() { return /* binding */ Reveal; }
+/* harmony export */   Reveal: () => (/* binding */ Reveal)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -8750,19 +7927,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 /* harmony import */ var _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./foundation.util.touch */ "./js/foundation.util.touch.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -8789,8 +7953,8 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 // pseudo-class has no native equivalent, so the scan runs through
 // querySelectorAll and Dom's narrow visibility filter per element.
 function countVisibleReveals() {
-  var count = 0;
-  document.querySelectorAll('.reveal').forEach(function (element) {
+  let count = 0;
+  document.querySelectorAll('.reveal').forEach(element => {
     if ((0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(element)) {
       count++;
     }
@@ -8807,593 +7971,546 @@ function countVisibleReveals() {
 // documentElement.scrollHeight comparison would drop it and re-introduce
 // the scrollbar shift the class exists to prevent.
 function documentHeight() {
-  var body = document.body;
-  var html = document.documentElement;
+  const body = document.body;
+  const html = document.documentElement;
   return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 }
 function windowHeight() {
   return document.documentElement.clientHeight;
 }
-var Reveal = /*#__PURE__*/function (_Plugin) {
-  function Reveal() {
-    _classCallCheck(this, Reveal);
-    return _callSuper(this, Reveal, arguments);
+class Reveal extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of Reveal.
+   * @class
+   * @name Reveal
+   * @param {jQuery} element - jQuery object to use for the modal.
+   * @param {Object} options - optional parameters.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Reveal.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Reveal'; // ie9 back compat
+    this._init();
+
+    // Touch and Triggers init are idempotent, just need to make sure they are initialized
+    _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__.Touch.init();
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__.Triggers.init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Reveal', {
+      'ESCAPE': 'close'
+    });
   }
-  _inherits(Reveal, _Plugin);
-  return _createClass(Reveal, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Reveal.
-     * @class
-     * @name Reveal
-     * @param {jQuery} element - jQuery object to use for the modal.
-     * @param {Object} options - optional parameters.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Reveal.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Reveal'; // ie9 back compat
-      this._init();
 
-      // Touch and Triggers init are idempotent, just need to make sure they are initialized
-      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_8__.Touch.init();
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__.Triggers.init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Reveal', {
-        'ESCAPE': 'close'
-      });
+  /**
+   * Initializes the modal by adding the overlay and close buttons, (if selected).
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
+    this.id = this.$element.id;
+    this.isActive = false;
+    this.cached = {
+      mq: _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.current
+    };
+    var openAnchors = Array.from(document.querySelectorAll(`[data-open="${this.id}"]`));
+    this.$anchor = openAnchors.length ? openAnchors : Array.from(document.querySelectorAll(`[data-toggle="${this.id}"]`));
+    this.$anchor.forEach(function (anchor) {
+      anchor.setAttribute('aria-controls', this.id);
+      anchor.setAttribute('aria-haspopup', 'dialog');
+      anchor.setAttribute('tabindex', '0');
+    }, this);
+    if (this.options.fullScreen || this.$element.classList.contains('full')) {
+      this.options.fullScreen = true;
+      this.options.overlay = false;
     }
+    if (this.options.overlay && !this.$overlay) {
+      this.$overlay = this._makeOverlay(this.id);
+    }
+    this.$element.setAttribute('role', 'dialog');
+    this.$element.setAttribute('aria-hidden', 'true');
+    this.$element.setAttribute('data-yeti-box', this.id);
+    this.$element.setAttribute('data-resize', this.id);
+    if (this.$overlay) {
+      // appendChild moves the element - the same net effect as the former
+      // detach().appendTo() jQuery dance.
+      this.$overlay.appendChild(this.$element);
+    } else {
+      document.querySelector(this.options.appendTo).appendChild(this.$element);
+      this.$element.classList.add('without-overlay');
+    }
+    this._events();
+    if (this.options.deepLink && window.location.hash === `#${this.id}`) {
+      this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, () => this.open());
+    }
+  }
 
-    /**
-     * Initializes the modal by adding the overlay and close buttons, (if selected).
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this2 = this;
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
-      this.id = this.$element.id;
-      this.isActive = false;
-      this.cached = {
-        mq: _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery.current
-      };
-      var openAnchors = Array.from(document.querySelectorAll("[data-open=\"".concat(this.id, "\"]")));
-      this.$anchor = openAnchors.length ? openAnchors : Array.from(document.querySelectorAll("[data-toggle=\"".concat(this.id, "\"]")));
-      this.$anchor.forEach(function (anchor) {
-        anchor.setAttribute('aria-controls', this.id);
-        anchor.setAttribute('aria-haspopup', 'dialog');
-        anchor.setAttribute('tabindex', '0');
-      }, this);
-      if (this.options.fullScreen || this.$element.classList.contains('full')) {
-        this.options.fullScreen = true;
-        this.options.overlay = false;
-      }
-      if (this.options.overlay && !this.$overlay) {
-        this.$overlay = this._makeOverlay(this.id);
-      }
-      this.$element.setAttribute('role', 'dialog');
-      this.$element.setAttribute('aria-hidden', 'true');
-      this.$element.setAttribute('data-yeti-box', this.id);
-      this.$element.setAttribute('data-resize', this.id);
-      if (this.$overlay) {
-        // appendChild moves the element - the same net effect as the former
-        // detach().appendTo() jQuery dance.
-        this.$overlay.appendChild(this.$element);
+  /**
+   * Creates an overlay div to display behind the modal.
+   * The element is created and appended natively (7.0 line A, S6); it is
+   * stored as a jQuery collection because the public `plugin.$overlay`
+   * surface stays jQuery in the mixed state.
+   * @private
+   */
+  _makeOverlay() {
+    var additionalOverlayClasses = '';
+    if (this.options.additionalOverlayClasses) {
+      additionalOverlayClasses = ' ' + this.options.additionalOverlayClasses;
+    }
+    const overlay = document.createElement('div');
+    overlay.className = 'reveal-overlay' + additionalOverlayClasses;
+    document.querySelector(this.options.appendTo).appendChild(overlay);
+    // terminal form: the element (the mixed state wrapped it)
+    return overlay;
+  }
+
+  /**
+   * Native stand-in for jQuery's `.show()`: clears an inline display
+   * override and, when the stylesheet still hides the element (`.reveal`
+   * and `.reveal-overlay` ship `display: none`), falls back to the default
+   * display of a block element - what jQuery's getDefaultDisplay resolved
+   * to for everything this plugin shows.
+   * @private
+   */
+  _show(element) {
+    element.style.display = '';
+    if (window.getComputedStyle(element).display === 'none') {
+      element.style.display = 'block';
+    }
+  }
+
+  /**
+   * Updates position of modal
+   * TODO:  Figure out if we actually need to cache these values or if it doesn't matter
+   * @private
+   */
+  _updatePosition() {
+    // outerWidth/Height(): the rect dimension (border-box, no margin);
+    // $(window).width(): the viewport
+    var width = this.$element.offsetWidth;
+    var outerWidth = window.innerWidth;
+    var height = this.$element.offsetHeight;
+    var outerHeight = window.innerHeight;
+    var left,
+      top = null;
+    if (this.options.hOffset === 'auto') {
+      left = parseInt((outerWidth - width) / 2, 10);
+    } else {
+      left = parseInt(this.options.hOffset, 10);
+    }
+    if (this.options.vOffset === 'auto') {
+      if (height > outerHeight) {
+        top = parseInt(Math.min(100, outerHeight / 10), 10);
       } else {
-        document.querySelector(this.options.appendTo).appendChild(this.$element);
-        this.$element.classList.add('without-overlay');
+        top = parseInt((outerHeight - height) / 4, 10);
       }
-      this._events();
-      if (this.options.deepLink && window.location.hash === "#".concat(this.id)) {
-        this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-          return _this2.open();
-        });
-      }
+    } else if (this.options.vOffset !== null) {
+      top = parseInt(this.options.vOffset, 10);
+    }
+    if (top !== null) {
+      this.$element.style.top = top + 'px';
     }
 
-    /**
-     * Creates an overlay div to display behind the modal.
-     * The element is created and appended natively (7.0 line A, S6); it is
-     * stored as a jQuery collection because the public `plugin.$overlay`
-     * surface stays jQuery in the mixed state.
-     * @private
-     */
-  }, {
-    key: "_makeOverlay",
-    value: function _makeOverlay() {
-      var additionalOverlayClasses = '';
-      if (this.options.additionalOverlayClasses) {
-        additionalOverlayClasses = ' ' + this.options.additionalOverlayClasses;
-      }
-      var overlay = document.createElement('div');
-      overlay.className = 'reveal-overlay' + additionalOverlayClasses;
-      document.querySelector(this.options.appendTo).appendChild(overlay);
-      // terminal form: the element (the mixed state wrapped it)
-      return overlay;
+    // only worry about left if we don't have an overlay or we have a horizontal offset,
+    // otherwise we're perfectly in the middle
+    if (!this.$overlay || this.options.hOffset !== 'auto') {
+      this.$element.style.left = left + 'px';
+      this.$element.style.margin = '0px';
     }
+  }
 
-    /**
-     * Native stand-in for jQuery's `.show()`: clears an inline display
-     * override and, when the stylesheet still hides the element (`.reveal`
-     * and `.reveal-overlay` ship `display: none`), falls back to the default
-     * display of a block element - what jQuery's getDefaultDisplay resolved
-     * to for everything this plugin shows.
-     * @private
-     */
-  }, {
-    key: "_show",
-    value: function _show(element) {
-      element.style.display = '';
-      if (window.getComputedStyle(element).display === 'none') {
-        element.style.display = 'block';
-      }
-    }
+  /**
+   * Adds event handlers for the modal.
+   * @private
+   */
+  _events() {
+    var _this = this;
+    const element = this.$element;
 
-    /**
-     * Updates position of modal
-     * TODO:  Figure out if we actually need to cache these values or if it doesn't matter
-     * @private
-     */
-  }, {
-    key: "_updatePosition",
-    value: function _updatePosition() {
-      // outerWidth/Height(): the rect dimension (border-box, no margin);
-      // $(window).width(): the viewport
-      var width = this.$element.offsetWidth;
-      var outerWidth = window.innerWidth;
-      var height = this.$element.offsetHeight;
-      var outerHeight = window.innerHeight;
-      var left,
-        top = null;
-      if (this.options.hOffset === 'auto') {
-        left = parseInt((outerWidth - width) / 2, 10);
-      } else {
-        left = parseInt(this.options.hOffset, 10);
+    // S4/S6: the Triggers util produces open/toggle.zf.trigger as element-
+    // local dual dispatches and close.zf.trigger as a real bubbling event;
+    // this consumer listens on the native side of that seam.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'open.zf.trigger', this.open.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'close.zf.trigger', (event, $element) => {
+      if (event.target === _this.$element || $(event.target).parents('[data-closable]')[0] === $element) {
+        // only close reveal when it's explicitly called
+        return this.close.apply(this);
       }
-      if (this.options.vOffset === 'auto') {
-        if (height > outerHeight) {
-          top = parseInt(Math.min(100, outerHeight / 10), 10);
-        } else {
-          top = parseInt((outerHeight - height) / 4, 10);
-        }
-      } else if (this.options.vOffset !== null) {
-        top = parseInt(this.options.vOffset, 10);
-      }
-      if (top !== null) {
-        this.$element.style.top = top + 'px';
-      }
-
-      // only worry about left if we don't have an overlay or we have a horizontal offset,
-      // otherwise we're perfectly in the middle
-      if (!this.$overlay || this.options.hOffset !== 'auto') {
-        this.$element.style.left = left + 'px';
-        this.$element.style.margin = '0px';
-      }
-    }
-
-    /**
-     * Adds event handlers for the modal.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this3 = this;
-      var _this = this;
-      var element = this.$element;
-
-      // S4/S6: the Triggers util produces open/toggle.zf.trigger as element-
-      // local dual dispatches and close.zf.trigger as a real bubbling event;
-      // this consumer listens on the native side of that seam.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'open.zf.trigger', this.open.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'close.zf.trigger', function (event, $element) {
-        if (event.target === _this.$element || $(event.target).parents('[data-closable]')[0] === $element) {
-          // only close reveal when it's explicitly called
-          return _this3.close.apply(_this3);
-        }
-      });
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'resizeme.zf.trigger', function () {
-        _this._updatePosition();
-      });
-      if (this.options.closeOnClick && this.options.overlay) {
-        var closeOnOverlayEvent = function closeOnOverlayEvent(e) {
-          if (e.target === _this.$element || _this.$element.contains(e.target) || !document.contains(e.target)) {
-            return;
-          }
-          _this.close();
-        };
-        // The M1-fixed off-then-on order is kept: one handler pair per
-        // overlay, rebound cleanly on re-init. The click and tap halves both
-        // live on the native event layer now (S13): 'tap' is a real, bubbling
-        // event on the touched element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay, '.zf.reveal');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$overlay, 'click.zf.reveal tap.zf.reveal', closeOnOverlayEvent);
-      }
-      if (this.options.deepLink) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, "hashchange.zf.reveal:".concat(this.id), this._handleState.bind(this));
-      }
-    }
-
-    /**
-     * Handles modal methods on back/forward button clicks or any other event that triggers hashchange.
-     * @private
-     */
-  }, {
-    key: "_handleState",
-    value: function _handleState() {
-      if (window.location.hash === '#' + this.id && !this.isActive) {
-        this.open();
-      } else {
-        this.close();
-      }
-    }
-
-    /**
-    * Disables the scroll when Reveal is shown to prevent the background from shifting
-    * @param {number} scrollTop - Scroll to visually apply, window current scroll by default
-    */
-  }, {
-    key: "_disableScroll",
-    value: function _disableScroll(scrollTop) {
-      scrollTop = scrollTop || window.scrollY;
-      if (documentHeight() > windowHeight()) {
-        // The px unit is explicit on purpose: a bare number assigned to a
-        // native style property is silently dropped (jQuery appended it).
-        document.documentElement.style.top = "".concat(-scrollTop, "px");
-      }
-    }
-
-    /**
-    * Reenables the scroll when Reveal closes
-    * @param {number} scrollTop - Scroll to restore, html "top" property by default (as set by `_disableScroll`)
-    */
-  }, {
-    key: "_enableScroll",
-    value: function _enableScroll(scrollTop) {
-      scrollTop = scrollTop || parseInt(document.documentElement.style.top, 10);
-      if (documentHeight() > windowHeight()) {
-        document.documentElement.style.top = "";
-        window.scrollTo(0, -scrollTop);
-      }
-    }
-
-    /**
-     * Opens the modal controlled by `this.$anchor`, and closes all others by default.
-     * @function
-     * @fires Reveal#closeme
-     * @fires Reveal#open
-     */
-  }, {
-    key: "open",
-    value: function open() {
-      var _this4 = this;
-      // either update or replace browser history
-      var hash = "#".concat(this.id);
-      if (this.options.deepLink && window.location.hash !== hash) {
-        if (window.history.pushState) {
-          if (this.options.updateHistory) {
-            window.history.pushState({}, '', hash);
-          } else {
-            window.history.replaceState({}, '', hash);
-          }
-        } else {
-          window.location.hash = hash;
-        }
-      }
-
-      // Remember anchor that opened it to set focus back later, have general anchors as fallback
-      this.$activeAnchor = this.$anchor.indexOf(document.activeElement) > -1 ? document.activeElement : this.$anchor[0];
-      this.isActive = true;
-
-      // Make elements invisible, but remove display: none so we can get size and positioning
-      this.$element.style.visibility = 'hidden';
-      this._show(this.$element);
-      this.$element.scrollTop = 0;
-      if (this.options.overlay) {
-        this.$overlay.style.visibility = 'hidden';
-        this._show(this.$overlay);
-      }
-      this._updatePosition();
-      this.$element.style.display = 'none';
-      this.$element.style.visibility = '';
-      if (this.$overlay) {
-        this.$overlay.style.visibility = '';
-        this.$overlay.style.display = 'none';
-        if (this.$element.classList.contains('fast')) {
-          this.$overlay.classList.add('fast');
-        } else if (this.$element.classList.contains('slow')) {
-          this.$overlay.classList.add('slow');
-        }
-      }
-      if (!this.options.multipleOpened) {
-        /**
-         * Fires immediately before the modal opens.
-         * Closes any other modals that are currently open
-         * @event Reveal#closeme
-         */
-        // S13: the closeme production flipped with the Triggers listener -
-        // a real, bubbling event whose detail carries the plugin id (the 6.x
-        // second trigger parameter) and whose listener is registered per
-        // plugin name.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'closeme.zf.reveal', [this.id]);
-      }
-      if (countVisibleReveals() === 0) {
-        this._disableScroll();
-      }
-      var _this = this;
-
-      // Motion UI method of reveal
-      if (this.options.animationIn) {
-        function afterAnimation() {
-          _this.$element.setAttribute('aria-hidden', 'false');
-          _this.$element.setAttribute('tabindex', '-1');
-          _this.$element.focus();
-          _this._addGlobalClasses();
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(_this.$element);
-        }
-        if (this.options.overlay) {
-          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateIn(this.$overlay, 'fade-in');
-        }
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateIn(this.$element, this.options.animationIn, function () {
-          if (_this4.$element) {
-            // protect against object having been removed
-            _this4.focusableElements = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.findFocusable(_this4.$element);
-            afterAnimation();
-          }
-        });
-      }
-      // Native method of reveal
-      else {
-        // S6: display is applied synchronously, exactly where jQuery's
-        // `.show(duration)` restored it. The legacy fx tween (a size/opacity
-        // "grow" that ran for non-zero showDelay values) is dropped - the
-        // display and event contracts never depended on it, and the option
-        // never delayed the display flip in the first place.
-        if (this.options.overlay) {
-          this._show(this.$overlay);
-        }
-        this._show(this.$element);
-      }
-
-      // handle accessibility
-      this.$element.setAttribute('aria-hidden', 'false');
-      this.$element.setAttribute('tabindex', '-1');
-      this.$element.focus();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(this.$element);
-      this._addGlobalClasses();
-      this._addGlobalListeners();
-
-      /**
-       * Fires when the modal has successfully opened.
-       * @event Reveal#open
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'open.zf.reveal');
-    }
-
-    /**
-     * Adds classes and listeners on document required by open modals.
-     *
-     * The following classes are added and updated:
-     * - `.is-reveal-open` - Prevents the scroll on document
-     * - `.zf-has-scroll`  - Displays a disabled scrollbar on document if required like if the
-     *                       scroll was not disabled. This prevent a "shift" of the page content due
-     *                       the scrollbar disappearing when the modal opens.
-     *
-     * @private
-     */
-  }, {
-    key: "_addGlobalClasses",
-    value: function _addGlobalClasses() {
-      var updateScrollbarClass = function updateScrollbarClass() {
-        document.documentElement.classList.toggle('zf-has-scroll', documentHeight() > windowHeight());
-      };
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'resizeme.zf.trigger.revealScrollbarListener', function () {
-        return updateScrollbarClass();
-      });
-      updateScrollbarClass();
-      document.documentElement.classList.add('is-reveal-open');
-    }
-
-    /**
-     * Removes classes and listeners on document that were required by open modals.
-     * @private
-     */
-  }, {
-    key: "_removeGlobalClasses",
-    value: function _removeGlobalClasses() {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger.revealScrollbarListener');
-      document.documentElement.classList.remove('is-reveal-open');
-      document.documentElement.classList.remove('zf-has-scroll');
-    }
-
-    /**
-     * Adds extra event handlers for the body and window if necessary.
-     * @private
-     */
-  }, {
-    key: "_addGlobalListeners",
-    value: function _addGlobalListeners() {
-      var _this = this;
-      if (!this.$element) {
-        return;
-      } // If we're in the middle of cleanup, don't freak out
-      this.focusableElements = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.findFocusable(this.$element);
-      if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
-        var closeOnBodyEvent = function closeOnBodyEvent(e) {
-          if (e.target === _this.$element || _this.$element.contains(e.target) || !document.contains(e.target)) {
-            return;
-          }
-          _this.close();
-        };
-        // Both halves on the native layer (S13): click since S6, tap with the
-        // Touch util's real synthesized events.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(document.body, 'click.zf.reveal tap.zf.reveal', closeOnBodyEvent);
-      }
-      if (this.options.closeOnEsc) {
-        // 7.0 terminal form: the ESC keydown consumer runs on the native
-        // event layer (every producer that reaches it dispatches real
-        // KeyboardEvents since the S16 suite migration; window has no
-        // .keydown() shortcut anyway, so there was never a bridge producer).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, "keydown.zf.reveal:".concat(this.id), function (e) {
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Reveal', {
-            close: function close() {
-              if (_this.options.closeOnEsc) {
-                _this.close();
-              }
-            }
-          });
-        });
-      }
-    }
-
-    /**
-     * Closes the modal.
-     * @function
-     * @fires Reveal#closed
-     */
-  }, {
-    key: "close",
-    value: function close() {
-      if (!this.isActive || !(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(this.$element)) {
-        return false;
-      }
-      var _this = this;
-
-      // Motion UI method of hiding
-      if (this.options.animationOut) {
-        if (this.options.overlay) {
-          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateOut(this.$overlay, 'fade-out');
-        }
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateOut(this.$element, this.options.animationOut, finishUp);
-      }
-      // Native method of hiding
-      else {
-        this.$element.style.display = 'none';
-        if (this.options.overlay) {
-          this.$overlay.style.display = 'none';
-          // finishUp keeps its after-completion timing contract: 6.x ran it
-          // from `.hide(0, finishUp)`, one macrotask after the call, and it
-          // now runs once the (aligned) hideDelay has elapsed.
-          setTimeout(finishUp, this.options.hideDelay);
-        } else {
-          finishUp();
-        }
-      }
-
-      // Conditionals to remove extra event listeners added on open
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, "keydown.zf.reveal:".concat(this.id));
-      if (!this.options.overlay && this.options.closeOnClick) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(document.body, 'click.zf.reveal tap.zf.reveal');
-      }
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'keydown.zf.reveal');
-      function finishUp() {
-        // destroy() can land while the out-animation is still running (it
-        // nulls every own property); the completion must then bail instead of
-        // dereferencing the nulled $element (same guard shape as the Orbit
-        // destroy fix, S14). 6.x never threw here only because its cleanup ran
-        // on emptied jQuery collections.
-        if (!_this.$element) {
+    });
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'toggle.zf.trigger', this.toggle.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'resizeme.zf.trigger', function () {
+      _this._updatePosition();
+    });
+    if (this.options.closeOnClick && this.options.overlay) {
+      const closeOnOverlayEvent = function (e) {
+        if (e.target === _this.$element || _this.$element.contains(e.target) || !document.contains(e.target)) {
           return;
         }
+        _this.close();
+      };
+      // The M1-fixed off-then-on order is kept: one handler pair per
+      // overlay, rebound cleanly on re-init. The click and tap halves both
+      // live on the native event layer now (S13): 'tap' is a real, bubbling
+      // event on the touched element.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay, '.zf.reveal');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$overlay, 'click.zf.reveal tap.zf.reveal', closeOnOverlayEvent);
+    }
+    if (this.options.deepLink) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, `hashchange.zf.reveal:${this.id}`, this._handleState.bind(this));
+    }
+  }
 
-        // Get the current top before the modal is closed and restore the scroll after.
-        // TODO: use component properties instead of HTML properties
-        // See https://github.com/foundation/foundation-sites/pull/10786
-        var scrollTop = parseInt(document.documentElement.style.top, 10);
-        if (countVisibleReveals() === 0) {
-          _this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
-        }
-        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.releaseFocus(_this.$element);
-        _this.$element.setAttribute('aria-hidden', 'true');
-        if (countVisibleReveals() === 0) {
-          _this._enableScroll(scrollTop);
-        }
+  /**
+   * Handles modal methods on back/forward button clicks or any other event that triggers hashchange.
+   * @private
+   */
+  _handleState() {
+    if (window.location.hash === '#' + this.id && !this.isActive) {
+      this.open();
+    } else {
+      this.close();
+    }
+  }
 
-        /**
-        * Fires when the modal is done closing.
-        * @event Reveal#closed
-        */
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(_this.$element, 'closed.zf.reveal');
+  /**
+  * Disables the scroll when Reveal is shown to prevent the background from shifting
+  * @param {number} scrollTop - Scroll to visually apply, window current scroll by default
+  */
+  _disableScroll(scrollTop) {
+    scrollTop = scrollTop || window.scrollY;
+    if (documentHeight() > windowHeight()) {
+      // The px unit is explicit on purpose: a bare number assigned to a
+      // native style property is silently dropped (jQuery appended it).
+      document.documentElement.style.top = `${-scrollTop}px`;
+    }
+  }
+
+  /**
+  * Reenables the scroll when Reveal closes
+  * @param {number} scrollTop - Scroll to restore, html "top" property by default (as set by `_disableScroll`)
+  */
+  _enableScroll(scrollTop) {
+    scrollTop = scrollTop || parseInt(document.documentElement.style.top, 10);
+    if (documentHeight() > windowHeight()) {
+      document.documentElement.style.top = "";
+      window.scrollTo(0, -scrollTop);
+    }
+  }
+
+  /**
+   * Opens the modal controlled by `this.$anchor`, and closes all others by default.
+   * @function
+   * @fires Reveal#closeme
+   * @fires Reveal#open
+   */
+  open() {
+    // either update or replace browser history
+    const hash = `#${this.id}`;
+    if (this.options.deepLink && window.location.hash !== hash) {
+      if (window.history.pushState) {
+        if (this.options.updateHistory) {
+          window.history.pushState({}, '', hash);
+        } else {
+          window.history.replaceState({}, '', hash);
+        }
+      } else {
+        window.location.hash = hash;
+      }
+    }
+
+    // Remember anchor that opened it to set focus back later, have general anchors as fallback
+    this.$activeAnchor = this.$anchor.indexOf(document.activeElement) > -1 ? document.activeElement : this.$anchor[0];
+    this.isActive = true;
+
+    // Make elements invisible, but remove display: none so we can get size and positioning
+    this.$element.style.visibility = 'hidden';
+    this._show(this.$element);
+    this.$element.scrollTop = 0;
+    if (this.options.overlay) {
+      this.$overlay.style.visibility = 'hidden';
+      this._show(this.$overlay);
+    }
+    this._updatePosition();
+    this.$element.style.display = 'none';
+    this.$element.style.visibility = '';
+    if (this.$overlay) {
+      this.$overlay.style.visibility = '';
+      this.$overlay.style.display = 'none';
+      if (this.$element.classList.contains('fast')) {
+        this.$overlay.classList.add('fast');
+      } else if (this.$element.classList.contains('slow')) {
+        this.$overlay.classList.add('slow');
+      }
+    }
+    if (!this.options.multipleOpened) {
+      /**
+       * Fires immediately before the modal opens.
+       * Closes any other modals that are currently open
+       * @event Reveal#closeme
+       */
+      // S13: the closeme production flipped with the Triggers listener -
+      // a real, bubbling event whose detail carries the plugin id (the 6.x
+      // second trigger parameter) and whose listener is registered per
+      // plugin name.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'closeme.zf.reveal', [this.id]);
+    }
+    if (countVisibleReveals() === 0) {
+      this._disableScroll();
+    }
+    var _this = this;
+
+    // Motion UI method of reveal
+    if (this.options.animationIn) {
+      function afterAnimation() {
+        _this.$element.setAttribute('aria-hidden', 'false');
+        _this.$element.setAttribute('tabindex', '-1');
+        _this.$element.focus();
+        _this._addGlobalClasses();
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(_this.$element);
+      }
+      if (this.options.overlay) {
+        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateIn(this.$overlay, 'fade-in');
+      }
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateIn(this.$element, this.options.animationIn, () => {
+        if (this.$element) {
+          // protect against object having been removed
+          this.focusableElements = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.findFocusable(this.$element);
+          afterAnimation();
+        }
+      });
+    }
+    // Native method of reveal
+    else {
+      // S6: display is applied synchronously, exactly where jQuery's
+      // `.show(duration)` restored it. The legacy fx tween (a size/opacity
+      // "grow" that ran for non-zero showDelay values) is dropped - the
+      // display and event contracts never depended on it, and the option
+      // never delayed the display flip in the first place.
+      if (this.options.overlay) {
+        this._show(this.$overlay);
+      }
+      this._show(this.$element);
+    }
+
+    // handle accessibility
+    this.$element.setAttribute('aria-hidden', 'false');
+    this.$element.setAttribute('tabindex', '-1');
+    this.$element.focus();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.trapFocus(this.$element);
+    this._addGlobalClasses();
+    this._addGlobalListeners();
+
+    /**
+     * Fires when the modal has successfully opened.
+     * @event Reveal#open
+     */
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'open.zf.reveal');
+  }
+
+  /**
+   * Adds classes and listeners on document required by open modals.
+   *
+   * The following classes are added and updated:
+   * - `.is-reveal-open` - Prevents the scroll on document
+   * - `.zf-has-scroll`  - Displays a disabled scrollbar on document if required like if the
+   *                       scroll was not disabled. This prevent a "shift" of the page content due
+   *                       the scrollbar disappearing when the modal opens.
+   *
+   * @private
+   */
+  _addGlobalClasses() {
+    const updateScrollbarClass = () => {
+      document.documentElement.classList.toggle('zf-has-scroll', documentHeight() > windowHeight());
+    };
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'resizeme.zf.trigger.revealScrollbarListener', () => updateScrollbarClass());
+    updateScrollbarClass();
+    document.documentElement.classList.add('is-reveal-open');
+  }
+
+  /**
+   * Removes classes and listeners on document that were required by open modals.
+   * @private
+   */
+  _removeGlobalClasses() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger.revealScrollbarListener');
+    document.documentElement.classList.remove('is-reveal-open');
+    document.documentElement.classList.remove('zf-has-scroll');
+  }
+
+  /**
+   * Adds extra event handlers for the body and window if necessary.
+   * @private
+   */
+  _addGlobalListeners() {
+    var _this = this;
+    if (!this.$element) {
+      return;
+    } // If we're in the middle of cleanup, don't freak out
+    this.focusableElements = _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.findFocusable(this.$element);
+    if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
+      const closeOnBodyEvent = function (e) {
+        if (e.target === _this.$element || _this.$element.contains(e.target) || !document.contains(e.target)) {
+          return;
+        }
+        _this.close();
+      };
+      // Both halves on the native layer (S13): click since S6, tap with the
+      // Touch util's real synthesized events.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(document.body, 'click.zf.reveal tap.zf.reveal', closeOnBodyEvent);
+    }
+    if (this.options.closeOnEsc) {
+      // 7.0 terminal form: the ESC keydown consumer runs on the native
+      // event layer (every producer that reaches it dispatches real
+      // KeyboardEvents since the S16 suite migration; window has no
+      // .keydown() shortcut anyway, so there was never a bridge producer).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, `keydown.zf.reveal:${this.id}`, function (e) {
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Reveal', {
+          close: function () {
+            if (_this.options.closeOnEsc) {
+              _this.close();
+            }
+          }
+        });
+      });
+    }
+  }
+
+  /**
+   * Closes the modal.
+   * @function
+   * @fires Reveal#closed
+   */
+  close() {
+    if (!this.isActive || !(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.visible)(this.$element)) {
+      return false;
+    }
+    var _this = this;
+
+    // Motion UI method of hiding
+    if (this.options.animationOut) {
+      if (this.options.overlay) {
+        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateOut(this.$overlay, 'fade-out');
+      }
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animateOut(this.$element, this.options.animationOut, finishUp);
+    }
+    // Native method of hiding
+    else {
+      this.$element.style.display = 'none';
+      if (this.options.overlay) {
+        this.$overlay.style.display = 'none';
+        // finishUp keeps its after-completion timing contract: 6.x ran it
+        // from `.hide(0, finishUp)`, one macrotask after the call, and it
+        // now runs once the (aligned) hideDelay has elapsed.
+        setTimeout(finishUp, this.options.hideDelay);
+      } else {
+        finishUp();
+      }
+    }
+
+    // Conditionals to remove extra event listeners added on open
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, `keydown.zf.reveal:${this.id}`);
+    if (!this.options.overlay && this.options.closeOnClick) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(document.body, 'click.zf.reveal tap.zf.reveal');
+    }
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'keydown.zf.reveal');
+    function finishUp() {
+      // destroy() can land while the out-animation is still running (it
+      // nulls every own property); the completion must then bail instead of
+      // dereferencing the nulled $element (same guard shape as the Orbit
+      // destroy fix, S14). 6.x never threw here only because its cleanup ran
+      // on emptied jQuery collections.
+      if (!_this.$element) {
+        return;
+      }
+
+      // Get the current top before the modal is closed and restore the scroll after.
+      // TODO: use component properties instead of HTML properties
+      // See https://github.com/foundation/foundation-sites/pull/10786
+      var scrollTop = parseInt(document.documentElement.style.top, 10);
+      if (countVisibleReveals() === 0) {
+        _this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
+      }
+      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.releaseFocus(_this.$element);
+      _this.$element.setAttribute('aria-hidden', 'true');
+      if (countVisibleReveals() === 0) {
+        _this._enableScroll(scrollTop);
       }
 
       /**
-      * Resets the modal content
-      * This prevents a running video to keep going in the background
+      * Fires when the modal is done closing.
+      * @event Reveal#closed
       */
-      if (this.options.resetOnClose) {
-        this.$element.html(this.$element.html());
-      }
-      this.isActive = false;
-      // If deepLink and we did not switched to an other modal...
-      if (_this.options.deepLink && window.location.hash === "#".concat(this.id)) {
-        // Remove the history hash
-        if (window.history.replaceState) {
-          var urlWithoutHash = window.location.pathname + window.location.search;
-          if (this.options.updateHistory) {
-            window.history.pushState({}, '', urlWithoutHash); // remove the hash
-          } else {
-            window.history.replaceState('', document.title, urlWithoutHash);
-          }
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(_this.$element, 'closed.zf.reveal');
+    }
+
+    /**
+    * Resets the modal content
+    * This prevents a running video to keep going in the background
+    */
+    if (this.options.resetOnClose) {
+      this.$element.html(this.$element.html());
+    }
+    this.isActive = false;
+    // If deepLink and we did not switched to an other modal...
+    if (_this.options.deepLink && window.location.hash === `#${this.id}`) {
+      // Remove the history hash
+      if (window.history.replaceState) {
+        const urlWithoutHash = window.location.pathname + window.location.search;
+        if (this.options.updateHistory) {
+          window.history.pushState({}, '', urlWithoutHash); // remove the hash
         } else {
-          window.location.hash = '';
+          window.history.replaceState('', document.title, urlWithoutHash);
         }
-      }
-
-      // the empty-collection .focus() was a silent no-op in 6.x; minimal
-      // fixtures have no anchors at all
-      if (this.$activeAnchor) {
-        this.$activeAnchor.focus();
-      }
-    }
-
-    /**
-     * Toggles the open/closed state of a modal.
-     * @function
-     */
-  }, {
-    key: "toggle",
-    value: function toggle() {
-      if (this.isActive) {
-        this.close();
       } else {
-        this.open();
+        window.location.hash = '';
       }
     }
-  }, {
-    key: "_destroy",
-    value:
-    /**
-     * Destroys an instance of a modal.
-     * @function
-     */
-    function _destroy() {
-      if (this.options.overlay) {
-        // move $element outside of $overlay to prevent error unregisterPlugin()
-        document.querySelector(this.options.appendTo).appendChild(this.$element);
-        this.$overlay.style.display = 'none';
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay);
-        this.$overlay.remove();
-      }
-      this.$element.style.display = 'none';
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element);
-      this.$anchor.forEach(function (anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(anchor, '.zf');
-      });
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, ".zf.reveal:".concat(this.id));
-      if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
 
-      if (countVisibleReveals() === 0) {
-        this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
-      }
+    // the empty-collection .focus() was a silent no-op in 6.x; minimal
+    // fixtures have no anchors at all
+    if (this.$activeAnchor) {
+      this.$activeAnchor.focus();
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+  }
+
+  /**
+   * Toggles the open/closed state of a modal.
+   * @function
+   */
+  toggle() {
+    if (this.isActive) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+  /**
+   * Destroys an instance of a modal.
+   * @function
+   */
+  _destroy() {
+    if (this.options.overlay) {
+      // move $element outside of $overlay to prevent error unregisterPlugin()
+      document.querySelector(this.options.appendTo).appendChild(this.$element);
+      this.$overlay.style.display = 'none';
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$overlay);
+      this.$overlay.remove();
+    }
+    this.$element.style.display = 'none';
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element);
+    this.$anchor.forEach(function (anchor) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(anchor, '.zf');
+    });
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, `.zf.reveal:${this.id}`);
+    if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+
+    if (countVisibleReveals() === 0) {
+      this._removeGlobalClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
+    }
+  }
+}
 Reveal.defaults = {
   /**
    * Motion-UI class to use for animated elements. If none used, defaults to simple show/hide.
@@ -9516,11 +8633,11 @@ Reveal.defaults = {
 /*!*********************************!*\
   !*** ./js/foundation.slider.js ***!
   \*********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Slider: function() { return /* binding */ Slider; }
+/* harmony export */   Slider: () => (/* binding */ Slider)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
@@ -9530,19 +8647,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.touch */ "./js/foundation.util.touch.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -9559,631 +8663,598 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.keyboard
  * @requires foundation.util.touch
  */
-var Slider = /*#__PURE__*/function (_Plugin) {
-  function Slider() {
-    _classCallCheck(this, Slider);
-    return _callSuper(this, Slider, arguments);
+
+class Slider extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__.Plugin {
+  /**
+   * Creates a new instance of a slider control.
+   * @class
+   * @name Slider
+   * @param {jQuery} element - jQuery object to make into a slider control.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Slider.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Slider'; // ie9 back compat
+    this.initialized = false;
+
+    // Touch and Triggers inits are idempotent, we just need to make sure it's initialied.
+    _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.init();
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__.Triggers.init();
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Slider', {
+      'ltr': {
+        'ARROW_RIGHT': 'increase',
+        'ARROW_UP': 'increase',
+        'ARROW_DOWN': 'decrease',
+        'ARROW_LEFT': 'decrease',
+        'SHIFT_ARROW_RIGHT': 'increaseFast',
+        'SHIFT_ARROW_UP': 'increaseFast',
+        'SHIFT_ARROW_DOWN': 'decreaseFast',
+        'SHIFT_ARROW_LEFT': 'decreaseFast',
+        'HOME': 'min',
+        'END': 'max'
+      },
+      'rtl': {
+        'ARROW_LEFT': 'increase',
+        'ARROW_RIGHT': 'decrease',
+        'SHIFT_ARROW_LEFT': 'increaseFast',
+        'SHIFT_ARROW_RIGHT': 'decreaseFast'
+      }
+    });
   }
-  _inherits(Slider, _Plugin);
-  return _createClass(Slider, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a slider control.
-     * @class
-     * @name Slider
-     * @param {jQuery} element - jQuery object to make into a slider control.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Slider.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Slider'; // ie9 back compat
-      this.initialized = false;
 
-      // Touch and Triggers inits are idempotent, we just need to make sure it's initialied.
-      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.init();
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_7__.Triggers.init();
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.register('Slider', {
-        'ltr': {
-          'ARROW_RIGHT': 'increase',
-          'ARROW_UP': 'increase',
-          'ARROW_DOWN': 'decrease',
-          'ARROW_LEFT': 'decrease',
-          'SHIFT_ARROW_RIGHT': 'increaseFast',
-          'SHIFT_ARROW_UP': 'increaseFast',
-          'SHIFT_ARROW_DOWN': 'decreaseFast',
-          'SHIFT_ARROW_LEFT': 'decreaseFast',
-          'HOME': 'min',
-          'END': 'max'
-        },
-        'rtl': {
-          'ARROW_LEFT': 'increase',
-          'ARROW_RIGHT': 'decrease',
-          'SHIFT_ARROW_LEFT': 'increaseFast',
-          'SHIFT_ARROW_RIGHT': 'decreaseFast'
-        }
-      });
-    }
-
-    /**
-     * Initilizes the plugin by reading/setting attributes, creating collections and setting the initial position of the handle(s).
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      this.inputs = Array.from(this.$element.querySelectorAll('input'));
-      this.handles = Array.from(this.$element.querySelectorAll('[data-slider-handle]'));
-      this.$handle = this.handles[0];
-      this.$input = this.inputs.length ? this.inputs[0] : document.getElementById(this.$handle.getAttribute('aria-controls'));
-      this.$fill = this.$element.querySelector('[data-slider-fill]');
+  /**
+   * Initilizes the plugin by reading/setting attributes, creating collections and setting the initial position of the handle(s).
+   * @function
+   * @private
+   */
+  _init() {
+    this.inputs = Array.from(this.$element.querySelectorAll('input'));
+    this.handles = Array.from(this.$element.querySelectorAll('[data-slider-handle]'));
+    this.$handle = this.handles[0];
+    this.$input = this.inputs.length ? this.inputs[0] : document.getElementById(this.$handle.getAttribute('aria-controls'));
+    this.$fill = this.$element.querySelector('[data-slider-fill]');
+    // Sliders without a fill element are valid markup (the 6.x empty
+    // collection made every fill write a no-op; null keeps that contract).
+    if (this.$fill) {
       this.$fill.style[this.options.vertical ? 'height' : 'width'] = '0';
-
-      // State attributes and classes go through the native layer (7.0 line A, S10).
-      if (this.options.disabled || this.$element.classList.contains(this.options.disabledClass)) {
-        this.options.disabled = true;
-        this.$element.classList.add(this.options.disabledClass);
-      }
-      if (!this.inputs.length) {
-        this.inputs = [this.$input];
-        this.options.binding = true;
-      }
-      this._setInitAttr(0);
-      if (this.handles[1]) {
-        this.options.doubleSided = true;
-        this.$handle2 = this.handles[1];
-        this.$input2 = this.inputs.length > 1 ? this.inputs[1] : document.getElementById(this.$handle2.getAttribute('aria-controls'));
-        if (!this.inputs[1]) {
-          this.inputs.push(this.$input2);
-        }
-
-        // this.$handle.triggerHandler('click.zf.slider');
-        this._setInitAttr(1);
-      }
-
-      // Set handle positions
-      this.setHandles();
-      this._events();
-      this.initialized = true;
     }
-  }, {
-    key: "setHandles",
-    value: function setHandles() {
-      var _this2 = this;
-      if (this.handles[1]) {
-        this._setHandlePos(this.$handle, this.inputs[0].value, function () {
-          _this2._setHandlePos(_this2.$handle2, _this2.inputs[1].value);
-        });
+
+    // State attributes and classes go through the native layer (7.0 line A, S10).
+    if (this.options.disabled || this.$element.classList.contains(this.options.disabledClass)) {
+      this.options.disabled = true;
+      this.$element.classList.add(this.options.disabledClass);
+    }
+    if (!this.inputs.length) {
+      this.inputs = [this.$input];
+      this.options.binding = true;
+    }
+    this._setInitAttr(0);
+    if (this.handles[1]) {
+      this.options.doubleSided = true;
+      this.$handle2 = this.handles[1];
+      this.$input2 = this.inputs.length > 1 ? this.inputs[1] : document.getElementById(this.$handle2.getAttribute('aria-controls'));
+      if (!this.inputs[1]) {
+        this.inputs.push(this.$input2);
+      }
+
+      // this.$handle.triggerHandler('click.zf.slider');
+      this._setInitAttr(1);
+    }
+
+    // Set handle positions
+    this.setHandles();
+    this._events();
+    this.initialized = true;
+  }
+  setHandles() {
+    if (this.handles[1]) {
+      this._setHandlePos(this.$handle, this.inputs[0].value, () => {
+        this._setHandlePos(this.$handle2, this.inputs[1].value);
+      });
+    } else {
+      this._setHandlePos(this.$handle, this.inputs[0].value);
+    }
+  }
+  _reflow() {
+    this.setHandles();
+  }
+  /**
+  * @function
+  * @private
+  * @param {Number} value - floating point (the value) to be transformed using to a relative position on the slider (the inverse of _value)
+  */
+  _pctOfBar(value) {
+    var pctOfBar = percent(value - this.options.start, this.options.end - this.options.start);
+    switch (this.options.positionValueFunction) {
+      case "pow":
+        pctOfBar = this._logTransform(pctOfBar);
+        break;
+      case "log":
+        pctOfBar = this._powTransform(pctOfBar);
+        break;
+    }
+    return pctOfBar.toFixed(2);
+  }
+
+  /**
+  * @function
+  * @private
+  * @param {Number} pctOfBar - floating point, the relative position of the slider (typically between 0-1) to be transformed to a value
+  */
+  _value(pctOfBar) {
+    switch (this.options.positionValueFunction) {
+      case "pow":
+        pctOfBar = this._powTransform(pctOfBar);
+        break;
+      case "log":
+        pctOfBar = this._logTransform(pctOfBar);
+        break;
+    }
+    var value;
+    if (this.options.vertical) {
+      // linear interpolation which is working with negative values for start
+      // https://math.stackexchange.com/a/1019084
+      value = parseFloat(this.options.end) + pctOfBar * (this.options.start - this.options.end);
+    } else {
+      value = (this.options.end - this.options.start) * pctOfBar + parseFloat(this.options.start);
+    }
+    return value;
+  }
+
+  /**
+  * @function
+  * @private
+  * @param {Number} value - floating point (typically between 0-1) to be transformed using the log function
+  */
+  _logTransform(value) {
+    return baseLog(this.options.nonLinearBase, value * (this.options.nonLinearBase - 1) + 1);
+  }
+
+  /**
+  * @function
+  * @private
+  * @param {Number} value - floating point (typically between 0-1) to be transformed using the power function
+  */
+  _powTransform(value) {
+    return (Math.pow(this.options.nonLinearBase, value) - 1) / (this.options.nonLinearBase - 1);
+  }
+
+  /**
+   * Sets the position of the selected handle and fill bar.
+   * @function
+   * @private
+   * @param {jQuery} $hndl - the selected handle to move.
+   * @param {Number} location - floating point between the start and end values of the slider bar.
+   * @param {Function} cb - callback function to fire on completion.
+   * @fires Slider#moved
+   * @fires Slider#changed
+   */
+  _setHandlePos(hndl, location, cb) {
+    hndl = hndl && hndl.nodeType === 1 ? hndl : hndl ? hndl[0] : hndl;
+    // don't move if the slider has been disabled since its initialization
+    if (this.$element.classList.contains(this.options.disabledClass)) {
+      return;
+    }
+    //might need to alter that slightly for bars that will have odd number selections.
+    location = parseFloat(location); //on input change events, convert string to number...grumble.
+
+    // prevent slider from running out of bounds, if value exceeds the limits set through options, override the value to min/max
+    if (location < this.options.start) {
+      location = this.options.start;
+    } else if (location > this.options.end) {
+      location = this.options.end;
+    }
+    var isDbl = this.options.doubleSided;
+    if (isDbl) {
+      //this block is to prevent 2 handles from crossing eachother. Could/should be improved.
+      if (this.handles.indexOf(hndl) === 0) {
+        var h2Val = parseFloat(this.$handle2.getAttribute('aria-valuenow'));
+        location = location >= h2Val ? h2Val - this.options.step : location;
       } else {
-        this._setHandlePos(this.$handle, this.inputs[0].value);
+        var h1Val = parseFloat(this.$handle.getAttribute('aria-valuenow'));
+        location = location <= h1Val ? h1Val + this.options.step : location;
       }
     }
-  }, {
-    key: "_reflow",
-    value: function _reflow() {
-      this.setHandles();
-    }
-    /**
-    * @function
-    * @private
-    * @param {Number} value - floating point (the value) to be transformed using to a relative position on the slider (the inverse of _value)
-    */
-  }, {
-    key: "_pctOfBar",
-    value: function _pctOfBar(value) {
-      var pctOfBar = percent(value - this.options.start, this.options.end - this.options.start);
-      switch (this.options.positionValueFunction) {
-        case "pow":
-          pctOfBar = this._logTransform(pctOfBar);
-          break;
-        case "log":
-          pctOfBar = this._powTransform(pctOfBar);
-          break;
-      }
-      return pctOfBar.toFixed(2);
-    }
+    var _this = this,
+      vert = this.options.vertical,
+      hOrW = vert ? 'height' : 'width',
+      lOrT = vert ? 'top' : 'left',
+      handleDim = hndl.getBoundingClientRect()[hOrW],
+      elemDim = this.$element.getBoundingClientRect()[hOrW],
+      //percentage of bar min/max value based on click or drag point
+      pctOfBar = this._pctOfBar(location),
+      //number of actual pixels to shift the handle, based on the percentage obtained above
+      pxToMove = (elemDim - handleDim) * pctOfBar,
+      //percentage of bar to shift the handle
+      movement = (percent(pxToMove, elemDim) * 100).toFixed(this.options.decimal);
+    //fixing the decimal value for the location number, is passed to other methods as a fixed floating-point value
+    location = parseFloat(location.toFixed(this.options.decimal));
+    // declare empty object for css adjustments, only used with 2 handled-sliders
+    var css = {};
+    this._setValues(hndl, location);
 
-    /**
-    * @function
-    * @private
-    * @param {Number} pctOfBar - floating point, the relative position of the slider (typically between 0-1) to be transformed to a value
-    */
-  }, {
-    key: "_value",
-    value: function _value(pctOfBar) {
-      switch (this.options.positionValueFunction) {
-        case "pow":
-          pctOfBar = this._powTransform(pctOfBar);
-          break;
-        case "log":
-          pctOfBar = this._logTransform(pctOfBar);
-          break;
-      }
-      var value;
-      if (this.options.vertical) {
-        // linear interpolation which is working with negative values for start
-        // https://math.stackexchange.com/a/1019084
-        value = parseFloat(this.options.end) + pctOfBar * (this.options.start - this.options.end);
+    // TODO update to calculate based on values set to respective inputs??
+    if (isDbl) {
+      var isLeftHndl = this.handles.indexOf(hndl) === 0,
+        //empty variable, will be used for min-height/width for fill bar
+        dim,
+        //percentage w/h of the handle compared to the slider bar
+        handlePct = Math.floor(percent(handleDim, elemDim) * 100);
+      //if left handle, the math is slightly different than if it's the right handle, and the left/top property needs to be changed for the fill bar
+      if (isLeftHndl) {
+        //left or top percentage value to apply to the fill bar.
+        css[lOrT] = `${movement}%`;
+        //calculate the new min-height/width for the fill bar.
+        dim = parseFloat(this.$handle2.style[lOrT]) - movement + handlePct;
+        //this callback is necessary to prevent errors and allow the proper placement and initialization of a 2-handled slider
+        //plus, it means we don't care if 'dim' isNaN on init, it won't be in the future.
+        if (cb && typeof cb === 'function') {
+          cb();
+        } //this is only needed for the initialization of 2 handled sliders
       } else {
-        value = (this.options.end - this.options.start) * pctOfBar + parseFloat(this.options.start);
+        //just caching the value of the left/bottom handle's left/top property
+        var handlePos = parseFloat(this.$handle.style[lOrT]);
+        //calculate the new min-height/width for the fill bar. Use isNaN to prevent false positives for numbers <= 0
+        //based on the percentage of movement of the handle being manipulated, less the opposing handle's left/top position, plus the percentage w/h of the handle itself
+        dim = movement - (isNaN(handlePos) ? (this.options.initialStart - this.options.start) / ((this.options.end - this.options.start) / 100) : handlePos) + handlePct;
       }
-      return value;
+      // assign the min-height/width to our css object
+      css[`min-${hOrW}`] = `${dim}%`;
     }
 
-    /**
-    * @function
-    * @private
-    * @param {Number} value - floating point (typically between 0-1) to be transformed using the log function
-    */
-  }, {
-    key: "_logTransform",
-    value: function _logTransform(value) {
-      return baseLog(this.options.nonLinearBase, value * (this.options.nonLinearBase - 1) + 1);
-    }
-
-    /**
-    * @function
-    * @private
-    * @param {Number} value - floating point (typically between 0-1) to be transformed using the power function
-    */
-  }, {
-    key: "_powTransform",
-    value: function _powTransform(value) {
-      return (Math.pow(this.options.nonLinearBase, value) - 1) / (this.options.nonLinearBase - 1);
-    }
-
-    /**
-     * Sets the position of the selected handle and fill bar.
-     * @function
-     * @private
-     * @param {jQuery} $hndl - the selected handle to move.
-     * @param {Number} location - floating point between the start and end values of the slider bar.
-     * @param {Function} cb - callback function to fire on completion.
-     * @fires Slider#moved
-     * @fires Slider#changed
-     */
-  }, {
-    key: "_setHandlePos",
-    value: function _setHandlePos(hndl, location, cb) {
-      hndl = hndl && hndl.nodeType === 1 ? hndl : hndl ? hndl[0] : hndl;
-      // don't move if the slider has been disabled since its initialization
-      if (this.$element.classList.contains(this.options.disabledClass)) {
+    //because we don't know exactly how the handle will be moved, check the amount of time it should take to move.
+    // the dragging flag rode jQuery's data cache (DOM-invisible); the
+    // expando property keeps it invisible
+    var moveTime = this.$element.zfSliderDragging ? 1000 / 60 : this.options.moveTime;
+    (0,_foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Move)(moveTime, hndl, function () {
+      // A Move chain can complete after the slider was destroyed (the
+      // completion runs off a requestAnimationFrame) and options are gone.
+      if (!_this.options) {
         return;
       }
-      //might need to alter that slightly for bars that will have odd number selections.
-      location = parseFloat(location); //on input change events, convert string to number...grumble.
-
-      // prevent slider from running out of bounds, if value exceeds the limits set through options, override the value to min/max
-      if (location < this.options.start) {
-        location = this.options.start;
-      } else if (location > this.options.end) {
-        location = this.options.end;
+      // adjusting the left/top property of the handle, based on the percentage calculated above
+      // if movement isNaN, that is because the slider is hidden and we cannot determine handle width,
+      // fall back to next best guess.
+      if (isNaN(movement)) {
+        hndl.style[lOrT] = `${pctOfBar * 100}%`;
+      } else {
+        hndl.style[lOrT] = `${movement}%`;
       }
-      var isDbl = this.options.doubleSided;
-      if (isDbl) {
-        //this block is to prevent 2 handles from crossing eachother. Could/should be improved.
-        if (this.handles.indexOf(hndl) === 0) {
-          var h2Val = parseFloat(this.$handle2.getAttribute('aria-valuenow'));
-          location = location >= h2Val ? h2Val - this.options.step : location;
-        } else {
-          var h1Val = parseFloat(this.$handle.getAttribute('aria-valuenow'));
-          location = location <= h1Val ? h1Val + this.options.step : location;
+      if (!_this.options.doubleSided) {
+        //if single-handled, a simple method to expand the fill bar
+        if (_this.$fill) {
+          _this.$fill.style[hOrW] = `${pctOfBar * 100}%`;
         }
-      }
-      var _this = this,
-        vert = this.options.vertical,
-        hOrW = vert ? 'height' : 'width',
-        lOrT = vert ? 'top' : 'left',
-        handleDim = hndl.getBoundingClientRect()[hOrW],
-        elemDim = this.$element.getBoundingClientRect()[hOrW],
-        //percentage of bar min/max value based on click or drag point
-        pctOfBar = this._pctOfBar(location),
-        //number of actual pixels to shift the handle, based on the percentage obtained above
-        pxToMove = (elemDim - handleDim) * pctOfBar,
-        //percentage of bar to shift the handle
-        movement = (percent(pxToMove, elemDim) * 100).toFixed(this.options.decimal);
-      //fixing the decimal value for the location number, is passed to other methods as a fixed floating-point value
-      location = parseFloat(location.toFixed(this.options.decimal));
-      // declare empty object for css adjustments, only used with 2 handled-sliders
-      var css = {};
-      this._setValues(hndl, location);
-
-      // TODO update to calculate based on values set to respective inputs??
-      if (isDbl) {
-        var isLeftHndl = this.handles.indexOf(hndl) === 0,
-          //empty variable, will be used for min-height/width for fill bar
-          dim,
-          //percentage w/h of the handle compared to the slider bar
-          handlePct = Math.floor(percent(handleDim, elemDim) * 100);
-        //if left handle, the math is slightly different than if it's the right handle, and the left/top property needs to be changed for the fill bar
-        if (isLeftHndl) {
-          //left or top percentage value to apply to the fill bar.
-          css[lOrT] = "".concat(movement, "%");
-          //calculate the new min-height/width for the fill bar.
-          dim = parseFloat(this.$handle2.style[lOrT]) - movement + handlePct;
-          //this callback is necessary to prevent errors and allow the proper placement and initialization of a 2-handled slider
-          //plus, it means we don't care if 'dim' isNaN on init, it won't be in the future.
-          if (cb && typeof cb === 'function') {
-            cb();
-          } //this is only needed for the initialization of 2 handled sliders
-        } else {
-          //just caching the value of the left/bottom handle's left/top property
-          var handlePos = parseFloat(this.$handle.style[lOrT]);
-          //calculate the new min-height/width for the fill bar. Use isNaN to prevent false positives for numbers <= 0
-          //based on the percentage of movement of the handle being manipulated, less the opposing handle's left/top position, plus the percentage w/h of the handle itself
-          dim = movement - (isNaN(handlePos) ? (this.options.initialStart - this.options.start) / ((this.options.end - this.options.start) / 100) : handlePos) + handlePct;
-        }
-        // assign the min-height/width to our css object
-        css["min-".concat(hOrW)] = "".concat(dim, "%");
-      }
-
-      //because we don't know exactly how the handle will be moved, check the amount of time it should take to move.
-      // the dragging flag rode jQuery's data cache (DOM-invisible); the
-      // expando property keeps it invisible
-      var moveTime = this.$element.zfSliderDragging ? 1000 / 60 : this.options.moveTime;
-      (0,_foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Move)(moveTime, hndl, function () {
-        // A Move chain can complete after the slider was destroyed (the
-        // completion runs off a requestAnimationFrame) and options are gone.
-        if (!_this.options) {
-          return;
-        }
-        // adjusting the left/top property of the handle, based on the percentage calculated above
-        // if movement isNaN, that is because the slider is hidden and we cannot determine handle width,
-        // fall back to next best guess.
-        if (isNaN(movement)) {
-          hndl.style[lOrT] = "".concat(pctOfBar * 100, "%");
-        } else {
-          hndl.style[lOrT] = "".concat(movement, "%");
-        }
-        if (!_this.options.doubleSided) {
-          //if single-handled, a simple method to expand the fill bar
-          _this.$fill.style[hOrW] = "".concat(pctOfBar * 100, "%");
-        } else {
-          //otherwise, use the css object we created above
+      } else {
+        //otherwise, use the css object we created above
+        if (_this.$fill) {
           Object.keys(css).forEach(function (prop) {
             _this.$fill.style[prop] = css[prop];
           });
         }
-      });
-      if (this.initialized) {
-        // S10: the finished.zf.animate consumer flips to the native event
-        // layer; the producer (Motion) has dispatched one real bubbling event
-        // per Move since S5, so this seam closes on the consumer half alone.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(this.$element, 'finished.zf.animate', function () {
-          // the chain can fire after destroy() (see the Move callback above)
-          if (!_this.$element) {
-            return;
-          }
-          /**
-           * Fires when the handle is done moving.
-           * @event Slider#moved
-           */
-          // Terminal form: real bubbling event, the plain handle element.
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'moved.zf.slider', [hndl]);
-        });
+      }
+    });
+    if (this.initialized) {
+      // S10: the finished.zf.animate consumer flips to the native event
+      // layer; the producer (Motion) has dispatched one real bubbling event
+      // per Move since S5, so this seam closes on the consumer half alone.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.one(this.$element, 'finished.zf.animate', function () {
+        // the chain can fire after destroy() (see the Move callback above)
+        if (!_this.$element) {
+          return;
+        }
         /**
-         * Fires when the value has not been change for a given time.
-         * @event Slider#changed
+         * Fires when the handle is done moving.
+         * @event Slider#moved
          */
-        clearTimeout(_this.timeout);
-        _this.timeout = setTimeout(function () {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'changed.zf.slider', [hndl]);
-        }, _this.options.changedDelay);
+        // Terminal form: real bubbling event, the plain handle element.
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'moved.zf.slider', [hndl]);
+      });
+      /**
+       * Fires when the value has not been change for a given time.
+       * @event Slider#changed
+       */
+      clearTimeout(_this.timeout);
+      _this.timeout = setTimeout(function () {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(_this.$element, 'changed.zf.slider', [hndl]);
+      }, _this.options.changedDelay);
+    }
+  }
+
+  /**
+   * Sets the initial attribute for the slider element.
+   * @function
+   * @private
+   * @param {Number} idx - index of the current handle/input to use.
+   */
+  _setInitAttr(idx) {
+    var initVal = idx === 0 ? this.options.initialStart : this.options.initialEnd;
+    var id = this.inputs[idx].getAttribute('id') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'slider');
+    // State attributes go through the native layer (7.0 line A, S10).
+    var input = this.inputs[idx];
+    input.setAttribute('id', id);
+    input.setAttribute('max', this.options.end);
+    input.setAttribute('min', this.options.start);
+    input.setAttribute('step', this.options.step);
+    input.value = initVal;
+    var handle = this.handles[idx];
+    handle.setAttribute('role', 'slider');
+    handle.setAttribute('aria-controls', id);
+    handle.setAttribute('aria-valuemax', this.options.end);
+    handle.setAttribute('aria-valuemin', this.options.start);
+    handle.setAttribute('aria-valuenow', initVal);
+    handle.setAttribute('aria-orientation', this.options.vertical ? 'vertical' : 'horizontal');
+    handle.setAttribute('tabindex', 0);
+  }
+
+  /**
+   * Sets the input and `aria-valuenow` values for the slider element.
+   * @function
+   * @private
+   * @param {jQuery} $handle - the currently selected handle.
+   * @param {Number} val - floating point of the new value.
+   */
+  _setValues(handle, val) {
+    handle = handle.nodeType === 1 ? handle : handle[0];
+    var idx = this.options.doubleSided ? this.handles.indexOf(handle) : 0;
+    this.inputs[idx].value = val;
+    // State attributes go through the native layer (7.0 line A, S10).
+    handle.setAttribute('aria-valuenow', val);
+  }
+
+  /**
+   * Handles events on the slider element.
+   * Calculates the new location of the current handle.
+   * If there are two handles and the bar was clicked, it determines which handle to move.
+   * @function
+   * @private
+   * @param {Object} e - the `event` object passed from the listener.
+   * @param {jQuery} $handle - the current handle to calculate for, if selected.
+   * @param {Number} val - floating point number for the new value of the slider.
+   * TODO clean this up, there's a lot of repeated code between this and the _setHandlePos fn.
+   */
+  _handleEvent(e, handle, val) {
+    var value;
+    if (!val) {
+      //click or drag events
+      e.preventDefault();
+      var _this = this,
+        vertical = this.options.vertical,
+        param = vertical ? 'height' : 'width',
+        direction = vertical ? 'top' : 'left',
+        eventOffset = vertical ? e.pageY : e.pageX,
+        barDim = this.$element.getBoundingClientRect()[param],
+        windowScroll = vertical ? window.pageYOffset : window.pageXOffset;
+
+      // jQuery offset(): the document-coordinates edge
+      var elemOffset = this.$element.getBoundingClientRect()[direction] + (vertical ? window.pageYOffset : window.pageXOffset);
+
+      // touch events emulated by the touch util give position relative to screen, add window.scroll to event coordinates...
+      // best way to guess this is simulated is if clientY == pageY
+      if (e.clientY === e.pageY) {
+        eventOffset = eventOffset + windowScroll;
       }
-    }
-
-    /**
-     * Sets the initial attribute for the slider element.
-     * @function
-     * @private
-     * @param {Number} idx - index of the current handle/input to use.
-     */
-  }, {
-    key: "_setInitAttr",
-    value: function _setInitAttr(idx) {
-      var initVal = idx === 0 ? this.options.initialStart : this.options.initialEnd;
-      var id = this.inputs[idx].getAttribute('id') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.GetYoDigits)(6, 'slider');
-      // State attributes go through the native layer (7.0 line A, S10).
-      var input = this.inputs[idx];
-      input.setAttribute('id', id);
-      input.setAttribute('max', this.options.end);
-      input.setAttribute('min', this.options.start);
-      input.setAttribute('step', this.options.step);
-      input.value = initVal;
-      var handle = this.handles[idx];
-      handle.setAttribute('role', 'slider');
-      handle.setAttribute('aria-controls', id);
-      handle.setAttribute('aria-valuemax', this.options.end);
-      handle.setAttribute('aria-valuemin', this.options.start);
-      handle.setAttribute('aria-valuenow', initVal);
-      handle.setAttribute('aria-orientation', this.options.vertical ? 'vertical' : 'horizontal');
-      handle.setAttribute('tabindex', 0);
-    }
-
-    /**
-     * Sets the input and `aria-valuenow` values for the slider element.
-     * @function
-     * @private
-     * @param {jQuery} $handle - the currently selected handle.
-     * @param {Number} val - floating point of the new value.
-     */
-  }, {
-    key: "_setValues",
-    value: function _setValues(handle, val) {
-      handle = handle.nodeType === 1 ? handle : handle[0];
-      var idx = this.options.doubleSided ? this.handles.indexOf(handle) : 0;
-      this.inputs[idx].value = val;
-      // State attributes go through the native layer (7.0 line A, S10).
-      handle.setAttribute('aria-valuenow', val);
-    }
-
-    /**
-     * Handles events on the slider element.
-     * Calculates the new location of the current handle.
-     * If there are two handles and the bar was clicked, it determines which handle to move.
-     * @function
-     * @private
-     * @param {Object} e - the `event` object passed from the listener.
-     * @param {jQuery} $handle - the current handle to calculate for, if selected.
-     * @param {Number} val - floating point number for the new value of the slider.
-     * TODO clean this up, there's a lot of repeated code between this and the _setHandlePos fn.
-     */
-  }, {
-    key: "_handleEvent",
-    value: function _handleEvent(e, handle, val) {
-      var value;
-      if (!val) {
-        //click or drag events
-        e.preventDefault();
-        var _this = this,
-          vertical = this.options.vertical,
-          param = vertical ? 'height' : 'width',
-          direction = vertical ? 'top' : 'left',
-          eventOffset = vertical ? e.pageY : e.pageX,
-          barDim = this.$element.getBoundingClientRect()[param],
-          windowScroll = vertical ? window.pageYOffset : window.pageXOffset;
-
-        // jQuery offset(): the document-coordinates edge
-        var elemOffset = this.$element.getBoundingClientRect()[direction] + (vertical ? window.pageYOffset : window.pageXOffset);
-
-        // touch events emulated by the touch util give position relative to screen, add window.scroll to event coordinates...
-        // best way to guess this is simulated is if clientY == pageY
-        if (e.clientY === e.pageY) {
-          eventOffset = eventOffset + windowScroll;
-        }
-        var eventFromBar = eventOffset - elemOffset;
-        var barXY;
-        if (eventFromBar < 0) {
-          barXY = 0;
-        } else if (eventFromBar > barDim) {
-          barXY = barDim;
-        } else {
-          barXY = eventFromBar;
-        }
-        var offsetPct = percent(barXY, barDim);
-        value = this._value(offsetPct);
-
-        // turn everything around for RTL, yay math!
-        if ((0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.rtl)() && !this.options.vertical) {
-          value = this.options.end - value;
-        }
-        value = _this._adjustValue(null, value);
-        if (!handle) {
-          //figure out which handle it is, pass it to the next function.
-          var firstHndlPos = absPosition(this.$handle, direction, barXY, param),
-            secndHndlPos = absPosition(this.$handle2, direction, barXY, param);
-          handle = firstHndlPos <= secndHndlPos ? this.$handle : this.$handle2;
-        }
+      var eventFromBar = eventOffset - elemOffset;
+      var barXY;
+      if (eventFromBar < 0) {
+        barXY = 0;
+      } else if (eventFromBar > barDim) {
+        barXY = barDim;
       } else {
-        //change event on input
-        value = this._adjustValue(null, val);
+        barXY = eventFromBar;
       }
-      this._setHandlePos(handle, value);
-    }
+      var offsetPct = percent(barXY, barDim);
+      value = this._value(offsetPct);
 
-    /**
-     * Adjustes value for handle in regard to step value. returns adjusted value
-     * @function
-     * @private
-     * @param {jQuery} $handle - the selected handle.
-     * @param {Number} value - value to adjust. used if $handle is falsy
-     */
-  }, {
-    key: "_adjustValue",
-    value: function _adjustValue($handle, value) {
-      var val,
-        step = this.options.step,
-        div = parseFloat(step / 2),
-        left,
-        previousVal,
-        nextVal;
-      if (!!$handle) {
-        val = parseFloat($handle.getAttribute('aria-valuenow'));
-      } else {
-        val = value;
+      // turn everything around for RTL, yay math!
+      if ((0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.rtl)() && !this.options.vertical) {
+        value = this.options.end - value;
       }
-      if (val >= 0) {
-        left = val % step;
-      } else {
-        left = step + val % step;
+      value = _this._adjustValue(null, value);
+      if (!handle) {
+        //figure out which handle it is, pass it to the next function.
+        var firstHndlPos = absPosition(this.$handle, direction, barXY, param),
+          secndHndlPos = absPosition(this.$handle2, direction, barXY, param);
+        handle = firstHndlPos <= secndHndlPos ? this.$handle : this.$handle2;
       }
-      previousVal = val - left;
-      nextVal = previousVal + step;
-      if (left === 0) {
-        return val;
-      }
-      val = val >= previousVal + div ? nextVal : previousVal;
+    } else {
+      //change event on input
+      value = this._adjustValue(null, val);
+    }
+    this._setHandlePos(handle, value);
+  }
+
+  /**
+   * Adjustes value for handle in regard to step value. returns adjusted value
+   * @function
+   * @private
+   * @param {jQuery} $handle - the selected handle.
+   * @param {Number} value - value to adjust. used if $handle is falsy
+   */
+  _adjustValue($handle, value) {
+    var val,
+      step = this.options.step,
+      div = parseFloat(step / 2),
+      left,
+      previousVal,
+      nextVal;
+    if (!!$handle) {
+      val = parseFloat($handle.getAttribute('aria-valuenow'));
+    } else {
+      val = value;
+    }
+    if (val >= 0) {
+      left = val % step;
+    } else {
+      left = step + val % step;
+    }
+    previousVal = val - left;
+    nextVal = previousVal + step;
+    if (left === 0) {
       return val;
     }
+    val = val >= previousVal + div ? nextVal : previousVal;
+    return val;
+  }
 
-    /**
-     * Adds event listeners to the slider elements.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      this._eventsForHandle(this.$handle);
-      if (this.handles[1]) {
-        this._eventsForHandle(this.$handle2);
-      }
+  /**
+   * Adds event listeners to the slider elements.
+   * @function
+   * @private
+   */
+  _events() {
+    this._eventsForHandle(this.$handle);
+    if (this.handles[1]) {
+      this._eventsForHandle(this.$handle2);
+    }
+  }
+
+  /**
+   * Adds event listeners a particular handle
+   * @function
+   * @private
+   * @param {jQuery} $handle - the current handle to apply listeners to.
+   */
+  _eventsForHandle(handle) {
+    var _this = this,
+      curHandle;
+    const handleChangeEvent = function (e) {
+      const idx = _this.inputs.indexOf(this);
+      _this._handleEvent(e, _this.handles[idx], this.value);
+    };
+
+    // IE only triggers the change event when the input loses focus which strictly follows the HTML specification
+    // listen for the enter key and trigger a change
+    // @see https://html.spec.whatwg.org/multipage/input.html#common-input-element-events
+    // S10: the input keyup/change consumers flip to the native event
+    // layer - their producers are real browser events, which reach native
+    // listeners directly. `this` is the input element, and the listeners
+    // are re-registered on every element of the collection like jQuery's
+    // collection-wide .on() did.
+    this.inputs.forEach(input => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(input, 'keyup.zf.slider change.zf.slider');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(input, 'keyup.zf.slider', function (e) {
+        if (e.keyCode === 13) handleChangeEvent.call(this, e);
+      });
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(input, 'change.zf.slider', handleChangeEvent);
+    });
+    if (this.options.clickSelect) {
+      // S10: the bar-click consumer flips to the native event layer -
+      // real clicks arrive directly and jQuery-synthesized clicks on the
+      // container ride the `.click()` shortcut bridge (reveal-native
+      // precedent).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'click.zf.slider');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'click.zf.slider', function (e) {
+        if (_this.$element.zfSliderDragging) {
+          return false;
+        }
+        if (!e.target.matches('[data-slider-handle]')) {
+          if (_this.options.doubleSided) {
+            _this._handleEvent(e);
+          } else {
+            _this._handleEvent(e, _this.$handle);
+          }
+        }
+      });
+    }
+    if (this.options.draggable) {
+      // S13: the drag chain flips with the Touch util - addTouch feeds real
+      // synthesized mouse events now, so the mousedown/mousemove/mouseup
+      // listeners live on the native event layer and serve the mouse and
+      // the touch feed alike.
+      this.handles.forEach(handleEl => _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.addTouch(handleEl));
+      var handleEl = handle.nodeType === 1 ? handle : handle[0];
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(handleEl, 'mousedown.zf.slider selectstart.zf.slider touchmove.zf.slider');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(handleEl, 'mousedown.zf.slider', function (e) {
+        handleEl.classList.add('is-dragging');
+        if (_this.$fill) {
+          _this.$fill.classList.add('is-dragging');
+        }
+        _this.$element.zfSliderDragging = true;
+        curHandle = e.currentTarget;
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(document.body, 'mousemove.zf.slider', function (ev) {
+          ev.preventDefault();
+          _this._handleEvent(ev, curHandle);
+        });
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(document.body, 'mouseup.zf.slider', function (ev) {
+          _this._handleEvent(ev, curHandle);
+          handleEl.classList.remove('is-dragging');
+          if (_this.$fill) {
+            _this.$fill.classList.remove('is-dragging');
+          }
+          _this.$element.zfSliderDragging = false;
+          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
+        });
+      });
+      // prevent events triggered by touch
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(handleEl, 'selectstart.zf.slider touchmove.zf.slider', function (e) {
+        e.preventDefault();
+      });
     }
 
-    /**
-     * Adds event listeners a particular handle
-     * @function
-     * @private
-     * @param {jQuery} $handle - the current handle to apply listeners to.
-     */
-  }, {
-    key: "_eventsForHandle",
-    value: function _eventsForHandle(handle) {
-      var _this = this,
-        curHandle;
-      var handleChangeEvent = function handleChangeEvent(e) {
-        var idx = _this.inputs.indexOf(this);
-        _this._handleEvent(e, _this.handles[idx], this.value);
-      };
+    // 7.0 terminal form: the keydown listener runs on the native event
+    // layer (the coarse suite's mocks dispatch real KeyboardEvents since
+    // the S16 migration).
+    var keydownEl = handle.nodeType === 1 ? handle : handle[0];
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(keydownEl, 'keydown.zf.slider');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(keydownEl, 'keydown.zf.slider', function (e) {
+      var _$handle = this,
+        oldValue = parseFloat(keydownEl.getAttribute('aria-valuenow')),
+        newValue;
 
-      // IE only triggers the change event when the input loses focus which strictly follows the HTML specification
-      // listen for the enter key and trigger a change
-      // @see https://html.spec.whatwg.org/multipage/input.html#common-input-element-events
-      // S10: the input keyup/change consumers flip to the native event
-      // layer - their producers are real browser events, which reach native
-      // listeners directly. `this` is the input element, and the listeners
-      // are re-registered on every element of the collection like jQuery's
-      // collection-wide .on() did.
-      this.inputs.forEach(function (input) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(input, 'keyup.zf.slider change.zf.slider');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(input, 'keyup.zf.slider', function (e) {
-          if (e.keyCode === 13) handleChangeEvent.call(this, e);
-        });
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(input, 'change.zf.slider', handleChangeEvent);
-      });
-      if (this.options.clickSelect) {
-        // S10: the bar-click consumer flips to the native event layer -
-        // real clicks arrive directly and jQuery-synthesized clicks on the
-        // container ride the `.click()` shortcut bridge (reveal-native
-        // precedent).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, 'click.zf.slider');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'click.zf.slider', function (e) {
-          if (_this.$element.zfSliderDragging) {
-            return false;
-          }
-          if (!e.target.matches('[data-slider-handle]')) {
-            if (_this.options.doubleSided) {
-              _this._handleEvent(e);
-            } else {
-              _this._handleEvent(e, _this.$handle);
-            }
-          }
-        });
-      }
-      if (this.options.draggable) {
-        // S13: the drag chain flips with the Touch util - addTouch feeds real
-        // synthesized mouse events now, so the mousedown/mousemove/mouseup
-        // listeners live on the native event layer and serve the mouse and
-        // the touch feed alike.
-        this.handles.forEach(function (handleEl) {
-          return _foundation_util_touch__WEBPACK_IMPORTED_MODULE_6__.Touch.addTouch(handleEl);
-        });
-        var handleEl = handle.nodeType === 1 ? handle : handle[0];
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(handleEl, 'mousedown.zf.slider selectstart.zf.slider touchmove.zf.slider');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(handleEl, 'mousedown.zf.slider', function (e) {
-          handleEl.classList.add('is-dragging');
-          _this.$fill.classList.add('is-dragging'); //
-          _this.$element.zfSliderDragging = true;
-          curHandle = e.currentTarget;
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(document.body, 'mousemove.zf.slider', function (ev) {
-            ev.preventDefault();
-            _this._handleEvent(ev, curHandle);
-          });
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(document.body, 'mouseup.zf.slider', function (ev) {
-            _this._handleEvent(ev, curHandle);
-            handleEl.classList.remove('is-dragging');
-            _this.$fill.classList.remove('is-dragging');
-            _this.$element.zfSliderDragging = false;
-            _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
-          });
-        });
-        // prevent events triggered by touch
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(handleEl, 'selectstart.zf.slider touchmove.zf.slider', function (e) {
-          e.preventDefault();
-        });
-      }
-
-      // 7.0 terminal form: the keydown listener runs on the native event
-      // layer (the coarse suite's mocks dispatch real KeyboardEvents since
-      // the S16 migration).
-      var keydownEl = handle.nodeType === 1 ? handle : handle[0];
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(keydownEl, 'keydown.zf.slider');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(keydownEl, 'keydown.zf.slider', function (e) {
-        var _$handle = this,
-          oldValue = parseFloat(keydownEl.getAttribute('aria-valuenow')),
-          newValue;
-
-        // handle keyboard event with keyboard util
-        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Slider', {
-          decrease: function decrease() {
-            newValue = oldValue - _this.options.step;
-          },
-          increase: function increase() {
-            newValue = oldValue + _this.options.step;
-          },
-          decreaseFast: function decreaseFast() {
-            newValue = oldValue - _this.options.step * 10;
-          },
-          increaseFast: function increaseFast() {
-            newValue = oldValue + _this.options.step * 10;
-          },
-          min: function min() {
-            newValue = _this.options.start;
-          },
-          max: function max() {
-            newValue = _this.options.end;
-          },
-          handled: function handled() {
-            // only set handle pos when event was handled specially
-            e.preventDefault();
-            _this._setHandlePos(_$handle, newValue);
-          }
-        });
-        /*if (newValue) { // if pressed key has special function, update value
+      // handle keyboard event with keyboard util
+      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_0__.Keyboard.handleKey(e, 'Slider', {
+        decrease: function () {
+          newValue = oldValue - _this.options.step;
+        },
+        increase: function () {
+          newValue = oldValue + _this.options.step;
+        },
+        decreaseFast: function () {
+          newValue = oldValue - _this.options.step * 10;
+        },
+        increaseFast: function () {
+          newValue = oldValue + _this.options.step * 10;
+        },
+        min: function () {
+          newValue = _this.options.start;
+        },
+        max: function () {
+          newValue = _this.options.end;
+        },
+        handled: function () {
+          // only set handle pos when event was handled specially
           e.preventDefault();
           _this._setHandlePos(_$handle, newValue);
-        }*/
+        }
       });
-    }
+      /*if (newValue) { // if pressed key has special function, update value
+        e.preventDefault();
+        _this._setHandlePos(_$handle, newValue);
+      }*/
+    });
+  }
 
-    /**
-     * Destroys the slider plugin.
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // Every plugin-namespaced listener drops in one pass each (the input,
-      // click, drag and keydown listeners all live on the native layer now),
-      // plus any body-wide drag pair left mid-drag.
-      this.inputs.forEach(function (input) {
-        return _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(input, '.zf.slider');
-      });
-      this.handles.forEach(function (handle) {
-        return _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(handle, '.zf.slider');
-      });
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, '.zf.slider');
-      clearTimeout(this.timeout);
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_5__.Plugin);
+  /**
+   * Destroys the slider plugin.
+   */
+  _destroy() {
+    // Every plugin-namespaced listener drops in one pass each (the input,
+    // click, drag and keydown listeners all live on the native layer now),
+    // plus any body-wide drag pair left mid-drag.
+    this.inputs.forEach(input => _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(input, '.zf.slider'));
+    this.handles.forEach(handle => _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(handle, '.zf.slider'));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(document.body, 'mousemove.zf.slider mouseup.zf.slider');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, '.zf.slider');
+    clearTimeout(this.timeout);
+  }
+}
 Slider.defaults = {
   /**
    * Minimum value for the slider scale.
@@ -10349,29 +9420,16 @@ function baseLog(base, value) {
 /*!***************************************!*\
   !*** ./js/foundation.smoothScroll.js ***!
   \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   SmoothScroll: function() { return /* binding */ SmoothScroll; }
+/* harmony export */   SmoothScroll: () => (/* binding */ SmoothScroll)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -10394,7 +9452,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 // 6.x fired no event from this path (the callback is the completion
 // contract, delivered once per scroll where jQuery delivered it once per
 // animated element), so none is added.
-var activeScroll = null;
+let activeScroll = null;
 function stopActiveScroll() {
   if (activeScroll !== null) {
     window.cancelAnimationFrame(activeScroll);
@@ -10406,20 +9464,16 @@ function resolveEasing(easing) {
     return easing;
   }
   if (easing === 'linear') {
-    return function (p) {
-      return p;
-    };
+    return p => p;
   }
   // jQuery's `_default` easing: unknown names animate as 'swing'
-  return function (p) {
-    return 0.5 - Math.cos(p * Math.PI) / 2;
-  };
+  return p => 0.5 - Math.cos(p * Math.PI) / 2;
 }
 function animateScroll(scrollPos, options, callback) {
-  var start = window.pageYOffset;
-  var delta = scrollPos - start;
-  var duration = options.animationDuration;
-  var easing = resolveEasing(options.animationEasing);
+  const start = window.pageYOffset;
+  const delta = scrollPos - start;
+  const duration = options.animationDuration;
+  const easing = resolveEasing(options.animationEasing);
   stopActiveScroll();
   if (duration === 0) {
     window.scrollTo(0, scrollPos);
@@ -10428,12 +9482,12 @@ function animateScroll(scrollPos, options, callback) {
     }
     return;
   }
-  var origin = null;
+  let origin = null;
   function step(ts) {
     if (origin === null) {
       origin = ts;
     }
-    var progress = Math.min((ts - origin) / duration, 1);
+    const progress = Math.min((ts - origin) / duration, 1);
     window.scrollTo(0, Math.round(start + delta * easing(progress)));
     if (progress < 1) {
       activeScroll = window.requestAnimationFrame(step);
@@ -10446,130 +9500,110 @@ function animateScroll(scrollPos, options, callback) {
   }
   activeScroll = window.requestAnimationFrame(step);
 }
-var SmoothScroll = /*#__PURE__*/function (_Plugin) {
-  function SmoothScroll() {
-    _classCallCheck(this, SmoothScroll);
-    return _callSuper(this, SmoothScroll, arguments);
+class SmoothScroll extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin {
+  /**
+   * Creates a new instance of SmoothScroll.
+   * @class
+   * @name SmoothScroll
+   * @fires SmoothScroll#init
+   * @param {Object} element - jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A, slice S16: the plugin works on the native element; the
+    // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = Object.assign({}, SmoothScroll.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
+    this.className = 'SmoothScroll'; // ie9 back compat
+
+    this._init();
   }
-  _inherits(SmoothScroll, _Plugin);
-  return _createClass(SmoothScroll, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of SmoothScroll.
-     * @class
-     * @name SmoothScroll
-     * @fires SmoothScroll#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A, slice S16: the plugin works on the native element; the
-      // jQuery collection the mixed-state reflow still feeds in is unwrapped.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = Object.assign({}, SmoothScroll.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
-      this.className = 'SmoothScroll'; // ie9 back compat
 
-      this._init();
-    }
+  /**
+   * Initialize the SmoothScroll plugin
+   * @private
+   */
+  _init() {
+    const element = this.$element;
+    const id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, 'smooth-scroll');
+    element.id = id;
+    this._events();
+  }
 
-    /**
-     * Initialize the SmoothScroll plugin
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var element = this.$element;
-      var id = element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, 'smooth-scroll');
-      element.id = id;
-      this._events();
-    }
+  /**
+   * Initializes events for SmoothScroll.
+   * @private
+   */
+  _events() {
+    // S7: both registrations move to the native event layer. The direct
+    // binding keeps the 6.x shape where a click landing on the container
+    // itself reaches the handler and is filtered by the anchor check; the
+    // delegated binding mirrors the jQuery delegate walk (closest match,
+    // never escaping the root) and hands the match to the handler, since
+    // a real event's currentTarget stays the listener element.
+    const element = this.$element;
+    const _this = this;
+    this._linkClickListener = function (e) {
+      _this._handleLinkClick(e, e.currentTarget);
+    };
+    this._delegatedClickListener = function (e) {
+      _this._handleLinkClick(e, this);
+    };
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(element, 'click.zf.smoothScroll', this._linkClickListener);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.delegate(element, 'click.zf.smoothScroll', 'a[href^="#"]', this._delegatedClickListener);
+  }
 
-    /**
-     * Initializes events for SmoothScroll.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      // S7: both registrations move to the native event layer. The direct
-      // binding keeps the 6.x shape where a click landing on the container
-      // itself reaches the handler and is filtered by the anchor check; the
-      // delegated binding mirrors the jQuery delegate walk (closest match,
-      // never escaping the root) and hands the match to the handler, since
-      // a real event's currentTarget stays the listener element.
-      var element = this.$element;
-      var _this = this;
-      this._linkClickListener = function (e) {
-        _this._handleLinkClick(e, e.currentTarget);
-      };
-      this._delegatedClickListener = function (e) {
-        _this._handleLinkClick(e, this);
-      };
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(element, 'click.zf.smoothScroll', this._linkClickListener);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.delegate(element, 'click.zf.smoothScroll', 'a[href^="#"]', this._delegatedClickListener);
-    }
+  /**
+   * Handle the given event to smoothly scroll to the anchor pointed by the event target.
+   * @param {*} e - event
+   * @param {*} link - the element the event landed on: the container for the
+   *   direct binding, the closest 'a[href^="#"]' for the delegated one.
+   * @function
+   * @private
+   */
+  _handleLinkClick(e, link) {
+    // Follow the link if it does not point to an anchor.
+    if (!link || !link.matches('a[href^="#"]')) return;
+    const arrival = link.getAttribute('href');
+    this._inTransition = true;
+    SmoothScroll.scrollToLoc(arrival, this.options, () => {
+      this._inTransition = false;
+    });
+    e.preventDefault();
+  }
+  /**
+   * Function to scroll to a given location on the page.
+   * @param {String} loc - A properly formatted jQuery id selector. Example: '#foo'
+   * @param {Object} options - The options to use.
+   * @param {Function} callback - The callback function.
+   * @static
+   * @function
+   */
+  static scrollToLoc(loc) {
+    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : SmoothScroll.defaults;
+    let callback = arguments.length > 2 ? arguments[2] : undefined;
+    const target = document.querySelector(loc);
 
-    /**
-     * Handle the given event to smoothly scroll to the anchor pointed by the event target.
-     * @param {*} e - event
-     * @param {*} link - the element the event landed on: the container for the
-     *   direct binding, the closest 'a[href^="#"]' for the delegated one.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_handleLinkClick",
-    value: function _handleLinkClick(e, link) {
-      var _this2 = this;
-      // Follow the link if it does not point to an anchor.
-      if (!link || !link.matches('a[href^="#"]')) return;
-      var arrival = link.getAttribute('href');
-      this._inTransition = true;
-      SmoothScroll.scrollToLoc(arrival, this.options, function () {
-        _this2._inTransition = false;
-      });
-      e.preventDefault();
-    }
-  }, {
-    key: "_destroy",
-    value:
-    /**
-     * Destroys the SmoothScroll instance.
-     * @function
-     */
-    function _destroy() {
-      // Native side: the direct and delegated click listeners share the
-      // zf.smoothScroll namespace and go in one bare-namespace call.
-      // (The 6.x jQuery-side `off('.zf.smoothScroll')` line died with this
-      // file's jQuery import: the plugin registers nothing on the jQuery
-      // side anymore.)
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(this.$element, '.zf.smoothScroll');
-    }
-  }], [{
-    key: "scrollToLoc",
-    value:
-    /**
-     * Function to scroll to a given location on the page.
-     * @param {String} loc - A properly formatted jQuery id selector. Example: '#foo'
-     * @param {Object} options - The options to use.
-     * @param {Function} callback - The callback function.
-     * @static
-     * @function
-     */
-    function scrollToLoc(loc) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : SmoothScroll.defaults;
-      var callback = arguments.length > 2 ? arguments[2] : undefined;
-      var target = document.querySelector(loc);
+    // Do nothing if target does not exist to prevent errors
+    if (!target) return false;
+    var scrollPos = Math.round(target.getBoundingClientRect().top + window.pageYOffset - options.threshold / 2 - options.offset);
+    animateScroll(scrollPos, options, callback);
+  }
 
-      // Do nothing if target does not exist to prevent errors
-      if (!target) return false;
-      var scrollPos = Math.round(target.getBoundingClientRect().top + window.pageYOffset - options.threshold / 2 - options.offset);
-      animateScroll(scrollPos, options, callback);
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_3__.Plugin);
+  /**
+   * Destroys the SmoothScroll instance.
+   * @function
+   */
+  _destroy() {
+    // Native side: the direct and delegated click listeners share the
+    // zf.smoothScroll namespace and go in one bare-namespace call.
+    // (The 6.x jQuery-side `off('.zf.smoothScroll')` line died with this
+    // file's jQuery import: the plugin registers nothing on the jQuery
+    // side anymore.)
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(this.$element, '.zf.smoothScroll');
+  }
+}
+
 /**
  * Default settings for plugin.
  */
@@ -10612,11 +9646,11 @@ SmoothScroll.defaults = {
 /*!*********************************!*\
   !*** ./js/foundation.sticky.js ***!
   \*********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Sticky: function() { return /* binding */ Sticky; }
+/* harmony export */   Sticky: () => (/* binding */ Sticky)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -10624,19 +9658,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
 /* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -10650,483 +9671,453 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.triggers
  * @requires foundation.util.mediaQuery
  */
-var Sticky = /*#__PURE__*/function (_Plugin) {
-  function Sticky() {
-    _classCallCheck(this, Sticky);
-    return _callSuper(this, Sticky, arguments);
+
+class Sticky extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of a sticky thing.
+   * @class
+   * @name Sticky
+   * @param {jQuery} element - jQuery object to make sticky.
+   * @param {Object} options - options object passed when creating the element programmatically.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Sticky.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
+    this.className = 'Sticky'; // ie9 back compat
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
+    this._init();
   }
-  _inherits(Sticky, _Plugin);
-  return _createClass(Sticky, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a sticky thing.
-     * @class
-     * @name Sticky
-     * @param {jQuery} element - jQuery object to make sticky.
-     * @param {Object} options - options object passed when creating the element programmatically.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.deepMerge)({}, Sticky.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_3__.datasetOptions)(this.$element), options);
-      this.className = 'Sticky'; // ie9 back compat
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
-      this._init();
+  /**
+   * Initializes the sticky element by adding classes, getting/setting dimensions, breakpoints and attributes
+   * @function
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_4__.MediaQuery._init();
+    var parentContainer = this.$element.parentElement && this.$element.parentElement.matches('[data-sticky-container]') ? this.$element.parentElement : null,
+      id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'sticky'),
+      _this = this;
+    if (parentContainer) {
+      this.$container = parentContainer;
+    } else {
+      this.wasWrapped = true;
+      // .wrap(htmlString): a container built from the option markup
+      var probe = document.createElement('template');
+      probe.innerHTML = this.options.container.trim();
+      var wrapper = probe.content.firstElementChild;
+      this.$element.parentElement.insertBefore(wrapper, this.$element);
+      wrapper.appendChild(this.$element);
+      this.$container = this.$element.parentElement;
     }
+    this.$container.classList.add(this.options.containerClass);
 
-    /**
-     * Initializes the sticky element by adding classes, getting/setting dimensions, breakpoints and attributes
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_4__.MediaQuery._init();
-      var parentContainer = this.$element.parentElement && this.$element.parentElement.matches('[data-sticky-container]') ? this.$element.parentElement : null,
-        id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'sticky'),
-        _this = this;
-      if (parentContainer) {
-        this.$container = parentContainer;
+    // State attributes go through the native layer (7.0 line A, S10).
+    this.$element.classList.add(this.options.stickyClass);
+    this.$element.setAttribute('data-resize', id);
+    this.$element.setAttribute('data-mutate', id);
+    if (this.options.anchor !== '') {
+      var anchorInit = document.getElementById(_this.options.anchor);
+      if (anchorInit) {
+        anchorInit.setAttribute('data-mutate', id);
+      }
+    }
+    this.scrollCount = this.options.checkEvery;
+    this.isStuck = false;
+    this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
+      // A load callback can land after destroy() nulled the instance state
+      // (Magellan S7 precedent).
+      if (!_this.$element) {
+        return;
+      }
+
+      //We calculate the container height to have correct values for anchor points offset calculation.
+      _this.containerHeight = window.getComputedStyle(_this.$element).display === "none" ? 0 : _this.$element.getBoundingClientRect().height;
+      _this.$container.style.height = _this.containerHeight + 'px';
+      _this.elemHeight = _this.containerHeight;
+      if (_this.options.anchor !== '') {
+        _this.$anchor = document.getElementById(_this.options.anchor);
       } else {
-        this.wasWrapped = true;
-        // .wrap(htmlString): a container built from the option markup
-        var probe = document.createElement('template');
-        probe.innerHTML = this.options.container.trim();
-        var wrapper = probe.content.firstElementChild;
-        this.$element.parentElement.insertBefore(wrapper, this.$element);
-        wrapper.appendChild(this.$element);
-        this.$container = this.$element.parentElement;
+        _this._parsePoints();
       }
-      this.$container.classList.add(this.options.containerClass);
-
-      // State attributes go through the native layer (7.0 line A, S10).
-      this.$element.classList.add(this.options.stickyClass);
-      this.$element.setAttribute('data-resize', id);
-      this.$element.setAttribute('data-mutate', id);
-      if (this.options.anchor !== '') {
-        var anchorInit = document.getElementById(_this.options.anchor);
-        if (anchorInit) {
-          anchorInit.setAttribute('data-mutate', id);
+      _this._setSizes(function () {
+        var scroll = window.pageYOffset;
+        _this._calc(false, scroll);
+        //Unstick the element will ensure that proper classes are set.
+        if (!_this.isStuck) {
+          _this._removeSticky(scroll >= _this.topPoint ? false : true);
         }
-      }
-      this.scrollCount = this.options.checkEvery;
-      this.isStuck = false;
-      this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-        // A load callback can land after destroy() nulled the instance state
-        // (Magellan S7 precedent).
-        if (!_this.$element) {
-          return;
-        }
-
-        //We calculate the container height to have correct values for anchor points offset calculation.
-        _this.containerHeight = window.getComputedStyle(_this.$element).display === "none" ? 0 : _this.$element.getBoundingClientRect().height;
-        _this.$container.style.height = _this.containerHeight + 'px';
-        _this.elemHeight = _this.containerHeight;
-        if (_this.options.anchor !== '') {
-          _this.$anchor = document.getElementById(_this.options.anchor);
-        } else {
-          _this._parsePoints();
-        }
-        _this._setSizes(function () {
-          var scroll = window.pageYOffset;
-          _this._calc(false, scroll);
-          //Unstick the element will ensure that proper classes are set.
-          if (!_this.isStuck) {
-            _this._removeSticky(scroll >= _this.topPoint ? false : true);
-          }
-        });
-        _this._events(id.split('-').reverse().join('-'));
       });
-    }
+      _this._events(id.split('-').reverse().join('-'));
+    });
+  }
 
-    /**
-     * If using multiple elements as anchors, calculates the top and bottom pixel values the sticky thing should stick and unstick on.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_parsePoints",
-    value: function _parsePoints() {
-      var top = this.options.topAnchor === "" ? 1 : this.options.topAnchor,
-        btm = this.options.btmAnchor === "" ? document.documentElement.scrollHeight : this.options.btmAnchor,
-        pts = [top, btm],
-        breaks = {};
-      for (var i = 0, len = pts.length; i < len && pts[i]; i++) {
-        var pt;
-        if (typeof pts[i] === 'number') {
-          pt = pts[i];
-        } else {
-          var place = pts[i].split(':'),
-            anchor = document.getElementById(place[0]);
+  /**
+   * If using multiple elements as anchors, calculates the top and bottom pixel values the sticky thing should stick and unstick on.
+   * @function
+   * @private
+   */
+  _parsePoints() {
+    var top = this.options.topAnchor === "" ? 1 : this.options.topAnchor,
+      btm = this.options.btmAnchor === "" ? document.documentElement.scrollHeight : this.options.btmAnchor,
+      pts = [top, btm],
+      breaks = {};
+    for (var i = 0, len = pts.length; i < len && pts[i]; i++) {
+      var pt;
+      if (typeof pts[i] === 'number') {
+        pt = pts[i];
+      } else {
+        var place = pts[i].split(':'),
+          anchor = document.getElementById(place[0]);
 
-          // offset().top equivalent (7.0 line A, S10): viewport-relative rect
-          // plus the current scroll, the S7 SmoothScroll precedent.
-          pt = anchor.getBoundingClientRect().top + window.pageYOffset;
-          if (place[1] && place[1].toLowerCase() === 'bottom') {
-            pt += anchor.getBoundingClientRect().height;
-          }
+        // offset().top equivalent (7.0 line A, S10): viewport-relative rect
+        // plus the current scroll, the S7 SmoothScroll precedent.
+        pt = anchor.getBoundingClientRect().top + window.pageYOffset;
+        if (place[1] && place[1].toLowerCase() === 'bottom') {
+          pt += anchor.getBoundingClientRect().height;
         }
-        breaks[i] = pt;
       }
-      this.points = breaks;
+      breaks[i] = pt;
+    }
+    this.points = breaks;
+    return;
+  }
+
+  /**
+   * Adds event handlers for the scrolling element.
+   * @private
+   * @param {String} id - pseudo-random id for unique scroll event listener.
+   */
+  _events(id) {
+    var _this = this,
+      scrollListener = this.scrollListener = `scroll.zf.${id}`;
+    if (this.isOn) {
       return;
     }
-
-    /**
-     * Adds event handlers for the scrolling element.
-     * @private
-     * @param {String} id - pseudo-random id for unique scroll event listener.
-     */
-  }, {
-    key: "_events",
-    value: function _events(id) {
-      var _this = this,
-        scrollListener = this.scrollListener = "scroll.zf.".concat(id);
-      if (this.isOn) {
-        return;
-      }
-      if (this.canStick) {
-        this.isOn = true;
-        // S10: the window scroll consumer flips to the native event layer -
-        // real scroll events reach it directly, under the per-instance
-        // namespace so the destroy path can drop it precisely.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, scrollListener);
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, scrollListener, function () {
-          if (_this.scrollCount === 0) {
-            _this.scrollCount = _this.options.checkEvery;
-            _this._setSizes(function () {
-              _this._calc(false, window.pageYOffset);
-            });
-          } else {
-            _this.scrollCount--;
-            _this._calc(false, window.pageYOffset);
-          }
-        });
-      }
-
-      // S10: the resizeme consumer flips to the native event layer (S4
-      // producer), like Equalizer S8.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'resizeme.zf.trigger', function () {
-        _this._eventsHandler(id);
-      });
-
-      // S10 group flip: the mutateme consumers (element and anchor) join the
-      // native event layer together with the last jQuery-synthesized
-      // producers (Tabs forward, ResponsiveToggle animated half), so every
-      // listener receives each dispatch exactly once.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'mutateme.zf.trigger', function () {
-        _this._eventsHandler(id);
-      });
-      if (this.$anchor) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$anchor, 'mutateme.zf.trigger', function () {
-          _this._eventsHandler(id);
-        });
-      }
-    }
-
-    /**
-     * Handler for events.
-     * @private
-     * @param {String} id - pseudo-random id for unique scroll event listener.
-     */
-  }, {
-    key: "_eventsHandler",
-    value: function _eventsHandler(id) {
-      var _this = this,
-        scrollListener = this.scrollListener = "scroll.zf.".concat(id);
-      _this._setSizes(function () {
-        _this._calc(false);
-        if (_this.canStick) {
-          if (!_this.isOn) {
-            _this._events(id);
-          }
-        } else if (_this.isOn) {
-          _this._pauseListeners(scrollListener);
-        }
-      });
-    }
-
-    /**
-     * Removes event handlers for scroll and change events on anchor.
-     * @fires Sticky#pause
-     * @param {String} scrollListener - unique, namespaced scroll listener attached to `window`
-     */
-  }, {
-    key: "_pauseListeners",
-    value: function _pauseListeners(scrollListener) {
-      this.isOn = false;
+    if (this.canStick) {
+      this.isOn = true;
+      // S10: the window scroll consumer flips to the native event layer -
+      // real scroll events reach it directly, under the per-instance
+      // namespace so the destroy path can drop it precisely.
       _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, scrollListener);
-
-      /**
-       * Fires when the plugin is paused due to resize event shrinking the view.
-       * @event Sticky#pause
-       * @private
-       */
-      // S10: real, bubbling CustomEvent - native listeners receive it
-      // directly, still-on-jQuery listeners through the real-event pass-
-      // through (white absorption).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'pause.zf.sticky');
-    }
-
-    /**
-     * Called on every `scroll` event and on `_init`
-     * fires functions based on booleans and cached values
-     * @param {Boolean} checkSizes - true if plugin should recalculate sizes and breakpoints.
-     * @param {Number} scroll - current scroll position passed from scroll event cb function. If not passed, defaults to `window.pageYOffset`.
-     */
-  }, {
-    key: "_calc",
-    value: function _calc(checkSizes, scroll) {
-      if (checkSizes) {
-        this._setSizes();
-      }
-      if (!this.canStick) {
-        if (this.isStuck) {
-          this._removeSticky(true);
-        }
-        return false;
-      }
-      if (!scroll) {
-        scroll = window.pageYOffset;
-      }
-      if (scroll >= this.topPoint) {
-        if (scroll <= this.bottomPoint) {
-          if (!this.isStuck) {
-            this._setSticky();
-          }
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, scrollListener, function () {
+        if (_this.scrollCount === 0) {
+          _this.scrollCount = _this.options.checkEvery;
+          _this._setSizes(function () {
+            _this._calc(false, window.pageYOffset);
+          });
         } else {
-          if (this.isStuck) {
-            this._removeSticky(false);
-          }
+          _this.scrollCount--;
+          _this._calc(false, window.pageYOffset);
+        }
+      });
+    }
+
+    // S10: the resizeme consumer flips to the native event layer (S4
+    // producer), like Equalizer S8.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'resizeme.zf.trigger', function () {
+      _this._eventsHandler(id);
+    });
+
+    // S10 group flip: the mutateme consumers (element and anchor) join the
+    // native event layer together with the last jQuery-synthesized
+    // producers (Tabs forward, ResponsiveToggle animated half), so every
+    // listener receives each dispatch exactly once.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'mutateme.zf.trigger', function () {
+      _this._eventsHandler(id);
+    });
+    if (this.$anchor) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$anchor, 'mutateme.zf.trigger', function () {
+        _this._eventsHandler(id);
+      });
+    }
+  }
+
+  /**
+   * Handler for events.
+   * @private
+   * @param {String} id - pseudo-random id for unique scroll event listener.
+   */
+  _eventsHandler(id) {
+    var _this = this,
+      scrollListener = this.scrollListener = `scroll.zf.${id}`;
+    _this._setSizes(function () {
+      _this._calc(false);
+      if (_this.canStick) {
+        if (!_this.isOn) {
+          _this._events(id);
+        }
+      } else if (_this.isOn) {
+        _this._pauseListeners(scrollListener);
+      }
+    });
+  }
+
+  /**
+   * Removes event handlers for scroll and change events on anchor.
+   * @fires Sticky#pause
+   * @param {String} scrollListener - unique, namespaced scroll listener attached to `window`
+   */
+  _pauseListeners(scrollListener) {
+    this.isOn = false;
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, scrollListener);
+
+    /**
+     * Fires when the plugin is paused due to resize event shrinking the view.
+     * @event Sticky#pause
+     * @private
+     */
+    // S10: real, bubbling CustomEvent - native listeners receive it
+    // directly, still-on-jQuery listeners through the real-event pass-
+    // through (white absorption).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'pause.zf.sticky');
+  }
+
+  /**
+   * Called on every `scroll` event and on `_init`
+   * fires functions based on booleans and cached values
+   * @param {Boolean} checkSizes - true if plugin should recalculate sizes and breakpoints.
+   * @param {Number} scroll - current scroll position passed from scroll event cb function. If not passed, defaults to `window.pageYOffset`.
+   */
+  _calc(checkSizes, scroll) {
+    if (checkSizes) {
+      this._setSizes();
+    }
+    if (!this.canStick) {
+      if (this.isStuck) {
+        this._removeSticky(true);
+      }
+      return false;
+    }
+    if (!scroll) {
+      scroll = window.pageYOffset;
+    }
+    if (scroll >= this.topPoint) {
+      if (scroll <= this.bottomPoint) {
+        if (!this.isStuck) {
+          this._setSticky();
         }
       } else {
         if (this.isStuck) {
-          this._removeSticky(true);
+          this._removeSticky(false);
         }
+      }
+    } else {
+      if (this.isStuck) {
+        this._removeSticky(true);
       }
     }
+  }
 
+  /**
+   * Causes the $element to become stuck.
+   * Adds `position: fixed;`, and helper classes.
+   * @fires Sticky#stuckto
+   * @function
+   * @private
+   */
+  _setSticky() {
+    var _this = this,
+      stickTo = this.options.stickTo,
+      mrgn = stickTo === 'top' ? 'marginTop' : 'marginBottom',
+      notStuckTo = stickTo === 'top' ? 'bottom' : 'top',
+      css = {};
+    css[mrgn] = `${this.options[mrgn]}em`;
+    css[stickTo] = 0;
+    css[notStuckTo] = 'auto';
+    this.isStuck = true;
+    // State classes go through the native layer (7.0 line A, S10); the css
+    // writes stay on jQuery (css seam).
+    this.$element.classList.remove('is-anchored', `is-at-${notStuckTo}`);
+    this.$element.classList.add('is-stuck', `is-at-${stickTo}`);
+    Object.keys(css).forEach(function (prop) {
+      this.$element.style[prop] = css[prop];
+    }, this);
     /**
-     * Causes the $element to become stuck.
-     * Adds `position: fixed;`, and helper classes.
-     * @fires Sticky#stuckto
-     * @function
-     * @private
+     * Fires when the $element has become `position: fixed;`
+     * Namespaced to `top` or `bottom`, e.g. `sticky.zf.stuckto:top`
+     * @event Sticky#stuckto
      */
-  }, {
-    key: "_setSticky",
-    value: function _setSticky() {
-      var _this = this,
-        stickTo = this.options.stickTo,
-        mrgn = stickTo === 'top' ? 'marginTop' : 'marginBottom',
-        notStuckTo = stickTo === 'top' ? 'bottom' : 'top',
-        css = {};
-      css[mrgn] = "".concat(this.options[mrgn], "em");
-      css[stickTo] = 0;
-      css[notStuckTo] = 'auto';
-      this.isStuck = true;
-      // State classes go through the native layer (7.0 line A, S10); the css
-      // writes stay on jQuery (css seam).
-      this.$element.classList.remove('is-anchored', "is-at-".concat(notStuckTo));
-      this.$element.classList.add('is-stuck', "is-at-".concat(stickTo));
-      Object.keys(css).forEach(function (prop) {
-        this.$element.style[prop] = css[prop];
-      }, this);
-      /**
-       * Fires when the $element has become `position: fixed;`
-       * Namespaced to `top` or `bottom`, e.g. `sticky.zf.stuckto:top`
-       * @event Sticky#stuckto
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, "sticky.zf.stuckto:".concat(stickTo));
-      // S10: the transitionend-family consumer flips to the native event
-      // layer - real browser events reach it directly. M1's off-then-on wipe
-      // carries over as the Events.off form.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function () {
-        _this._setSizes();
-      });
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, `sticky.zf.stuckto:${stickTo}`);
+    // S10: the transitionend-family consumer flips to the native event
+    // layer - real browser events reach it directly. M1's off-then-on wipe
+    // carries over as the Events.off form.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky', function () {
+      _this._setSizes();
+    });
+  }
+
+  /**
+   * Causes the $element to become unstuck.
+   * Removes `position: fixed;`, and helper classes.
+   * Adds other helper classes.
+   * @param {Boolean} isTop - tells the function if the $element should anchor to the top or bottom of its $anchor element.
+   * @fires Sticky#unstuckfrom
+   * @private
+   */
+  _removeSticky(isTop) {
+    var stickTo = this.options.stickTo,
+      stickToTop = stickTo === 'top',
+      css = {},
+      anchorPt = (this.points ? this.points[1] - this.points[0] : this.anchorHeight) - this.elemHeight,
+      mrgn = stickToTop ? 'marginTop' : 'marginBottom',
+      topOrBottom = isTop ? 'top' : 'bottom';
+    css[mrgn] = 0;
+    css.bottom = 'auto';
+    if (isTop) {
+      css.top = 0;
+    } else {
+      css.top = anchorPt;
     }
-
+    this.isStuck = false;
+    // State classes go through the native layer (7.0 line A, S10).
+    this.$element.classList.remove('is-stuck', `is-at-${stickTo}`);
+    this.$element.classList.add('is-anchored', `is-at-${topOrBottom}`);
+    Object.keys(css).forEach(function (prop) {
+      this.$element.style[prop] = css[prop];
+    }, this);
     /**
-     * Causes the $element to become unstuck.
-     * Removes `position: fixed;`, and helper classes.
-     * Adds other helper classes.
-     * @param {Boolean} isTop - tells the function if the $element should anchor to the top or bottom of its $anchor element.
-     * @fires Sticky#unstuckfrom
-     * @private
+     * Fires when the $element has become anchored.
+     * Namespaced to `top` or `bottom`, e.g. `sticky.zf.unstuckfrom:bottom`
+     * @event Sticky#unstuckfrom
      */
-  }, {
-    key: "_removeSticky",
-    value: function _removeSticky(isTop) {
-      var stickTo = this.options.stickTo,
-        stickToTop = stickTo === 'top',
-        css = {},
-        anchorPt = (this.points ? this.points[1] - this.points[0] : this.anchorHeight) - this.elemHeight,
-        mrgn = stickToTop ? 'marginTop' : 'marginBottom',
-        topOrBottom = isTop ? 'top' : 'bottom';
-      css[mrgn] = 0;
-      css.bottom = 'auto';
-      if (isTop) {
-        css.top = 0;
-      } else {
-        css.top = anchorPt;
-      }
-      this.isStuck = false;
-      // State classes go through the native layer (7.0 line A, S10).
-      this.$element.classList.remove('is-stuck', "is-at-".concat(stickTo));
-      this.$element.classList.add('is-anchored', "is-at-".concat(topOrBottom));
-      Object.keys(css).forEach(function (prop) {
-        this.$element.style[prop] = css[prop];
-      }, this);
-      /**
-       * Fires when the $element has become anchored.
-       * Namespaced to `top` or `bottom`, e.g. `sticky.zf.unstuckfrom:bottom`
-       * @event Sticky#unstuckfrom
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, "sticky.zf.unstuckfrom:".concat(topOrBottom));
-    }
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, `sticky.zf.unstuckfrom:${topOrBottom}`);
+  }
 
-    /**
-     * Sets the $element and $container sizes for plugin.
-     * Calls `_setBreakPoints`.
-     * @param {Function} cb - optional callback function to fire on completion of `_setBreakPoints`.
-     * @private
-     */
-  }, {
-    key: "_setSizes",
-    value: function _setSizes(cb) {
-      this.canStick = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_4__.MediaQuery.is(this.options.stickyOn);
-      if (!this.canStick) {
-        if (cb && typeof cb === 'function') {
-          cb();
-        }
-        return;
-      }
-      var newElemWidth = this.$container.getBoundingClientRect().width,
-        comp = window.getComputedStyle(this.$container),
-        pdngl = parseInt(comp['padding-left'], 10),
-        pdngr = parseInt(comp['padding-right'], 10);
-      if (this.$anchor) {
-        this.anchorHeight = this.$anchor.getBoundingClientRect().height;
-      } else {
-        this._parsePoints();
-      }
-      this.$element.style.maxWidth = "".concat(newElemWidth - pdngl - pdngr, "px");
-
-      // Recalculate the height only if it is "dynamic"
-      if (this.options.dynamicHeight || !this.containerHeight) {
-        // Get the sticked element height and apply it to the container to "hold the place"
-        var newContainerHeight = this.$element.getBoundingClientRect().height || this.containerHeight;
-        newContainerHeight = window.getComputedStyle(this.$element).display === "none" ? 0 : newContainerHeight;
-        this.$container.style.height = newContainerHeight + 'px';
-        this.containerHeight = newContainerHeight;
-      }
-      this.elemHeight = this.containerHeight;
-      if (!this.isStuck) {
-        if (this.$element.classList.contains('is-at-bottom')) {
-          var anchorPt = (this.points ? this.points[1] - (this.$container.getBoundingClientRect().top + window.pageYOffset) : this.anchorHeight) - this.elemHeight;
-          this.$element.style.top = anchorPt + 'px';
-        }
-      }
-      this._setBreakPoints(this.containerHeight, function () {
-        if (cb && typeof cb === 'function') {
-          cb();
-        }
-      });
-    }
-
-    /**
-     * Sets the upper and lower breakpoints for the element to become sticky/unsticky.
-     * @param {Number} elemHeight - px value for sticky.$element height, calculated by `_setSizes`.
-     * @param {Function} cb - optional callback function to be called on completion.
-     * @private
-     */
-  }, {
-    key: "_setBreakPoints",
-    value: function _setBreakPoints(elemHeight, cb) {
-      if (!this.canStick) {
-        if (cb && typeof cb === 'function') {
-          cb();
-        }
-        return false;
-      }
-      var mTop = emCalc(this.options.marginTop),
-        mBtm = emCalc(this.options.marginBottom),
-        // offset().top equivalent (7.0 line A, S10, S7 SmoothScroll
-        // precedent).
-        topPoint = this.points ? this.points[0] : this.$anchor.getBoundingClientRect().top + window.pageYOffset,
-        bottomPoint = this.points ? this.points[1] : topPoint + this.anchorHeight,
-        winHeight = window.innerHeight;
-      if (this.options.stickTo === 'top') {
-        topPoint -= mTop;
-        bottomPoint -= elemHeight + mTop;
-      } else if (this.options.stickTo === 'bottom') {
-        topPoint -= winHeight - (elemHeight + mBtm);
-        bottomPoint -= winHeight - mBtm;
-      } else {
-        //this would be the stickTo: both option... tricky
-      }
-      this.topPoint = topPoint;
-      this.bottomPoint = bottomPoint;
+  /**
+   * Sets the $element and $container sizes for plugin.
+   * Calls `_setBreakPoints`.
+   * @param {Function} cb - optional callback function to fire on completion of `_setBreakPoints`.
+   * @private
+   */
+  _setSizes(cb) {
+    this.canStick = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_4__.MediaQuery.is(this.options.stickyOn);
+    if (!this.canStick) {
       if (cb && typeof cb === 'function') {
         cb();
       }
+      return;
     }
+    var newElemWidth = this.$container.getBoundingClientRect().width,
+      comp = window.getComputedStyle(this.$container),
+      pdngl = parseInt(comp['padding-left'], 10),
+      pdngr = parseInt(comp['padding-right'], 10);
+    if (this.$anchor) {
+      this.anchorHeight = this.$anchor.getBoundingClientRect().height;
+    } else {
+      this._parsePoints();
+    }
+    this.$element.style.maxWidth = `${newElemWidth - pdngl - pdngr}px`;
 
-    /**
-     * Destroys the current sticky element.
-     * Resets the element to the top position first.
-     * Removes event listeners, JS-added css properties and classes, and unwraps the $element if the JS added the $container.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      this._removeSticky(true);
-
-      // The css resets and the state classes.
-      this.$element.classList.remove("".concat(this.options.stickyClass), 'is-anchored', 'is-at-top');
-      this.$element.style.height = '';
-      this.$element.style.top = '';
-      this.$element.style.bottom = '';
-      this.$element.style.maxWidth = '';
-      // Native side: the flipped resizeme/mutateme/transitionend listeners and
-      // the per-instance window scroll listener drop precisely. The mutateme
-      // listeners live on the native layer since the S10 group flip.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger mutateme.zf.trigger');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
-      if (this.$anchor) {
-        // The 'change.zf.sticky' off below is removed (S14): 6.x never bound a
-        // change listener on the anchor (grep master confirms - only this off
-        // existed), so the wipe always matched nothing, and on the native
-        // layer it could never unregister anything either. Dead code.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$anchor, 'mutateme.zf.trigger');
-      }
-      if (this.scrollListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.scrollListener);
-      if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
-
-      if (this.wasWrapped) {
-        // .unwrap(): the wrapper is replaced by its children
-        var wrapper = this.$element.parentElement;
-        while (wrapper.firstChild) {
-          wrapper.parentElement.insertBefore(wrapper.firstChild, wrapper);
-        }
-        wrapper.remove();
-      } else {
-        this.$container.classList.remove(this.options.containerClass);
-        this.$container.style.height = '';
+    // Recalculate the height only if it is "dynamic"
+    if (this.options.dynamicHeight || !this.containerHeight) {
+      // Get the sticked element height and apply it to the container to "hold the place"
+      var newContainerHeight = this.$element.getBoundingClientRect().height || this.containerHeight;
+      newContainerHeight = window.getComputedStyle(this.$element).display === "none" ? 0 : newContainerHeight;
+      this.$container.style.height = newContainerHeight + 'px';
+      this.containerHeight = newContainerHeight;
+    }
+    this.elemHeight = this.containerHeight;
+    if (!this.isStuck) {
+      if (this.$element.classList.contains('is-at-bottom')) {
+        var anchorPt = (this.points ? this.points[1] - (this.$container.getBoundingClientRect().top + window.pageYOffset) : this.anchorHeight) - this.elemHeight;
+        this.$element.style.top = anchorPt + 'px';
       }
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+    this._setBreakPoints(this.containerHeight, function () {
+      if (cb && typeof cb === 'function') {
+        cb();
+      }
+    });
+  }
+
+  /**
+   * Sets the upper and lower breakpoints for the element to become sticky/unsticky.
+   * @param {Number} elemHeight - px value for sticky.$element height, calculated by `_setSizes`.
+   * @param {Function} cb - optional callback function to be called on completion.
+   * @private
+   */
+  _setBreakPoints(elemHeight, cb) {
+    if (!this.canStick) {
+      if (cb && typeof cb === 'function') {
+        cb();
+      }
+      return false;
+    }
+    var mTop = emCalc(this.options.marginTop),
+      mBtm = emCalc(this.options.marginBottom),
+      // offset().top equivalent (7.0 line A, S10, S7 SmoothScroll
+      // precedent).
+      topPoint = this.points ? this.points[0] : this.$anchor.getBoundingClientRect().top + window.pageYOffset,
+      bottomPoint = this.points ? this.points[1] : topPoint + this.anchorHeight,
+      winHeight = window.innerHeight;
+    if (this.options.stickTo === 'top') {
+      topPoint -= mTop;
+      bottomPoint -= elemHeight + mTop;
+    } else if (this.options.stickTo === 'bottom') {
+      topPoint -= winHeight - (elemHeight + mBtm);
+      bottomPoint -= winHeight - mBtm;
+    } else {
+      //this would be the stickTo: both option... tricky
+    }
+    this.topPoint = topPoint;
+    this.bottomPoint = bottomPoint;
+    if (cb && typeof cb === 'function') {
+      cb();
+    }
+  }
+
+  /**
+   * Destroys the current sticky element.
+   * Resets the element to the top position first.
+   * Removes event listeners, JS-added css properties and classes, and unwraps the $element if the JS added the $container.
+   * @function
+   */
+  _destroy() {
+    this._removeSticky(true);
+
+    // The css resets and the state classes.
+    this.$element.classList.remove(`${this.options.stickyClass}`, 'is-anchored', 'is-at-top');
+    this.$element.style.height = '';
+    this.$element.style.top = '';
+    this.$element.style.bottom = '';
+    this.$element.style.maxWidth = '';
+    // Native side: the flipped resizeme/mutateme/transitionend listeners and
+    // the per-instance window scroll listener drop precisely. The mutateme
+    // listeners live on the native layer since the S10 group flip.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'resizeme.zf.trigger mutateme.zf.trigger');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, 'transitionend.zf.sticky webkitTransitionEnd.zf.sticky oTransitionEnd.zf.sticky otransitionend.zf.sticky MSTransitionEnd.zf.sticky');
+    if (this.$anchor) {
+      // The 'change.zf.sticky' off below is removed (S14): 6.x never bound a
+      // change listener on the anchor (grep master confirms - only this off
+      // existed), so the wipe always matched nothing, and on the native
+      // layer it could never unregister anything either. Dead code.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$anchor, 'mutateme.zf.trigger');
+    }
+    if (this.scrollListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.scrollListener);
+    if (this.onLoadListener) _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+
+    if (this.wasWrapped) {
+      // .unwrap(): the wrapper is replaced by its children
+      const wrapper = this.$element.parentElement;
+      while (wrapper.firstChild) {
+        wrapper.parentElement.insertBefore(wrapper.firstChild, wrapper);
+      }
+      wrapper.remove();
+    } else {
+      this.$container.classList.remove(this.options.containerClass);
+      this.$container.style.height = '';
+    }
+  }
+}
 Sticky.defaults = {
   /**
    * Customizable container template. Add your own classes for styling and sizing.
@@ -11229,11 +10220,11 @@ function emCalc(em) {
 /*!*******************************!*\
   !*** ./js/foundation.tabs.js ***!
   \*******************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Tabs: function() { return /* binding */ Tabs; }
+/* harmony export */   Tabs: () => (/* binding */ Tabs)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -11242,19 +10233,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.keyboard */ "./js/foundation.util.keyboard.js");
 /* harmony import */ var _foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.imageLoader */ "./js/foundation.util.imageLoader.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -11268,486 +10246,454 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.keyboard
  * @requires foundation.util.imageLoader if tabs contain images
  */
-var Tabs = /*#__PURE__*/function (_Plugin) {
-  function Tabs() {
-    _classCallCheck(this, Tabs);
-    return _callSuper(this, Tabs, arguments);
+
+class Tabs extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin {
+  /**
+   * Creates a new instance of tabs.
+   * @class
+   * @name Tabs
+   * @fires Tabs#init
+   * @param {jQuery} element - jQuery object to make into tabs.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Tabs.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
+    this.className = 'Tabs'; // ie9 back compat
+
+    this._init();
+    _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Tabs', {
+      'ENTER': 'open',
+      'SPACE': 'open',
+      'ARROW_RIGHT': 'next',
+      'ARROW_UP': 'previous',
+      'ARROW_DOWN': 'next',
+      'ARROW_LEFT': 'previous'
+      // 'TAB': 'next',
+      // 'SHIFT_TAB': 'previous'
+    });
   }
-  _inherits(Tabs, _Plugin);
-  return _createClass(Tabs, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of tabs.
-     * @class
-     * @name Tabs
-     * @fires Tabs#init
-     * @param {jQuery} element - jQuery object to make into tabs.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.deepMerge)({}, Tabs.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.datasetOptions)(this.$element), options);
-      this.className = 'Tabs'; // ie9 back compat
 
-      this._init();
-      _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.register('Tabs', {
-        'ENTER': 'open',
-        'SPACE': 'open',
-        'ARROW_RIGHT': 'next',
-        'ARROW_UP': 'previous',
-        'ARROW_DOWN': 'next',
-        'ARROW_LEFT': 'previous'
-        // 'TAB': 'next',
-        // 'SHIFT_TAB': 'previous'
-      });
-    }
+  /**
+   * Initializes the tabs by showing and focusing (if autoFocus=true) the preset active tab.
+   * @private
+   */
+  _init() {
+    var _this = this;
+    this._isInitializing = true;
+    // Per-instance id for the native deep-link hashchange namespace (7.0 line
+    // A, S8) - the same shape Reveal/Magellan/Accordion use.
+    this.id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'tabs');
+    this.$element.setAttribute('role', 'tablist');
+    this.$tabTitles = Array.from(this.$element.querySelectorAll(`.${this.options.linkClass}`));
+    this.$tabContent = document.querySelector(`[data-tabs-content="${this.$element.id}"]`);
+    this.$tabTitles.forEach(function (elem) {
+      var link = elem.querySelector('a'),
+        isActive = elem.classList.contains(`${_this.options.linkActiveClass}`),
+        hash = link.getAttribute('data-tabs-target') || link.hash.slice(1),
+        linkId = link.id ? link.id : `${hash}-label`,
+        tabContent = document.getElementById(hash);
 
-    /**
-     * Initializes the tabs by showing and focusing (if autoFocus=true) the preset active tab.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this2 = this;
-      var _this = this;
-      this._isInitializing = true;
-      // Per-instance id for the native deep-link hashchange namespace (7.0 line
-      // A, S8) - the same shape Reveal/Magellan/Accordion use.
-      this.id = this.$element.id || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.GetYoDigits)(6, 'tabs');
-      this.$element.setAttribute('role', 'tablist');
-      this.$tabTitles = Array.from(this.$element.querySelectorAll(".".concat(this.options.linkClass)));
-      this.$tabContent = document.querySelector("[data-tabs-content=\"".concat(this.$element.id, "\"]"));
-      this.$tabTitles.forEach(function (elem) {
-        var link = elem.querySelector('a'),
-          isActive = elem.classList.contains("".concat(_this.options.linkActiveClass)),
-          hash = link.getAttribute('data-tabs-target') || link.hash.slice(1),
-          linkId = link.id ? link.id : "".concat(hash, "-label"),
-          tabContent = document.getElementById(hash);
+      // State/ARIA go through the native layer (7.0 line A, S8).
+      elem.setAttribute('role', 'presentation');
+      link.setAttribute('role', 'tab');
+      link.setAttribute('aria-controls', hash);
+      link.setAttribute('aria-selected', `${isActive}`);
+      link.setAttribute('id', linkId);
+      link.setAttribute('tabindex', isActive ? '0' : '-1');
+      tabContent.setAttribute('role', 'tabpanel');
+      tabContent.setAttribute('aria-labelledby', linkId);
 
-        // State/ARIA go through the native layer (7.0 line A, S8).
-        elem.setAttribute('role', 'presentation');
-        link.setAttribute('role', 'tab');
-        link.setAttribute('aria-controls', hash);
-        link.setAttribute('aria-selected', "".concat(isActive));
-        link.setAttribute('id', linkId);
-        link.setAttribute('tabindex', isActive ? '0' : '-1');
-        tabContent.setAttribute('role', 'tabpanel');
-        tabContent.setAttribute('aria-labelledby', linkId);
-
-        // Save up the initial hash to return to it later when going back in history
-        if (isActive) {
-          _this._initialAnchor = "#".concat(hash);
-        }
-        if (!isActive) {
-          tabContent.setAttribute('aria-hidden', 'true');
-        }
-        if (isActive && _this.options.autoFocus) {
-          _this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
-            // A load callback can land after destroy() nulled the instance
-            // state (the S6 slider guard pattern).
-            if (!_this.$element) {
-              return;
-            }
-            // fx 方案 A: the native page-scroll tween (SmoothScroll S7
-            // equivalence - one viewport tween, the callback once, ledger ②)
-            _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
-              scrollTop: elem.getBoundingClientRect().top + window.pageYOffset
-            }, _this.options.deepLinkSmudgeDelay, null, function () {
-              link.focus();
-            });
-          });
-        }
-      });
-      if (this.options.matchHeight) {
-        var images = this.$tabContent ? this.$tabContent.querySelectorAll('img') : [];
-        if (images.length) {
-          (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_5__.onImagesLoaded)(images, this._setHeight.bind(this));
-        } else {
-          this._setHeight();
-        }
+      // Save up the initial hash to return to it later when going back in history
+      if (isActive) {
+        _this._initialAnchor = `#${hash}`;
       }
-
-      // Current context-bound function to open tabs on page load or history hashchange
-      this._checkDeepLink = function () {
-        var anchor = window.location.hash;
-        if (!anchor.length) {
-          // If we are still initializing and there is no anchor, then there is nothing to do
-          if (_this2._isInitializing) return;
-          // Otherwise, move to the initial anchor
-          if (_this2._initialAnchor) anchor = _this2._initialAnchor;
-        }
-        var anchorNoHash = anchor.indexOf('#') >= 0 ? anchor.slice(1) : anchor;
-        var anchorEl = anchorNoHash ? document.getElementById(anchorNoHash) : null;
-        var link = anchor ? _this2.$element.querySelector("[href$=\"".concat(anchor, "\"],[data-tabs-target=\"").concat(anchorNoHash, "\"]")) : null;
-        // Whether the anchor element that has been found is part of this element
-        var isOwnAnchor = !!(anchorEl && link);
-        if (isOwnAnchor) {
-          // If there is an anchor for the hash, select it
-          if (anchorEl && link) {
-            _this2.selectTab(anchorEl, true);
-          }
-          // Otherwise, collapse everything
-          else {
-            _this2._collapse();
-          }
-
-          // Roll up a little to show the titles
-          if (_this2.options.deepLinkSmudge) {
-            var offsetTop = _this2.$element.getBoundingClientRect().top + window.pageYOffset;
-            _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
-              scrollTop: offsetTop - _this2.options.deepLinkSmudgeOffset
-            }, _this2.options.deepLinkSmudgeDelay);
-          }
-
-          /**
-           * Fires when the plugin has deeplinked at pageload
-           * @event Tabs#deeplink
-           */
-          // S8: real, bubbling CustomEvent - native listeners receive it
-          // directly, still-on-jQuery listeners through the real-event
-          // pass-through (the forwarded $link/$anchor ride in
-          // event.originalEvent.detail for them).
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(_this2.$element, 'deeplink.zf.tabs', [link, anchorEl]);
-        }
-      };
-
-      //use browser to open a tab, if it exists in this tabset
-      if (this.options.deepLink) {
-        this._checkDeepLink();
+      if (!isActive) {
+        tabContent.setAttribute('aria-hidden', 'true');
       }
-      this._events();
-      this._isInitializing = false;
-    }
-
-    /**
-     * Adds event handlers for items within the tabs.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      this._addKeyHandler();
-      this._addClickHandler();
-      this._setHeightMqHandler = null;
-      if (this.options.matchHeight) {
-        this._setHeightMqHandler = this._setHeight.bind(this);
-
-        // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
-        // bubbling window event on the native layer now, so this consumer
-        // binds there (equalizer/responsiveToggle/responsiveMenu/
-        // responsiveAccordionTabs/offcanvas all flipped with the producer in
-        // the same move).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, 'changed.zf.mediaquery', this._setHeightMqHandler);
-      }
-      if (this.options.deepLink) {
-        // S8: the deep-link hashchange moves to the native event layer under
-        // the per-instance namespace shape introduced for Reveal's hashchange,
-        // so the destroy path can drop it precisely. Real hashchange events are
-        // unaffected by the namespace.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, "hashchange.zf.tabs:".concat(this.id), this._checkDeepLink);
-      }
-    }
-
-    /**
-     * Adds click handlers for items within the tabs.
-     * @private
-     */
-  }, {
-    key: "_addClickHandler",
-    value: function _addClickHandler() {
-      var _this = this;
-
-      // S8: the delegated click consumer flips to the native event layer. Its
-      // producers are real user clicks only (the keyboard flow calls
-      // _handleTabChange directly), so this half can move alone; inside the
-      // handler `this` is the matched title element, like jQuery's delegation.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'click.zf.tabs');
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.delegate(this.$element, 'click.zf.tabs', ".".concat(this.options.linkClass), function (e) {
-        e.preventDefault();
-        _this._handleTabChange(this);
-      });
-    }
-
-    /**
-     * Adds keyboard event handlers for items within the tabs.
-     * @private
-     */
-  }, {
-    key: "_addKeyHandler",
-    value: function _addKeyHandler() {
-      var _this = this;
-
-      // 7.0 line A terminal form: the keydown listener runs on the native
-      // event layer (the coarse suite's mocks dispatch real KeyboardEvents
-      // since the S16 migration, so the old jQuery-pass-through reason is
-      // gone). The listener binds on every title, like the collection-wide
-      // .on() did.
-      this.$tabTitles.forEach(function (title) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(title, 'keydown.zf.tabs');
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(title, 'keydown.zf.tabs', function (e) {
-          if (e.which === 9) return;
-          var elements = Array.from(this.parentElement.children),
-            prevElement,
-            nextElement,
-            i = elements.indexOf(this);
-          if (_this.options.wrapOnKeys) {
-            prevElement = i === 0 ? elements[elements.length - 1] : elements[i - 1];
-            nextElement = i === elements.length - 1 ? elements[0] : elements[i + 1];
-          } else {
-            prevElement = elements[Math.max(0, i - 1)];
-            nextElement = elements[Math.min(i + 1, elements.length - 1)];
+      if (isActive && _this.options.autoFocus) {
+        _this.onLoadListener = (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__.onLoad)(window, function () {
+          // A load callback can land after destroy() nulled the instance
+          // state (the S6 slider guard pattern).
+          if (!_this.$element) {
+            return;
           }
-          var element = this;
-          // handle keyboard event with keyboard util
-          _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Tabs', {
-            open: function open() {
-              element.querySelector('[role="tab"]').focus();
-              _this._handleTabChange(element);
-            },
-            previous: function previous() {
-              prevElement.querySelector('[role="tab"]').focus();
-              _this._handleTabChange(prevElement);
-            },
-            next: function next() {
-              nextElement.querySelector('[role="tab"]').focus();
-              _this._handleTabChange(nextElement);
-            },
-            handled: function handled() {
-              e.preventDefault();
-            }
+          // fx 方案 A: the native page-scroll tween (SmoothScroll S7
+          // equivalence - one viewport tween, the callback once, ledger ②)
+          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
+            scrollTop: elem.getBoundingClientRect().top + window.pageYOffset
+          }, _this.options.deepLinkSmudgeDelay, null, () => {
+            link.focus();
           });
         });
-      }, this.$tabTitles);
+      }
+    });
+    if (this.options.matchHeight) {
+      var images = this.$tabContent ? this.$tabContent.querySelectorAll('img') : [];
+      if (images.length) {
+        (0,_foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_5__.onImagesLoaded)(images, this._setHeight.bind(this));
+      } else {
+        this._setHeight();
+      }
     }
 
-    /**
-     * Opens the tab `$targetContent` defined by `$target`. Collapses active tab.
-     * @param {jQuery} $target - Tab to open.
-     * @param {boolean} historyHandled - browser has already handled a history update
-     * @fires Tabs#change
-     * @function
-     */
-  }, {
-    key: "_handleTabChange",
-    value: function _handleTabChange(target, historyHandled) {
-      target = target.nodeType === 1 ? target : target[0];
-
-      // With `activeCollapse`, if the target is the active Tab, collapse it.
-      if (target.classList.contains("".concat(this.options.linkActiveClass))) {
-        if (this.options.activeCollapse) {
+    // Current context-bound function to open tabs on page load or history hashchange
+    this._checkDeepLink = () => {
+      var anchor = window.location.hash;
+      if (!anchor.length) {
+        // If we are still initializing and there is no anchor, then there is nothing to do
+        if (this._isInitializing) return;
+        // Otherwise, move to the initial anchor
+        if (this._initialAnchor) anchor = this._initialAnchor;
+      }
+      var anchorNoHash = anchor.indexOf('#') >= 0 ? anchor.slice(1) : anchor;
+      var anchorEl = anchorNoHash ? document.getElementById(anchorNoHash) : null;
+      var link = anchor ? this.$element.querySelector(`[href$="${anchor}"],[data-tabs-target="${anchorNoHash}"]`) : null;
+      // Whether the anchor element that has been found is part of this element
+      var isOwnAnchor = !!(anchorEl && link);
+      if (isOwnAnchor) {
+        // If there is an anchor for the hash, select it
+        if (anchorEl && link) {
+          this.selectTab(anchorEl, true);
+        }
+        // Otherwise, collapse everything
+        else {
           this._collapse();
         }
-        return;
-      }
-      var oldTab = this.$element.querySelector(".".concat(this.options.linkClass, ".").concat(this.options.linkActiveClass)),
-        tabLink = target.querySelector('[role="tab"]'),
-        targetName = tabLink.getAttribute('data-tabs-target'),
-        anchor = targetName && targetName.length ? "#".concat(targetName) : tabLink.hash,
-        targetContent = this.$tabContent.querySelector(anchor);
 
-      //close old tab
-      this._collapseTab(oldTab);
-
-      //open new tab
-      this._openTab(target);
-
-      //either replace or update browser history
-      if (this.options.deepLink && !historyHandled) {
-        if (this.options.updateHistory) {
-          history.pushState({}, '', location.pathname + location.search + anchor);
-        } else {
-          history.replaceState({}, '', location.pathname + location.search + anchor);
+        // Roll up a little to show the titles
+        if (this.options.deepLinkSmudge) {
+          var offsetTop = this.$element.getBoundingClientRect().top + window.pageYOffset;
+          _foundation_util_motion__WEBPACK_IMPORTED_MODULE_6__.Motion.animate(document.documentElement, {
+            scrollTop: offsetTop - this.options.deepLinkSmudgeOffset
+          }, this.options.deepLinkSmudgeDelay);
         }
-      }
-
-      /**
-       * Fires when the plugin has successfully changed tabs.
-       * @event Tabs#change
-       */
-      // 7.0 terminal form (the ruled detail sweep): the change production is
-      // a real, bubbling CustomEvent with the plain elements as parameters -
-      // the 6.x jQuery trigger delivered collections as trailing handler
-      // arguments; jQuery listeners on this real event read them from
-      // event.originalEvent.detail.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'change.zf.tabs', [target, targetContent]);
-
-      // S10 group flip: the mutateme forward is a real bubbling event.
-      var mutated = targetContent ? targetContent.querySelectorAll('[data-mutate]') : [];
-      for (var i = 0; i < mutated.length; i++) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
-      }
-    }
-
-    /**
-     * Opens the tab `$targetContent` defined by `$target`.
-     * @param {jQuery} $target - Tab to open.
-     * @function
-     */
-  }, {
-    key: "_openTab",
-    value: function _openTab(target) {
-      var tabLink = target.querySelector('[role="tab"]'),
-        hash = tabLink.getAttribute('data-tabs-target') || tabLink.hash.slice(1),
-        targetContent = this.$tabContent.querySelector("#".concat(hash));
-
-      // State/ARIA go through the native layer (7.0 line A, S8).
-      target.classList.add("".concat(this.options.linkActiveClass));
-      tabLink.setAttribute('aria-selected', 'true');
-      tabLink.setAttribute('tabindex', '0');
-      targetContent.classList.add("".concat(this.options.panelActiveClass));
-      targetContent.removeAttribute('aria-hidden');
-    }
-
-    /**
-     * Collapses `$targetContent` defined by `$target`.
-     * @param {jQuery} $target - Tab to collapse.
-     * @function
-     */
-  }, {
-    key: "_collapseTab",
-    value: function _collapseTab(target) {
-      target = target.nodeType === 1 ? target : target[0];
-      // State/ARIA go through the native layer (7.0 line A, S8).
-      var tabLink = target.querySelector('[role="tab"]');
-      target.classList.remove("".concat(this.options.linkActiveClass));
-      tabLink.setAttribute('aria-selected', 'false');
-      tabLink.setAttribute('tabindex', '-1');
-      var panel = document.getElementById(tabLink.getAttribute('aria-controls'));
-      if (panel) {
-        panel.classList.remove("".concat(this.options.panelActiveClass));
-        panel.setAttribute('aria-hidden', 'true');
-      }
-    }
-
-    /**
-     * Collapses the active Tab.
-     * @fires Tabs#collapse
-     * @function
-     */
-  }, {
-    key: "_collapse",
-    value: function _collapse() {
-      var activeTab = this.$element.querySelector(".".concat(this.options.linkClass, ".").concat(this.options.linkActiveClass));
-      if (activeTab) {
-        this._collapseTab(activeTab);
 
         /**
-        * Fires when the plugin has successfully collapsed tabs.
-        * @event Tabs#collapse
-        */
-        // S8: real, bubbling CustomEvent; the terminal form forwards the
-        // plain element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'collapse.zf.tabs', [activeTab]);
+         * Fires when the plugin has deeplinked at pageload
+         * @event Tabs#deeplink
+         */
+        // S8: real, bubbling CustomEvent - native listeners receive it
+        // directly, still-on-jQuery listeners through the real-event
+        // pass-through (the forwarded $link/$anchor ride in
+        // event.originalEvent.detail for them).
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'deeplink.zf.tabs', [link, anchorEl]);
       }
-    }
+    };
 
-    /**
-     * Public method for selecting a content pane to display.
-     * @param {jQuery | String} elem - jQuery object or string of the id of the pane to display.
-     * @param {boolean} historyHandled - browser has already handled a history update
-     * @function
-     */
-  }, {
-    key: "selectTab",
-    value: function selectTab(elem, historyHandled) {
-      var idStr, hashIdStr;
-      if (_typeof(elem) === 'object') {
-        // nodeType marks a real node: a native element arrives unwrapped
-        // (the 7.0 contract), a jQuery collection still needs the [0] head
-        idStr = elem.nodeType === 1 ? elem.id : elem[0].id;
+    //use browser to open a tab, if it exists in this tabset
+    if (this.options.deepLink) {
+      this._checkDeepLink();
+    }
+    this._events();
+    this._isInitializing = false;
+  }
+
+  /**
+   * Adds event handlers for items within the tabs.
+   * @private
+   */
+  _events() {
+    this._addKeyHandler();
+    this._addClickHandler();
+    this._setHeightMqHandler = null;
+    if (this.options.matchHeight) {
+      this._setHeightMqHandler = this._setHeight.bind(this);
+
+      // S13 flip: MediaQuery produces 'changed.zf.mediaquery' as a real
+      // bubbling window event on the native layer now, so this consumer
+      // binds there (equalizer/responsiveToggle/responsiveMenu/
+      // responsiveAccordionTabs/offcanvas all flipped with the producer in
+      // the same move).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, 'changed.zf.mediaquery', this._setHeightMqHandler);
+    }
+    if (this.options.deepLink) {
+      // S8: the deep-link hashchange moves to the native event layer under
+      // the per-instance namespace shape introduced for Reveal's hashchange,
+      // so the destroy path can drop it precisely. Real hashchange events are
+      // unaffected by the namespace.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(window, `hashchange.zf.tabs:${this.id}`, this._checkDeepLink);
+    }
+  }
+
+  /**
+   * Adds click handlers for items within the tabs.
+   * @private
+   */
+  _addClickHandler() {
+    var _this = this;
+
+    // S8: the delegated click consumer flips to the native event layer. Its
+    // producers are real user clicks only (the keyboard flow calls
+    // _handleTabChange directly), so this half can move alone; inside the
+    // handler `this` is the matched title element, like jQuery's delegation.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'click.zf.tabs');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.delegate(this.$element, 'click.zf.tabs', `.${this.options.linkClass}`, function (e) {
+      e.preventDefault();
+      _this._handleTabChange(this);
+    });
+  }
+
+  /**
+   * Adds keyboard event handlers for items within the tabs.
+   * @private
+   */
+  _addKeyHandler() {
+    var _this = this;
+
+    // 7.0 line A terminal form: the keydown listener runs on the native
+    // event layer (the coarse suite's mocks dispatch real KeyboardEvents
+    // since the S16 migration, so the old jQuery-pass-through reason is
+    // gone). The listener binds on every title, like the collection-wide
+    // .on() did.
+    this.$tabTitles.forEach(function (title) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(title, 'keydown.zf.tabs');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.on(title, 'keydown.zf.tabs', function (e) {
+        if (e.which === 9) return;
+        var elements = Array.from(this.parentElement.children),
+          prevElement,
+          nextElement,
+          i = elements.indexOf(this);
+        if (_this.options.wrapOnKeys) {
+          prevElement = i === 0 ? elements[elements.length - 1] : elements[i - 1];
+          nextElement = i === elements.length - 1 ? elements[0] : elements[i + 1];
+        } else {
+          prevElement = elements[Math.max(0, i - 1)];
+          nextElement = elements[Math.min(i + 1, elements.length - 1)];
+        }
+        var element = this;
+        // handle keyboard event with keyboard util
+        _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard.handleKey(e, 'Tabs', {
+          open: function () {
+            element.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(element);
+          },
+          previous: function () {
+            prevElement.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(prevElement);
+          },
+          next: function () {
+            nextElement.querySelector('[role="tab"]').focus();
+            _this._handleTabChange(nextElement);
+          },
+          handled: function () {
+            e.preventDefault();
+          }
+        });
+      });
+    }, this.$tabTitles);
+  }
+
+  /**
+   * Opens the tab `$targetContent` defined by `$target`. Collapses active tab.
+   * @param {jQuery} $target - Tab to open.
+   * @param {boolean} historyHandled - browser has already handled a history update
+   * @fires Tabs#change
+   * @function
+   */
+  _handleTabChange(target, historyHandled) {
+    target = target.nodeType === 1 ? target : target[0];
+
+    // With `activeCollapse`, if the target is the active Tab, collapse it.
+    if (target.classList.contains(`${this.options.linkActiveClass}`)) {
+      if (this.options.activeCollapse) {
+        this._collapse();
+      }
+      return;
+    }
+    var oldTab = this.$element.querySelector(`.${this.options.linkClass}.${this.options.linkActiveClass}`),
+      tabLink = target.querySelector('[role="tab"]'),
+      targetName = tabLink.getAttribute('data-tabs-target'),
+      anchor = targetName && targetName.length ? `#${targetName}` : tabLink.hash,
+      targetContent = this.$tabContent.querySelector(anchor);
+
+    //close old tab
+    this._collapseTab(oldTab);
+
+    //open new tab
+    this._openTab(target);
+
+    //either replace or update browser history
+    if (this.options.deepLink && !historyHandled) {
+      if (this.options.updateHistory) {
+        history.pushState({}, '', location.pathname + location.search + anchor);
       } else {
-        idStr = elem;
+        history.replaceState({}, '', location.pathname + location.search + anchor);
       }
-      if (idStr.indexOf('#') < 0) {
-        hashIdStr = "#".concat(idStr);
-      } else {
-        hashIdStr = idStr;
-        idStr = idStr.slice(1);
-      }
-
-      // jQuery's .has(): the titles CONTAINING a descendant matching
-      var target = this.$tabTitles.filter(function (title) {
-        return title.querySelector("[href$=\"".concat(hashIdStr, "\"],[data-tabs-target=\"").concat(idStr, "\"]"));
-      })[0];
-      this._handleTabChange(target, historyHandled);
-    }
-  }, {
-    key: "_setHeight",
-    value:
-    /**
-     * Sets the height of each panel to the height of the tallest panel.
-     * If enabled in options, gets called on media query change.
-     * If loading content via external source, can be called directly or with _reflow.
-     * If enabled with `data-match-height="true"`, tabs sets to equal height
-     * @function
-     * @private
-     */
-    function _setHeight() {
-      var max = 0,
-        _this = this; // Lock down the `this` value for the root tabs object
-
-      if (!this.$tabContent) {
-        return;
-      }
-      var panels = Array.from(this.$tabContent.querySelectorAll(".".concat(this.options.panelClass)));
-      panels.forEach(function (panel) {
-        panel.style.minHeight = '';
-        var isActive = panel.classList.contains("".concat(_this.options.panelActiveClass)); // get the options from the parent instead of trying to get them from the child
-
-        if (!isActive) {
-          panel.style.visibility = 'hidden';
-          panel.style.display = 'block';
-        }
-        var temp = panel.getBoundingClientRect().height;
-        if (!isActive) {
-          panel.style.visibility = '';
-          panel.style.display = '';
-        }
-        max = temp > max ? temp : max;
-      });
-      panels.forEach(function (panel) {
-        panel.style.minHeight = "".concat(max, "px");
-      });
     }
 
     /**
-     * Destroys an instance of tabs.
-     * @fires Tabs#destroyed
+     * Fires when the plugin has successfully changed tabs.
+     * @event Tabs#change
      */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // the 6.x destroy cleanup: hide the titles and panels
-      this.$element.querySelectorAll(".".concat(this.options.linkClass)).forEach(function (el) {
-        el.style.display = 'none';
-      });
-      this.$element.querySelectorAll(".".concat(this.options.panelClass)).forEach(function (el) {
-        el.style.display = 'none';
-      });
+    // 7.0 terminal form (the ruled detail sweep): the change production is
+    // a real, bubbling CustomEvent with the plain elements as parameters -
+    // the 6.x jQuery trigger delivered collections as trailing handler
+    // arguments; jQuery listeners on this real event read them from
+    // event.originalEvent.detail.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'change.zf.tabs', [target, targetContent]);
 
-      // the delegated click listener, the title keydown listeners and the
-      // deep-link hashchange go with their namespaces.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'click.zf.tabs');
-      this.$tabTitles.forEach(function (title) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(title, '.zf.tabs');
-      });
-      if (this.options.matchHeight) {
-        if (this._setHeightMqHandler != null) {
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, 'changed.zf.mediaquery', this._setHeightMqHandler); // S13 flip, see _events
-        }
+    // S10 group flip: the mutateme forward is a real bubbling event.
+    var mutated = targetContent ? targetContent.querySelectorAll('[data-mutate]') : [];
+    for (var i = 0; i < mutated.length; i++) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
+    }
+  }
+
+  /**
+   * Opens the tab `$targetContent` defined by `$target`.
+   * @param {jQuery} $target - Tab to open.
+   * @function
+   */
+  _openTab(target) {
+    var tabLink = target.querySelector('[role="tab"]'),
+      hash = tabLink.getAttribute('data-tabs-target') || tabLink.hash.slice(1),
+      targetContent = this.$tabContent.querySelector(`#${hash}`);
+
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    target.classList.add(`${this.options.linkActiveClass}`);
+    tabLink.setAttribute('aria-selected', 'true');
+    tabLink.setAttribute('tabindex', '0');
+    targetContent.classList.add(`${this.options.panelActiveClass}`);
+    targetContent.removeAttribute('aria-hidden');
+  }
+
+  /**
+   * Collapses `$targetContent` defined by `$target`.
+   * @param {jQuery} $target - Tab to collapse.
+   * @function
+   */
+  _collapseTab(target) {
+    target = target.nodeType === 1 ? target : target[0];
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    var tabLink = target.querySelector('[role="tab"]');
+    target.classList.remove(`${this.options.linkActiveClass}`);
+    tabLink.setAttribute('aria-selected', 'false');
+    tabLink.setAttribute('tabindex', '-1');
+    var panel = document.getElementById(tabLink.getAttribute('aria-controls'));
+    if (panel) {
+      panel.classList.remove(`${this.options.panelActiveClass}`);
+      panel.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  /**
+   * Collapses the active Tab.
+   * @fires Tabs#collapse
+   * @function
+   */
+  _collapse() {
+    var activeTab = this.$element.querySelector(`.${this.options.linkClass}.${this.options.linkActiveClass}`);
+    if (activeTab) {
+      this._collapseTab(activeTab);
+
+      /**
+      * Fires when the plugin has successfully collapsed tabs.
+      * @event Tabs#collapse
+      */
+      // S8: real, bubbling CustomEvent; the terminal form forwards the
+      // plain element.
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.trigger(this.$element, 'collapse.zf.tabs', [activeTab]);
+    }
+  }
+
+  /**
+   * Public method for selecting a content pane to display.
+   * @param {jQuery | String} elem - jQuery object or string of the id of the pane to display.
+   * @param {boolean} historyHandled - browser has already handled a history update
+   * @function
+   */
+  selectTab(elem, historyHandled) {
+    var idStr, hashIdStr;
+    if (typeof elem === 'object') {
+      // nodeType marks a real node: a native element arrives unwrapped
+      // (the 7.0 contract), a jQuery collection still needs the [0] head
+      idStr = elem.nodeType === 1 ? elem.id : elem[0].id;
+    } else {
+      idStr = elem;
+    }
+    if (idStr.indexOf('#') < 0) {
+      hashIdStr = `#${idStr}`;
+    } else {
+      hashIdStr = idStr;
+      idStr = idStr.slice(1);
+    }
+
+    // jQuery's .has(): the titles CONTAINING a descendant matching
+    var target = this.$tabTitles.filter(function (title) {
+      return title.querySelector(`[href$="${hashIdStr}"],[data-tabs-target="${idStr}"]`);
+    })[0];
+    this._handleTabChange(target, historyHandled);
+  }
+  /**
+   * Sets the height of each panel to the height of the tallest panel.
+   * If enabled in options, gets called on media query change.
+   * If loading content via external source, can be called directly or with _reflow.
+   * If enabled with `data-match-height="true"`, tabs sets to equal height
+   * @function
+   * @private
+   */
+  _setHeight() {
+    var max = 0,
+      _this = this; // Lock down the `this` value for the root tabs object
+
+    if (!this.$tabContent) {
+      return;
+    }
+    var panels = Array.from(this.$tabContent.querySelectorAll(`.${this.options.panelClass}`));
+    panels.forEach(function (panel) {
+      panel.style.minHeight = '';
+      var isActive = panel.classList.contains(`${_this.options.panelActiveClass}`); // get the options from the parent instead of trying to get them from the child
+
+      if (!isActive) {
+        panel.style.visibility = 'hidden';
+        panel.style.display = 'block';
       }
-      if (this.options.deepLink) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, "hashchange.zf.tabs:".concat(this.id));
+      var temp = panel.getBoundingClientRect().height;
+      if (!isActive) {
+        panel.style.visibility = '';
+        panel.style.display = '';
       }
-      if (this.onLoadListener) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+      max = temp > max ? temp : max;
+    });
+    panels.forEach(function (panel) {
+      panel.style.minHeight = `${max}px`;
+    });
+  }
+
+  /**
+   * Destroys an instance of tabs.
+   * @fires Tabs#destroyed
+   */
+  _destroy() {
+    // the 6.x destroy cleanup: hide the titles and panels
+    this.$element.querySelectorAll(`.${this.options.linkClass}`).forEach(function (el) {
+      el.style.display = 'none';
+    });
+    this.$element.querySelectorAll(`.${this.options.panelClass}`).forEach(function (el) {
+      el.style.display = 'none';
+    });
+
+    // the delegated click listener, the title keydown listeners and the
+    // deep-link hashchange go with their namespaces.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(this.$element, 'click.zf.tabs');
+    this.$tabTitles.forEach(function (title) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(title, '.zf.tabs');
+    });
+    if (this.options.matchHeight) {
+      if (this._setHeightMqHandler != null) {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, 'changed.zf.mediaquery', this._setHeightMqHandler); // S13 flip, see _events
       }
     }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_0__.Plugin);
+    if (this.options.deepLink) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, `hashchange.zf.tabs:${this.id}`);
+    }
+    if (this.onLoadListener) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_3__.Events.off(window, this.onLoadListener); // S4: onLoad registers on the native event layer
+    }
+  }
+}
 Tabs.defaults = {
   /**
    * Link the location hash to the active pane.
@@ -11851,11 +10797,11 @@ Tabs.defaults = {
 /*!**********************************!*\
   !*** ./js/foundation.toggler.js ***!
   \**********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Toggler: function() { return /* binding */ Toggler; }
+/* harmony export */   Toggler: () => (/* binding */ Toggler)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
 /* harmony import */ var _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.core.plugin */ "./js/foundation.core.plugin.js");
@@ -11863,19 +10809,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -11891,208 +10824,182 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
  * @requires foundation.util.events
  * @requires foundation.util.dom
  */
-var Toggler = /*#__PURE__*/function (_Plugin) {
-  function Toggler() {
-    _classCallCheck(this, Toggler);
-    return _callSuper(this, Toggler, arguments);
+
+class Toggler extends _foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.Plugin {
+  /**
+   * Creates a new instance of Toggler.
+   * @class
+   * @name Toggler
+   * @fires Toggler#init
+   * @param {Object} element - Element (7.0) or, in the mixed state, a jQuery object to add the trigger to.
+   * @param {Object} options - Overrides to the default plugin settings.
+   */
+  _setup(element, options) {
+    // 7.0 line A, slice S15: the plugin works on the native element; the
+    // jQuery collection the mixed-state reflow still feeds in is unwrapped.
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = Object.assign({}, Toggler.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
+    this.className = '';
+    this.className = 'Toggler'; // ie9 back compat
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_3__.Triggers.init();
+    this._init();
+    this._events();
   }
-  _inherits(Toggler, _Plugin);
-  return _createClass(Toggler, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of Toggler.
-     * @class
-     * @name Toggler
-     * @fires Toggler#init
-     * @param {Object} element - Element (7.0) or, in the mixed state, a jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    function _setup(element, options) {
-      // 7.0 line A, slice S15: the plugin works on the native element; the
-      // jQuery collection the mixed-state reflow still feeds in is unwrapped.
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = Object.assign({}, Toggler.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.datasetOptions)(this.$element), options);
-      this.className = '';
-      this.className = 'Toggler'; // ie9 back compat
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_3__.Triggers.init();
-      this._init();
-      this._events();
+  /**
+   * Initializes the Toggler plugin by parsing the toggle class from data-toggler, or animation classes from data-animate.
+   * @function
+   * @private
+   */
+  _init() {
+    // Collect triggers to set ARIA attributes to
+    var id = this.$element.id,
+      triggers = document.querySelectorAll(`[data-open~="${id}"], [data-close~="${id}"], [data-toggle~="${id}"]`);
+    var input;
+    // Parse animation classes if they were set
+    if (this.options.animate) {
+      input = this.options.animate.split(' ');
+      this.animationIn = input[0];
+      this.animationOut = input[1] || null;
+
+      // - aria-expanded: according to the element visibility.
+      //   (was `!this.$element.is(':hidden')`; Dom's visible() carries the
+      //   narrow display-based semantics decided for the 7.0 line, slice S1)
+      this._setTriggersExpanded(triggers, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(this.$element));
     }
-
-    /**
-     * Initializes the Toggler plugin by parsing the toggle class from data-toggler, or animation classes from data-animate.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      // Collect triggers to set ARIA attributes to
-      var id = this.$element.id,
-        triggers = document.querySelectorAll("[data-open~=\"".concat(id, "\"], [data-close~=\"").concat(id, "\"], [data-toggle~=\"").concat(id, "\"]"));
-      var input;
-      // Parse animation classes if they were set
-      if (this.options.animate) {
-        input = this.options.animate.split(' ');
-        this.animationIn = input[0];
-        this.animationOut = input[1] || null;
-
-        // - aria-expanded: according to the element visibility.
-        //   (was `!this.$element.is(':hidden')`; Dom's visible() carries the
-        //   narrow display-based semantics decided for the 7.0 line, slice S1)
-        this._setTriggersExpanded(triggers, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(this.$element));
+    // Otherwise, parse toggle class
+    else {
+      input = this.options.toggler;
+      if (typeof input !== 'string' || !input.length) {
+        throw new Error(`The 'toggler' option containing the target class is required, got "${input}"`);
       }
-      // Otherwise, parse toggle class
-      else {
-        input = this.options.toggler;
-        if (typeof input !== 'string' || !input.length) {
-          throw new Error("The 'toggler' option containing the target class is required, got \"".concat(input, "\""));
-        }
-        // Allow for a . at the beginning of the string
-        this.className = input[0] === '.' ? input.slice(1) : input;
+      // Allow for a . at the beginning of the string
+      this.className = input[0] === '.' ? input.slice(1) : input;
 
-        // - aria-expanded: according to the elements class set.
-        this._setTriggersExpanded(triggers, this.$element.classList.contains(this.className));
-      }
-
-      // - aria-controls: adding the element id to it if not already in it.
-      for (var i = 0; i < triggers.length; i++) {
-        var trigger = triggers[i];
-        var controls = trigger.getAttribute('aria-controls') || '';
-        var containsId = new RegExp("\\b".concat((0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.RegExpEscape)(id), "\\b")).test(controls);
-        if (!containsId) trigger.setAttribute('aria-controls', controls ? "".concat(controls, " ").concat(id) : id);
-      }
+      // - aria-expanded: according to the elements class set.
+      this._setTriggersExpanded(triggers, this.$element.classList.contains(this.className));
     }
 
-    /**
-     * Writes aria-expanded on every trigger element.
-     * @function
-     * @private
-     * @param {NodeList} triggers - the trigger elements to update.
-     * @param {Boolean} isOn - whether the toggler element is in the "on" state.
-     */
-  }, {
-    key: "_setTriggersExpanded",
-    value: function _setTriggersExpanded(triggers, isOn) {
-      for (var i = 0; i < triggers.length; i++) {
-        triggers[i].setAttribute('aria-expanded', isOn ? 'true' : 'false');
-      }
+    // - aria-controls: adding the element id to it if not already in it.
+    for (var i = 0; i < triggers.length; i++) {
+      var trigger = triggers[i];
+      var controls = trigger.getAttribute('aria-controls') || '';
+      const containsId = new RegExp(`\\b${(0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_2__.RegExpEscape)(id)}\\b`).test(controls);
+      if (!containsId) trigger.setAttribute('aria-controls', controls ? `${controls} ${id}` : id);
     }
+  }
 
-    /**
-     * Initializes events for the toggle trigger.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      // S4: both sides of the 'toggle.zf.trigger' seam are native now - the
-      // Triggers util dispatches through the Events layer, so this consumer
-      // listens there too. (jQuery-synthesized triggers no longer reach it:
-      // a jQuery trigger() never produces a real DOM event.)
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
+  /**
+   * Writes aria-expanded on every trigger element.
+   * @function
+   * @private
+   * @param {NodeList} triggers - the trigger elements to update.
+   * @param {Boolean} isOn - whether the toggler element is in the "on" state.
+   */
+  _setTriggersExpanded(triggers, isOn) {
+    for (var i = 0; i < triggers.length; i++) {
+      triggers[i].setAttribute('aria-expanded', isOn ? 'true' : 'false');
     }
+  }
 
-    /**
-     * Toggles the target class on the target element. An event is fired from the original trigger depending on if the resultant state was "on" or "off".
-     * @function
-     * @fires Toggler#on
-     * @fires Toggler#off
-     */
-  }, {
-    key: "toggle",
-    value: function toggle() {
-      this[this.options.animate ? '_toggleAnimate' : '_toggleClass']();
+  /**
+   * Initializes events for the toggle trigger.
+   * @function
+   * @private
+   */
+  _events() {
+    // S4: both sides of the 'toggle.zf.trigger' seam are native now - the
+    // Triggers util dispatches through the Events layer, so this consumer
+    // listens there too. (jQuery-synthesized triggers no longer reach it:
+    // a jQuery trigger() never produces a real DOM event.)
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.on(this.$element, 'toggle.zf.trigger', this.toggle.bind(this));
+  }
+
+  /**
+   * Toggles the target class on the target element. An event is fired from the original trigger depending on if the resultant state was "on" or "off".
+   * @function
+   * @fires Toggler#on
+   * @fires Toggler#off
+   */
+  toggle() {
+    this[this.options.animate ? '_toggleAnimate' : '_toggleClass']();
+  }
+  _toggleClass() {
+    var element = this.$element;
+    element.classList.toggle(this.className);
+    var isOn = element.classList.contains(this.className);
+    if (isOn) {
+      /**
+       * Fires if the target element has the class after a toggle.
+       * @event Toggler#on
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'on.zf.toggler');
+    } else {
+      /**
+       * Fires if the target element does not have the class after a toggle.
+       * @event Toggler#off
+       */
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'off.zf.toggler');
     }
-  }, {
-    key: "_toggleClass",
-    value: function _toggleClass() {
-      var element = this.$element;
-      element.classList.toggle(this.className);
-      var isOn = element.classList.contains(this.className);
-      if (isOn) {
-        /**
-         * Fires if the target element has the class after a toggle.
-         * @event Toggler#on
-         */
+    this._updateARIA(isOn);
+    this._triggerMutate();
+  }
+  _toggleAnimate() {
+    var _this = this,
+      element = this.$element;
+
+    // Mixed-state seam (7.0 line A, S3): Motion still runs on jQuery, so it
+    // is fed the jQuery object and its callback still arrives with jQuery
+    // conventions; only the events fired from the callback already go
+    // through the native Events layer.
+    if (!(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(element)) {
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.animateIn(this.$element, this.animationIn, function () {
+        _this._updateARIA(true);
         _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'on.zf.toggler');
-      } else {
-        /**
-         * Fires if the target element does not have the class after a toggle.
-         * @event Toggler#off
-         */
+        _this._triggerMutate();
+      });
+    } else {
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.animateOut(this.$element, this.animationOut, function () {
+        _this._updateARIA(false);
         _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'off.zf.toggler');
-      }
-      this._updateARIA(isOn);
-      this._triggerMutate();
+        _this._triggerMutate();
+      });
     }
-  }, {
-    key: "_toggleAnimate",
-    value: function _toggleAnimate() {
-      var _this = this,
-        element = this.$element;
+  }
+  _updateARIA(isOn) {
+    var id = this.$element.id;
+    var triggers = document.querySelectorAll(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`);
+    this._setTriggersExpanded(triggers, isOn);
+  }
 
-      // Mixed-state seam (7.0 line A, S3): Motion still runs on jQuery, so it
-      // is fed the jQuery object and its callback still arrives with jQuery
-      // conventions; only the events fired from the callback already go
-      // through the native Events layer.
-      if (!(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_5__.visible)(element)) {
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.animateIn(this.$element, this.animationIn, function () {
-          _this._updateARIA(true);
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'on.zf.toggler');
-          _this._triggerMutate();
-        });
-      } else {
-        _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.animateOut(this.$element, this.animationOut, function () {
-          _this._updateARIA(false);
-          _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(element, 'off.zf.toggler');
-          _this._triggerMutate();
-        });
-      }
+  /**
+   * Fires mutateme.zf.trigger on every [data-mutate] descendant, so other
+   * plugins can react to the toggled element changing.
+   * @function
+   * @private
+   */
+  _triggerMutate() {
+    var mutated = this.$element.querySelectorAll('[data-mutate]');
+    for (var i = 0; i < mutated.length; i++) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
     }
-  }, {
-    key: "_updateARIA",
-    value: function _updateARIA(isOn) {
-      var id = this.$element.id;
-      var triggers = document.querySelectorAll("[data-open=\"".concat(id, "\"], [data-close=\"").concat(id, "\"], [data-toggle=\"").concat(id, "\"]"));
-      this._setTriggersExpanded(triggers, isOn);
-    }
+  }
 
-    /**
-     * Fires mutateme.zf.trigger on every [data-mutate] descendant, so other
-     * plugins can react to the toggled element changing.
-     * @function
-     * @private
-     */
-  }, {
-    key: "_triggerMutate",
-    value: function _triggerMutate() {
-      var mutated = this.$element.querySelectorAll('[data-mutate]');
-      for (var i = 0; i < mutated.length; i++) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.trigger(mutated[i], 'mutateme.zf.trigger');
-      }
-    }
-
-    /**
-     * Destroys the instance of Toggler on the element.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      // Native side: the toggle.zf.trigger seam listener and every other
-      // listener this plugin registered through the Events layer are dropped
-      // by the bare-namespace form in one call. (The 6.x jQuery-side
-      // `off('.zf.toggler')` line died with this file's jQuery import: the
-      // plugin registers nothing on the jQuery side anymore.)
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, '.zf.toggler');
-    }
-  }]);
-}(_foundation_core_plugin__WEBPACK_IMPORTED_MODULE_1__.Plugin);
+  /**
+   * Destroys the instance of Toggler on the element.
+   * @function
+   */
+  _destroy() {
+    // Native side: the toggle.zf.trigger seam listener and every other
+    // listener this plugin registered through the Events layer are dropped
+    // by the bare-namespace form in one call. (The 6.x jQuery-side
+    // `off('.zf.toggler')` line died with this file's jQuery import: the
+    // plugin registers nothing on the jQuery side anymore.)
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_4__.Events.off(this.$element, '.zf.toggler');
+  }
+}
 Toggler.defaults = {
   /**
    * Class of the element to toggle. It can be provided with or without "."
@@ -12116,11 +11023,11 @@ Toggler.defaults = {
 /*!**********************************!*\
   !*** ./js/foundation.tooltip.js ***!
   \**********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Tooltip: function() { return /* binding */ Tooltip; }
+/* harmony export */   Tooltip: () => (/* binding */ Tooltip)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
@@ -12130,22 +11037,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foundation.util.triggers */ "./js/foundation.util.triggers.js");
 /* harmony import */ var _foundation_positionable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foundation.positionable */ "./js/foundation.positionable.js");
 /* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _superPropGet(t, e, o, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), e, o); return 2 & r && "function" == typeof p ? function (t) { return p.apply(o, t); } : p; }
-function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
-function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
 
@@ -12169,346 +11060,314 @@ function parseTemplate(html) {
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.triggers
  */
-var Tooltip = /*#__PURE__*/function (_Positionable) {
-  function Tooltip() {
-    _classCallCheck(this, Tooltip);
-    return _callSuper(this, Tooltip, arguments);
+
+class Tooltip extends _foundation_positionable__WEBPACK_IMPORTED_MODULE_6__.Positionable {
+  /**
+   * Creates a new instance of a Tooltip.
+   * @class
+   * @name Tooltip
+   * @fires Tooltip#init
+   * @param {jQuery} element - jQuery object to attach a tooltip to.
+   * @param {Object} options - object to extend the default configuration.
+   */
+  _setup(element, options) {
+    // Mixed state (7.0 line A, S16): the constructor takes the native element
+    // the 7.0 contract carries as well as the jQuery collection the mixed-state
+    // reflow still feeds in; internals keep the collection until this file is
+    // migrated off jQuery.
+    // 7.0 line A terminal form: the element (either constructor shape).
+    this.$element = element.nodeType === 1 ? element : element[0];
+    this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_1__.deepMerge)({}, Tooltip.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_1__.datasetOptions)(this.$element), options);
+    this.className = 'Tooltip'; // ie9 back compat
+
+    this.isActive = false;
+    this.isClick = false;
+
+    // Triggers init is idempotent, just need to make sure it is initialized
+    _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init();
+    this._init();
   }
-  _inherits(Tooltip, _Positionable);
-  return _createClass(Tooltip, [{
-    key: "_setup",
-    value:
-    /**
-     * Creates a new instance of a Tooltip.
-     * @class
-     * @name Tooltip
-     * @fires Tooltip#init
-     * @param {jQuery} element - jQuery object to attach a tooltip to.
-     * @param {Object} options - object to extend the default configuration.
-     */
-    function _setup(element, options) {
-      // Mixed state (7.0 line A, S16): the constructor takes the native element
-      // the 7.0 contract carries as well as the jQuery collection the mixed-state
-      // reflow still feeds in; internals keep the collection until this file is
-      // migrated off jQuery.
-      // 7.0 line A terminal form: the element (either constructor shape).
-      this.$element = element.nodeType === 1 ? element : element[0];
-      this.options = (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_1__.deepMerge)({}, Tooltip.defaults, (0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_1__.datasetOptions)(this.$element), options);
-      this.className = 'Tooltip'; // ie9 back compat
 
-      this.isActive = false;
-      this.isClick = false;
+  /**
+   * Initializes the tooltip by setting the creating the tip element, adding it's text, setting private variables and setting attributes on the anchor.
+   * @private
+   */
+  _init() {
+    _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__.MediaQuery._init();
+    var elemId = this.$element.getAttribute('aria-describedby') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, 'tooltip');
+    this.options.tipText = this.options.tipText || this.$element.getAttribute('title');
+    this.template = this.options.template ? parseTemplate(this.options.template) : this._buildTemplate(elemId);
 
-      // Triggers init is idempotent, just need to make sure it is initialized
-      _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_5__.Triggers.init($);
-      this._init();
+    // The element-local hide before positioning (the 6.x appendTo/hide).
+    document.body.appendChild(this.template);
+    if (this.options.allowHtml) {
+      this.template.innerHTML = this.options.tipText;
+    } else {
+      this.template.textContent = this.options.tipText;
     }
+    this.template.style.display = 'none';
+    this.$element.setAttribute('title', '');
+    this.$element.setAttribute('aria-describedby', elemId);
+    this.$element.setAttribute('data-yeti-box', elemId);
+    this.$element.setAttribute('data-toggle', elemId);
+    this.$element.setAttribute('data-resize', elemId);
+    this.$element.classList.add(this.options.triggerClass);
+    super._init();
+    this._events();
+  }
+  _getDefaultPosition() {
+    // handle legacy classnames
+    var elementClassName = this.$element.className;
+    if (this.$element instanceof SVGElement) {
+      elementClassName = elementClassName.baseVal;
+    }
+    var position = elementClassName.match(/\b(top|left|right|bottom)\b/g);
+    return position ? position[0] : 'top';
+  }
+  _getDefaultAlignment() {
+    return 'center';
+  }
+  _getHOffset() {
+    if (this.position === 'left' || this.position === 'right') {
+      return this.options.hOffset + this.options.tooltipWidth;
+    } else {
+      return this.options.hOffset;
+    }
+  }
+  _getVOffset() {
+    if (this.position === 'top' || this.position === 'bottom') {
+      return this.options.vOffset + this.options.tooltipHeight;
+    } else {
+      return this.options.vOffset;
+    }
+  }
 
-    /**
-     * Initializes the tooltip by setting the creating the tip element, adding it's text, setting private variables and setting attributes on the anchor.
-     * @private
-     */
-  }, {
-    key: "_init",
-    value: function _init() {
-      _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__.MediaQuery._init();
-      var elemId = this.$element.getAttribute('aria-describedby') || (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.GetYoDigits)(6, 'tooltip');
-      this.options.tipText = this.options.tipText || this.$element.getAttribute('title');
-      this.template = this.options.template ? parseTemplate(this.options.template) : this._buildTemplate(elemId);
+  /**
+   * builds the tooltip element, adds attributes, and returns the template.
+   * The element is created natively (7.0 line A, S8); the terminal form
+   * returns the element (the mixed state returned a jQuery collection).
+   * @private
+   */
+  _buildTemplate(id) {
+    var templateClasses = `${this.options.tooltipClass} ${this.options.templateClasses}`.trim();
+    var template = document.createElement('div');
+    template.className = templateClasses;
+    template.setAttribute('role', 'tooltip');
+    template.setAttribute('aria-hidden', 'true');
+    template.setAttribute('data-is-active', 'false');
+    template.setAttribute('data-is-focus', 'false');
+    template.setAttribute('id', id);
+    return template;
+  }
 
-      // The element-local hide before positioning (the 6.x appendTo/hide).
-      document.body.appendChild(this.template);
-      if (this.options.allowHtml) {
-        this.template.innerHTML = this.options.tipText;
-      } else {
-        this.template.textContent = this.options.tipText;
-      }
-      this.template.style.display = 'none';
-      this.$element.setAttribute('title', '');
-      this.$element.setAttribute('aria-describedby', elemId);
-      this.$element.setAttribute('data-yeti-box', elemId);
-      this.$element.setAttribute('data-toggle', elemId);
-      this.$element.setAttribute('data-resize', elemId);
-      this.$element.classList.add(this.options.triggerClass);
-      _superPropGet(Tooltip, "_init", this, 3)([]);
-      this._events();
-    }
-  }, {
-    key: "_getDefaultPosition",
-    value: function _getDefaultPosition() {
-      // handle legacy classnames
-      var elementClassName = this.$element.className;
-      if (this.$element instanceof SVGElement) {
-        elementClassName = elementClassName.baseVal;
-      }
-      var position = elementClassName.match(/\b(top|left|right|bottom)\b/g);
-      return position ? position[0] : 'top';
-    }
-  }, {
-    key: "_getDefaultAlignment",
-    value: function _getDefaultAlignment() {
-      return 'center';
-    }
-  }, {
-    key: "_getHOffset",
-    value: function _getHOffset() {
-      if (this.position === 'left' || this.position === 'right') {
-        return this.options.hOffset + this.options.tooltipWidth;
-      } else {
-        return this.options.hOffset;
-      }
-    }
-  }, {
-    key: "_getVOffset",
-    value: function _getVOffset() {
-      if (this.position === 'top' || this.position === 'bottom') {
-        return this.options.vOffset + this.options.tooltipHeight;
-      } else {
-        return this.options.vOffset;
-      }
-    }
+  /**
+   * sets the position class of an element and recursively calls itself until there are no more possible positions to attempt, or the tooltip element is no longer colliding.
+   * if the tooltip is larger than the screen width, default to full width - any user selected margin
+   * @private
+   */
+  _setPosition() {
+    // Seam (S8): the whole positioning block (Positionable + the Box util)
+    // still runs on jQuery objects - Box consumes and produces jQuery
+    // collections and is self-consistent, so the anchor/template pair is
+    // handed in as such and nothing here changes until the Box slice.
+    super._setPosition(this.$element, this.template);
+  }
 
-    /**
-     * builds the tooltip element, adds attributes, and returns the template.
-     * The element is created natively (7.0 line A, S8); the terminal form
-     * returns the element (the mixed state returned a jQuery collection).
-     * @private
-     */
-  }, {
-    key: "_buildTemplate",
-    value: function _buildTemplate(id) {
-      var templateClasses = "".concat(this.options.tooltipClass, " ").concat(this.options.templateClasses).trim();
-      var template = document.createElement('div');
-      template.className = templateClasses;
-      template.setAttribute('role', 'tooltip');
-      template.setAttribute('aria-hidden', 'true');
-      template.setAttribute('data-is-active', 'false');
-      template.setAttribute('data-is-focus', 'false');
-      template.setAttribute('id', id);
-      return template;
+  /**
+   * reveals the tooltip, and fires an event to close any other open tooltips on the page
+   * @fires Tooltip#closeme
+   * @fires Tooltip#show
+   * @function
+   */
+  show() {
+    if (this.options.showOn !== 'all' && !_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__.MediaQuery.is(this.options.showOn)) {
+      // console.error('The screen is too small to display this tooltip');
+      return false;
     }
+    var _this = this;
+    this.template.style.visibility = 'hidden';
+    // .show() native form: clear the inline none, fall back to block
+    this.template.style.display = '';
+    if (window.getComputedStyle(this.template).display === 'none') {
+      this.template.style.display = 'block';
+    }
+    this._setPosition();
+    this.template.classList.remove('top', 'bottom', 'left', 'right');
+    this.template.classList.add(this.position);
+    this.template.classList.remove('align-top', 'align-bottom', 'align-left', 'align-right', 'align-center');
+    this.template.classList.add('align-' + this.alignment);
 
     /**
-     * sets the position class of an element and recursively calls itself until there are no more possible positions to attempt, or the tooltip element is no longer colliding.
-     * if the tooltip is larger than the screen width, default to full width - any user selected margin
-     * @private
+     * Fires to close all other open tooltips on the page
+     * @event Closeme#tooltip
      */
-  }, {
-    key: "_setPosition",
-    value: function _setPosition() {
-      // Seam (S8): the whole positioning block (Positionable + the Box util)
-      // still runs on jQuery objects - Box consumes and produces jQuery
-      // collections and is self-consistent, so the anchor/template pair is
-      // handed in as such and nothing here changes until the Box slice.
-      _superPropGet(Tooltip, "_setPosition", this, 3)([this.$element, this.template]);
-    }
+    // S13: the closeme production flipped with the Triggers listener -
+    // a real, bubbling event whose detail carries the plugin id.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'closeme.zf.tooltip', [this.template.id]);
 
+    // State/ARIA go through the native layer (7.0 line A, S8).
+    this.template.setAttribute('data-is-active', 'true');
+    this.template.setAttribute('aria-hidden', 'false');
+    _this.isActive = true;
+    // fx 方案 A: the fade tween runs on Motion's native primitive (the
+    // stop-in-place, the hide reset and the visibility clear keep the 6.x
+    // ordering).
+    const templateEl = this.template;
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.stop(templateEl);
+    templateEl.style.display = 'none';
+    templateEl.style.visibility = '';
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.fadeIn(templateEl, this.options.fadeInDuration, function () {
+      //maybe do stuff?
+    });
     /**
-     * reveals the tooltip, and fires an event to close any other open tooltips on the page
-     * @fires Tooltip#closeme
-     * @fires Tooltip#show
-     * @function
+     * Fires when the tooltip is shown
+     * @event Tooltip#show
      */
-  }, {
-    key: "show",
-    value: function show() {
-      if (this.options.showOn !== 'all' && !_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_3__.MediaQuery.is(this.options.showOn)) {
-        // console.error('The screen is too small to display this tooltip');
-        return false;
-      }
-      var _this = this;
-      this.template.style.visibility = 'hidden';
-      // .show() native form: clear the inline none, fall back to block
-      this.template.style.display = '';
-      if (window.getComputedStyle(this.template).display === 'none') {
-        this.template.style.display = 'block';
-      }
-      this._setPosition();
-      this.template.classList.remove('top', 'bottom', 'left', 'right');
-      this.template.classList.add(this.position);
-      this.template.classList.remove('align-top', 'align-bottom', 'align-left', 'align-right', 'align-center');
-      this.template.classList.add('align-' + this.alignment);
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'show.zf.tooltip');
+  }
 
-      /**
-       * Fires to close all other open tooltips on the page
-       * @event Closeme#tooltip
-       */
-      // S13: the closeme production flipped with the Triggers listener -
-      // a real, bubbling event whose detail carries the plugin id.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'closeme.zf.tooltip', [this.template.id]);
+  /**
+   * Hides the current tooltip, and resets the positioning class if it was changed due to collision
+   * @fires Tooltip#hide
+   * @function
+   */
+  hide() {
+    var _this = this;
+    // State/ARIA native; fx 方案 A, see show().
+    this.template.setAttribute('aria-hidden', 'true');
+    this.template.setAttribute('data-is-active', 'false');
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.stop(this.template);
+    _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.fadeOut(this.template, this.options.fadeOutDuration, function () {
+      _this.isActive = false;
+      _this.isClick = false;
+    });
+    /**
+     * fires when the tooltip is hidden
+     * @event Tooltip#hide
+     */
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'hide.zf.tooltip');
+  }
 
-      // State/ARIA go through the native layer (7.0 line A, S8).
-      this.template.setAttribute('data-is-active', 'true');
-      this.template.setAttribute('aria-hidden', 'false');
-      _this.isActive = true;
-      // fx 方案 A: the fade tween runs on Motion's native primitive (the
-      // stop-in-place, the hide reset and the visibility clear keep the 6.x
-      // ordering).
-      var templateEl = this.template;
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.stop(templateEl);
-      templateEl.style.display = 'none';
-      templateEl.style.visibility = '';
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.fadeIn(templateEl, this.options.fadeInDuration, function () {
-        //maybe do stuff?
+  /**
+   * adds event listeners for the tooltip and its anchor
+   * TODO combine some of the listeners like focus and mouseenter, etc.
+   * @private
+   */
+  _events() {
+    const _this = this;
+    const element = this.$element;
+    const hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined';
+    var isFocus = false;
+
+    // `disableForTouch: Fully disable the tooltip on touch devices
+    if (hasTouch && this.options.disableForTouch) return;
+    if (!this.options.disableHover) {
+      // S8: hover/focus/click consumers flip to the native event layer -
+      // mouseenter/mouseleave/mousedown/focus/focusout are real DOM events
+      // and reach these listeners directly (still-on-jQuery synthetic
+      // producers like `$(el).trigger('mouseenter')` do not, by design).
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mouseenter.zf.tooltip', function () {
+        if (!_this.isActive) {
+          _this.timeout = setTimeout(function () {
+            _this.show();
+          }, _this.options.hoverDelay);
+        }
       });
-      /**
-       * Fires when the tooltip is shown
-       * @event Tooltip#show
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'show.zf.tooltip');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mouseleave.zf.tooltip', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.ignoreMousedisappear)(function () {
+        clearTimeout(_this.timeout);
+        if (!isFocus || _this.isClick && !_this.options.clickOpen) {
+          _this.hide();
+        }
+      }));
     }
-
-    /**
-     * Hides the current tooltip, and resets the positioning class if it was changed due to collision
-     * @fires Tooltip#hide
-     * @function
-     */
-  }, {
-    key: "hide",
-    value: function hide() {
-      var _this = this;
-      // State/ARIA native; fx 方案 A, see show().
-      this.template.setAttribute('aria-hidden', 'true');
-      this.template.setAttribute('data-is-active', 'false');
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.stop(this.template);
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion.fadeOut(this.template, this.options.fadeOutDuration, function () {
-        _this.isActive = false;
-        _this.isClick = false;
+    if (hasTouch) {
+      // S13: the tap/touchend consumer flips with the Touch util - 'tap' is
+      // a real, bubbling event on the touched element now. The anchor itself
+      // has no tap listener outside this binding, so arming the document
+      // touch chain (Touch.init, idempotent) covers it.
+      _foundation_util_touch__WEBPACK_IMPORTED_MODULE_4__.Touch.init();
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'tap.zf.tooltip touchend.zf.tooltip', function () {
+        _this.isActive ? _this.hide() : _this.show();
       });
-      /**
-       * fires when the tooltip is hidden
-       * @event Tooltip#hide
-       */
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this.$element, 'hide.zf.tooltip');
     }
-
-    /**
-     * adds event listeners for the tooltip and its anchor
-     * TODO combine some of the listeners like focus and mouseenter, etc.
-     * @private
-     */
-  }, {
-    key: "_events",
-    value: function _events() {
-      var _this = this;
-      var element = this.$element;
-      var hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined';
-      var isFocus = false;
-
-      // `disableForTouch: Fully disable the tooltip on touch devices
-      if (hasTouch && this.options.disableForTouch) return;
-      if (!this.options.disableHover) {
-        // S8: hover/focus/click consumers flip to the native event layer -
-        // mouseenter/mouseleave/mousedown/focus/focusout are real DOM events
-        // and reach these listeners directly (still-on-jQuery synthetic
-        // producers like `$(el).trigger('mouseenter')` do not, by design).
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mouseenter.zf.tooltip', function () {
-          if (!_this.isActive) {
-            _this.timeout = setTimeout(function () {
-              _this.show();
-            }, _this.options.hoverDelay);
-          }
-        });
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mouseleave.zf.tooltip', (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.ignoreMousedisappear)(function () {
-          clearTimeout(_this.timeout);
-          if (!isFocus || _this.isClick && !_this.options.clickOpen) {
-            _this.hide();
-          }
-        }));
-      }
-      if (hasTouch) {
-        // S13: the tap/touchend consumer flips with the Touch util - 'tap' is
-        // a real, bubbling event on the touched element now. The anchor itself
-        // has no tap listener outside this binding, so arming the document
-        // touch chain (Touch.init, idempotent) covers it.
-        _foundation_util_touch__WEBPACK_IMPORTED_MODULE_4__.Touch.init();
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'tap.zf.tooltip touchend.zf.tooltip', function () {
-          _this.isActive ? _this.hide() : _this.show();
-        });
-      }
-      if (this.options.clickOpen) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mousedown.zf.tooltip', function () {
-          if (_this.isClick) {
-            //_this.hide();
-            // _this.isClick = false;
-          } else {
-            _this.isClick = true;
-            if ((_this.options.disableHover || !_this.$element.getAttribute('tabindex')) && !_this.isActive) {
-              _this.show();
-            }
-          }
-        });
-      } else {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mousedown.zf.tooltip', function () {
-          _this.isClick = true;
-        });
-      }
-
-      // S8: the close consumer flips to the native event layer - both
-      // producers there (the [data-close] delegation and the closeme
-      // broadcast) have dispatched real bubbling events since S4.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'close.zf.trigger', this.hide.bind(this));
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'focus.zf.tooltip', function () {
-        isFocus = true;
+    if (this.options.clickOpen) {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mousedown.zf.tooltip', function () {
         if (_this.isClick) {
-          // If we're not showing open on clicks, we need to pretend a click-launched focus isn't
-          // a real focus, otherwise on hover and come back we get bad behavior
-          if (!_this.options.clickOpen) {
-            isFocus = false;
-          }
-          return false;
+          //_this.hide();
+          // _this.isClick = false;
         } else {
-          _this.show();
+          _this.isClick = true;
+          if ((_this.options.disableHover || !_this.$element.getAttribute('tabindex')) && !_this.isActive) {
+            _this.show();
+          }
         }
       });
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'focusout.zf.tooltip', function () {
-        isFocus = false;
-        _this.isClick = false;
-        _this.hide();
-      });
-
-      // S8: the resizeme consumer flips to the native event layer (S4
-      // producer).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'resizeme.zf.trigger', function () {
-        if (_this.isActive) {
-          _this._setPosition();
-        }
+    } else {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'mousedown.zf.tooltip', function () {
+        _this.isClick = true;
       });
     }
 
-    /**
-     * adds a toggle method, in addition to the static show() & hide() functions
-     * @function
-     */
-  }, {
-    key: "toggle",
-    value: function toggle() {
-      if (this.isActive) {
-        this.hide();
+    // S8: the close consumer flips to the native event layer - both
+    // producers there (the [data-close] delegation and the closeme
+    // broadcast) have dispatched real bubbling events since S4.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'close.zf.trigger', this.hide.bind(this));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'focus.zf.tooltip', function () {
+      isFocus = true;
+      if (_this.isClick) {
+        // If we're not showing open on clicks, we need to pretend a click-launched focus isn't
+        // a real focus, otherwise on hover and come back we get bad behavior
+        if (!_this.options.clickOpen) {
+          isFocus = false;
+        }
+        return false;
       } else {
-        this.show();
+        _this.show();
       }
-    }
+    });
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'focusout.zf.tooltip', function () {
+      isFocus = false;
+      _this.isClick = false;
+      _this.hide();
+    });
 
-    /**
-     * Destroys an instance of tooltip, removes template element from the view.
-     * @function
-     */
-  }, {
-    key: "_destroy",
-    value: function _destroy() {
-      this.$element.setAttribute('title', this.template.textContent);
-      this.$element.classList.remove(this.options.triggerClass, 'top', 'right', 'left', 'bottom');
-      ['aria-describedby', 'data-disable-hover', 'data-resize', 'data-toggle', 'data-tooltip', 'data-yeti-box'].forEach(function (name) {
-        this.$element.removeAttribute(name);
-      }, this);
+    // S8: the resizeme consumer flips to the native event layer (S4
+    // producer).
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(element, 'resizeme.zf.trigger', function () {
+      if (_this.isActive) {
+        _this._setPosition();
+      }
+    });
+  }
 
-      // The flipped hover/focus/click/close/resizeme listeners.
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.tooltip');
-      this.template.remove();
+  /**
+   * adds a toggle method, in addition to the static show() & hide() functions
+   * @function
+   */
+  toggle() {
+    if (this.isActive) {
+      this.hide();
+    } else {
+      this.show();
     }
-  }]);
-}(_foundation_positionable__WEBPACK_IMPORTED_MODULE_6__.Positionable);
+  }
+
+  /**
+   * Destroys an instance of tooltip, removes template element from the view.
+   * @function
+   */
+  _destroy() {
+    this.$element.setAttribute('title', this.template.textContent);
+    this.$element.classList.remove(this.options.triggerClass, 'top', 'right', 'left', 'bottom');
+    ['aria-describedby', 'data-disable-hover', 'data-resize', 'data-toggle', 'data-tooltip', 'data-yeti-box'].forEach(function (name) {
+      this.$element.removeAttribute(name);
+    }, this);
+
+    // The flipped hover/focus/click/close/resizeme listeners.
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(this.$element, '.zf.trigger .zf.tooltip');
+    this.template.remove();
+  }
+}
 Tooltip.defaults = {
   /**
    * Time, in ms, before a tooltip should open on hover.
@@ -12679,11 +11538,11 @@ Tooltip.defaults = {
 /*!***********************************!*\
   !*** ./js/foundation.util.box.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Box: function() { return /* binding */ Box; }
+/* harmony export */   Box: () => (/* binding */ Box)
 /* harmony export */ });
 var Box = {
   ImNotTouchingYou: ImNotTouchingYou,
@@ -12861,20 +11720,20 @@ function GetExplicitOffsets(element, anchor, position, alignment, vOffset, hOffs
 /*!***********************************!*\
   !*** ./js/foundation.util.dom.js ***!
   \***********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   datasetOptions: function() { return /* binding */ datasetOptions; },
-/* harmony export */   deepMerge: function() { return /* binding */ deepMerge; },
-/* harmony export */   formControls: function() { return /* binding */ formControls; },
-/* harmony export */   isButton: function() { return /* binding */ isButton; },
-/* harmony export */   isCheckbox: function() { return /* binding */ isCheckbox; },
-/* harmony export */   isRadio: function() { return /* binding */ isRadio; },
-/* harmony export */   isReset: function() { return /* binding */ isReset; },
-/* harmony export */   isSubmit: function() { return /* binding */ isSubmit; },
-/* harmony export */   q: function() { return /* binding */ q; },
-/* harmony export */   visible: function() { return /* binding */ visible; }
+/* harmony export */   datasetOptions: () => (/* binding */ datasetOptions),
+/* harmony export */   deepMerge: () => (/* binding */ deepMerge),
+/* harmony export */   formControls: () => (/* binding */ formControls),
+/* harmony export */   isButton: () => (/* binding */ isButton),
+/* harmony export */   isCheckbox: () => (/* binding */ isCheckbox),
+/* harmony export */   isRadio: () => (/* binding */ isRadio),
+/* harmony export */   isReset: () => (/* binding */ isReset),
+/* harmony export */   isSubmit: () => (/* binding */ isSubmit),
+/* harmony export */   q: () => (/* binding */ q),
+/* harmony export */   visible: () => (/* binding */ visible)
 /* harmony export */ });
 /**
  * Thin DOM helpers for the jQuery-free plugin layer (7.0 line A, slice S1).
@@ -12907,7 +11766,7 @@ function q(sel, ctx) {
  * @returns {Boolean} true when the element is rendered by the display rules.
  */
 function visible(el) {
-  for (var node = el; node && node.nodeType === 1; node = node.parentNode) {
+  for (let node = el; node && node.nodeType === 1; node = node.parentNode) {
     if (window.getComputedStyle(node).display === 'none') {
       return false;
     }
@@ -12915,9 +11774,7 @@ function visible(el) {
   return true;
 }
 function camelCase(name) {
-  return name.replace(/-([a-z])/g, function (match, char) {
-    return char.toUpperCase();
-  });
+  return name.replace(/-([a-z])/g, (match, char) => char.toUpperCase());
 }
 
 // jQuery `.data()`'s value conversion (`getData` in its data module):
@@ -12957,11 +11814,11 @@ function convertData(value) {
  * @returns {Object} camelCased map of the element's data-* attributes.
  */
 function datasetOptions(el) {
-  var options = {};
+  const options = {};
   if (!el || el.nodeType !== 1) {
     return options;
   }
-  Array.from(el.attributes).forEach(function (attr) {
+  Array.from(el.attributes).forEach(attr => {
     if (attr.name.indexOf('data-') === 0) {
       options[camelCase(attr.name.slice(5))] = convertData(attr.value);
     }
@@ -13038,7 +11895,7 @@ function deepMerge(target) {
   for (var _len = arguments.length, sources = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     sources[_key - 1] = arguments[_key];
   }
-  sources.forEach(function (source) {
+  sources.forEach(source => {
     // jQuery skips null/undefined sources entirely.
     if (source == null) {
       return;
@@ -13054,22 +11911,22 @@ function deepMerge(target) {
     // parity with the jQuery loop - and the `__proto__` guard does the
     // pollution filtering the rule would otherwise ask for.)
     /* eslint-disable-next-line guard-for-in */
-    for (var key in source) {
-      var srcValue = source[key];
+    for (const key in source) {
+      const srcValue = source[key];
       // `undefined` source values are skipped (jQuery's copy !== undefined
       // guard), so an option can never be reset to undefined by omission.
       if (srcValue === undefined || key === '__proto__' || srcValue === target) {
         continue;
       }
       if (isPlainObjectish(srcValue)) {
-        var dstValue = target[key];
-        var srcIsArray = Array.isArray(srcValue);
+        const dstValue = target[key];
+        const srcIsArray = Array.isArray(srcValue);
         // jQuery descends only when the destination side carries the
         // matching kind: an array source merges by index into an array
         // destination, an object source into an object destination;
         // anything else (primitive, kind mismatch) starts from a fresh
         // carrier of the source's shape.
-        var mergeIntoDst = srcIsArray ? Array.isArray(dstValue) : !Array.isArray(dstValue) && isPlainObjectish(dstValue);
+        const mergeIntoDst = srcIsArray ? Array.isArray(dstValue) : !Array.isArray(dstValue) && isPlainObjectish(dstValue);
         target[key] = deepMerge(mergeIntoDst ? dstValue : srcIsArray ? [] : {}, srcValue);
       } else {
         // Primitives, functions, RegExps, DOM nodes: assigned as-is.
@@ -13087,11 +11944,11 @@ function deepMerge(target) {
 /*!**************************************!*\
   !*** ./js/foundation.util.events.js ***!
   \**************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Events: function() { return /* binding */ Events; }
+/* harmony export */   Events: () => (/* binding */ Events)
 /* harmony export */ });
 /**
  * Namespace-aware event layer for the jQuery-free plugin layer (7.0 line A,
@@ -13142,12 +11999,12 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 // Map<element, Map<type, { recs: Array<{ns, fn, invoke, once}>, dispatcher }>>
-var listenerTable = new Map();
+const listenerTable = new Map();
 
 // While a triggered event is calling the same-named native method
 // (trigger('focus') → el.focus()), the real DOM event that this produces is
 // swallowed once, like jQuery's "triggered" guard.
-var nativeEcho = null;
+let nativeEcho = null;
 function splitTypes(types) {
   return (types || '').match(/\S+/g) || [];
 }
@@ -13155,7 +12012,7 @@ function splitTypes(types) {
 // 'open.zf.toggler' → { type: 'open', ns: Set{'zf','toggler'} };
 // '.zf.toggler'     → { type: '',     ns: Set{'zf','toggler'} } (all types).
 function parseType(namespaced) {
-  var parts = namespaced.split('.');
+  const parts = namespaced.split('.');
   return {
     type: parts.shift(),
     ns: new Set(parts)
@@ -13170,16 +12027,14 @@ function nsMatch(queryNs, handlerNs) {
   if (queryNs.size === 0) {
     return true;
   }
-  var names = Array.from(queryNs);
-  return names.every(function (name) {
-    return handlerNs.has(name);
-  });
+  const names = Array.from(queryNs);
+  return names.every(name => handlerNs.has(name));
 }
 function nsString(ns) {
   return Array.from(ns).sort().join('.');
 }
 function getBucket(el, type, create) {
-  var byType = listenerTable.get(el);
+  let byType = listenerTable.get(el);
   if (!byType) {
     if (!create) {
       return null;
@@ -13187,7 +12042,7 @@ function getBucket(el, type, create) {
     byType = new Map();
     listenerTable.set(el, byType);
   }
-  var bucket = byType.get(type);
+  let bucket = byType.get(type);
   if (!bucket && create) {
     bucket = {
       recs: [],
@@ -13202,12 +12057,12 @@ function getBucket(el, type, create) {
 // on every dispatch so off() during dispatch behaves, and filters by the
 // namespaces carried on the event.
 function installDispatcher(el, type, bucket) {
-  var dispatcher = function dispatcher(event) {
+  const dispatcher = function (event) {
     if (nativeEcho === type) {
       nativeEcho = null;
       return;
     }
-    var result = runHandlers(el, bucket.recs, event, nsOf(event), event.detail || []);
+    const result = runHandlers(el, bucket.recs, event, nsOf(event), event.detail || []);
     // The dispatch is synchronous, so the triggerHandler caller can read
     // the run's result back off the event object (jQuery's event.result).
     if (result !== undefined) {
@@ -13222,7 +12077,7 @@ function removeBucket(el, type, bucket) {
     return;
   }
   el.removeEventListener(type, bucket.dispatcher);
-  var byType = listenerTable.get(el);
+  const byType = listenerTable.get(el);
   if (!byType) {
     return;
   }
@@ -13244,8 +12099,8 @@ function nsOf(event) {
 // an own property keeps the native behavior (the original is still called).
 function immediateChecker(event) {
   if (!event.zfImmediateStopped) {
-    var stopped = false;
-    var original = event.stopImmediatePropagation;
+    let stopped = false;
+    const original = event.stopImmediatePropagation;
     event.stopImmediatePropagation = function () {
       stopped = true;
       if (typeof original === 'function') {
@@ -13262,20 +12117,20 @@ function immediateChecker(event) {
 // Runs the matching handlers for one dispatch. Returns the last non-undefined
 // result (jQuery's event.result).
 function runHandlers(el, recs, event, queryNs, args) {
-  var result;
-  var immediateStopped = immediateChecker(event);
+  let result;
+  const immediateStopped = immediateChecker(event);
   // Snapshot: handlers added during dispatch don't run in it; removed ones do
   // (they were already queued) — matches the jQuery handler queue.
-  var queue = recs.slice();
-  for (var i = 0; i < queue.length; i++) {
+  const queue = recs.slice();
+  for (let i = 0; i < queue.length; i++) {
     if (immediateStopped()) {
       break;
     }
-    var rec = queue[i];
+    const rec = queue[i];
     if (!nsMatch(queryNs, rec.ns)) {
       continue;
     }
-    var ret = rec.invoke(event, args);
+    const ret = rec.invoke(event, args);
     if (ret !== undefined) {
       result = ret;
       if (ret === false) {
@@ -13284,12 +12139,12 @@ function runHandlers(el, recs, event, queryNs, args) {
       }
     }
     if (rec.once) {
-      var at = recs.indexOf(rec);
+      const at = recs.indexOf(rec);
       if (at > -1) {
         recs.splice(at, 1);
       }
       if (recs.length === 0) {
-        var bucket = getBucket(el, rec.type);
+        const bucket = getBucket(el, rec.type);
         if (bucket) {
           removeBucket(el, rec.type, bucket);
         }
@@ -13299,10 +12154,10 @@ function runHandlers(el, recs, event, queryNs, args) {
   return result;
 }
 function makeRec(el, type, ns, fn, options) {
-  var rec = {
-    type: type,
-    ns: ns,
-    fn: fn,
+  const rec = {
+    type,
+    ns,
+    fn,
     once: !!(options && options.once),
     invoke: null
   };
@@ -13311,11 +12166,11 @@ function makeRec(el, type, ns, fn, options) {
     // the selector, searched upward from the event target but never escaping
     // the delegation root (jQuery's delegate walk).
     rec.invoke = function (event, args) {
-      var target = event.target;
+      const target = event.target;
       if (!target || typeof target.closest !== 'function') {
         return undefined;
       }
-      var match = target.closest(options.selector);
+      const match = target.closest(options.selector);
       if (!match || match !== el && !el.contains(match)) {
         return undefined;
       }
@@ -13329,9 +12184,9 @@ function makeRec(el, type, ns, fn, options) {
   return rec;
 }
 function on(el, types, fn) {
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
-    var bucket = getBucket(el, parsed.type, true);
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
+    const bucket = getBucket(el, parsed.type, true);
     if (!bucket.dispatcher) {
       installDispatcher(el, parsed.type, bucket);
     }
@@ -13340,9 +12195,9 @@ function on(el, types, fn) {
   return el;
 }
 function one(el, types, fn) {
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
-    var bucket = getBucket(el, parsed.type, true);
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
+    const bucket = getBucket(el, parsed.type, true);
     if (!bucket.dispatcher) {
       installDispatcher(el, parsed.type, bucket);
     }
@@ -13356,35 +12211,35 @@ function one(el, types, fn) {
 // Delegated listener on a root (typically the document), covering the
 // `[data-toggle]` document-level delegation of the Triggers util.
 function delegate(root, types, selector, fn) {
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
-    var bucket = getBucket(root, parsed.type, true);
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
+    const bucket = getBucket(root, parsed.type, true);
     if (!bucket.dispatcher) {
       installDispatcher(root, parsed.type, bucket);
     }
     bucket.recs.push(makeRec(root, parsed.type, parsed.ns, fn, {
-      selector: selector
+      selector
     }));
   });
   return root;
 }
 function off(el, types, fn) {
-  var byType = listenerTable.get(el);
+  const byType = listenerTable.get(el);
   if (!byType) {
     return el;
   }
   if (types == null) {
     // off(): everything on the element.
-    Array.from(byType.keys()).forEach(function (type) {
+    Array.from(byType.keys()).forEach(type => {
       off(el, type, fn);
     });
     return el;
   }
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
     if (parsed.type === '') {
       // Bare namespace ('.zf.toggler'): every type on the element.
-      Array.from(byType.keys()).forEach(function (type) {
+      Array.from(byType.keys()).forEach(type => {
         removeMatching(el, type, parsed.ns, fn);
       });
     } else {
@@ -13394,12 +12249,12 @@ function off(el, types, fn) {
   return el;
 }
 function removeMatching(el, type, queryNs, fn) {
-  var bucket = getBucket(el, type);
+  const bucket = getBucket(el, type);
   if (!bucket) {
     return;
   }
-  bucket.recs = bucket.recs.filter(function (rec) {
-    var match = (!fn || rec.fn === fn) && nsMatch(queryNs, rec.ns);
+  bucket.recs = bucket.recs.filter(rec => {
+    const match = (!fn || rec.fn === fn) && nsMatch(queryNs, rec.ns);
     return !match;
   });
   if (bucket.recs.length === 0) {
@@ -13413,13 +12268,13 @@ function removeMatching(el, type, queryNs, fn) {
 // final form = native Element, to be switched uniformly in the line-A
 // wrap-up slice.
 function trigger(el, types, params) {
-  var args = params == null ? [] : Array.isArray(params) ? params : [params];
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
+  const args = params == null ? [] : Array.isArray(params) ? params : [params];
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
     if (!parsed.type) {
       return;
     }
-    var event = new CustomEvent(parsed.type, {
+    const event = new CustomEvent(parsed.type, {
       bubbles: true,
       cancelable: true,
       detail: args
@@ -13450,10 +12305,10 @@ function trigger(el, types, params) {
 // jQuery consumers is done by the callers that own the seam (Triggers util)
 // through jQuery's own filtered triggerHandler.
 function triggerHandler(el, types, params) {
-  var args = params == null ? [] : Array.isArray(params) ? params : [params];
-  var result;
-  splitTypes(types).forEach(function (namespaced) {
-    var parsed = parseType(namespaced);
+  const args = params == null ? [] : Array.isArray(params) ? params : [params];
+  let result;
+  splitTypes(types).forEach(namespaced => {
+    const parsed = parseType(namespaced);
     if (!parsed.type) {
       return;
     }
@@ -13464,7 +12319,7 @@ function triggerHandler(el, types, params) {
     // every table hear it, ancestors and other elements do not - the rest
     // of the jQuery semantics (no bubbling, no native-method shortcut,
     // handler `false` still prevents the default).
-    var event = new CustomEvent(parsed.type, {
+    const event = new CustomEvent(parsed.type, {
       bubbles: false,
       cancelable: true,
       detail: args
@@ -13475,13 +12330,13 @@ function triggerHandler(el, types, params) {
   });
   return result;
 }
-var Events = {
-  on: on,
-  one: one,
-  off: off,
-  delegate: delegate,
-  trigger: trigger,
-  triggerHandler: triggerHandler
+const Events = {
+  on,
+  one,
+  off,
+  delegate,
+  trigger,
+  triggerHandler
 };
 
 
@@ -13491,11 +12346,11 @@ var Events = {
 /*!*******************************************!*\
   !*** ./js/foundation.util.imageLoader.js ***!
   \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   onImagesLoaded: function() { return /* binding */ onImagesLoaded; }
+/* harmony export */   onImagesLoaded: () => (/* binding */ onImagesLoaded)
 /* harmony export */ });
 /**
  * Runs a callback function when images are fully loaded.
@@ -13505,7 +12360,7 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Func} callback - Function to execute when image is fully loaded.
  */
 function onImagesLoaded(images, callback) {
-  var list = images && images.nodeType === 1 ? [images] : Array.from(images || []);
+  const list = images && images.nodeType === 1 ? [images] : Array.from(images || []);
   var unloaded = list.length;
   if (unloaded === 0) {
     callback();
@@ -13521,17 +12376,17 @@ function onImagesLoaded(images, callback) {
       // guard makes the pair idempotent (jQuery's `.one` + `.off` shape:
       // only one of the two events fires the handler).
       var settled = false;
-      var _handler = function handler() {
+      var handler = function () {
         if (settled) {
           return;
         }
         settled = true;
-        image.removeEventListener('load', _handler);
-        image.removeEventListener('error', _handler);
+        image.removeEventListener('load', handler);
+        image.removeEventListener('error', handler);
         singleImageLoaded();
       };
-      image.addEventListener('load', _handler);
-      image.addEventListener('error', _handler);
+      image.addEventListener('load', handler);
+      image.addEventListener('error', handler);
       image.src = img.getAttribute('src');
     }
   });
@@ -13550,21 +12405,15 @@ function onImagesLoaded(images, callback) {
 /*!****************************************!*\
   !*** ./js/foundation.util.keyboard.js ***!
   \****************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Keyboard: function() { return /* binding */ Keyboard; }
+/* harmony export */   Keyboard: () => (/* binding */ Keyboard)
 /* harmony export */ });
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 /* harmony import */ var _foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.dom */ "./js/foundation.util.dom.js");
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 /*******************************************
  *                                         *
  * This util was created by Marius Olbertz *
@@ -13576,7 +12425,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
 
 
-var keyCodes = {
+const keyCodes = {
   9: 'TAB',
   13: 'ENTER',
   27: 'ESCAPE',
@@ -13592,7 +12441,7 @@ var keyCodes = {
 // P3-2: real KeyboardEvents carry `key`; map it to the command names the
 // keyCode table produces. The keyCode/which fallback below stays for one
 // release (legacy synthetic events and the mock's non-mapped keys).
-var keyNames = {
+const keyNames = {
   'Tab': 'TAB',
   'Enter': 'ENTER',
   'Escape': 'ESCAPE',
@@ -13608,7 +12457,7 @@ var commands = {};
 
 // Focusable candidates, in DOM order (7.0 line A, S5: the 6.x implementation
 // ran the same selector through jQuery's `.find()`).
-var focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]';
+const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]';
 
 // Functions pulled out to be referenceable from internals
 // 7.0 line A terminal form: the return is the sorted native element array
@@ -13618,14 +12467,14 @@ function findFocusable(element) {
     return false;
   }
   // Accepts an element, a NodeList, an array or a jQuery collection.
-  var roots = Array.from(element.nodeType === 1 ? [element] : element);
-  var candidates = [];
-  roots.forEach(function (root) {
+  const roots = Array.from(element.nodeType === 1 ? [element] : element);
+  const candidates = [];
+  roots.forEach(root => {
     if (root && root.querySelectorAll) {
-      candidates.push.apply(candidates, _toConsumableArray(root.querySelectorAll(focusableSelector)));
+      candidates.push(...root.querySelectorAll(focusableSelector));
     }
   });
-  var focusable = candidates.filter(function (el) {
+  const focusable = candidates.filter(function (el) {
     //only have visible elements and those that have a tabindex greater or equal 0
     if (!(0,_foundation_util_dom__WEBPACK_IMPORTED_MODULE_2__.visible)(el) || el.getAttribute('tabindex') < 0) {
       return false;
@@ -13636,7 +12485,7 @@ function findFocusable(element) {
     if (a.getAttribute('tabindex') === b.getAttribute('tabindex')) {
       return 0;
     }
-    var aTabIndex = parseInt(a.getAttribute('tabindex'), 10),
+    const aTabIndex = parseInt(a.getAttribute('tabindex'), 10),
       bTabIndex = parseInt(b.getAttribute('tabindex'), 10);
     // A missing attribute is treated the same as 0
     if (a.getAttribute('tabindex') === null && bTabIndex > 0) {
@@ -13664,9 +12513,9 @@ function parseKey(event) {
 
   // Remove un-printable characters, e.g. for `fromCharCode` calls for CTRL only events
   key = key.replace(/\W+/, '');
-  if (event.shiftKey) key = "SHIFT_".concat(key);
-  if (event.ctrlKey) key = "CTRL_".concat(key);
-  if (event.altKey) key = "ALT_".concat(key);
+  if (event.shiftKey) key = `SHIFT_${key}`;
+  if (event.ctrlKey) key = `CTRL_${key}`;
+  if (event.altKey) key = `ALT_${key}`;
 
   // Remove trailing underscore, in case only modifiers were used (e.g. only `CTRL_ALT`)
   key = key.replace(/_$/, '');
@@ -13687,7 +12536,7 @@ var Keyboard = {
    * @param {String} component - Foundation component's name, e.g. Slider or Reveal
    * @param {Objects} functions - collection of functions that are to be executed
    */
-  handleKey: function handleKey(event, component, functions) {
+  handleKey(event, component, functions) {
     var commandList = commands[component],
       keyCode = this.parseKey(event),
       cmds,
@@ -13737,7 +12586,8 @@ var Keyboard = {
    * @param {Object} component - Foundation component, e.g. Slider or Reveal
    * @return String componentName
    */
-  register: function register(componentName, cmds) {
+
+  register(componentName, cmds) {
     commands[componentName] = cmds;
   },
   // TODO9438: These references to Keyboard need to not require global. Will 'this' work in this context?
@@ -13749,11 +12599,11 @@ var Keyboard = {
    * handing in the jQuery object.
    * @param  {jQuery} $element  jQuery object to trap the foucs into.
    */
-  trapFocus: function trapFocus(element) {
+  trapFocus(element) {
     // Accepts an element or a collection (mixed state callers); the
     // focusable list is the native array terminal form.
-    var el = element.nodeType === 1 ? element : element[0];
-    var focusable = findFocusable(el),
+    const el = element.nodeType === 1 ? element : element[0];
+    const focusable = findFocusable(el),
       firstFocusable = focusable[0],
       lastFocusable = focusable[focusable.length - 1];
     _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(el, 'keydown.zf.trapfocus', function (event) {
@@ -13770,8 +12620,8 @@ var Keyboard = {
    * Releases the trapped focus from the given element.
    * @param  {jQuery} $element  jQuery object to release the focus for.
    */
-  releaseFocus: function releaseFocus(element) {
-    var el = element.nodeType === 1 ? element : element[0];
+  releaseFocus(element) {
+    const el = element.nodeType === 1 ? element : element[0];
     _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(el, "keydown.zf.trapfocus");
   }
 };
@@ -13795,20 +12645,13 @@ function getKeyCodes(kcs) {
 /*!******************************************!*\
   !*** ./js/foundation.util.mediaQuery.js ***!
   \******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MediaQuery: function() { return /* binding */ MediaQuery; }
+/* harmony export */   MediaQuery: () => (/* binding */ MediaQuery)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 // Default set of media queries
@@ -13839,7 +12682,7 @@ var MediaQuery = {
    * @function
    * @private
    */
-  _init: function _init() {
+  _init() {
     // make sure the initialization is only done once when calling _init() several times
     if (this.isInitialized === true) {
       return this;
@@ -13864,7 +12707,7 @@ var MediaQuery = {
       if (namedQueries.hasOwnProperty(key)) {
         self.queries.push({
           name: key,
-          value: "only screen and (min-width: ".concat(namedQueries[key], ")")
+          value: `only screen and (min-width: ${namedQueries[key]})`
         });
       }
     }
@@ -13877,7 +12720,7 @@ var MediaQuery = {
    * @function
    * @private
    */
-  _reInit: function _reInit() {
+  _reInit() {
     this.isInitialized = false;
     this._init();
   },
@@ -13887,7 +12730,7 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint to check.
    * @returns {Boolean} `true` if the breakpoint matches, `false` if it's smaller.
    */
-  atLeast: function atLeast(size) {
+  atLeast(size) {
     var query = this.get(size);
     if (query) {
       return window.matchMedia(query).matches;
@@ -13901,7 +12744,7 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint to check.
    * @returns {Boolean} `true` if the breakpoint matches, `false` if it's smaller.
    */
-  only: function only(size) {
+  only(size) {
     return size === this._getCurrentSize();
   },
   /**
@@ -13910,8 +12753,8 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint to check.
    * @returns {Boolean} `true` if the breakpoint matches, `false` if it's larger.
    */
-  upTo: function upTo(size) {
-    var nextSize = this.next(size);
+  upTo(size) {
+    const nextSize = this.next(size);
 
     // If the next breakpoint does not match, the screen is smaller than
     // the upper limit of this breakpoint.
@@ -13929,14 +12772,9 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint to check, either 'small only' or 'small'. Omitting 'only' falls back to using atLeast() method.
    * @returns {Boolean} `true` if the breakpoint matches, `false` if it does not.
    */
-  is: function is(size) {
-    var parts = size.trim().split(' ').filter(function (p) {
-      return !!p.length;
-    });
-    var _parts = _slicedToArray(parts, 2),
-      bpSize = _parts[0],
-      _parts$ = _parts[1],
-      bpModifier = _parts$ === void 0 ? '' : _parts$;
+  is(size) {
+    const parts = size.trim().split(' ').filter(p => !!p.length);
+    const [bpSize, bpModifier = ''] = parts;
 
     // Only the breakpont
     if (bpModifier === 'only') {
@@ -13950,7 +12788,10 @@ var MediaQuery = {
     if (bpModifier === 'down') {
       return this.upTo(bpSize);
     }
-    throw new Error("\n      Invalid breakpoint passed to MediaQuery.is().\n      Expected a breakpoint name formatted like \"<size> <modifier>\", got \"".concat(size, "\".\n    "));
+    throw new Error(`
+      Invalid breakpoint passed to MediaQuery.is().
+      Expected a breakpoint name formatted like "<size> <modifier>", got "${size}".
+    `);
   },
   /**
    * Gets the media query of a breakpoint.
@@ -13958,7 +12799,7 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint to get.
    * @returns {String|null} - The media query of the breakpoint, or `null` if the breakpoint doesn't exist.
    */
-  get: function get(size) {
+  get(size) {
     for (var i in this.queries) {
       if (this.queries.hasOwnProperty(i)) {
         var query = this.queries[i];
@@ -13973,15 +12814,15 @@ var MediaQuery = {
    * @param {String} size - Name of the breakpoint.
    * @returns {String|null} - The name of the following breakpoint, or `null` if the passed breakpoint was the last one.
    */
-  next: function next(size) {
-    var _this = this;
-    var queryIndex = this.queries.findIndex(function (q) {
-      return _this._getQueryName(q) === size;
-    });
+  next(size) {
+    const queryIndex = this.queries.findIndex(q => this._getQueryName(q) === size);
     if (queryIndex === -1) {
-      throw new Error("\n        Unknown breakpoint \"".concat(size, "\" passed to MediaQuery.next().\n        Ensure it is present in your Sass \"$breakpoints\" setting.\n      "));
+      throw new Error(`
+        Unknown breakpoint "${size}" passed to MediaQuery.next().
+        Ensure it is present in your Sass "$breakpoints" setting.
+      `);
     }
-    var nextQuery = this.queries[queryIndex + 1];
+    const nextQuery = this.queries[queryIndex + 1];
     return nextQuery ? nextQuery.name : null;
   },
   /**
@@ -13991,10 +12832,13 @@ var MediaQuery = {
    * @param {String|Object} value - Breakpoint name or query object.
    * @returns {String} Name of the breakpoint.
    */
-  _getQueryName: function _getQueryName(value) {
+  _getQueryName(value) {
     if (typeof value === 'string') return value;
-    if (_typeof(value) === 'object') return value.name;
-    throw new TypeError("\n      Invalid value passed to MediaQuery._getQueryName().\n      Expected a breakpoint name (String) or a breakpoint query (Object), got \"".concat(value, "\" (").concat(_typeof(value), ")\n    "));
+    if (typeof value === 'object') return value.name;
+    throw new TypeError(`
+      Invalid value passed to MediaQuery._getQueryName().
+      Expected a breakpoint name (String) or a breakpoint query (Object), got "${value}" (${typeof value})
+    `);
   },
   /**
    * Gets the current breakpoint name by testing every breakpoint and returning the last one to match (the biggest one).
@@ -14002,7 +12846,7 @@ var MediaQuery = {
    * @private
    * @returns {String} Name of the current breakpoint.
    */
-  _getCurrentSize: function _getCurrentSize() {
+  _getCurrentSize() {
     var matched;
     for (var i = 0; i < this.queries.length; i++) {
       var query = this.queries[i];
@@ -14017,14 +12861,13 @@ var MediaQuery = {
    * @function
    * @private
    */
-  _watcher: function _watcher() {
-    var _this2 = this;
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.on(window, 'resize.zf.mediaquery', function () {
-      var newSize = _this2._getCurrentSize(),
-        currentSize = _this2.current;
+  _watcher() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.on(window, 'resize.zf.mediaquery', () => {
+      var newSize = this._getCurrentSize(),
+        currentSize = this.current;
       if (newSize !== currentSize) {
         // Change the current media query
-        _this2.current = newSize;
+        this.current = newSize;
 
         // Broadcast the media query change on the window as a real,
         // bubbling event: native consumers receive it directly and
@@ -14077,12 +12920,12 @@ function parseStyleToObject(str) {
 /*!**************************************!*\
   !*** ./js/foundation.util.motion.js ***!
   \**************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Motion: function() { return /* binding */ Motion; },
-/* harmony export */   Move: function() { return /* binding */ Move; }
+/* harmony export */   Motion: () => (/* binding */ Motion),
+/* harmony export */   Move: () => (/* binding */ Move)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 
@@ -14092,20 +12935,20 @@ __webpack_require__.r(__webpack_exports__);
  * @module foundation.motion
  */
 
-var initClasses = ['mui-enter', 'mui-leave'];
-var activeClasses = ['mui-enter-active', 'mui-leave-active'];
+const initClasses = ['mui-enter', 'mui-leave'];
+const activeClasses = ['mui-enter-active', 'mui-leave-active'];
 
 // End-event names the animation completion listens for. Upstream motion-ui
 // listens for the standard 'transitionend' only, while the 6.x inlined
 // variant resolved a single name through a last-match-wins feature probe
 // that ends on 'webkitTransitionEnd' in Chromium. Listening to both keeps
 // completion working on every engine; `finish` runs at most once.
-var endEvents = ['transitionend', 'webkitTransitionEnd'];
-var Motion = {
-  animateIn: function animateIn(element, animation, cb) {
+const endEvents = ['transitionend', 'webkitTransitionEnd'];
+const Motion = {
+  animateIn: function (element, animation, cb) {
     animate(true, element, animation, cb);
   },
-  animateOut: function animateOut(element, animation, cb) {
+  animateOut: function (element, animation, cb) {
     animate(false, element, animation, cb);
   },
   // jQuery fx-compatible primitives (fx 方案 A): slideUp/slideDown,
@@ -14118,50 +12961,36 @@ var Motion = {
   // and animate every element in it, the complete firing once per element
   // (the collection semantics the multi-target accordion/menu calls rely
   // on).
-  slideUp: function slideUp(elements, duration, complete) {
-    fxEach(elements, function (el) {
-      return fxSlide('up', el, duration, complete);
-    });
+  slideUp: function (elements, duration, complete) {
+    fxEach(elements, el => fxSlide('up', el, duration, complete));
   },
-  slideDown: function slideDown(elements, duration, complete) {
-    fxEach(elements, function (el) {
-      return fxSlide('down', el, duration, complete);
-    });
+  slideDown: function (elements, duration, complete) {
+    fxEach(elements, el => fxSlide('down', el, duration, complete));
   },
-  fadeIn: function fadeIn(elements, duration, complete) {
-    fxEach(elements, function (el) {
-      return fxFade('in', el, duration, complete);
-    });
+  fadeIn: function (elements, duration, complete) {
+    fxEach(elements, el => fxFade('in', el, duration, complete));
   },
-  fadeOut: function fadeOut(elements, duration, complete) {
-    fxEach(elements, function (el) {
-      return fxFade('out', el, duration, complete);
-    });
+  fadeOut: function (elements, duration, complete) {
+    fxEach(elements, el => fxFade('out', el, duration, complete));
   },
-  animate: function animate(elements, props, duration, easing, complete) {
-    fxEach(elements, function (el) {
-      return fxAnimate(el, props, duration, easing, complete);
-    });
+  animate: function (elements, props, duration, easing, complete) {
+    fxEach(elements, el => fxAnimate(el, props, duration, easing, complete));
   },
-  stop: function stop(elements, clearQueue, jumpToEnd) {
-    fxEach(elements, function (el) {
-      return fxStop(el, clearQueue, jumpToEnd);
-    });
+  stop: function (elements, clearQueue, jumpToEnd) {
+    fxEach(elements, el => fxStop(el, clearQueue, jumpToEnd));
   },
   // jQuery's `:animated` check: an element with a RUNNING fx animation
   // (queued-but-not-started ones do not count, like jQuery's timers).
-  isAnimating: function isAnimating(element) {
-    var el = toElement(element);
+  isAnimating: function (element) {
+    const el = toElement(element);
     if (!el) {
       return false;
     }
-    var st = fxTable.get(el);
+    const st = fxTable.get(el);
     return !!(st && st.running);
   },
-  finish: function finish(elements) {
-    fxEach(elements, function (el) {
-      return fxFinish(el);
-    });
+  finish: function (elements) {
+    fxEach(elements, el => fxFinish(el));
   }
 };
 
@@ -14241,24 +13070,24 @@ function animate(isIn, element, animation, cb) {
   // The mixed-state input is unwrapped to the animation target; the plugin
   // layer now hands in native elements (S15) while the not-yet-migrated
   // callers still pass jQuery collections.
-  var el = toElement(element);
+  const el = toElement(element);
   if (!el || el.nodeType !== 1) return;
   var initClass = isIn ? initClasses[0] : initClasses[1];
   var activeClass = isIn ? activeClasses[0] : activeClasses[1];
   // One completion per animate() call: both end-event names are armed below.
-  var finished = false;
+  let finished = false;
 
   // Set up the animation
   reset();
   addClass(el, animation);
   el.style.transition = 'none';
-  requestAnimationFrame(function () {
+  requestAnimationFrame(() => {
     addClass(el, initClass);
     if (isIn) show(el);
   });
 
   // Start the animation
-  requestAnimationFrame(function () {
+  requestAnimationFrame(() => {
     // will trigger the browser to synchronously calculate the style and layout
     // also called reflow or layout thrashing
     // see https://gist.github.com/paulirish/5d52fb081b3570c81e3a
@@ -14268,9 +13097,7 @@ function animate(isIn, element, animation, cb) {
   });
 
   // Clean up the animation when it finishes
-  endEvents.forEach(function (endEvent) {
-    return _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.one(el, endEvent, finish);
-  });
+  endEvents.forEach(endEvent => _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.one(el, endEvent, finish));
 
   // Hides the element (for out animations), resets the element, and runs a callback
   function finish() {
@@ -14298,7 +13125,7 @@ function animate(isIn, element, animation, cb) {
     for (var _len = arguments.length, tokens = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       tokens[_key - 1] = arguments[_key];
     }
-    tokens.forEach(function (token) {
+    tokens.forEach(token => {
       if (token) {
         target.classList.remove(token);
       }
@@ -14330,7 +13157,7 @@ function animate(isIn, element, animation, cb) {
 //   ledger ②).
 // ---------------------------------------------------------------------------
 
-var SLIDE_PROPS = ['height', 'paddingTop', 'paddingBottom', 'marginTop', 'marginBottom', 'opacity'];
+const SLIDE_PROPS = ['height', 'paddingTop', 'paddingBottom', 'marginTop', 'marginBottom', 'opacity'];
 
 // Element / jQuery collection / NodeList / array -> element list (jQuery
 // collection semantics: an fx call animates every element it was given).
@@ -14338,7 +13165,7 @@ function fxEach(obj, fn) {
   if (!obj) {
     return;
   }
-  var list = obj.nodeType === undefined && obj.length !== undefined ? Array.from(obj) : [obj];
+  const list = obj.nodeType === undefined && obj.length !== undefined ? Array.from(obj) : [obj];
   list.forEach(fn);
 }
 function resolveFxEasing(easing) {
@@ -14346,26 +13173,22 @@ function resolveFxEasing(easing) {
     return easing;
   }
   if (easing === 'linear') {
-    return function (p) {
-      return p;
-    };
+    return p => p;
   }
-  return function (p) {
-    return 0.5 - Math.cos(p * Math.PI) / 2;
-  };
+  return p => 0.5 - Math.cos(p * Math.PI) / 2;
 }
 
 // getDefaultDisplay, jQuery shape: a detached probe of the same tag measured
 // in the document, cached. Falls back to 'block' for display:none by UA
 // stylesheet (e.g. <script>), which is what jQuery's own fallback did.
-var defaultDisplayCache = {};
+const defaultDisplayCache = {};
 function defaultDisplay(tag) {
   if (defaultDisplayCache[tag]) {
     return defaultDisplayCache[tag];
   }
-  var probe = document.createElement(tag);
+  const probe = document.createElement(tag);
   document.body.appendChild(probe);
-  var display = window.getComputedStyle(probe).display;
+  let display = window.getComputedStyle(probe).display;
   document.body.removeChild(probe);
   if (!display || display === 'none') {
     display = 'block';
@@ -14376,12 +13199,12 @@ function defaultDisplay(tag) {
 
 // The inline display jQuery saved in its data-priv when hiding, so a later
 // show restores it (WeakMap: cleared with the element, like data-priv).
-var savedDisplay = new WeakMap();
+const savedDisplay = new WeakMap();
 
 // Per-element fx state: the running animation plus the queued ones.
-var fxTable = new WeakMap();
+const fxTable = new WeakMap();
 function fxState(el) {
-  var st = fxTable.get(el);
+  let st = fxTable.get(el);
   if (!st) {
     st = {
       queue: [],
@@ -14398,20 +13221,20 @@ function fxState(el) {
 // (hide/show residue) and then the caller's callback. `jump` prepares,
 // paints 1 and completes (stop/finish semantics).
 function enqueueFx(el, duration, easing, prepare, paint, complete) {
-  var st = fxState(el);
-  var ease = resolveFxEasing(easing);
-  var anim = {
+  const st = fxState(el);
+  const ease = resolveFxEasing(easing);
+  const anim = {
     rafId: null,
     origin: null,
     prepare: prepare || null,
     complete: complete || null,
-    cancel: function cancel() {
+    cancel() {
       if (anim.rafId !== null) {
         window.cancelAnimationFrame(anim.rafId);
         anim.rafId = null;
       }
     },
-    jump: function jump() {
+    jump() {
       anim.cancel();
       if (anim.prepare) {
         anim.prepare();
@@ -14419,7 +13242,7 @@ function enqueueFx(el, duration, easing, prepare, paint, complete) {
       paint(1);
       anim.finish();
     },
-    finish: function finish() {
+    finish() {
       st.running = null;
       anim.rafId = null;
       // jQuery called the complete with the element as `this`
@@ -14428,37 +13251,37 @@ function enqueueFx(el, duration, easing, prepare, paint, complete) {
       }
       runNextFx(el);
     },
-    start: function start() {
+    start() {
       // prepare() may signal `true`: animating toward the element's current
       // state completes synchronously (jQuery's showHide skip), no timer.
-      var skip = anim.prepare ? anim.prepare() : false;
+      const skip = anim.prepare ? anim.prepare() : false;
       if (duration === 0 || skip) {
         // jQuery's duration-0 dequeue: end state + complete, same tick.
         paint(1);
         anim.finish();
         return;
       }
-      var _step = function step(ts) {
+      const step = function (ts) {
         if (anim.origin === null) {
           anim.origin = ts;
         }
-        var progress = Math.min((ts - anim.origin) / duration, 1);
+        const progress = Math.min((ts - anim.origin) / duration, 1);
         paint(ease(progress));
         if (progress < 1) {
-          anim.rafId = window.requestAnimationFrame(_step);
+          anim.rafId = window.requestAnimationFrame(step);
         } else {
           anim.rafId = null;
           anim.finish();
         }
       };
-      anim.rafId = window.requestAnimationFrame(_step);
+      anim.rafId = window.requestAnimationFrame(step);
     }
   };
   st.queue.push(anim);
   runNextFx(el);
 }
 function runNextFx(el) {
-  var st = fxState(el);
+  const st = fxState(el);
   if (st.running || !st.queue.length) {
     return;
   }
@@ -14470,11 +13293,11 @@ function runNextFx(el) {
 // it stands (jumpToEnd paints the end first), its complete fires only when
 // jumping; clearQueue drops the pending ones.
 function fxStop(el, clearQueue, jumpToEnd) {
-  var st = fxState(el);
+  const st = fxState(el);
   if (st.queue.length && clearQueue) {
     st.queue.length = 0;
   }
-  var anim = st.running;
+  const anim = st.running;
   if (!anim) {
     return;
   }
@@ -14493,8 +13316,8 @@ function fxStop(el, clearQueue, jumpToEnd) {
 // queue is snapshotted first and whatever finish() left queued (animations
 // that just started) is dropped from the pending set - they already jumped.
 function fxFinish(el) {
-  var st = fxState(el);
-  var pending = st.queue.slice();
+  const st = fxState(el);
+  const pending = st.queue.slice();
   st.queue.length = 0;
   if (st.running) {
     st.running.jump();
@@ -14514,21 +13337,19 @@ function isScrollRoot(el) {
 }
 function fxAnimate(el, props, duration, easing, complete) {
   el = toElement(el);
-  var entries = Object.keys(props).map(function (key) {
-    var camel = key === 'scrolltop' ? 'scrollTop' : key.replace(/-([a-z])/g, function (m, c) {
-      return c.toUpperCase();
-    });
-    var to = Number(props[key]);
-    var from = camel === 'scrollTop' ? isScrollRoot(el) ? window.pageYOffset : el.scrollTop : parseFloat(window.getComputedStyle(el)[camel]);
+  const entries = Object.keys(props).map(key => {
+    const camel = key === 'scrolltop' ? 'scrollTop' : key.replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+    const to = Number(props[key]);
+    const from = camel === 'scrollTop' ? isScrollRoot(el) ? window.pageYOffset : el.scrollTop : parseFloat(window.getComputedStyle(el)[camel]);
     return {
-      camel: camel,
-      from: from,
-      to: to
+      camel,
+      from,
+      to
     };
   });
-  var paint = function paint(p) {
-    entries.forEach(function (entry) {
-      var value = entry.from + (entry.to - entry.from) * p;
+  const paint = function (p) {
+    entries.forEach(entry => {
+      const value = entry.from + (entry.to - entry.from) * p;
       if (entry.camel === 'scrollTop') {
         if (isScrollRoot(el)) {
           window.scrollTo(0, Math.round(value));
@@ -14545,9 +13366,9 @@ function fxAnimate(el, props, duration, easing, complete) {
   enqueueFx(el, duration, easing, null, paint, complete);
 }
 function measureSlide(el) {
-  var cs = window.getComputedStyle(el);
-  var values = {};
-  SLIDE_PROPS.forEach(function (prop) {
+  const cs = window.getComputedStyle(el);
+  const values = {};
+  SLIDE_PROPS.forEach(prop => {
     values[prop] = parseFloat(cs[prop]);
     if (isNaN(values[prop])) {
       values[prop] = prop === 'opacity' ? 1 : 0;
@@ -14558,7 +13379,7 @@ function measureSlide(el) {
 function paintSlide(el, values) {
   // Foundation sets border-box globally: an inline height must include the
   // tweened paddings or the pane would shrink by them twice.
-  var borderBox = window.getComputedStyle(el).boxSizing !== 'content-box';
+  const borderBox = window.getComputedStyle(el).boxSizing !== 'content-box';
   el.style.height = (borderBox ? values.height + values.paddingTop + values.paddingBottom : values.height) + 'px';
   el.style.paddingTop = values.paddingTop + 'px';
   el.style.paddingBottom = values.paddingBottom + 'px';
@@ -14567,27 +13388,27 @@ function paintSlide(el, values) {
   el.style.opacity = values.opacity;
 }
 function clearSlideInline(el, overflowInline) {
-  SLIDE_PROPS.forEach(function (prop) {
+  SLIDE_PROPS.forEach(prop => {
     el.style[prop] = '';
   });
   el.style.overflow = overflowInline || '';
 }
 function fxSlide(direction, element, duration, complete) {
-  var el = toElement(element);
+  const el = toElement(element);
   if (!el || !el.isConnected) {
     // jQuery animations on detached elements measured 0 and completed; the
     // call sites never pass one, complete keeps firing for queue order.
     enqueueFx(el, 0, null, null, function () {}, complete);
     return;
   }
-  var overflowInline = el.style.overflow;
+  const overflowInline = el.style.overflow;
   // jQuery evaluated the hidden/visible branch when the animation STARTED,
   // not when it was enqueued - a queued slideUp hides the element a later
   // slideDown was enqueued against. prepare() is that start point.
-  var mode; // 'up' | 'down' | 'noop'
-  var from, to;
-  var prepare = function prepare() {
-    var hidden = window.getComputedStyle(el).display === 'none';
+  let mode; // 'up' | 'down' | 'noop'
+  let from, to;
+  const prepare = function () {
+    const hidden = window.getComputedStyle(el).display === 'none';
     if (direction === 'down') {
       mode = hidden ? 'down' : 'noop';
       if (mode === 'noop') {
@@ -14616,12 +13437,12 @@ function fxSlide(direction, element, duration, complete) {
       el.style.overflow = 'hidden';
     }
   };
-  var paint = function paint(p) {
+  const paint = function (p) {
     if (mode === 'noop') {
       return;
     }
-    var values = {};
-    SLIDE_PROPS.forEach(function (prop) {
+    const values = {};
+    SLIDE_PROPS.forEach(prop => {
       if (mode === 'up') {
         values[prop] = from[prop] * (1 - p);
       } else {
@@ -14630,7 +13451,7 @@ function fxSlide(direction, element, duration, complete) {
     });
     paintSlide(el, values);
   };
-  var done = function done() {
+  const done = function () {
     if (mode === 'noop') {
       // animating toward the current state: nothing touched, complete still
       // fires (jQuery ran and completed the animation).
@@ -14651,15 +13472,15 @@ function fxSlide(direction, element, duration, complete) {
   enqueueFx(el, duration, null, prepare, paint, done);
 }
 function fxFade(direction, element, duration, complete) {
-  var el = toElement(element);
+  const el = toElement(element);
   if (!el || !el.isConnected) {
     enqueueFx(el, 0, null, null, function () {}, complete);
     return;
   }
-  var mode; // 'in' | 'out' | 'noop'
-  var from, to;
-  var prepare = function prepare() {
-    var hidden = window.getComputedStyle(el).display === 'none';
+  let mode; // 'in' | 'out' | 'noop'
+  let from, to;
+  const prepare = function () {
+    const hidden = window.getComputedStyle(el).display === 'none';
     if (direction === 'in') {
       mode = hidden ? 'in' : 'noop';
       if (mode === 'noop') {
@@ -14667,7 +13488,7 @@ function fxFade(direction, element, duration, complete) {
       }
       if (mode === 'in') {
         el.style.display = savedDisplay.get(el) || defaultDisplay(el.tagName);
-        var inlineOpacity = el.style.opacity;
+        const inlineOpacity = el.style.opacity;
         from = 0;
         to = inlineOpacity !== '' ? parseFloat(inlineOpacity) : 1;
       }
@@ -14683,13 +13504,13 @@ function fxFade(direction, element, duration, complete) {
       to = 0;
     }
   };
-  var paint = function paint(p) {
+  const paint = function (p) {
     if (mode === 'noop') {
       return;
     }
     el.style.opacity = from + (to - from) * p;
   };
-  var done = function done() {
+  const done = function () {
     if (mode === 'noop') {
       if (complete) {
         complete();
@@ -14715,11 +13536,11 @@ function fxFade(direction, element, duration, complete) {
 /*!************************************!*\
   !*** ./js/foundation.util.nest.js ***!
   \************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Nest: function() { return /* binding */ Nest; }
+/* harmony export */   Nest: () => (/* binding */ Nest)
 /* harmony export */ });
 // S13 (7.0 line A): the Nest util is jQuery-free - the DOM reads/writes
 // inside Feather and Burn moved from jQuery traversal to the element's own
@@ -14732,29 +13553,29 @@ function toMenu(menu) {
   // array-like (HTMLSelectElement exposes its first option as [0]).
   return menu && menu.nodeType === undefined && menu[0] !== undefined && menu[0] !== null ? menu[0] : menu;
 }
-var Nest = {
-  Feather: function Feather(menu) {
-    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'zf';
+const Nest = {
+  Feather(menu) {
+    let type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'zf';
     menu = toMenu(menu);
     menu.setAttribute('role', 'menubar');
     menu.querySelectorAll('a').forEach(function (anchor) {
       anchor.setAttribute('role', 'menuitem');
     });
-    var subMenuClass = "is-".concat(type, "-submenu"),
-      subItemClass = "".concat(subMenuClass, "-item"),
-      hasSubClass = "".concat(subMenuClass, "-parent"),
+    const subMenuClass = `is-${type}-submenu`,
+      subItemClass = `${subMenuClass}-item`,
+      hasSubClass = `${subMenuClass}-parent`,
       applyAria = type !== 'accordion'; // Accordions handle their own ARIA attriutes.
 
-    var items = menu.querySelectorAll('li');
+    const items = menu.querySelectorAll('li');
     items.forEach(function (item) {
       item.setAttribute('role', 'none');
-      var sub = item.querySelector(':scope > ul');
+      const sub = item.querySelector(':scope > ul');
       if (sub) {
         // data-submenu is tagged in this pass; the second pass below sees it
 
         item.classList.add(hasSubClass);
         if (applyAria) {
-          var firstItem = item.querySelector(':scope > a');
+          const firstItem = item.querySelector(':scope > a');
           firstItem.setAttribute('aria-haspopup', 'true');
           firstItem.setAttribute('aria-label', firstItem.getAttribute('aria-label') || firstItem.textContent);
           // Note:  Drilldowns behave differently in how they hide, and so need
@@ -14782,16 +13603,16 @@ var Nest = {
     });
     return;
   },
-  Burn: function Burn(menu, type) {
+  Burn(menu, type) {
     menu = toMenu(menu);
-    var subMenuClass = "is-".concat(type, "-submenu"),
-      subItemClass = "".concat(subMenuClass, "-item"),
-      hasSubClass = "".concat(subMenuClass, "-parent");
+    const subMenuClass = `is-${type}-submenu`,
+      subItemClass = `${subMenuClass}-item`,
+      hasSubClass = `${subMenuClass}-parent`;
 
     // `>li, > li > ul, .menu, .menu > li, [data-submenu] > li` from the
     // jQuery find(): the :scope-prefixed parts stay root-relative, the
     // descendant parts search the whole menu.
-    var selector = [':scope > li', ':scope > li > ul', '.menu', '.menu > li', '[data-submenu] > li'].join(',');
+    const selector = [':scope > li', ':scope > li > ul', '.menu', '.menu > li', '[data-submenu] > li'].join(',');
     menu.querySelectorAll(selector).forEach(function (node) {
       node.classList.remove(subMenuClass, subItemClass, hasSubClass, 'is-submenu-item', 'submenu', 'is-active');
       node.removeAttribute('data-submenu');
@@ -14807,11 +13628,11 @@ var Nest = {
 /*!****************************************!*\
   !*** ./js/foundation.util.registry.js ***!
   \****************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Registry: function() { return /* binding */ Registry; }
+/* harmony export */   Registry: () => (/* binding */ Registry)
 /* harmony export */ });
 /**
  * Instance registry for the jQuery-free plugin layer (7.0 line A, slice S1).
@@ -14828,14 +13649,14 @@ __webpack_require__.r(__webpack_exports__);
  * enumerated by design, but jQuery data was not enumerable either, so this
  * matches the v6 division of labor exactly.
  */
-var instances = new WeakMap();
-var Registry = {
+const instances = new WeakMap();
+const Registry = {
   /**
    * Gets the plugin instance registered for an element.
    * @param {Element} el - the element to look up.
    * @returns {?Object} the registered instance, or undefined if there is none.
    */
-  getInstance: function getInstance(el) {
+  getInstance(el) {
     return instances.get(el);
   },
   /**
@@ -14844,7 +13665,7 @@ var Registry = {
    * @param {Object} instance - the plugin instance.
    * @returns {Object} the stored instance, for chaining.
    */
-  setInstance: function setInstance(el, instance) {
+  setInstance(el, instance) {
     instances.set(el, instance);
     return instance;
   },
@@ -14853,7 +13674,7 @@ var Registry = {
    * @param {Element} el - the element to look up.
    * @returns {Boolean} true if an instance is registered for the element.
    */
-  has: function has(el) {
+  has(el) {
     return instances.has(el);
   },
   /**
@@ -14861,7 +13682,7 @@ var Registry = {
    * @param {Element} el - the element to unregister.
    * @returns {Boolean} true if an entry existed and was removed.
    */
-  removeInstance: function removeInstance(el) {
+  removeInstance(el) {
     return instances.delete(el);
   }
 };
@@ -14873,11 +13694,11 @@ var Registry = {
 /*!*************************************!*\
   !*** ./js/foundation.util.timer.js ***!
   \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Timer: function() { return /* binding */ Timer; }
+/* harmony export */   Timer: () => (/* binding */ Timer)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 
@@ -14923,7 +13744,7 @@ function Timer(element, options, cb, nameSpace) {
         cb();
       }
     }, remain);
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(element, "timerstart.zf.".concat(nameSpace));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(element, `timerstart.zf.${nameSpace}`);
   };
   this.pause = function () {
     this.isPaused = true;
@@ -14932,7 +13753,7 @@ function Timer(element, options, cb, nameSpace) {
     element.zfTimerPaused = true;
     var end = Date.now();
     remain = remain - (end - start);
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(element, "timerpaused.zf.".concat(nameSpace));
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(element, `timerpaused.zf.${nameSpace}`);
   };
 }
 
@@ -14943,19 +13764,13 @@ function Timer(element, options, cb, nameSpace) {
 /*!*************************************!*\
   !*** ./js/foundation.util.touch.js ***!
   \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Touch: function() { return /* binding */ Touch; }
+/* harmony export */   Touch: () => (/* binding */ Touch)
 /* harmony export */ });
 /* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 //**************************************************
 //**Work inspired by multiple jquery swipe plugins**
 //**Done by Yohai Ararat ***************************
@@ -15019,7 +13834,7 @@ function onTouchMove(e) {
       var swipeTarget = touchTarget;
       onTouchEnd.apply(this, arguments);
       _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(swipeTarget, 'swipe', [e, dir]);
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(swipeTarget, "swipe".concat(dir), e);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(swipeTarget, `swipe${dir}`, e);
     }
   }
 }
@@ -15057,18 +13872,20 @@ function handleTouch(event) {
     }));
   }
 }
-var SpotSwipe = /*#__PURE__*/_createClass(function SpotSwipe() {
-  _classCallCheck(this, SpotSwipe);
-  this.version = '1.0.0';
-  this.enabled = 'ontouchstart' in document.documentElement;
-  this.preventDefault = false;
-  this.moveThreshold = 75;
-  this.timeThreshold = 200;
-  // The 6.x `_init()` registered the synthesizers through `$.event.special`
-  // setup hooks, which jQuery invoked for every element a 'tap'/'swipe*'
-  // listener was bound to. The native chain arms once on the document (see
-  // Touch.init), so there is nothing per-element to set up anymore.
-});
+class SpotSwipe {
+  constructor() {
+    this.version = '1.0.0';
+    this.enabled = 'ontouchstart' in document.documentElement;
+    this.preventDefault = false;
+    this.moveThreshold = 75;
+    this.timeThreshold = 200;
+    // The 6.x `_init()` registered the synthesizers through `$.event.special`
+    // setup hooks, which jQuery invoked for every element a 'tap'/'swipe*'
+    // listener was bound to. The native chain arms once on the document (see
+    // Touch.init), so there is nothing per-element to set up anymore.
+  }
+}
+
 /****************************************************
  * As far as I can tell, both setupSpotSwipe and    *
  * setupTouchHandler should be idempotent,          *
@@ -15119,17 +13936,14 @@ Touch.init = function () {
 /*!****************************************!*\
   !*** ./js/foundation.util.triggers.js ***!
   \****************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Triggers: function() { return /* binding */ Triggers; }
+/* harmony export */   Triggers: () => (/* binding */ Triggers)
 /* harmony export */ });
-/* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core.utils */ "./js/foundation.core.utils.js");
-/* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
-/* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-
+/* harmony import */ var _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.motion */ "./js/foundation.util.motion.js");
+/* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foundation.util.events */ "./js/foundation.util.events.js");
 
 
 
@@ -15146,9 +13960,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 // (S4 clause), and closeableListener's fadeOut fx chain stays jQuery-side
 // (same ledger as the accordion fx).
 
-var triggers = function triggers(el, type) {
-  (el.getAttribute("data-".concat(type)) || '').split(' ').forEach(function (id) {
-    var target = document.getElementById(id);
+const triggers = (el, type) => {
+  (el.getAttribute(`data-${type}`) || '').split(' ').forEach(id => {
+    let target = document.getElementById(id);
     if (!target) {
       return;
     }
@@ -15158,9 +13972,9 @@ var triggers = function triggers(el, type) {
       // One real, bubbling event: reaches native listeners and the document
       // closable delegation, plus the jQuery listeners of un-migrated plugins
       // (white absorption).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(target, "".concat(type, ".zf.trigger"), [el]);
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(target, `${type}.zf.trigger`, [el]);
     } else {
-      dispatchLocal(target, "".concat(type, ".zf.trigger"), el);
+      dispatchLocal(target, `${type}.zf.trigger`, el);
     }
   });
 };
@@ -15171,8 +13985,8 @@ var triggers = function triggers(el, type) {
 // between the per-bundle Events tables; same-element listeners only, the
 // 6.x no-bubble shape). Still-on-jQuery third-party listeners no longer
 // receive the element-local zf.trigger dispatches - 7.0 change, ledger.
-var dispatchLocal = function dispatchLocal(target, type, param) {
-  _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.triggerHandler(target, type, [param]);
+const dispatchLocal = (target, type, param) => {
+  _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.triggerHandler(target, type, [param]);
 };
 var Triggers = {
   Listeners: {
@@ -15181,54 +13995,49 @@ var Triggers = {
   },
   Initializers: {}
 };
-
-// Module-level flag (S4): was `$.triggersInitialized`, a property hung on the
-// jQuery namespace. Same one-shot semantics, no jQuery dependency.
-var triggersInitialized = false;
 Triggers.Listeners.Basic = {
-  openListener: function openListener() {
+  openListener: function () {
     triggers(this, 'open');
   },
-  closeListener: function closeListener() {
-    var id = this.getAttribute('data-close');
+  closeListener: function () {
+    let id = this.getAttribute('data-close');
     if (id) {
       triggers(this, 'close');
     } else {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this, 'close.zf.trigger');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(this, 'close.zf.trigger');
     }
   },
-  toggleListener: function toggleListener() {
-    var id = this.getAttribute('data-toggle');
+  toggleListener: function () {
+    let id = this.getAttribute('data-toggle');
     if (id) {
       triggers(this, 'toggle');
     } else {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this, 'toggle.zf.trigger');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(this, 'toggle.zf.trigger');
     }
   },
-  closeableListener: function closeableListener(e) {
-    var _this = this;
-    var animation = this.getAttribute('data-closable');
+  closeableListener: function (e) {
+    let animation = this.getAttribute('data-closable');
 
     // Only close the first closable element. See https://git.io/zf-7833
     e.stopPropagation();
     if (animation !== '') {
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.animateOut(this, animation, function () {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(_this, 'closed.zf');
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.animateOut(this, animation, () => {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(this, 'closed.zf');
       });
     } else {
       // fx 方案 A: the plain fadeOut on the native primitive (jQuery's fx
       // default duration, 400ms). The closed.zf production keeps its jQuery
       // transport (the S4 dual-transport seam owns it).
-      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_1__.Motion.fadeOut(this, 400);
+      _foundation_util_motion__WEBPACK_IMPORTED_MODULE_0__.Motion.fadeOut(this, 400);
       // 7.0: the closed production joins the native layer - a real,
       // bubbling event (6.x delivered a jQuery-synthetic one to jQuery
       // listeners only; both shapes reach jQuery listeners now).
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(this, 'closed.zf');
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(this, 'closed.zf');
     }
   },
-  toggleFocusListener: function toggleFocusListener() {
-    var id = this.getAttribute('data-toggle-focus');
-    var target = document.getElementById(id);
+  toggleFocusListener: function () {
+    let id = this.getAttribute('data-toggle-focus');
+    let target = document.getElementById(id);
     if (target) {
       dispatchLocal(target, 'toggle.zf.trigger', this);
     }
@@ -15239,57 +14048,57 @@ Triggers.Listeners.Basic = {
 // The former off-then-on dup guard is replaced by module-level flags: once an
 // Initializer has installed its delegation, repeated calls (Foundation re-init,
 // third parties, IHearYou) are no-ops, so one click still yields one dispatch.
-var simpleListenerFlags = {};
+let simpleListenerFlags = {};
 function delegateSimple(type, types, selector, listener) {
   if (simpleListenerFlags[type]) {
     return;
   }
   simpleListenerFlags[type] = true;
-  _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.delegate(document, types, selector, listener);
+  _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.delegate(document, types, selector, listener);
 }
-Triggers.Initializers.addOpenListener = function () {
+Triggers.Initializers.addOpenListener = () => {
   delegateSimple('open', 'click.zf.trigger', '[data-open]', Triggers.Listeners.Basic.openListener);
 };
 
 // Elements with [data-close] will close a plugin that supports it when clicked.
 // If used without a value on [data-close], the event will bubble, allowing it to close a parent component.
-Triggers.Initializers.addCloseListener = function () {
+Triggers.Initializers.addCloseListener = () => {
   delegateSimple('close', 'click.zf.trigger', '[data-close]', Triggers.Listeners.Basic.closeListener);
 };
 
 // Elements with [data-toggle] will toggle a plugin that supports it when clicked.
-Triggers.Initializers.addToggleListener = function () {
+Triggers.Initializers.addToggleListener = () => {
   delegateSimple('toggle', 'click.zf.trigger', '[data-toggle]', Triggers.Listeners.Basic.toggleListener);
 };
 
 // Elements with [data-closable] will respond to close.zf.trigger events.
-Triggers.Initializers.addCloseableListener = function () {
+Triggers.Initializers.addCloseableListener = () => {
   delegateSimple('closeable', 'close.zf.trigger', '[data-closeable], [data-closable]', Triggers.Listeners.Basic.closeableListener);
 };
 
 // Elements with [data-toggle-focus] will respond to coming in and out of focus
-Triggers.Initializers.addToggleFocusListener = function () {
+Triggers.Initializers.addToggleFocusListener = () => {
   delegateSimple('toggleFocus', 'focus.zf.trigger blur.zf.trigger', '[data-toggle-focus]', Triggers.Listeners.Basic.toggleFocusListener);
 };
 
 // More Global/complex listeners and triggers
 Triggers.Listeners.Global = {
-  closeMeListener: function closeMeListener(e, pluginId, pluginName) {
+  closeMeListener: function (e, pluginId, pluginName) {
     // S13: the plugin name is an explicit parameter - the listener is
     // registered once per name (the 6.x single jQuery listener derived it
     // from the event namespace, which real events do not carry) - and the
     // id rides the event detail, where Events.trigger puts the extra
     // parameters (the 6.x second trigger parameter).
-    var plugin = pluginName || (e.namespace ? e.namespace.split('.')[0] : 'dropdown');
-    var plugins = document.querySelectorAll("[data-".concat(plugin, "]"));
-    for (var i = 0; i < plugins.length; i++) {
-      var node = plugins[i];
-      if (node.getAttribute('data-yeti-box') !== "".concat(pluginId)) {
+    let plugin = pluginName || (e.namespace ? e.namespace.split('.')[0] : 'dropdown');
+    let plugins = document.querySelectorAll(`[data-${plugin}]`);
+    for (let i = 0; i < plugins.length; i++) {
+      let node = plugins[i];
+      if (node.getAttribute('data-yeti-box') !== `${pluginId}`) {
         // Native broadcast: reaches the plugin's own listeners whether they
         // are already native (Events.on) or still jQuery (real-event
         // pass-through). The forwarded parameter is already the final-form
         // native element.
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(node, 'close.zf.trigger', [node]);
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(node, 'close.zf.trigger', [node]);
       }
     }
   }
@@ -15302,7 +14111,7 @@ Triggers.Initializers.addClosemeListener = function (pluginName) {
   if (pluginName) {
     if (typeof pluginName === 'string') {
       plugNames.push(pluginName);
-    } else if (_typeof(pluginName) === 'object' && typeof pluginName[0] === 'string') {
+    } else if (typeof pluginName === 'object' && typeof pluginName[0] === 'string') {
       plugNames = plugNames.concat(pluginName);
     } else {
       console.error('Plugin names must be strings');
@@ -15315,22 +14124,20 @@ Triggers.Initializers.addClosemeListener = function (pluginName) {
     // leaves exactly one fresh listener set behind (self-healing: a later
     // initializer call rebuilds the window listeners whatever happened to
     // the previous ones).
-    var listeners = plugNames.map(function (name) {
-      return "closeme.zf.".concat(name);
-    }).join(' ');
-    _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.off(window, listeners);
-    plugNames.forEach(function (name) {
-      _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, "closeme.zf.".concat(name), function (e, pluginId) {
+    let listeners = plugNames.map(name => `closeme.zf.${name}`).join(' ');
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.off(window, listeners);
+    plugNames.forEach(name => {
+      _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, `closeme.zf.${name}`, function (e, pluginId) {
         Triggers.Listeners.Global.closeMeListener(e, pluginId, name);
       });
     });
   }
 };
 function debounceGlobalListener(debounce, trigger, listener) {
-  var timer;
+  let timer;
   // Native side (S13): real resize/scroll events reach the listener through
   // the Events layer.
-  _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.on(window, trigger, function () {
+  _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.on(window, trigger, function () {
     if (timer) {
       clearTimeout(timer);
     }
@@ -15341,21 +14148,21 @@ Triggers.Initializers.addResizeListener = function (debounce) {
   // Snapshot at registration time, as before: elements added later receive
   // nothing (6.x limitation, kept by decision - a ResizeObserver rework is a
   // separate, behavior-changing slice).
-  var nodes = document.querySelectorAll('[data-resize]');
+  let nodes = document.querySelectorAll('[data-resize]');
   if (nodes.length) {
     debounceGlobalListener(debounce, 'resize.zf.trigger', function () {
-      for (var i = 0; i < nodes.length; i++) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(nodes[i], 'resizeme.zf.trigger', [nodes[i]]);
+      for (let i = 0; i < nodes.length; i++) {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(nodes[i], 'resizeme.zf.trigger', [nodes[i]]);
       }
     });
   }
 };
 Triggers.Initializers.addScrollListener = function (debounce) {
-  var nodes = document.querySelectorAll('[data-scroll]');
+  let nodes = document.querySelectorAll('[data-scroll]');
   if (nodes.length) {
     debounceGlobalListener(debounce, 'scroll.zf.trigger', function () {
-      for (var i = 0; i < nodes.length; i++) {
-        _foundation_util_events__WEBPACK_IMPORTED_MODULE_2__.Events.trigger(nodes[i], 'scrollme.zf.trigger', [nodes[i], window.pageYOffset]);
+      for (let i = 0; i < nodes.length; i++) {
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_1__.Events.trigger(nodes[i], 'scrollme.zf.trigger', [nodes[i], window.pageYOffset]);
       }
     });
   }
@@ -15376,14 +14183,34 @@ Triggers.Initializers.addGlobalListeners = function () {
   Triggers.Initializers.addScrollListener();
   Triggers.Initializers.addClosemeListener();
 };
-Triggers.init = function (__, Foundation) {
-  (0,_foundation_core_utils__WEBPACK_IMPORTED_MODULE_0__.onLoad)(window, function () {
-    if (triggersInitialized !== true) {
+Triggers.init = function (Foundation) {
+  // 7.0: arm at DOMContentLoaded (or immediately once the DOM is parsed)
+  // instead of window load. A stalled third-party resource - an embedded
+  // video iframe that hangs without erroring - would otherwise leave every
+  // [data-open]/[data-close]/[data-toggle] interaction dead until it gives
+  // up, with nothing in the console. Arming at DOM-ready is safe for the
+  // delegation (the document-level listeners resolve targets at event
+  // time), and the initial Foundation.init() reflow completes before
+  // DOMContentLoaded fires, so the closeme yeti-box snapshot still sees
+  // the full plugin set.
+  //
+  // The armed flag lives on window, not in module state: the docs layout
+  // loads the foundation.js monolith next to the per-plugin chain, and
+  // every copy of this module used to arm its own delegation set - one
+  // click then ran toggle eight times, which nets to "closed" for every
+  // open/close style interaction (dropdown, responsive toggle).
+  const arm = function () {
+    if (window.zfTriggersArmed !== true) {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-      triggersInitialized = true;
+      window.zfTriggersArmed = true;
     }
-  });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', arm);
+  } else {
+    arm();
+  }
   if (Foundation) {
     Foundation.Triggers = Triggers;
     // Legacy included to be backwards compatible for now.
@@ -15422,74 +14249,75 @@ Triggers.init = function (__, Foundation) {
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	!function() {
+/******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 		__webpack_require__.d = (exports, definition) => {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	}();
+/******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	!function() {
-/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
+/******/ 	(() => {
 /******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
+/******/ 		__webpack_require__.r = (exports) => {
 /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
-/******/ 	}();
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-!function() {
+(() => {
 /*!**********************************!*\
   !*** ./js/entries/foundation.js ***!
   \**********************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Abide: function() { return /* reexport safe */ _foundation_abide__WEBPACK_IMPORTED_MODULE_12__.Abide; },
-/* harmony export */   Accordion: function() { return /* reexport safe */ _foundation_accordion__WEBPACK_IMPORTED_MODULE_13__.Accordion; },
-/* harmony export */   AccordionMenu: function() { return /* reexport safe */ _foundation_accordionMenu__WEBPACK_IMPORTED_MODULE_14__.AccordionMenu; },
-/* harmony export */   Box: function() { return /* reexport safe */ _foundation_util_box__WEBPACK_IMPORTED_MODULE_2__.Box; },
-/* harmony export */   CoreUtils: function() { return /* reexport module object */ _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__; },
-/* harmony export */   Drilldown: function() { return /* reexport safe */ _foundation_drilldown__WEBPACK_IMPORTED_MODULE_15__.Drilldown; },
-/* harmony export */   Dropdown: function() { return /* reexport safe */ _foundation_dropdown__WEBPACK_IMPORTED_MODULE_16__.Dropdown; },
-/* harmony export */   DropdownMenu: function() { return /* reexport safe */ _foundation_dropdownMenu__WEBPACK_IMPORTED_MODULE_17__.DropdownMenu; },
-/* harmony export */   Equalizer: function() { return /* reexport safe */ _foundation_equalizer__WEBPACK_IMPORTED_MODULE_18__.Equalizer; },
-/* harmony export */   Foundation: function() { return /* reexport safe */ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation; },
-/* harmony export */   Interchange: function() { return /* reexport safe */ _foundation_interchange__WEBPACK_IMPORTED_MODULE_19__.Interchange; },
-/* harmony export */   Keyboard: function() { return /* reexport safe */ _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard; },
-/* harmony export */   Magellan: function() { return /* reexport safe */ _foundation_magellan__WEBPACK_IMPORTED_MODULE_20__.Magellan; },
-/* harmony export */   MediaQuery: function() { return /* reexport safe */ _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery; },
-/* harmony export */   Motion: function() { return /* reexport safe */ _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion; },
-/* harmony export */   Nest: function() { return /* reexport safe */ _foundation_util_nest__WEBPACK_IMPORTED_MODULE_8__.Nest; },
-/* harmony export */   OffCanvas: function() { return /* reexport safe */ _foundation_offcanvas__WEBPACK_IMPORTED_MODULE_21__.OffCanvas; },
-/* harmony export */   Orbit: function() { return /* reexport safe */ _foundation_orbit__WEBPACK_IMPORTED_MODULE_22__.Orbit; },
-/* harmony export */   ResponsiveAccordionTabs: function() { return /* reexport safe */ _foundation_responsiveAccordionTabs__WEBPACK_IMPORTED_MODULE_32__.ResponsiveAccordionTabs; },
-/* harmony export */   ResponsiveMenu: function() { return /* reexport safe */ _foundation_responsiveMenu__WEBPACK_IMPORTED_MODULE_23__.ResponsiveMenu; },
-/* harmony export */   ResponsiveToggle: function() { return /* reexport safe */ _foundation_responsiveToggle__WEBPACK_IMPORTED_MODULE_24__.ResponsiveToggle; },
-/* harmony export */   Reveal: function() { return /* reexport safe */ _foundation_reveal__WEBPACK_IMPORTED_MODULE_25__.Reveal; },
-/* harmony export */   Slider: function() { return /* reexport safe */ _foundation_slider__WEBPACK_IMPORTED_MODULE_26__.Slider; },
-/* harmony export */   SmoothScroll: function() { return /* reexport safe */ _foundation_smoothScroll__WEBPACK_IMPORTED_MODULE_27__.SmoothScroll; },
-/* harmony export */   Sticky: function() { return /* reexport safe */ _foundation_sticky__WEBPACK_IMPORTED_MODULE_28__.Sticky; },
-/* harmony export */   Tabs: function() { return /* reexport safe */ _foundation_tabs__WEBPACK_IMPORTED_MODULE_29__.Tabs; },
-/* harmony export */   Timer: function() { return /* reexport safe */ _foundation_util_timer__WEBPACK_IMPORTED_MODULE_9__.Timer; },
-/* harmony export */   Toggler: function() { return /* reexport safe */ _foundation_toggler__WEBPACK_IMPORTED_MODULE_30__.Toggler; },
-/* harmony export */   Tooltip: function() { return /* reexport safe */ _foundation_tooltip__WEBPACK_IMPORTED_MODULE_31__.Tooltip; },
-/* harmony export */   Touch: function() { return /* reexport safe */ _foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch; },
-/* harmony export */   Triggers: function() { return /* reexport safe */ _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers; },
-/* harmony export */   onImagesLoaded: function() { return /* reexport safe */ _foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_3__.onImagesLoaded; }
+/* harmony export */   Abide: () => (/* reexport safe */ _foundation_abide__WEBPACK_IMPORTED_MODULE_12__.Abide),
+/* harmony export */   Accordion: () => (/* reexport safe */ _foundation_accordion__WEBPACK_IMPORTED_MODULE_13__.Accordion),
+/* harmony export */   AccordionMenu: () => (/* reexport safe */ _foundation_accordionMenu__WEBPACK_IMPORTED_MODULE_14__.AccordionMenu),
+/* harmony export */   Box: () => (/* reexport safe */ _foundation_util_box__WEBPACK_IMPORTED_MODULE_2__.Box),
+/* harmony export */   CoreUtils: () => (/* reexport module object */ _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__),
+/* harmony export */   Drilldown: () => (/* reexport safe */ _foundation_drilldown__WEBPACK_IMPORTED_MODULE_15__.Drilldown),
+/* harmony export */   Dropdown: () => (/* reexport safe */ _foundation_dropdown__WEBPACK_IMPORTED_MODULE_16__.Dropdown),
+/* harmony export */   DropdownMenu: () => (/* reexport safe */ _foundation_dropdownMenu__WEBPACK_IMPORTED_MODULE_17__.DropdownMenu),
+/* harmony export */   Equalizer: () => (/* reexport safe */ _foundation_equalizer__WEBPACK_IMPORTED_MODULE_18__.Equalizer),
+/* harmony export */   Foundation: () => (/* reexport safe */ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation),
+/* harmony export */   Interchange: () => (/* reexport safe */ _foundation_interchange__WEBPACK_IMPORTED_MODULE_19__.Interchange),
+/* harmony export */   Keyboard: () => (/* reexport safe */ _foundation_util_keyboard__WEBPACK_IMPORTED_MODULE_4__.Keyboard),
+/* harmony export */   Magellan: () => (/* reexport safe */ _foundation_magellan__WEBPACK_IMPORTED_MODULE_20__.Magellan),
+/* harmony export */   MediaQuery: () => (/* reexport safe */ _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery),
+/* harmony export */   Motion: () => (/* reexport safe */ _foundation_util_motion__WEBPACK_IMPORTED_MODULE_7__.Motion),
+/* harmony export */   Nest: () => (/* reexport safe */ _foundation_util_nest__WEBPACK_IMPORTED_MODULE_8__.Nest),
+/* harmony export */   OffCanvas: () => (/* reexport safe */ _foundation_offcanvas__WEBPACK_IMPORTED_MODULE_21__.OffCanvas),
+/* harmony export */   Orbit: () => (/* reexport safe */ _foundation_orbit__WEBPACK_IMPORTED_MODULE_22__.Orbit),
+/* harmony export */   ResponsiveAccordionTabs: () => (/* reexport safe */ _foundation_responsiveAccordionTabs__WEBPACK_IMPORTED_MODULE_32__.ResponsiveAccordionTabs),
+/* harmony export */   ResponsiveMenu: () => (/* reexport safe */ _foundation_responsiveMenu__WEBPACK_IMPORTED_MODULE_23__.ResponsiveMenu),
+/* harmony export */   ResponsiveToggle: () => (/* reexport safe */ _foundation_responsiveToggle__WEBPACK_IMPORTED_MODULE_24__.ResponsiveToggle),
+/* harmony export */   Reveal: () => (/* reexport safe */ _foundation_reveal__WEBPACK_IMPORTED_MODULE_25__.Reveal),
+/* harmony export */   Slider: () => (/* reexport safe */ _foundation_slider__WEBPACK_IMPORTED_MODULE_26__.Slider),
+/* harmony export */   SmoothScroll: () => (/* reexport safe */ _foundation_smoothScroll__WEBPACK_IMPORTED_MODULE_27__.SmoothScroll),
+/* harmony export */   Sticky: () => (/* reexport safe */ _foundation_sticky__WEBPACK_IMPORTED_MODULE_28__.Sticky),
+/* harmony export */   Tabs: () => (/* reexport safe */ _foundation_tabs__WEBPACK_IMPORTED_MODULE_29__.Tabs),
+/* harmony export */   Timer: () => (/* reexport safe */ _foundation_util_timer__WEBPACK_IMPORTED_MODULE_9__.Timer),
+/* harmony export */   Toggler: () => (/* reexport safe */ _foundation_toggler__WEBPACK_IMPORTED_MODULE_30__.Toggler),
+/* harmony export */   Tooltip: () => (/* reexport safe */ _foundation_tooltip__WEBPACK_IMPORTED_MODULE_31__.Tooltip),
+/* harmony export */   Touch: () => (/* reexport safe */ _foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch),
+/* harmony export */   Triggers: () => (/* reexport safe */ _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   onImagesLoaded: () => (/* reexport safe */ _foundation_util_imageLoader__WEBPACK_IMPORTED_MODULE_3__.onImagesLoaded)
 /* harmony export */ });
 /* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../foundation.core */ "./js/foundation.core.js");
 /* harmony import */ var _foundation_core_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../foundation.core.utils */ "./js/foundation.core.utils.js");
@@ -15582,7 +14410,7 @@ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.Touch = _foundation_uti
 
 // Touch and Triggers init are side-effect driven, just idempotent setup.
 _foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch.init();
-_foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers.init($, _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
+_foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers.init(_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
 _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_abide__WEBPACK_IMPORTED_MODULE_12__.Abide, 'Abide');
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_accordion__WEBPACK_IMPORTED_MODULE_13__.Accordion, 'Accordion');
@@ -15606,8 +14434,9 @@ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_togg
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_tooltip__WEBPACK_IMPORTED_MODULE_31__.Tooltip, 'Tooltip');
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_responsiveAccordionTabs__WEBPACK_IMPORTED_MODULE_32__.ResponsiveAccordionTabs, 'ResponsiveAccordionTabs');
 
-/* harmony default export */ __webpack_exports__["default"] = (_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
-}();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
+})();
+
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

@@ -1,8 +1,0 @@
-// Compatibility shim: the `flex-video` name is deprecated since 6.10 and will
-// be removed in Foundation 7.0. Use the responsive-embed component instead.
-//
-// Slice B9: `@forward` instead of `@import` — the re-export keeps working for
-// `@import 'components/flex-video'` consumers (forwarded members are defined
-// in the consumer's import world) and additionally exposes the module members
-// to `@use 'components/flex-video'` consumers.
-@forward 'responsive-embed';

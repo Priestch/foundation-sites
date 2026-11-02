@@ -1,4 +1,5 @@
-# Explicit support baseline for the 6.x CSS output (JS dist stays ES5).
+# Explicit support baseline, governing the CSS output AND the JS dist
+# transpilation target (7.0 drops the ES5 pin - webpack/babel both read this).
 # Chrome/Edge 110 (2022), Firefox 115 (the 2023 ESR line, covers newer ESRs too),
 # Safari/iOS 15.4 (2022-03), Samsung Internet 17.
 chrome >= 110

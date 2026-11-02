@@ -2,9 +2,6 @@
 // https://get.foundation
 // Licensed under MIT Open Source
 //
-// The `.show-for-ie` / `.hide-for-ie` classes are deprecated since 6.10 and
-// will be removed in Foundation 7.0, together with all IE support.
-
 // 7.0 Sass modularization (M2 line B, slice B8): the visibility partial is a
 // real `@use` module now (scss/components/_visibility-module.scss). This file
 // stays at the legacy import path (foundation.scss, docs, customizer and the

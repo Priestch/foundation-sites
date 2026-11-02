@@ -1105,18 +1105,7 @@ $offcanvas-push-zindex: 11;
     display: none !important;
   }
 }
-.show-for-ie {
-  display: none;
-}
 
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .show-for-ie {
-    display: block !important;
-  }
-  .hide-for-ie {
-    display: none !important;
-  }
-}
 .show-for-sticky {
   display: none;
 }

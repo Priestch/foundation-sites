@@ -51,8 +51,10 @@ $responsive-embed-ratios: (
 }
 
 @mixin foundation-responsive-embed {
-  .responsive-embed,
-  .flex-video {
+  // 7.0: the .flex-video alias (a Foundation 5 name kept alive through 6.x
+  // as a second selector on these rules) is gone - rename the class to
+  // responsive-embed, which has been the documented component since 6.4.
+  .responsive-embed {
     @include responsive-embed($ratio: default);
 
     $ratios: map-remove($responsive-embed-ratios, default);

@@ -9,7 +9,7 @@ video: GxUsloI_qnQ
 To make sure embedded content maintains its aspect ratio as the width of the screen changes, wrap the `iframe`, `object`, `embed`, or `video` in a container with the `.responsive-embed` class.
 
 <div class="callout alert">
-  <p><strong>Deprecated since 6.10:</strong> the <code>.flex-video</code> class name (and its <code>.flex-video-widescreen</code> / <code>.flex-video-4by3</code> aliases) will be <strong>removed in Foundation 7.0</strong>. Use the <code>.responsive-embed</code> classes documented below instead.</p>
+  <p><strong>Deprecated since 6.10:</strong> the <code>.flex-video</code> class name (and its <code>.flex-video-widescreen</code> / <code>.flex-video-4by3</code> aliases) were <strong>removed in Foundation 7.0</strong>. Rename the class in your markup to <code>.responsive-embed</code> (and <code>.flex-video-widescreen</code> to <code>.responsive-embed.widescreen</code>) - the component below is the same technique with configurable ratios.</p>
 </div>
 
 <p>
