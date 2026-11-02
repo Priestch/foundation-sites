@@ -1,0 +1,27 @@
+@use "true" as *;
+@use "sass:meta";
+@use "../../scss/themes/semi" as semi;
+
+// One theme per file: a module can be configured only once per compilation,
+// so each practice theme gets its own foundation-next compilation.
+@use "../../scss/foundation-next" as fs with ($fs-user: meta.module-variables("semi"));
+
+@include describe('Themes (semi, through foundation-next)') {
+
+  @include it('carries the Semi brand, secondary and control radius through an entry') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-label();
+      }
+      @include contains($selector: false) {
+        .label {
+          background: #0064fa;
+          border-radius: 3px;
+        }
+        .label.secondary {
+          background: #0095ee;
+        }
+      }
+    }
+  }
+}

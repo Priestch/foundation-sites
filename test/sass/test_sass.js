@@ -15,6 +15,8 @@ var settingsModuleFile = path.join(__dirname, '_settings_module.scss');
 var nextLoadUnitsFile = path.join(__dirname, '_next_load_units.scss');
 var themesFile = path.join(__dirname, '_themes.scss');
 var themesNextFile = path.join(__dirname, '_themes_next.scss');
+var themesTdesignFile = path.join(__dirname, '_themes_tdesign.scss');
+var themesSemiFile = path.join(__dirname, '_themes_semi.scss');
 var utilFacadeFile = path.join(__dirname, '_util_facade.scss');
 var formsFacadeFile = path.join(__dirname, '_forms_facade.scss');
 var typographyFacadeFile = path.join(__dirname, '_typography_facade.scss');
@@ -39,6 +41,8 @@ sassTrue.runSass({describe, it, sass }, settingsModuleFile, { loadPaths: [scssDi
 sassTrue.runSass({describe, it, sass }, nextLoadUnitsFile, { loadPaths: [scssDir] });
 sassTrue.runSass({describe, it, sass }, themesFile, { loadPaths: [scssDir] });
 sassTrue.runSass({describe, it, sass }, themesNextFile, { loadPaths: [scssDir] });
+sassTrue.runSass({describe, it, sass }, themesTdesignFile, { loadPaths: [scssDir] });
+sassTrue.runSass({describe, it, sass }, themesSemiFile, { loadPaths: [scssDir] });
 sassTrue.runSass({describe, it, sass }, utilFacadeFile);
 sassTrue.runSass({describe, it, sass }, formsFacadeFile);
 sassTrue.runSass({describe, it, sass }, typographyFacadeFile);

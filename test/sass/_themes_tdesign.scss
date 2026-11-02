@@ -1,0 +1,37 @@
+@use "true" as *;
+@use "sass:meta";
+@use "../../scss/themes/tdesign" as tdesign;
+
+// One theme per file: a module can be configured only once per compilation,
+// so each practice theme gets its own foundation-next compilation.
+@use "../../scss/foundation-next" as fs with ($fs-user: meta.module-variables("tdesign"));
+
+@include describe('Themes (tdesign, through foundation-next)') {
+
+  @include it('carries the TDesign brand and control radius through an entry') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-label();
+      }
+      @include contains($selector: false) {
+        .label {
+          background: #0052d9;
+          border-radius: 3px;
+        }
+      }
+    }
+  }
+
+  @include it('carries the TDesign shadow tier through the container class') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-card();
+      }
+      @include contains($selector: false) {
+        .card {
+          border-radius: 6px;
+        }
+      }
+    }
+  }
+}

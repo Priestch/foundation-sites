@@ -1,0 +1,47 @@
+// Foundation for Sites — the "tdesign" practice theme
+// https://get.foundation
+// Licensed under MIT Open Source
+//
+// A settings module carrying TDesign's light-theme look (the Tencent design
+// language) on the 7.0 token surface — the second proof, after classic, that
+// an external design system maps onto Foundation with data alone: every value
+// below is lifted from TDesign's published tokens, no framework code was
+// touched. Use it through the foundation-next entry:
+//
+//   @use "sass:meta";
+//   @use "foundation/themes/tdesign" as theme;
+//   @include fs.foundation-everything(meta.module-variables("theme"));
+//
+// Provenance (checked out next to this repo):
+// - palette/grays: packages/theme-generator/src/common/themes/built-in/css/
+//   web/TDesign/light.css (--td-*-color-N) and extra.css (--td-radius-*)
+// - font: site/src/style/fonts.less (--td-font-family)
+//
+// Mapping notes:
+// - TDesign's semantic brand is brand-7; its error color sits at error-6
+//   (--td-error-color = error-6), unlike most scales that read at 5.
+// - TDesign has no brand-secondary; Foundation's neutral secondary role maps
+//   to gray-9. Its gray scale is background-first (1-6) and text-first
+//   (13-14); body text is gray-14, not black.
+
+$foundation-palette: (
+  "primary": #0052d9,   // --td-brand-color (brand-color-7)
+  "secondary": #5e5e5e, // gray-color-9 — the neutral stand-in for secondary
+  "success": #2ba471,   // --td-success-color (success-color-5)
+  "warning": #e37318,   // --td-warning-color (warning-color-5)
+  "alert": #d54941,     // --td-error-color (error-color-6)
+);
+$light-gray: #f3f3f3;   // gray-color-1 — secondarycontainer / hover fills
+$medium-gray: #ddd;     // gray-color-4 — component borders
+$dark-gray: #a6a6a6;    // gray-color-6 — muted icons and placeholders
+$black: #181818;        // gray-color-14 — body text
+$white: #ffffff;        // --td-bg-color-container
+$body-font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$global-weight-normal: 400;
+$global-weight-bold: 600;
+$global-radius: 0;
+$global-radius-small: 3px;  // --td-radius-default — control class (buttons, tags)
+$global-radius-large: 6px;  // --td-radius-medium — container class (cards, menus)
+$global-shadow-sm: 0 1px 10px rgba(0, 0, 0, 0.05), 0 4px 5px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.12); // --td-shadow-1
+$global-shadow-md: 0 3px 14px 2px rgba(0, 0, 0, 0.05), 0 8px 10px 1px rgba(0, 0, 0, 0.06), 0 5px 5px -3px rgba(0, 0, 0, 0.1); // --td-shadow-2
+$global-focus-ring: null; // not yet wired — lands with the T2 focus-ring pass

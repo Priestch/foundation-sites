@@ -1,0 +1,51 @@
+// Foundation for Sites — the "semi" practice theme
+// https://get.foundation
+// Licensed under MIT Open Source
+//
+// A settings module carrying Semi Design's light-theme look (the ByteDance
+// design language) on the 7.0 token surface — the third proof that an
+// external design system maps onto Foundation with data alone. Every value
+// below is lifted from Semi's published tokens, no framework code was
+// touched. Use it through the foundation-next entry:
+//
+//   @use "sass:meta";
+//   @use "foundation/themes/semi" as theme;
+//   @include fs.foundation-everything(meta.module-variables("theme"));
+//
+// Provenance (checked out next to this repo):
+// - palette: packages/semi-theme-default/scss/_palette.scss (the light block
+//   at the top of the file; the file repeats the scale for dark mode)
+// - semantics/shadows/radius: packages/semi-theme-default/scss/global.scss
+//   (--semi-color-*, --semi-shadow-elevated, --semi-border-radius-*)
+//
+// Mapping notes:
+// - Semi keeps one elevation shadow for everything floating (toast, modal,
+//   popover). The md tier carries it verbatim; the sm tier keeps only its
+//   diffuse layer, so cards get elevation without the hairline.
+// - Semi's secondary IS a brand slot (light-blue-5) — unlike TDesign's
+//   neutral — and its grey scale ends at grey-9, which is the main text
+//   color (--semi-color-text-0), not pure black.
+// - Semi's radius tiers read small=3px (button/tag/tabs) and medium=6px
+//   (dropdown/menu class); the 12px modal tier has no Foundation slot.
+
+$foundation-palette: (
+  "primary": #0064fa,   // --semi-color-primary (blue-5)
+  "secondary": #0095ee, // --semi-color-secondary (light-blue-5)
+  "success": #3bb346,   // --semi-color-success (green-5)
+  "warning": #fc8800,   // --semi-color-warning (orange-5)
+  "alert": #f93920,     // --semi-color-danger (red-5)
+);
+$light-gray: #e6e8ea;   // grey-1
+$medium-gray: #c6c9cd;  // grey-2
+$dark-gray: #6b7075;    // grey-5 — muted icons and secondary text
+$black: #1c1f23;        // grey-9 — --semi-color-text-0
+$white: #ffffff;
+$body-font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$global-weight-normal: 400;
+$global-weight-bold: 600;
+$global-radius: 0;
+$global-radius-small: 3px;  // --semi-border-radius-small — control class
+$global-radius-large: 6px;  // --semi-border-radius-medium — container class
+$global-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.1); // the diffuse layer of elevated
+$global-shadow-md: 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1); // --semi-shadow-elevated
+$global-focus-ring: null; // not yet wired — lands with the T2 focus-ring pass
