@@ -49,7 +49,7 @@ $label-padding: 0.33333rem 0.5rem !default;
 
 /// Default radius of labels.
 /// @type Number
-$label-radius: $global-radius !default;
+$label-radius: $global-radius-small !default;
 
 /// Generates base styles for a label.
 @mixin label {

@@ -1,0 +1,33 @@
+// Foundation for Sites — the "classic" theme (the 6.x default look)
+// https://get.foundation
+// Licensed under MIT Open Source
+//
+// A settings module carrying the exact 6.x defaults, so a 7.0 project can
+// opt back into the familiar look with one @use, regardless of what the
+// 7.0 default theme becomes. Use it through the foundation-next entry:
+//
+//   @use "sass:meta";
+//   @use "foundation/themes/classic" as theme;
+//   @include fs.foundation-everything(meta.module-variables("theme"));
+
+$foundation-palette: (
+  "primary": #1779ba,
+  "secondary": #767676,
+  "success": #3adb76,
+  "warning": #ffae00,
+  "alert": #cc4b37,
+);
+$light-gray: #e6e6e6;
+$medium-gray: #cacaca;
+$dark-gray: #8a8a8a;
+$black: #0a0a0a;
+$white: #fefefe;
+$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+$global-weight-normal: normal;
+$global-weight-bold: bold;
+$global-radius: 0;
+$global-radius-small: 0;
+$global-radius-large: 0;
+$global-shadow-sm: none;
+$global-shadow-md: none;
+$global-focus-ring: null;

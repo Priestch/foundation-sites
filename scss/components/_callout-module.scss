@@ -59,7 +59,7 @@ $callout-font-color-alt: $body-background !default;
 
 /// Default border radius for callouts.
 /// @type Color
-$callout-radius: $global-radius !default;
+$callout-radius: $global-radius-large !default;
 
 /// Amount to tint links used within colored panels. Set to `false` to disable this feature.
 /// @type Number | Boolean

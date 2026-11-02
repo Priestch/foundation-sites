@@ -65,7 +65,7 @@ $button-color-alt: $black !default;
 
 /// Border radius for buttons, defaulted to global-radius.
 /// @type Number
-$button-radius: $global-radius !default;
+$button-radius: $global-radius-small !default;
 
 /// Border for buttons, transparent by default
 /// @type List

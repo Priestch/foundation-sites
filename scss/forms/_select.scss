@@ -27,7 +27,7 @@ $select-triangle-color: $dark-gray !default;
 
 /// Default radius for select menus.
 /// @type Color
-$select-radius: $global-radius !default;
+$select-radius: $global-radius-small !default;
 
 @mixin form-select {
   $height: ($input-font-size * unitless-calc($input-line-height)) + (get-side($input-padding, 'top') + get-side($input-padding, 'bottom')) - rem-calc(1);

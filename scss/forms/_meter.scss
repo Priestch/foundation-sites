@@ -24,7 +24,7 @@ $meter-height: 1rem !default;
 
 /// Border radius of a `<meter>` element.
 /// @type Length
-$meter-radius: $global-radius !default;
+$meter-radius: $global-radius-small !default;
 
 /// Background color of a `<meter>` element.
 /// @type Color

@@ -41,7 +41,7 @@ $pagination-item-spacing: rem-calc(1) !default;
 
 /// Default radius for pagination items.
 /// @type Number
-$pagination-radius: $global-radius !default;
+$pagination-radius: $global-radius-small !default;
 
 /// Background color of pagination items on hover.
 /// @type Color

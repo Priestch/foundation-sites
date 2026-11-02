@@ -1,0 +1,33 @@
+@use "true" as *;
+@use "sass:map";
+@use "../../scss/foundation" as foundation;
+
+@include describe('Theme token tiers (P0)') {
+
+  @include it('the new tier tokens default to the legacy behavior') {
+    @include assert-equal(foundation.$global-radius-small, foundation.$global-radius,
+      'small tier defaults to the flat legacy radius');
+    @include assert-equal(foundation.$global-radius-large, foundation.$global-radius,
+      'large tier defaults to the flat legacy radius');
+    @include assert-equal(foundation.$global-shadow-sm, none,
+      'low elevation defaults to none');
+    @include assert-equal(foundation.$global-shadow-md, none,
+      'high elevation defaults to none');
+    @include assert-equal(foundation.$global-focus-ring, null,
+      'the unified focus ring defaults to unset (legacy per-component focus)');
+  }
+
+  @include it('control-class components follow the small tier') {
+    @include assert-equal(foundation.$button-radius, foundation.$global-radius-small,
+      'button radius derives from the small tier');
+    @include assert-equal(foundation.$input-radius, foundation.$global-radius-small,
+      'input radius derives from the small tier');
+  }
+
+  @include it('container-class components follow the large tier') {
+    @include assert-equal(foundation.$card-border-radius, foundation.$global-radius-large,
+      'card radius derives from the large tier');
+    @include assert-equal(foundation.$tooltip-radius, foundation.$global-radius-large,
+      'tooltip radius derives from the large tier');
+  }
+}

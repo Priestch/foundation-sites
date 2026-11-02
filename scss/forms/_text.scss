@@ -109,11 +109,11 @@ $input-number-spinners: true !default;
 
 /// Radius for text inputs.
 /// @type Border
-$input-radius: $global-radius !default;
+$input-radius: $global-radius-small !default;
 
 /// Border radius for form buttons, defaulted to global-radius.
 /// @type Number
-$form-button-radius: $global-radius !default;
+$form-button-radius: $global-radius-small !default;
 
 @mixin form-element {
   $height: ($input-font-size * unitless-calc($input-line-height)) + (get-side($input-padding, 'top') + get-side($input-padding, 'bottom')) - rem-calc(1);

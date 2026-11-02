@@ -1,0 +1,20 @@
+@use "true" as *;
+@use "sass:meta";
+@use "../../scss/foundation-next" as fs;
+@use "../../scss/themes/classic" as classic;
+
+@include describe('Themes (classic, through foundation-next)') {
+
+  @include it('compiles the classic theme through the per-component entry') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-label(meta.module-variables("classic"));
+      }
+      @include contains($selector: false) {
+        .label {
+          background: #1779ba;
+        }
+      }
+    }
+  }
+}

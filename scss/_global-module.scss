@@ -113,6 +113,28 @@ $global-weight-bold: bold !default;
 /// @type Number
 $global-radius: 0 !default;
 
+/// Radius tier for control-class components (buttons, labels, form
+/// controls, switches). 7.0 theme system: defaults to the flat legacy
+/// radius, so existing builds are unchanged until a theme opts in.
+/// @type Number
+$global-radius-small: $global-radius !default;
+/// Radius tier for container-class components (cards, callouts, reveal,
+/// tooltips, menus).
+/// @type Number
+$global-radius-large: $global-radius !default;
+/// Low elevation for floating surfaces (cards at rest). `none` is the
+/// legacy default; themes opt in.
+/// @type Shadow
+$global-shadow-sm: none !default;
+/// Higher elevation for overlays and popups. `none` is the legacy default.
+/// @type Shadow
+$global-shadow-md: none !default;
+/// Unified focus ring. `null` keeps each component's legacy focus styling;
+/// a theme sets a ring value (e.g. `0 0 0 2px rgba($primary-color, .35)`)
+/// to switch the whole framework over.
+/// @type Shadow | Null
+$global-focus-ring: null !default;
+
 /// Global value used for all menu styles. Can be overwritten at individual menu component level.
 /// @type Number
 /// Color of the menu icon (hamburger) in a title bar.

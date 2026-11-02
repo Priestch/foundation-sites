@@ -33,7 +33,7 @@ $progress-meter-background: $primary-color !default;
 
 /// Default radius of a progress bar.
 /// @type Number
-$progress-radius: $global-radius !default;
+$progress-radius: $global-radius-small !default;
 
 @mixin foundation-progress-element {
   progress {

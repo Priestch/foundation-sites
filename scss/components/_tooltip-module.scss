@@ -70,7 +70,7 @@ $tooltip-pip-height: $tooltip-pip-width * 0.866 !default;
 
 /// Default radius for tooltips.
 /// @type Number
-$tooltip-radius: $global-radius !default;
+$tooltip-radius: $global-radius-large !default;
 
 @mixin has-tip {
   position: relative;

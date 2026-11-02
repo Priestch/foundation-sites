@@ -102,6 +102,11 @@ $global-position: 1rem;
 $global-weight-normal: normal;
 $global-weight-bold: bold;
 $global-radius: 0;
+$global-radius-small: $global-radius;
+$global-radius-large: $global-radius;
+$global-shadow-sm: none;
+$global-shadow-md: none;
+$global-focus-ring: null;
 $global-menu-padding: 0.7rem 1rem;
 $global-menu-nested-margin: 1rem;
 $global-text-direction: ltr;
@@ -206,7 +211,7 @@ $keystroke-font: $font-family-monospace;
 $keystroke-color: $black;
 $keystroke-background: $light-gray;
 $keystroke-padding: rem-calc(2 4 0);
-$keystroke-radius: $global-radius;
+$keystroke-radius: $global-radius-small;
 $abbr-underline: 1px dotted $black;
 
 // 5. Typography Helpers
@@ -313,7 +318,7 @@ $button-background: $primary-color;
 $button-background-hover: scale-color($button-background, $lightness: -15%);
 $button-color: $white;
 $button-color-alt: $black;
-$button-radius: $global-radius;
+$button-radius: $global-radius-small;
 $button-border: 1px solid transparent;
 $button-hollow-border-width: 1px;
 $button-sizes: (
@@ -352,7 +357,7 @@ $callout-sizes: (
 );
 $callout-font-color: $body-font-color;
 $callout-font-color-alt: $body-background;
-$callout-radius: $global-radius;
+$callout-radius: $global-radius-large;
 $callout-link-tint: 30%;
 
 // 14. Card
@@ -363,7 +368,7 @@ $card-font-color: $body-font-color;
 $card-divider-background: $light-gray;
 $card-border: 1px solid $light-gray;
 $card-shadow: none;
-$card-border-radius: $global-radius;
+$card-border-radius: $global-radius-large;
 $card-padding: $global-padding;
 $card-margin-bottom: $global-margin;
 
@@ -410,7 +415,7 @@ $dropdown-background: $body-background;
 $dropdown-border: 1px solid $medium-gray;
 $dropdown-font-size: 1rem;
 $dropdown-width: 300px;
-$dropdown-radius: $global-radius;
+$dropdown-radius: $global-radius-small;
 $dropdown-sizes: (
   tiny: 100px,
   small: 200px,
@@ -461,7 +466,7 @@ $form-label-font-weight: $global-weight-normal;
 $form-label-line-height: 1.8;
 $select-background: $white;
 $select-triangle-color: $dark-gray;
-$select-radius: $global-radius;
+$select-radius: $global-radius-small;
 $input-color: $black;
 $input-placeholder-color: $medium-gray;
 $input-font-family: inherit;
@@ -479,8 +484,8 @@ $input-shadow-focus: 0 0 5px $medium-gray;
 $input-cursor-disabled: not-allowed;
 $input-transition: box-shadow 0.5s, border-color 0.25s ease-in-out;
 $input-number-spinners: true;
-$input-radius: $global-radius;
-$form-button-radius: $global-radius;
+$input-radius: $global-radius-small;
+$form-button-radius: $global-radius-small;
 
 // 21. Label
 // ---------
@@ -491,7 +496,7 @@ $label-color-alt: $black;
 $label-palette: $foundation-palette;
 $label-font-size: 0.8rem;
 $label-padding: 0.33333rem 0.5rem;
-$label-radius: $global-radius;
+$label-radius: $global-radius-small;
 
 // 22. Media Object
 // ----------------
@@ -519,7 +524,7 @@ $menu-icons-back-compat: true;
 // ---------
 
 $meter-height: 1rem;
-$meter-radius: $global-radius;
+$meter-radius: $global-radius-small;
 $meter-background: $medium-gray;
 $meter-fill-good: $success-color;
 $meter-fill-medium: $warning-color;
@@ -571,7 +576,7 @@ $pagination-margin-bottom: $global-margin;
 $pagination-item-color: $black;
 $pagination-item-padding: rem-calc(3 10);
 $pagination-item-spacing: rem-calc(1);
-$pagination-radius: $global-radius;
+$pagination-radius: $global-radius-small;
 $pagination-item-background-hover: $light-gray;
 $pagination-item-background-current: $primary-color;
 $pagination-item-color-current: $white;
@@ -590,7 +595,7 @@ $progress-height: 1rem;
 $progress-background: $medium-gray;
 $progress-margin-bottom: $global-margin;
 $progress-meter-background: $primary-color;
-$progress-radius: $global-radius;
+$progress-radius: $global-radius-small;
 
 // 29. Prototype Arrow
 // -------------------
@@ -769,7 +774,7 @@ $reveal-width: 600px;
 $reveal-max-width: $global-width;
 $reveal-padding: $global-padding;
 $reveal-border: 1px solid $medium-gray;
-$reveal-radius: $global-radius;
+$reveal-radius: $global-radius-large;
 $reveal-zindex: 1005;
 $reveal-overlay-background: rgba($black, 0.45);
 
@@ -785,7 +790,7 @@ $slider-handle-height: 1.4rem;
 $slider-handle-width: 1.4rem;
 $slider-handle-background: $primary-color;
 $slider-opacity-disabled: 0.25;
-$slider-radius: $global-radius;
+$slider-radius: $global-radius-small;
 
 // 49. Switch
 // ----------
@@ -798,11 +803,11 @@ $switch-height: 2rem;
 $switch-height-tiny: 1.5rem;
 $switch-height-small: 1.75rem;
 $switch-height-large: 2.5rem;
-$switch-radius: $global-radius;
+$switch-radius: $global-radius-small;
 $switch-margin: $global-margin;
 $switch-paddle-background: $white;
 $switch-paddle-offset: 0.25rem;
-$switch-paddle-radius: $global-radius;
+$switch-paddle-radius: $global-radius-small;
 $switch-paddle-transition: all 0.25s ease-out;
 $switch-opacity-disabled: 0.5;
 $switch-cursor-disabled: not-allowed;
@@ -853,7 +858,7 @@ $thumbnail-margin-bottom: $global-margin;
 $thumbnail-shadow: 0 0 0 1px rgba($black, 0.2);
 $thumbnail-shadow-hover: 0 0 6px 1px rgba($primary-color, 0.5);
 $thumbnail-transition: box-shadow 200ms ease-out;
-$thumbnail-radius: $global-radius;
+$thumbnail-radius: $global-radius-large;
 
 // 53. Title Bar
 // -------------
@@ -879,7 +884,7 @@ $tooltip-max-width: 10rem;
 $tooltip-font-size: $small-font-size;
 $tooltip-pip-width: 0.75rem;
 $tooltip-pip-height: $tooltip-pip-width * 0.866;
-$tooltip-radius: $global-radius;
+$tooltip-radius: $global-radius-large;
 
 // 55. Top Bar
 // -----------

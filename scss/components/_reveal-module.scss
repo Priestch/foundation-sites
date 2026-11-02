@@ -48,7 +48,7 @@ $reveal-border: 1px solid $medium-gray !default;
 
 /// Default radius for modal.
 /// @type Number
-$reveal-radius: $global-radius !default;
+$reveal-radius: $global-radius-large !default;
 
 /// z-index for modals. The overlay uses this value, while the modal itself uses this value plus one.
 /// @type Number

@@ -45,7 +45,7 @@ $slider-opacity-disabled: 0.25 !default;
 
 /// Default radius for slider.
 /// @type Number
-$slider-radius: $global-radius !default;
+$slider-radius: $global-radius-small !default;
 
 @mixin foundation-range-input {
   input[type='range'] {  // stylelint-disable-line selector-no-qualifying-type

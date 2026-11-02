@@ -59,7 +59,7 @@ $button-background: $primary-color !default;
 $button-background-hover: scale-color($button-background, $lightness: -15%) !default;
 $button-color: $white !default;
 $button-color-alt: $black !default;
-$button-radius: $global-radius !default;
+$button-radius: $global-radius-small !default;
 $button-hollow-border-width: 1px !default;
 $button-sizes: (
   tiny: 0.6rem,

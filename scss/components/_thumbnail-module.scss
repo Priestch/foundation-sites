@@ -36,7 +36,7 @@ $thumbnail-transition: box-shadow 200ms ease-out !default;
 
 /// Default radius for thumbnail images.
 /// @type Number
-$thumbnail-radius: $global-radius !default;
+$thumbnail-radius: $global-radius-large !default;
 
 /// Adds thumbnail styles to an element.
 @mixin thumbnail {

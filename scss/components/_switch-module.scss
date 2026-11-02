@@ -57,7 +57,7 @@ $switch-height-large: 2.5rem !default;
 
 /// Border radius of the switch
 /// @type Number
-$switch-radius: $global-radius !default;
+$switch-radius: $global-radius-small !default;
 
 /// border around a modal.
 /// @type Number
@@ -73,7 +73,7 @@ $switch-paddle-offset: 0.25rem !default;
 
 /// border radius of the switch paddle
 /// @type Number
-$switch-paddle-radius: $global-radius !default;
+$switch-paddle-radius: $global-radius-small !default;
 
 /// switch transition.
 /// @type Number

@@ -26,5 +26,10 @@ $user: () !default;
   $body-font-color: map.get($user, "body-font-color"),
   $titlebar-icon-color: map.get($user, "titlebar-icon-color"),
   $titlebar-icon-color-hover: map.get($user, "titlebar-icon-color-hover"),
+  $global-radius-small: map.get($user, "global-radius-small"),
+  $global-radius-large: map.get($user, "global-radius-large"),
+  $global-shadow-sm: map.get($user, "global-shadow-sm"),
+  $global-shadow-md: map.get($user, "global-shadow-md"),
+  $global-focus-ring: map.get($user, "global-focus-ring"),
 );
 
