@@ -389,6 +389,11 @@ $abbr-underline: 1px dotted $black !default;
       }
     }
 
+    // 7.0: the unified focus ring when the theme set one (keyboard focus)
+    &:focus-visible {
+      @include focus-ring;
+    }
+
     img {
       border: 0;
     }

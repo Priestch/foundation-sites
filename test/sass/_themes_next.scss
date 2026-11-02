@@ -9,6 +9,11 @@
 
 @include describe('Themes (classic, through foundation-next)') {
 
+  @include it('keeps the legacy focus indicators: the ring is explicitly off') {
+    @include assert-equal(classic.$global-focus-ring, false,
+      'classic pins false (null cannot travel through module configuration)');
+  }
+
   @include it('configures the whole entry: the palette and radius ambients flow') {
     @include assert {
       @include output($selector: false) {

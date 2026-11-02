@@ -236,6 +236,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         a:hover, a:focus {
           color: rgb(7.4196078431%, 35.0745098039%, 74.1960784314%);
         }
+        a:focus-visible {
+          box-shadow: 0 0 0 2px #1668dc;
+        }
         a img {
           border: 0;
         }

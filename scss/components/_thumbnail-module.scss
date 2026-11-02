@@ -59,6 +59,13 @@ $thumbnail-radius: $global-radius-large !default;
     box-shadow: $thumbnail-shadow-hover;
   }
 
+  // 7.0: the unified focus ring when the theme set one (keyboard focus).
+  // Same specificity as the hover/focus shadow above — source order lets
+  // the ring win on focus-visible; with no ring the block above stands.
+  &:focus-visible {
+    @include focus-ring;
+  }
+
   image {
     box-shadow: none;
   }

@@ -203,6 +203,9 @@ $offcanvas-push-zindex: 11;
         [data-whatinput=mouse] .probe {
           outline: 0;
         }
+        .probe:focus-visible {
+          box-shadow: 0 0 0 2px #1240ab;
+        }
       }
     }
 

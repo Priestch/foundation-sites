@@ -124,6 +124,11 @@ $accordion-content-padding: 1rem !default;
     background-color: $background-hover;
   }
 
+  // 7.0: the unified focus ring when the theme set one (keyboard focus)
+  &:focus-visible {
+    @include focus-ring;
+  }
+
   @if $accordion-plusminus {
     &::before {
       position: absolute;

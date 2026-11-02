@@ -328,7 +328,7 @@ textarea:focus {
   outline: none;
   border: 1px solid #7a8499;
   background-color: #fefefe;
-  box-shadow: 0 0 5px #dcdfe3;
+  box-shadow: 0 0 0 2px #1668dc;
   transition: box-shadow 0.5s, border-color 0.25s ease-in-out;
 }
 
@@ -519,7 +519,7 @@ select:focus {
   outline: none;
   border: 1px solid #7a8499;
   background-color: #fefefe;
-  box-shadow: 0 0 5px #dcdfe3;
+  box-shadow: 0 0 0 2px #1668dc;
   transition: box-shadow 0.5s, border-color 0.25s ease-in-out;
 }
 select:disabled {
@@ -701,6 +701,9 @@ a {
 }
 a:hover, a:focus {
   color: rgb(7.4196078431%, 35.0745098039%, 74.1960784314%);
+}
+a:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
 }
 a img {
   border: 0;
@@ -3019,6 +3022,9 @@ ul.no-bullet, ol.no-bullet {
 [data-whatinput=mouse] .button {
   outline: 0;
 }
+.button:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
+}
 .button.tiny {
   font-size: 0.6rem;
 }
@@ -3453,6 +3459,9 @@ a.button:hover, a.button:focus {
 .close-button:hover, .close-button:focus {
   color: #0a0a0a;
 }
+.close-button:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
+}
 .close-button.small {
   right: 0.66rem;
   top: 0.33em;
@@ -3680,6 +3689,7 @@ input:checked ~ .switch-paddle::after {
 }
 input:focus-visible ~ .switch-paddle {
   background: rgb(76.5359477124%, 78.5471521942%, 81.2287581699%);
+  box-shadow: 0 0 0 2px #1668dc;
 }
 input:focus-visible ~ .switch-paddle::after {
   background: #fefefe;
@@ -4264,6 +4274,9 @@ table.hover:not(.unstriped) tr:nth-of-type(even):hover {
 .accordion-title:hover, .accordion-title:focus {
   background-color: #f2f3f5;
 }
+.accordion-title:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
+}
 .accordion-title::before {
   position: absolute;
   top: 50%;
@@ -4383,6 +4396,9 @@ table.hover:not(.unstriped) tr:nth-of-type(even):hover {
 .orbit-next:hover, .orbit-previous:hover, .orbit-next:active, .orbit-previous:active, .orbit-next:focus, .orbit-previous:focus {
   background-color: rgba(10, 10, 10, 0.5);
 }
+.orbit-next:focus-visible, .orbit-previous:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
+}
 
 .orbit-previous {
   right: 0;
@@ -4497,6 +4513,9 @@ table.hover:not(.unstriped) tr:nth-of-type(even):hover {
   background: #f2f3f5;
   color: #1668dc;
 }
+.tabs-title > a:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
+}
 
 .tabs-content {
   border: 1px solid #f2f3f5;
@@ -4534,6 +4553,9 @@ a.thumbnail {
 }
 a.thumbnail:hover, a.thumbnail:focus {
   box-shadow: 0 0 6px 1px rgba(22, 104, 220, 0.5);
+}
+a.thumbnail:focus-visible {
+  box-shadow: 0 0 0 2px #1668dc;
 }
 a.thumbnail image {
   box-shadow: none;

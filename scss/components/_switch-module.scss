@@ -170,6 +170,9 @@ $switch-cursor-disabled: not-allowed !default;
   input:focus-visible ~ & {
     background: $switch-background-focus;
 
+    // 7.0: the unified focus ring when the theme set one
+    @include focus-ring;
+
     &::after {
       background: $switch-paddle-background;
     }

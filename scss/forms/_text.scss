@@ -145,7 +145,8 @@ $form-button-radius: $global-radius-small !default;
     outline: none;
     border: $input-border-focus;
     background-color: $input-background-focus;
-    box-shadow: $input-shadow-focus;
+    // 7.0: the unified ring replaces the legacy glow when a theme set one
+    box-shadow: if($global-focus-ring, $global-focus-ring, $input-shadow-focus);
 
     @if has-value($input-transition) {
       transition: $input-transition;

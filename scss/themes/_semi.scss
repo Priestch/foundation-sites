@@ -48,4 +48,7 @@ $global-radius-small: 3px;  // --semi-border-radius-small — control class
 $global-radius-large: 6px;  // --semi-border-radius-medium — container class
 $global-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.1); // the diffuse layer of elevated
 $global-shadow-md: 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1); // --semi-shadow-elevated
-$global-focus-ring: null; // not yet wired — lands with the T2 focus-ring pass
+// Semi draws focus as `outline: 2px solid primary` on :focus-visible
+// (button.scss); the box-shadow contract renders the identical ring and
+// keeps one property for the whole framework.
+$global-focus-ring: 0 0 0 2px #0064fa; // --semi-color-primary (blue-5)

@@ -34,4 +34,17 @@
       }
     }
   }
+
+  @include it('rings focused controls with the TDesign brand') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-button();
+      }
+      @include contains($selector: false) {
+        .button:focus-visible {
+          box-shadow: 0 0 0 2px #0052d9;
+        }
+      }
+    }
+  }
 }

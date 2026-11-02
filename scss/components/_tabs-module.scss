@@ -120,6 +120,11 @@ $tab-content-padding: 1rem !default;
       background: $background-active;
       color: $color-active;
     }
+
+    // 7.0: the unified focus ring when the theme set one (keyboard focus)
+    &:focus-visible {
+      @include focus-ring;
+    }
   }
 }
 

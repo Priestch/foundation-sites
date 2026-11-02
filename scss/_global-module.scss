@@ -132,12 +132,6 @@ $global-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08) !default;
 /// Higher elevation for overlays and popups. `none` is the legacy default.
 /// @type Shadow
 $global-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12) !default;
-/// Unified focus ring. `null` keeps each component's legacy focus styling;
-/// a theme sets a ring value (e.g. `0 0 0 2px rgba($primary-color, .35)`)
-/// to switch the whole framework over.
-/// @type Shadow | Null
-$global-focus-ring: null !default;
-
 /// Global value used for all menu styles. Can be overwritten at individual menu component level.
 /// @type Number
 /// Color of the menu icon (hamburger) in a title bar.
@@ -170,6 +164,28 @@ $secondary-color: if(sass(map.has-key($foundation-palette, secondary)): map.get(
 $success-color: if(sass(map.has-key($foundation-palette, success)): map.get($foundation-palette, success); else: #3adb76) !default;
 $warning-color: if(sass(map.has-key($foundation-palette, warning)): map.get($foundation-palette, warning); else: #ffae00) !default;
 $alert-color: if(sass(map.has-key($foundation-palette, alert)): map.get($foundation-palette, alert); else: #cc4b37) !default;
+
+/// Unified focus ring, a box-shadow value emitted on `:focus` (form
+/// controls, where it replaces the legacy glow) and `:focus-visible`
+/// (everything else) by every wired component. The modern default derives
+/// from the palette, so a custom "primary" re-rings the whole framework;
+/// `false` opts out and keeps the legacy per-component focus styling.
+/// Note the off value is `false`, not `null`: a `null` module
+/// configuration does not satisfy `!default` (it means "unset"), so a
+/// theme module cannot travel a null through `with (...)`.
+/// @type Shadow | Boolean
+$global-focus-ring: 0 0 0 2px $primary-color !default;
+
+/// Emits the unified focus ring when one is set, and nothing at all when
+/// it isn't — every component then keeps its legacy focus indicator.
+/// Include from a `:focus` / `:focus-visible` rule. The ring rides the
+/// box-shadow contract so it never collides with the outline resets and
+/// composes with the shadow tiers.
+@mixin focus-ring {
+  @if $global-focus-ring {
+    box-shadow: $global-focus-ring;
+  }
+}
 
 @mixin foundation-global-styles {
   @include foundation-normalize;

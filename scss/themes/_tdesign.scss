@@ -44,4 +44,6 @@ $global-radius-small: 3px;  // --td-radius-default — control class (buttons, t
 $global-radius-large: 6px;  // --td-radius-medium — container class (cards, menus)
 $global-shadow-sm: 0 1px 10px rgba(0, 0, 0, 0.05), 0 4px 5px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.12); // --td-shadow-1
 $global-shadow-md: 0 3px 14px 2px rgba(0, 0, 0, 0.05), 0 8px 10px 1px rgba(0, 0, 0, 0.06), 0 5px 5px -3px rgba(0, 0, 0, 0.1); // --td-shadow-2
-$global-focus-ring: null; // not yet wired — lands with the T2 focus-ring pass
+// TDesign expresses focus through brand borders; the unified box-shadow
+// contract carries the same brand-7 hue as the ring.
+$global-focus-ring: 0 0 0 2px #0052d9; // brand-color-7

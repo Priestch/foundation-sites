@@ -30,4 +30,4 @@ $global-radius-small: 0;
 $global-radius-large: 0;
 $global-shadow-sm: none;
 $global-shadow-md: none;
-$global-focus-ring: null;
+$global-focus-ring: false; // keep the legacy per-component focus styles — `false`, not `null`: a null cannot travel through module configuration

@@ -15,6 +15,7 @@
 @use '../util/unit' as *;
 @use '../util/value' as *;
 @use '../util/math' as *;
+@use '../global-module' as *; // slice B9: the ambient focus-ring mixin lives at the single owner
 
 /// Default position of the close button. The first value should be `right` or `left`, and the second value should be `top` or `bottom`.
 /// @type List
@@ -112,6 +113,11 @@ $closebutton-color-hover: $black !default;
   &:hover,
   &:focus {
     color: $closebutton-color-hover;
+  }
+
+  // 7.0: the unified focus ring when the theme set one (keyboard focus)
+  &:focus-visible {
+    @include focus-ring;
   }
 }
 

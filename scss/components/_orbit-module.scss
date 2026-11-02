@@ -123,6 +123,11 @@ $orbit-control-zindex: 10 !default;
   &:focus {
     background-color: $orbit-control-background-hover;
   }
+
+  // 7.0: the unified focus ring when the theme set one (keyboard focus)
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
 /// Adds styles for the Orbit previous button. These styles are used on the `.orbit-previous` class.

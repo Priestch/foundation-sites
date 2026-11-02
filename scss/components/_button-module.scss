@@ -141,6 +141,11 @@ $button-responsive-expanded: false !default;
   }
 
   @include disable-mouse-outline;
+
+  // 7.0: the unified focus ring when the theme set one (keyboard focus)
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
 /// Expands a button to make it full-width.

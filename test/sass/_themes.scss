@@ -13,8 +13,21 @@
       'low elevation defaults to the modern card shadow');
     @include assert-equal(foundation.$global-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.12),
       'high elevation defaults to the modern overlay shadow');
-    @include assert-equal(foundation.$global-focus-ring, null,
-      'the unified focus ring stays unset until its P2 wiring');
+    @include assert-equal(foundation.$global-focus-ring, 0 0 0 2px #1668dc,
+      'the unified focus ring is on by default (modern) — classic sets it back to null');
+  }
+
+  @include it('control-class components add the ring on keyboard focus') {
+    @include assert {
+      @include output($selector: false) {
+        @include foundation.foundation-button();
+      }
+      @include contains($selector: false) {
+        .button:focus-visible {
+          box-shadow: 0 0 0 2px #1668dc;
+        }
+      }
+    }
   }
 
   @include it('control-class components follow the small tier') {
