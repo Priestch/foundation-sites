@@ -59,3 +59,6 @@ foundation-docs
 
 # Playwright MCP session artifacts (screenshots, console logs)
 .playwright-mcp/
+
+# Agent worktrees
+.claude/worktrees/
