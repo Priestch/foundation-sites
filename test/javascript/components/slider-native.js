@@ -38,6 +38,33 @@ describe('Slider (native layer contract)', function() {
     return plugin;
   }
 
+  describe('init() without a fill element', function() {
+    // 6.x jQuery empty-collection semantics: sliders without a
+    // [data-slider-fill] element are valid markup, every fill write is a
+    // no-op. The native port crashed on null.style until the guards landed.
+    var noFillTemplate = `<div class="slider" data-slider data-initial-start="10" data-step="1">
+        <span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+        <input type="hidden">
+      </div>`;
+
+    it('initializes, positions the handle and skips every fill write', function() {
+      html = document.body.appendChild(fixture(noFillTemplate));
+      plugin = new Foundation.Slider(html, {moveTime: 0, changedDelay: 0});
+
+      (plugin.$fill === null).should.be.true;
+      plugin.$handle.style.left.should.not.equal('');
+      plugin.$input.value.should.equal('10');
+    });
+
+    it('moves the handle on setHandles without touching a fill', function() {
+      html = document.body.appendChild(fixture(noFillTemplate));
+      plugin = new Foundation.Slider(html, {moveTime: 0, changedDelay: 0});
+      plugin.setHandles();
+      plugin.$handle.style.left.should.not.equal('');
+      (plugin.$fill === null).should.be.true;
+    });
+  });
+
   describe('init()', function() {
     it('writes the input and handle state attributes through the native layer', function() {
       build({});

@@ -59,6 +59,13 @@ class Magellan extends Plugin {
    * Can be invoked if new elements are added or the size of a location changes.
    * @function
    */
+  // The link list is not frozen at _setup: arm() re-reads it (late scripts
+  // build nav lists), and the re-read is exposed as a method so the contract
+  // itself is pinnable.
+  _readLinks() {
+    this.links = Array.from(this.$element.querySelectorAll('a'));
+  }
+
   calcPoints() {
     var _this = this,
         body = document.body,
@@ -102,7 +109,7 @@ class Magellan extends Plugin {
       // Re-read the links: DOMContentLoaded runs after every synchronous
       // page script, so nav lists a late script builds (the docs sidebar's
       // generated subnav) are present now but were not at _setup time.
-      _this.links = Array.from(_this.$element.querySelectorAll('a'));
+      _this._readLinks();
       _this.calcPoints();
       _this._updateActive();
       // S7: the resizeme/scrollme consumers flip to the native event layer.

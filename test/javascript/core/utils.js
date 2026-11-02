@@ -39,3 +39,36 @@ describe('Foundation core utils', function() {
   });
 
 });
+
+  describe('onLoad()', function() {
+    it('keeps window itself as the target when the page contains iframes (toElement never unwraps window into a frame)', function(done) {
+      // window is array-like - window[0] is the first frame's Window - so the
+      // collection-unwrap heuristic used to resolve onLoad's target to the
+      // first iframe (the docs site's video embed), which then threw on the
+      // next property read. The handler's `this` is the element the Events
+      // layer registered it on: it must be the window, not a frame.
+      var iframe = document.createElement('iframe');
+      iframe.src = 'about:blank';
+      document.body.appendChild(iframe);
+      window.zfOnLoadProbeFramesPresent = (window.frames && window.frames.length > 0);
+      try {
+        Foundation.onLoad(window, function() {
+          window.zfOnLoadProbeTarget = this;
+        });
+        setTimeout(function() {
+          try {
+            window.zfOnLoadProbeFramesPresent.should.be.true;
+            (window.zfOnLoadProbeTarget === window).should.be.true;
+            done();
+          } finally {
+            delete window.zfOnLoadProbeFramesPresent;
+            delete window.zfOnLoadProbeTarget;
+            iframe.remove();
+          }
+        }, 20);
+      } catch (e) {
+        iframe.remove();
+        throw e;
+      }
+    });
+  });

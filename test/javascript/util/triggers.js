@@ -66,6 +66,44 @@ describe('Triggers (native dispatch)', function() {
       anchor.querySelector('a').getAttribute('aria-expanded').should.equal('false');
     });
 
+    it('arms the delegation exactly once across repeated init() calls: the window flag dedupes module copies (8x toggle storm regression)', function() {
+      // The docs layout loads the foundation.js monolith next to the
+      // per-plugin chain; each Triggers module copy used to arm its own
+      // delegation set, so one click ran toggle N times - which nets to
+      // "closed" for every open/close style interaction. The armed flag
+      // lives on window precisely so copies dedupe each other.
+      (window.zfTriggersArmed === true).should.be.true;
+
+      var el = append('<div id="s4-toggle-dedup" data-toggler="is-visible"></div>');
+      var anchor2 = append('<a data-toggle="s4-toggle-dedup">Toggle</a>');
+      var plugin = track(new Foundation.Toggler(el, {}));
+
+      var onSpy = sinon.spy();
+      FoundationNext.Events.on(el, 'on.zf.toggler', onSpy);
+
+      // A second init (another copy, or a re-init after the flag was lost)
+      // must not install a second delegation set.
+      Foundation.Triggers.init();
+      Foundation.Triggers.init();
+
+      click(anchor2);
+      el.classList.contains('is-visible').should.be.true;
+      sinon.assert.calledOnce(onSpy);
+
+      // With the flag removed the next init() legitimately re-arms (the
+      // self-healing contract) - but then exactly one set exists again:
+      // close (fires 'off', not 'on'), then open fires 'on' exactly once
+      // more. A duplicate delegation set would double-fire both.
+      delete window.zfTriggersArmed;
+      Foundation.Triggers.init();
+      click(anchor2);
+      el.classList.contains('is-visible').should.be.false;
+      sinon.assert.calledOnce(onSpy);
+      click(anchor2);
+      el.classList.contains('is-visible').should.be.true;
+      sinon.assert.calledTwice(onSpy);
+    });
+
     it('keeps repeated Initializer calls idempotent: one click, one dispatch', function() {
       // Third parties (or Foundation.IHearYou) may call these again at any
       // time; the former off-then-on guard is a module-level flag now.
