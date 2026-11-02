@@ -309,43 +309,42 @@ Checkbox inputs support the additional attribute `data-min-required` what lets y
 ---
 
 ## Event Listener
-Setup event listener after foundation is initialized (especially for formvalid/forminvalid). Easier to chain via document selector.
+Setup event listener after foundation is initialized (especially for formvalid/forminvalid). Easiest to delegate from the document.
 * valid.zf.abide and invalid.zf.abide are field level events, triggered in validateInput function
   *   ev.target is the DOM field element,
-  *   elem is the field element (a DOM element)
+  *   the field element is also passed as ev.detail[0]
 * formvalid.zf.abide and forminvalid.zf.abide are form events, triggered in validateForm function
   *   ev.target is the DOM form element,
-  *   frm is the form element (a DOM element)
+  *   the form element is also passed as ev.detail[0]
 
 ```javascript
-$(document)
+document.addEventListener("invalid.zf.abide", function(ev) {
   // field element is invalid
-  .on("invalid.zf.abide", function(ev,elem) {
-    console.log("Field id "+ev.target.id+" is invalid");
-  })
+  console.log("Field id "+ev.target.id+" is invalid");
+});
+document.addEventListener("valid.zf.abide", function(ev) {
   // field element is valid
-  .on("valid.zf.abide", function(ev,elem) {
-    console.log("Field name "+elem.attr('name')+" is valid");
-  })
+  console.log("Field name "+ev.detail[0].name+" is valid");
+});
+document.addEventListener("forminvalid.zf.abide", function(ev) {
   // form validation failed
-  .on("forminvalid.zf.abide", function(ev,frm) {
-    console.log("Form id "+ev.target.id+" is invalid");
-  })
+  console.log("Form id "+ev.target.id+" is invalid");
+});
+document.addEventListener("formvalid.zf.abide", function(ev) {
   // form validation passed, form will submit if submit event not returned false
-  .on("formvalid.zf.abide", function(ev,frm) {
-    console.log("Form id "+frm.attr('id')+" is valid");
-    // ajax post form
-  })
+  console.log("Form id "+ev.detail[0].id+" is valid");
+  // ajax post form
+});
+document.addEventListener("submit", function(ev) {
   // to prevent form from submitting upon successful validation
-  .on("submit", function(ev) {
-    ev.preventDefault();
-    console.log("Submit for form id "+ev.target.id+" intercepted");
-  });
+  ev.preventDefault();
+  console.log("Submit for form id "+ev.target.id+" intercepted");
+});
 // You can bind field or form event selectively
-$("#foo").on("invalid.zf.abide", function(ev,el) {
+document.querySelector("#foo").addEventListener("invalid.zf.abide", function(ev) {
   alert("Input field foo is invalid");
 });
-$("#bar").on("formvalid.zf.abide", function(ev,frm) {
+document.querySelector("#bar").addEventListener("formvalid.zf.abide", function(ev) {
   alert("Form is valid, finally!");
   // do something perhaps
 });

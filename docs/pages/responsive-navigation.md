@@ -87,21 +87,6 @@ A drilldown menu works well on mobile, but on larger screens, you may want to co
 </ul>
 ```
 
-<br>
-<div class="alert callout">
-  <p>
-    <strong>Bug(v6.3.1):</strong> There is a bug within <strong>drilldown-dropdown menu</strong> combo. If you set up a responsive menu with drilldown on small, then dropdown for medium up, and resize to small and then back to medium the dropdowns will not work. The bug can be reproduced <a href="https://codepen.io/IamManchanda/pen/mmGOgG?editors=1000">here</a> <br>
-    <strong>Good News:</strong> The Bug will be fixed with the upcoming foundation release. If you are specifically using <strong>v6.3.1</strong>, we recommend to use this below patch to fix this.
-  </p>
-</div>
-
-```javascript
-// Patch for a Bug in v6.3.1
-$(window).on('changed.zf.mediaquery', function() {
-  $('.is-dropdown-submenu.invisible').removeClass('invisible');
-});
-```
-
 #### Accordion Dropdown Menu
 
 Same like drilldowns, an accordion menu works well on mobile, but on larger screens, you may want to convert that same menu into a dropdown. Here's an example for the same:

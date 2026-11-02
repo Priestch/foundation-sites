@@ -50,21 +50,21 @@ Another quite useful library, `Foundation.Keyboard` has several methods to make 
 
 Ever wanted a handy list of common keycodes and the keys they represent? Use `Foundation.Keyboard.keys`. This is an object containing key/value pairs of the most frequently used keys in our framework.
 
-Want to manage your own keyboard inputs? No problem! Within your `.on('key**')` callback, call `Foundation.Keyboard.parseKey(event)` to get a string of what key was pressed, e.g. `'TAB'` or `'ALT_X'`.
+Want to manage your own keyboard inputs? No problem! In your key event callback, call `Foundation.Keyboard.parseKey(event)` to get a string of what key was pressed, e.g. `'TAB'` or `'ALT_X'`.
 (You can also use this function outside of the Foundation components, in your own JavaScript code!)
 
 What if you want to know if there's focusable elements somewhere on a page? Instead of writing your own function and selector from scratch, just use:
 ```js
-var focusable = Foundation.Keyboard.findFocusable($('#content'));
+var focusable = Foundation.Keyboard.findFocusable(document.querySelector('#content'));
 ```
 
 The Keyboard utility also provides functions to trap the keyboard focus inside a given element. This is quite useful for modals in terms of accessibility. When the focus is trapped, pressing tab while the last focusable element inside the given container is selected will focus the first element and vice versa.
 ```js
 // Trap focus to given element
-Foundation.Keyboard.trapFocus($('#content'));
+Foundation.Keyboard.trapFocus(document.querySelector('#content'));
 
 // Release focus from given element
-Foundation.Keyboard.releaseFocus($('#content'));
+Foundation.Keyboard.releaseFocus(document.querySelector('#content'));
 ```
 
 
@@ -100,10 +100,11 @@ Foundation.MediaQuery.current;
 // a string of the current breakpoint size.
 ```
 
-Also included is an event emitter for breakpoint changes. You can hook into this event with:
+Also included is an event emitter for breakpoint changes. The `changed.zf.mediaquery` event fires on `window`; the sizes are passed in the event detail (7.0: native events carry extra parameters in `event.detail`):
 ```js
-
-$(window).on('changed.zf.mediaquery', function(event, newSize, oldSize){});
+window.addEventListener('changed.zf.mediaquery', function(event) {
+  var newSize = event.detail[0], oldSize = event.detail[1];
+});
 ```
 
 ## Motion & Move
@@ -115,7 +116,7 @@ Two handy utilities, one little file.
 
 `Foundation.Move` is a simple helper function for utilizing browsers' `requestAnimationFrame` method for hardware acceleration. Invoke like so:
 ```js
-Foundation.Move(durationInMS, $element, function(){
+Foundation.Move(durationInMS, element, function(){
   //animation logic
 });
 ```
@@ -126,7 +127,7 @@ When the animation is complete, the element will fire `finished.zf.animate`.
 
 ```js
 
-var timer = new Foundation.Timer($element, {duration: ms, infinite: bool}, callback);
+var timer = new Foundation.Timer(element, {duration: ms, infinite: bool}, callback);
 // includes: timer.start(), timer.pause(), timer.restart()
 ```
 Similar to `setInterval`, except you can pause and resume where you left off.
@@ -135,9 +136,9 @@ Similar to `setInterval`, except you can pause and resume where you left off.
 `js/foundation.util.imageLoader.js`
 
 ```js
-Foundation.onImagesLoaded($images, callback);
+Foundation.onImagesLoaded(document.querySelectorAll('img'), callback);
 ```
-This will execute your callback function after all the images in the collection have loaded.
+This will execute your callback function after all the images in the list have loaded (an element, a NodeList or an array all work).
 
 ## Touch
 `js/foundation.util.touch.js`
@@ -170,9 +171,9 @@ Provides a number of event listeners and triggers your script can hook into. Mos
 // Add the data-open/close/toggle="idOfElement" tag to your markup.
 // When a click event is triggered on that element, these are the non-bubbling events directed at your element.
 // If you don't use an `id` selector, an event will be triggered that bubbles up to window.
-$('selector').on('open.zf.trigger', handleOpen);
-$('selector').on('close.zf.trigger', handleClose);
-$('selector').on('toggle.zf.trigger', handleToggle);
+element.addEventListener('open.zf.trigger', handleOpen);
+element.addEventListener('close.zf.trigger', handleClose);
+element.addEventListener('toggle.zf.trigger', handleToggle);
 ```
 Besides these useful click triggers, there are also other listeners for you to tap into. Need to know when the window has been resized, but only when it's done resizing? How about a debounced scroll event? Add this markup and JavaScript and you're good to go!
 
@@ -181,8 +182,9 @@ Besides these useful click triggers, there are also other listeners for you to t
 <div data-resize="someId">...</div>
 ```
 ```js
-$('#someId').on('scrollme.zf.trigger', handleScroll);
-$('#someId').on('resizeme.zf.trigger', handleResize);
+var el = document.getElementById('someId');
+el.addEventListener('scrollme.zf.trigger', handleScroll);
+el.addEventListener('resizeme.zf.trigger', handleResize);
 ```
 
 ## Throttle
@@ -195,12 +197,12 @@ Many times when you create a callback, it's advantageous to add a delay in order
 ### Without Delay
 ```js
 // Button click handler
-$('.button').on('click', function(e){
+document.querySelector('.button').addEventListener('click', function(e){
   // Handle Click
 });
 
 // Resize function
-$(window).on('resize', function(e){
+window.addEventListener('resize', function(e){
   // Do responsive stuff
 });
 ```
@@ -208,7 +210,7 @@ $(window).on('resize', function(e){
 ### With Delay
 ```js
 // Throttled resize function
-$(window).on('resize', Foundation.util.throttle(function(e){
+window.addEventListener('resize', Foundation.util.throttle(function(e){
   // Do responsive stuff
 }, 300));
 ```
@@ -234,4 +236,4 @@ Foundation includes a couple useful features in the core library that are used i
 
 `Foundation.getFnName(fn)` returns a string representation of a named function. Seems small, but believe us—it's useful.
 
-`Foundation.transitionend()` is a function<span data-tooltip title="Goodbye ZURB, I'll miss you"> </span> that returns the string of the properly vendor-prefixed version of `transitionend` events. Most browsers don't require a prefix these days, but for those that do, we've got you covered. But IE 9 doesn't support transitions?? Quite right you are! In that case, our plugins that use transitions will simply snap to whatever location or visibility state they were headed to, and this function will fire a `transitionend` event manually on the element you passed. It still gives the desired results, and allows Motion-UI to work in IE 9.
+`Foundation.transitionend()` is a function<span data-tooltip title="Goodbye ZURB, I'll miss you"> </span> that returns the string of the properly vendor-prefixed version of `transitionend` events. Most browsers don't require a prefix these days, but for those that do, we've got you covered.

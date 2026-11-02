@@ -187,11 +187,9 @@ The folks at [jsDelivr](https://www.jsdelivr.com) host the compressed Foundation
 <script src="https://cdn.jsdelivr.net/npm/foundation-sites@7.0.0-beta.1/dist/js/foundation.min.js" crossorigin="anonymous"></script>
 ```
 
-From Foundation 6.4, flex is enabled by default and **only the new XY Grid is available**. However, others CSS versions are available for backward compatibility and the most common usage cases. For others uses and advanced customization, we recommand to build Foundation with custom settings (see others installation methods).
+The XY Grid is the only grid in Foundation 7 — the float grid CSS variant is no longer shipped. Two other CSS builds are available for the most common usage cases. For other uses and advanced customization, we recommend building Foundation with custom settings (see other installation methods).
 
 ```html
-<!-- foundation-float.min.css: Compressed CSS with legacy Float Grid -->
-
 <!-- foundation-prototype.min.css: Compressed CSS with prototyping classes -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@7.0.0-beta.1/dist/css/foundation-prototype.min.css" crossorigin="anonymous">
 

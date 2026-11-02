@@ -233,7 +233,8 @@ Foundation.MediaQuery.get('medium') // => only screen and (min-width: 640px)
 The media query helper broadcasts an event on the window every time the breakpoint changes. We use this internally with plugins like Interchange to detect a shift in breakpoint. You can also subscribe to the event yourself.
 
 ```js
-$(window).on('changed.zf.mediaquery', function(event, newSize, oldSize) {
-  // newSize is the name of the now-current breakpoint, oldSize is the previous breakpoint
+window.addEventListener('changed.zf.mediaquery', function(event) {
+  var newSize = event.detail[0], // the name of the now-current breakpoint
+      oldSize = event.detail[1]; // the previous breakpoint
 });
 ```

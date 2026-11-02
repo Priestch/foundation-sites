@@ -90,7 +90,7 @@ Any `<a>` without a submenu will function like a normal link.
 
 <div class="secondary callout">
   <p>If you like to set the height to auto you can also set the autoHeight and animateHeight params</p>
-  <button class="button expanded" onclick="$('#m3').foundation('_destroy');if($('#m3').data('autoHeight')){$('#m3').data('autoHeight',false);$(this).html('autoHeight is Off');}else{$('#m3').data('autoHeight',true);$(this).html('autoHeight is On');}new Foundation.Drilldown($('#m3'));return false;">autoHeight is On</button>
+  <button class="button expanded" onclick="var m=document.getElementById('m3'),inst=Foundation.Registry.getInstance(m),on=!inst.options.autoHeight;inst._destroy();new Foundation.Drilldown(m,{autoHeight:on});this.textContent='autoHeight is '+(on?'On':'Off');return false;">autoHeight is On</button>
 </div>
 
 <p>

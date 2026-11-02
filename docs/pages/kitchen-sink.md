@@ -461,7 +461,7 @@ description: Everything but.
 
 ---
 
-## Flex Grid
+## XY Grid
 
 
 <div class="docs-codepen-container" data-ks-codepen>
@@ -531,7 +531,7 @@ description: Everything but.
 ```html_example
 <form>
   <label>Input Label
-    <input type="text" placeholder=".small-12.columns" aria-describedby="exampleHelpText">
+    <input type="text" placeholder=".cell.small-12" aria-describedby="exampleHelpText">
   </label>
   <p class="help-text" id="exampleHelpText">Here's how you use this input field!</p>
   <label>

@@ -45,23 +45,23 @@ By default, Foundation is exported as [UMD modules](http://bob.yexley.net/umd-ja
 For example with [ES6](https://github.com/lukehoban/es6features#readme) (the ESM format):
 ```js
 import Foundation from 'foundation-sites';
-const $dropdown = new Foundation.Dropdown($('#mydropdown'));
+const dropdown = new Foundation.Dropdown(document.querySelector('#mydropdown'));
 // Or
-import { Dropdown } from 'foundation-sites';
-const $dropdown = new Dropdown($('#mydropdown'));
+import { Dropdown } from 'foundation-sites';
+const dropdown = new Dropdown(document.querySelector('#mydropdown'));
 ```
 
 With [RequireJs](https://requirejs.org/) (the AMD format):
 ```js
 define(['foundation'], function(Foundation) {
-  var $dropdown = new Foundation.Dropdown($('#mydropdown'));
+  var dropdown = new Foundation.Dropdown(document.querySelector('#mydropdown'));
 });
 ```
 
 With [Node.js](https://www.safaribooksonline.com/library/view/learning-javascript-design/9781449334840/ch11s03.html) (the CommonJs format):
 ```js
 var Foundation = require('foundation-sites');
-var $dropdown = new Dropdown($('#mydropdown'));
+var dropdown = new Foundation.Dropdown(document.querySelector('#mydropdown'));
 ```
 
 #### Available formats
@@ -167,7 +167,7 @@ Setting options with JavaScript involves passing an object into the constructor 
 
 ```js
 var options = {multiExpand: true, allowAllClosed: false};
-var accordion = new Foundation.Accordion($('#some-accordion'), options);
+var accordion = new Foundation.Accordion(document.querySelector('#some-accordion'), options);
 ```
 
 It's worth noting that options passed to plugins via JavaScript take the highest precedence, and will overwrite any default values or options applied via the `data-some-option` tag. This is also how the `data-options="someOption:true; someOtherOption:false"` options are passed into constructor functions. So, if you were to say:
@@ -246,8 +246,8 @@ document.querySelectorAll('.tooltip').forEach(function(el) {
 If you are creating your plugins programmatically, you can, of course, invoke methods directly:
 
 ```js
-var $modal = new Foundation.Reveal($('#some-modal'), options);
-$modal.open();
+var modal = new Foundation.Reveal(document.querySelector('#some-modal'), options);
+modal.open();
 ```
 
 <div class="callout warning">
@@ -261,7 +261,7 @@ $modal.open();
 Every plugin fires DOM events when certain functions finish. For example, you can listen for when tabs change, or an off-canvas menu opens, and create a callback to respond to it.
 
 ```js
-$('[data-tabs]').on('change.zf.tabs', function() {
+document.querySelector('[data-tabs]').addEventListener('change.zf.tabs', function() {
   console.log('Those tabs sure did change!');
 });
 ```

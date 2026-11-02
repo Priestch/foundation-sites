@@ -194,7 +194,7 @@ You can use the same five transition effects to create CSS animations as well. T
 Foundation includes a customized version of the Motion UI animation utility in `js/foundation.util.motion.js`. If you are using the Foundation version of this utility, and you wish to animate your own elements, trigger it this way:
 
 ```js
-var elem = $('#elem-to-animate');
+var elem = document.querySelector('#elem-to-animate');
 
 Foundation.Motion.animateIn(elem, animationClass [, callback]);
 Foundation.Motion.animateOut(elem, animationClass [, callback]);

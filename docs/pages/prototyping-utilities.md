@@ -6,8 +6,8 @@ sass:
   - scss/prototype/*.scss
 ---
 
-<div class="callout alert">
-  <p><strong>Deprecated since 6.10:</strong> the Prototyping Utilities (the <code>foundation-prototype</code> CSS build and the <code>$prototype-*</code> classes and mixins) will be <strong>removed in Foundation 7.0</strong>. They may be extracted into a separate package; if you rely on them, pin your version or copy the classes you need into your own Sass.</p>
+<div class="callout primary">
+  <p><strong>Still here in 7.0:</strong> the Prototyping Utilities (the <code>foundation-prototype</code> CSS build and the <code>$prototype-*</code> classes and mixins) ship with Foundation 7 — the deprecation announced for 6.10 was rescinded. They remain opt-in as ever: the prototype classes are only emitted when you include <code>foundation-prototype-classes</code> (or use the separate <code>foundation-prototype</code> CSS build), so they add nothing to the default bundle.</p>
 </div>
 
 <h4><strong>Prototype to Production</strong></h4>

@@ -92,8 +92,8 @@ Foundation.Interchange.SPECIAL_QUERIES['square'] = 'screen and (aspect-ratio: 1/
 When using Interchange programmatically, you need to pass in your ruleset in the `options` object, as well as the *container* element, *not* the content elements, like so:
 
 ```js
-var $photoFrame = $('#some-container');
-var interchange = new Foundation.Interchange($photoFrame, {
+var photoFrame = document.querySelector('#some-container');
+var interchange = new Foundation.Interchange(photoFrame, {
   rules: [
     "[path/to/default.jpg, small]", 
     "[path/to/medium.jpg, medium]",

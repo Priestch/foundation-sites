@@ -226,12 +226,14 @@ To use animations from the Motion UI library, include the <code>data-animation-i
 To use AJAX to load your modal content, use the code snippet below.
 
 ```js
-var $modal = $('#modal');
+var modal = document.querySelector('#modal');
 
-$.ajax('/url')
-  .done(function(resp){
-    $modal.html(resp).foundation('open');
-});
+fetch('/url')
+  .then(function(resp) { return resp.text(); })
+  .then(function(html) {
+    modal.innerHTML = html;
+    Foundation.Registry.getInstance(modal).open();
+  });
 ```
 
 

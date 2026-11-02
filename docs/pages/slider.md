@@ -209,6 +209,7 @@ The nonLinearBase-option is optional and defaults to 5.
 The slider takes into account the width of the handles when calculating how to display itself. This means that if the slider is initially hidden, or hidden while the value is adjusted, the resulting visual will be slightly different because the width of the handle is indeterminate.  If this is problematic, you can use JavaScript to cause the slider to reflow at the time that you change it from being hidden.  Example:
 
 ```js
-$('#my-slider').show();
-$('#my-slider').foundation('_reflow');
+var slider = document.querySelector('#my-slider');
+slider.style.display = ''; // un-hide the slider
+Foundation.Registry.getInstance(slider)._reflow();
 ```
