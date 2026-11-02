@@ -1,0 +1,27 @@
+// Foundation for Sites — the "modern" theme (the 7.0 default look)
+// https://get.foundation
+// Licensed under MIT Open Source
+//
+// A settings module carrying the 7.0 default values explicitly: a deeper,
+// steadier blue bloodline, TDesign/Semi-grade neutrals, tiered radii and
+// elevation. Since these ARE the defaults, this module exists for explicit
+// pinning (and as the reference the defaults must stay in sync with).
+
+$foundation-palette: (
+  "primary": #1668dc,
+  "secondary": #5c6770,
+  "success": #2ba471,
+  "warning": #e37318,
+  "alert": #cc4b37,
+);
+$light-gray: #f2f3f5;
+$medium-gray: #dcdfe3;
+$dark-gray: #7a8499;
+$body-font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$global-weight-normal: 400;
+$global-weight-bold: 600;
+$global-radius: 0;
+$global-radius-small: 3px;
+$global-radius-large: 6px;
+$global-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+$global-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);

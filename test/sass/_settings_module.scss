@@ -33,9 +33,9 @@ $fs-user: ();
   $fs-user: (
     "foundation-palette": (
       "primary": #1240ab,
-      "secondary": #767676,
-      "success": #3adb76,
-      "warning": #ffae00,
+      "secondary": #5c6770,
+      "success": #2ba471,
+      "warning": #e37318,
       "alert": #cc4b37,
     ),
     "global-radius": 8px,
@@ -59,7 +59,7 @@ $user-palette: meta.module-variables("palette-settings");
     @include assert-equal(map.get($effective, 'global-radius'), 0,
       'Keeps the library default for $global-radius');
 
-    @include assert-equal(map.get($effective, 'primary-color'), #1779ba,
+    @include assert-equal(map.get($effective, 'primary-color'), #1668dc,
       'Derives $primary-color from the library palette');
   }
 
@@ -88,7 +88,7 @@ $user-palette: meta.module-variables("palette-settings");
     @include assert-equal(map.get($effective, 'primary-color'), #123456,
       'Keeps the direct $primary-color override instead of the palette value');
 
-    @include assert-equal(map.get($effective, 'secondary-color'), #767676,
+    @include assert-equal(map.get($effective, 'secondary-color'), #5c6770,
       'Derives $secondary-color from the palette when not set directly');
 
     @include assert-equal(map.get($effective, 'alert-color'), #cc4b37,
@@ -104,7 +104,7 @@ $user-palette: meta.module-variables("palette-settings");
     @include assert-equal(map.get($effective, 'primary-color'), #09665c,
       'Derives $primary-color from the user palette despite the reflected null entries');
 
-    @include assert-equal(map.get($effective, 'secondary-color'), #767676,
+    @include assert-equal(map.get($effective, 'secondary-color'), #5c6770,
       'Keeps the library palette value for $secondary-color despite the reflected null entry');
   }
 
@@ -116,8 +116,8 @@ $user-palette: meta.module-variables("palette-settings");
     // (see scss/next/_load-button.scss, "1.").
     $effective: fs.merge-settings($user);
 
-    @include assert-equal(map.get($effective, 'button-radius'), 0,
-      'Reflects the frozen library value of $button-radius (the load unit re-derives it as 8px)');
+    @include assert-equal(map.get($effective, 'button-radius'), 3px,
+      'Reflects the frozen library value of $button-radius (the modern small tier) (the load unit re-derives it as 8px)');
   }
 
   @include it('unknown-settings-keys() returns an empty list for known keys [function]') {
@@ -206,27 +206,27 @@ $user-palette: meta.module-variables("palette-settings");
           color: #fefefe;
         }
         .button.solid.secondary, .button.solid.secondary.disabled, .button.solid.secondary[disabled], .button.solid.secondary.disabled:hover, .button.solid.secondary[disabled]:hover, .button.solid.secondary.disabled:focus, .button.solid.secondary[disabled]:focus {
-          background-color: #767676;
+          background-color: #5c6770;
           color: #fefefe;
         }
         .button.solid.secondary:hover, .button.solid.secondary:focus {
-          background-color: rgb(94.4, 94.4, 94.4);
+          background-color: rgb(28.862745098%, 32.3137254902%, 35.137254902%);
           color: #fefefe;
         }
         .button.solid.success, .button.solid.success.disabled, .button.solid.success[disabled], .button.solid.success.disabled:hover, .button.solid.success[disabled]:hover, .button.solid.success.disabled:focus, .button.solid.success[disabled]:focus {
-          background-color: #3adb76;
+          background-color: #2ba471;
           color: #0a0a0a;
         }
         .button.solid.success:hover, .button.solid.success:focus {
-          background-color: rgb(13.4269123959%, 73.4750483885%, 35.8050997223%);
+          background-color: rgb(13.4901960784%, 51.4509803922%, 35.4509803922%);
           color: #0a0a0a;
         }
         .button.solid.warning, .button.solid.warning.disabled, .button.solid.warning[disabled], .button.solid.warning.disabled:hover, .button.solid.warning[disabled]:hover, .button.solid.warning.disabled:focus, .button.solid.warning[disabled]:focus {
-          background-color: #ffae00;
+          background-color: #e37318;
           color: #0a0a0a;
         }
         .button.solid.warning:hover, .button.solid.warning:focus {
-          background-color: rgb(204, 139.2, 0);
+          background-color: rgb(71.2156862745%, 36.0784313725%, 7.5294117647%);
           color: #0a0a0a;
         }
         .button.solid.alert, .button.solid.alert.disabled, .button.solid.alert[disabled], .button.solid.alert.disabled:hover, .button.solid.alert[disabled]:hover, .button.solid.alert.disabled:focus, .button.solid.alert[disabled]:focus {
@@ -257,28 +257,28 @@ $user-palette: meta.module-variables("palette-settings");
           color: rgb(9, 32, 85.5);
         }
         .button.secondary, .button.secondary.disabled, .button.secondary[disabled], .button.secondary.disabled:hover, .button.secondary[disabled]:hover, .button.secondary.disabled:focus, .button.secondary[disabled]:focus {
-          border: 1px solid #767676;
-          color: #767676;
+          border: 1px solid #5c6770;
+          color: #5c6770;
         }
         .button.secondary:hover, .button.secondary:focus {
-          border-color: #3b3b3b;
-          color: #3b3b3b;
+          border-color: rgb(18.0392156863%, 20.1960784314%, 21.9607843137%);
+          color: rgb(18.0392156863%, 20.1960784314%, 21.9607843137%);
         }
         .button.success, .button.success.disabled, .button.success[disabled], .button.success.disabled:hover, .button.success[disabled]:hover, .button.success.disabled:focus, .button.success[disabled]:focus {
-          border: 1px solid #3adb76;
-          color: #3adb76;
+          border: 1px solid #2ba471;
+          color: #2ba471;
         }
         .button.success:hover, .button.success:focus {
-          border-color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
-          color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
+          border-color: rgb(8.431372549%, 32.1568627451%, 22.1568627451%);
+          color: rgb(8.431372549%, 32.1568627451%, 22.1568627451%);
         }
         .button.warning, .button.warning.disabled, .button.warning[disabled], .button.warning.disabled:hover, .button.warning[disabled]:hover, .button.warning.disabled:focus, .button.warning[disabled]:focus {
-          border: 1px solid #ffae00;
-          color: #ffae00;
+          border: 1px solid #e37318;
+          color: #e37318;
         }
         .button.warning:hover, .button.warning:focus {
-          border-color: rgb(127.5, 87, 0);
-          color: rgb(127.5, 87, 0);
+          border-color: rgb(44.5098039216%, 22.5490196078%, 4.7058823529%);
+          color: rgb(44.5098039216%, 22.5490196078%, 4.7058823529%);
         }
         .button.alert, .button.alert.disabled, .button.alert[disabled], .button.alert.disabled:hover, .button.alert[disabled]:hover, .button.alert.disabled:focus, .button.alert[disabled]:focus {
           border: 1px solid #cc4b37;
@@ -305,22 +305,22 @@ $user-palette: meta.module-variables("palette-settings");
           color: rgb(9, 32, 85.5);
         }
         .button.clear.secondary, .button.clear.secondary.disabled, .button.clear.secondary[disabled], .button.clear.secondary.disabled:hover, .button.clear.secondary[disabled]:hover, .button.clear.secondary.disabled:focus, .button.clear.secondary[disabled]:focus {
-          color: #767676;
+          color: #5c6770;
         }
         .button.clear.secondary:hover, .button.clear.secondary:focus {
-          color: #3b3b3b;
+          color: rgb(18.0392156863%, 20.1960784314%, 21.9607843137%);
         }
         .button.clear.success, .button.clear.success.disabled, .button.clear.success[disabled], .button.clear.success.disabled:hover, .button.clear.success[disabled]:hover, .button.clear.success.disabled:focus, .button.clear.success[disabled]:focus {
-          color: #3adb76;
+          color: #2ba471;
         }
         .button.clear.success:hover, .button.clear.success:focus {
-          color: rgb(21.3991416309, 117.1008583691, 57.0643776824);
+          color: rgb(8.431372549%, 32.1568627451%, 22.1568627451%);
         }
         .button.clear.warning, .button.clear.warning.disabled, .button.clear.warning[disabled], .button.clear.warning.disabled:hover, .button.clear.warning[disabled]:hover, .button.clear.warning.disabled:focus, .button.clear.warning[disabled]:focus {
-          color: #ffae00;
+          color: #e37318;
         }
         .button.clear.warning:hover, .button.clear.warning:focus {
-          color: rgb(127.5, 87, 0);
+          color: rgb(44.5098039216%, 22.5490196078%, 4.7058823529%);
         }
         .button.clear.alert, .button.clear.alert.disabled, .button.clear.alert[disabled], .button.clear.alert.disabled:hover, .button.clear.alert[disabled]:hover, .button.clear.alert.disabled:focus, .button.clear.alert[disabled]:focus {
           color: #cc4b37;
@@ -357,13 +357,13 @@ $user-palette: meta.module-variables("palette-settings");
           border-top-color: #1240ab;
         }
         .button.dropdown.hollow.secondary::after, .button.dropdown.clear.secondary::after {
-          border-top-color: #767676;
+          border-top-color: #5c6770;
         }
         .button.dropdown.hollow.success::after, .button.dropdown.clear.success::after {
-          border-top-color: #3adb76;
+          border-top-color: #2ba471;
         }
         .button.dropdown.hollow.warning::after, .button.dropdown.clear.warning::after {
-          border-top-color: #ffae00;
+          border-top-color: #e37318;
         }
         .button.dropdown.hollow.alert::after, .button.dropdown.clear.alert::after {
           border-top-color: #cc4b37;
@@ -400,7 +400,7 @@ $user-palette: meta.module-variables("palette-settings");
         }
         caption {
           padding: 0.5rem 0.625rem 0.625rem;
-          font-weight: bold;
+          font-weight: 600;
         }
         thead {
           background: rgb(247.65, 247.65, 247.65);
@@ -419,7 +419,7 @@ $user-palette: meta.module-variables("palette-settings");
         tfoot th,
         tfoot td {
           padding: 0.5rem 0.625rem 0.625rem;
-          font-weight: bold;
+          font-weight: 600;
           text-align: left;
         }
         tbody th,

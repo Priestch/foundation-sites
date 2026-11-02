@@ -14,7 +14,7 @@
 //   `$button-background: $primary-color !default` in scss/components/_button.scss.
 //
 // Both overrides (`8px`, `#123456`) deliberately differ from the defaults (`0`,
-// `#1779ba`), so any assertion below fails loudly if a `!default` ever starts
+// `#1668dc`), so any assertion below fails loudly if a `!default` ever starts
 // shadowing a user-supplied value.
 //
 // Note the two different override points, which the migration must support alike:

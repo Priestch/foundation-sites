@@ -31,7 +31,7 @@ $global-radius: 8px;
 $global-margin: 2rem;
 $foundation-palette: (
   "primary": #1240ab,
-  "secondary": #767676,
+  "secondary": #5c6770,
   "success": #2e7d32,
   "warning": #f9a825,
   "alert": #c62828,
@@ -72,7 +72,7 @@ $offcanvas-push-zindex: 11;
     @include assert-equal($card-margin-bottom, 2rem,
       'Derives $card-margin-bottom from the overridden $global-margin mirror');
 
-    @include assert-equal($switch-background, #cacaca,
+    @include assert-equal($switch-background, #dcdfe3,
       'Resolves the module default through the $medium-gray mirror');
 
     @include assert-equal($table-head-font-color, #0a0a0a,
@@ -100,7 +100,7 @@ $offcanvas-push-zindex: 11;
           color: #fefefe;
         }
         .badge.secondary {
-          background: #767676;
+          background: #5c6770;
           color: #fefefe;
         }
         .badge.success {
@@ -145,7 +145,7 @@ $offcanvas-push-zindex: 11;
           color: #0a0a0a;
         }
         .callout.secondary {
-          background-color: rgb(234.45, 234.45, 234.45);
+          background-color: rgb(90.1176470588%, 91.0882352941%, 91.8823529412%);
           color: #0a0a0a;
         }
         .callout.success {
@@ -456,7 +456,7 @@ $offcanvas-push-zindex: 11;
     }
     .menu .menu-text {
       padding: 0.7rem 1rem;
-      font-weight: bold;
+      font-weight: 600;
       line-height: 1;
       color: inherit;
     }
@@ -531,10 +531,10 @@ $offcanvas-push-zindex: 11;
     @include assert-equal($titlebar-background, #0a0a0a,
       'Derives the title-bar background through the util color cell');
 
-    @include assert-equal($topbar-background, #e6e6e6,
+    @include assert-equal($topbar-background, #f2f3f5,
       'Derives the top-bar background through the $light-gray mirror');
 
-    @include assert-equal($topbar-submenu-background, #e6e6e6,
+    @include assert-equal($topbar-submenu-background, #f2f3f5,
       'Derives the top-bar submenu background from the top-bar background default');
 
     @include assert-equal($maincontent-class, 'off-canvas-content',
@@ -617,8 +617,8 @@ $offcanvas-push-zindex: 11;
           content: "";
         }
         .menu-icon:hover::after {
-          background: #cacaca;
-          box-shadow: 0 7px 0 #cacaca, 0 14px 0 #cacaca;
+          background: #dcdfe3;
+          box-shadow: 0 7px 0 #dcdfe3, 0 14px 0 #dcdfe3;
         }
 
         .menu-icon.dark {
@@ -641,8 +641,8 @@ $offcanvas-push-zindex: 11;
           content: "";
         }
         .menu-icon.dark:hover::after {
-          background: #8a8a8a;
-          box-shadow: 0 7px 0 #8a8a8a, 0 14px 0 #8a8a8a;
+          background: #7a8499;
+          box-shadow: 0 7px 0 #7a8499, 0 14px 0 #7a8499;
         }
       }
     }
@@ -912,7 +912,7 @@ $offcanvas-push-zindex: 11;
   z-index: 1;
   display: none;
   min-width: 200px;
-  border: 1px solid #cacaca;
+  border: 1px solid #dcdfe3;
   background: #fefefe;
 }
 .dropdown .is-dropdown-submenu a {

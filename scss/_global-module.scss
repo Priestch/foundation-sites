@@ -54,20 +54,20 @@ $global-lineheight: 1.5 !default;
 /// Colors used for buttons, callouts, links, etc. There must always be a color called `primary`.
 /// @type Map
 $foundation-palette: (
-  "primary": #1779ba,
-  "secondary": #767676,
-  "success": #3adb76,
-  "warning": #ffae00,
+  "primary": #1668dc,
+  "secondary": #5c6770,
+  "success": #2ba471,
+  "warning": #e37318,
   "alert": #cc4b37,
 ) !default;
 
 /// Color used for light gray UI items.
 /// @type Color
-$light-gray: #e6e6e6 !default;
+$light-gray: #f2f3f5 !default;
 
 /// Color used for medium gray UI items.
 /// @type Color
-$medium-gray: #cacaca !default;
+$medium-gray: #dcdfe3 !default;
 
 /// Background color of the body.
 /// @type Color
@@ -79,7 +79,7 @@ $body-font-color: $black !default;
 
 /// Font stack of the body.
 /// @type List
-$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif !default;
+$body-font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
 
 /// Set to `true` to enable safe padding on the body for non-rectangular devices (i.e. phones with notches)
 /// @type Boolean
@@ -103,11 +103,11 @@ $global-position: 1rem !default;
 
 /// Global font weight used for normal type.
 /// @type Keyword | Number
-$global-weight-normal: normal !default;
+$global-weight-normal: 400 !default;
 
 /// Global font weight used for bold type.
 /// @type Keyword | Number
-$global-weight-bold: bold !default;
+$global-weight-bold: 600 !default;
 
 /// Global value used for all elements that have a border radius.
 /// @type Number
@@ -117,18 +117,21 @@ $global-radius: 0 !default;
 /// controls, switches). 7.0 theme system: defaults to the flat legacy
 /// radius, so existing builds are unchanged until a theme opts in.
 /// @type Number
-$global-radius-small: $global-radius !default;
+// The tier derives from the legacy master so a custom $global-radius
+// override still wins through the import-world chain; the flat default
+// (0) falls through to the modern tier value.
+$global-radius-small: if($global-radius == 0, 3px, $global-radius) !default;
 /// Radius tier for container-class components (cards, callouts, reveal,
 /// tooltips, menus).
 /// @type Number
-$global-radius-large: $global-radius !default;
+$global-radius-large: if($global-radius == 0, 6px, $global-radius) !default;
 /// Low elevation for floating surfaces (cards at rest). `none` is the
 /// legacy default; themes opt in.
 /// @type Shadow
-$global-shadow-sm: none !default;
+$global-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08) !default;
 /// Higher elevation for overlays and popups. `none` is the legacy default.
 /// @type Shadow
-$global-shadow-md: none !default;
+$global-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12) !default;
 /// Unified focus ring. `null` keeps each component's legacy focus styling;
 /// a theme sets a ring value (e.g. `0 0 0 2px rgba($primary-color, .35)`)
 /// to switch the whole framework over.

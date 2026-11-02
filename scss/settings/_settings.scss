@@ -80,32 +80,32 @@ $global-font-size: 100%;
 $global-width: rem-calc(1200);
 $global-lineheight: 1.5;
 $foundation-palette: (
-  "primary": #1779ba,
-  "secondary": #767676,
-  "success": #3adb76,
-  "warning": #ffae00,
+  "primary": #1668dc,
+  "secondary": #5c6770,
+  "success": #2ba471,
+  "warning": #e37318,
   "alert": #cc4b37,
 );
-$light-gray: #e6e6e6;
-$medium-gray: #cacaca;
-$dark-gray: #8a8a8a;
+$light-gray: #f2f3f5;
+$medium-gray: #dcdfe3;
+$dark-gray: #7a8499;
 $black: #0a0a0a;
 $white: #fefefe;
 $body-background: $white;
 $body-font-color: $black;
-$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+$body-font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 $body-safe-padding: false;
 $body-antialiased: true;
 $global-margin: 1rem;
 $global-padding: 1rem;
 $global-position: 1rem;
-$global-weight-normal: normal;
-$global-weight-bold: bold;
+$global-weight-normal: 400;
+$global-weight-bold: 600;
 $global-radius: 0;
-$global-radius-small: $global-radius;
-$global-radius-large: $global-radius;
-$global-shadow-sm: none;
-$global-shadow-md: none;
+$global-radius-small: 3px;
+$global-radius-large: 6px;
+$global-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+$global-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
 $global-focus-ring: null;
 $global-menu-padding: 0.7rem 1rem;
 $global-menu-nested-margin: 1rem;

@@ -4,17 +4,17 @@
 
 @include describe('Theme token tiers (P0)') {
 
-  @include it('the new tier tokens default to the legacy behavior') {
-    @include assert-equal(foundation.$global-radius-small, foundation.$global-radius,
-      'small tier defaults to the flat legacy radius');
-    @include assert-equal(foundation.$global-radius-large, foundation.$global-radius,
-      'large tier defaults to the flat legacy radius');
-    @include assert-equal(foundation.$global-shadow-sm, none,
-      'low elevation defaults to none');
-    @include assert-equal(foundation.$global-shadow-md, none,
-      'high elevation defaults to none');
+  @include it('the tier tokens carry the modern default look (P1)') {
+    @include assert-equal(foundation.$global-radius-small, 3px,
+      'small tier defaults to the modern 3px');
+    @include assert-equal(foundation.$global-radius-large, 6px,
+      'large tier defaults to the modern 6px');
+    @include assert-equal(foundation.$global-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.08),
+      'low elevation defaults to the modern card shadow');
+    @include assert-equal(foundation.$global-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.12),
+      'high elevation defaults to the modern overlay shadow');
     @include assert-equal(foundation.$global-focus-ring, null,
-      'the unified focus ring defaults to unset (legacy per-component focus)');
+      'the unified focus ring stays unset until its P2 wiring');
   }
 
   @include it('control-class components follow the small tier') {

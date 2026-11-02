@@ -57,7 +57,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
     @include assert-equal($keystroke-radius, 8px,
       'Derives $keystroke-radius from the overridden $global-radius mirror');
 
-    @include assert-equal($anchor-color, #1779ba,
+    @include assert-equal($anchor-color, #1668dc,
       'Resolves the module default through the mirrored $primary-color');
   }
 
@@ -70,9 +70,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         .subheader {
           margin-top: 0.2rem;
           margin-bottom: 0.5rem;
-          font-weight: normal;
+          font-weight: 400;
           line-height: 1.4;
-          color: #8a8a8a;
+          color: #7a8499;
         }
 
         .lead {
@@ -96,7 +96,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         cite,
         .cite-block {
           display: block;
-          color: #8a8a8a;
+          color: #7a8499;
           font-size: 0.8125rem;
         }
         cite:before,
@@ -107,9 +107,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         code,
         .code-inline {
           border: 1px solid #b0b0b0;
-          background-color: #e6e6e6;
+          background-color: #f2f3f5;
           font-family: Consolas, "Liberation Mono", Courier, monospace;
-          font-weight: normal;
+          font-weight: 400;
           color: #0a0a0a;
           display: inline;
           max-width: 100%;
@@ -119,9 +119,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
 
         .code-block {
           border: 1px solid #b0b0b0;
-          background-color: #e6e6e6;
+          background-color: #f2f3f5;
           font-family: Consolas, "Liberation Mono", Courier, monospace;
-          font-weight: normal;
+          font-weight: 400;
           color: #0a0a0a;
           display: block;
           overflow: auto;
@@ -177,7 +177,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
 
         strong,
         b {
-          font-weight: bold;
+          font-weight: 600;
           line-height: inherit;
         }
 
@@ -192,9 +192,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         h4, .h4,
         h5, .h5,
         h6, .h6 {
-          font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
           font-style: normal;
-          font-weight: normal;
+          font-weight: 400;
           color: inherit;
           text-rendering: optimizeLegibility;
         }
@@ -229,12 +229,12 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         }
         a {
           line-height: inherit;
-          color: #1779ba;
+          color: #1668dc;
           text-decoration: none;
           cursor: pointer;
         }
         a:hover, a:focus {
-          color: rgb(19.78, 104.06, 159.96);
+          color: rgb(7.4196078431%, 35.0745098039%, 74.1960784314%);
         }
         a img {
           border: 0;
@@ -282,7 +282,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         }
         dl dt {
           margin-bottom: 0.3rem;
-          font-weight: bold;
+          font-weight: 600;
         }
 
         blockquote {
@@ -292,7 +292,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         }
         blockquote, blockquote p {
           line-height: 1.6;
-          color: #8a8a8a;
+          color: #7a8499;
         }
 
         abbr, abbr[title] {
@@ -308,7 +308,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         kbd {
           margin: 0;
           padding: 0.125rem 0.25rem 0;
-          background-color: #e6e6e6;
+          background-color: #f2f3f5;
           font-family: Consolas, "Liberation Mono", Courier, monospace;
           color: #0a0a0a;
           border-radius: 8px;
@@ -329,9 +329,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         .subheader {
           margin-top: 0.2rem;
           margin-bottom: 0.5rem;
-          font-weight: normal;
+          font-weight: 400;
           line-height: 1.4;
-          color: #8a8a8a;
+          color: #7a8499;
         }
 
         .lead {
@@ -355,7 +355,7 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         .cite-block,
         cite {
           display: block;
-          color: #8a8a8a;
+          color: #7a8499;
           font-size: 0.8125rem;
         }
         .cite-block:before,
@@ -366,9 +366,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
         .code-inline,
         code {
           border: 1px solid #b0b0b0;
-          background-color: #e6e6e6;
+          background-color: #f2f3f5;
           font-family: Consolas, "Liberation Mono", Courier, monospace;
-          font-weight: normal;
+          font-weight: 400;
           color: #0a0a0a;
           display: inline;
           max-width: 100%;
@@ -378,9 +378,9 @@ $header-sizes: (small: (h1: 30, h2: 28), medium: (h1: 40));
 
         .code-block {
           border: 1px solid #b0b0b0;
-          background-color: #e6e6e6;
+          background-color: #f2f3f5;
           font-family: Consolas, "Liberation Mono", Courier, monospace;
-          font-weight: normal;
+          font-weight: 400;
           color: #0a0a0a;
           display: block;
           overflow: auto;

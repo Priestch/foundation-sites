@@ -99,7 +99,7 @@ $switch-cursor-disabled: not-allowed !default;
 
   // These properties cascade down to the switch text
   font-size: rem-calc(14);
-  font-weight: bold;
+  font-weight: $global-weight-bold;
   color: $white;
 
   user-select: none;

@@ -344,7 +344,7 @@ $menu-icons-back-compat: true !default;
 @mixin menu-text {
   padding: $global-menu-padding;
 
-  font-weight: bold;
+  font-weight: $global-weight-bold;
   line-height: 1;
   color: inherit;
 }

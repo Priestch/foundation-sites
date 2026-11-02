@@ -1,18 +1,23 @@
 @use "true" as *;
 @use "sass:meta";
-@use "../../scss/foundation-next" as fs;
 @use "../../scss/themes/classic" as classic;
+
+// The theme ergonomics: a theme configures the foundation-next ENTRY (its
+// ambients - palette, grays, radii, shadows - flow through next/configure),
+// so this is `@use ... with`, not a per-mixin map.
+@use "../../scss/foundation-next" as fs with ($fs-user: meta.module-variables("classic"));
 
 @include describe('Themes (classic, through foundation-next)') {
 
-  @include it('compiles the classic theme through the per-component entry') {
+  @include it('configures the whole entry: the palette and radius ambients flow') {
     @include assert {
       @include output($selector: false) {
-        @include fs.foundation-label(meta.module-variables("classic"));
+        @include fs.foundation-label();
       }
       @include contains($selector: false) {
         .label {
           background: #1779ba;
+          border-radius: 0;
         }
       }
     }
