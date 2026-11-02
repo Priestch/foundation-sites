@@ -20,9 +20,14 @@ var CONFIG = require('../config.js');
 var CURRENT_VERSION = require('../../package.json').version;
 var NEXT_VERSION;
 
-gulp.task('deploy', gulp.series('deploy:prompt', 'deploy:version', 'deploy:dist', 'deploy:plugins', 'deploy:settings', 'deploy:commit', 'deploy:templates'));
+// 7.0: deploy:settings is OFF the release chain. The settings template is
+// hand-maintained since the B2 dual-track (octophant 1.0.1 regenerations drop
+// the sass:color use and the disposition comments and mis-inject derived
+// colors - the 6.10 rehearsal hit it, this one re-confirmed it). The task
+// stays defined below for whenever octophant is fixed or replaced.
+gulp.task('deploy', gulp.series('deploy:prompt', 'deploy:version', 'deploy:dist', 'deploy:plugins', 'deploy:commit', 'deploy:templates'));
 
-gulp.task('deploy:prep', gulp.series('deploy:prompt', 'deploy:version', 'deploy:dist', 'deploy:plugins', 'deploy:settings'));
+gulp.task('deploy:prep', gulp.series('deploy:prompt', 'deploy:version', 'deploy:dist', 'deploy:plugins'));
 gulp.task('deploy:dist', gulp.series('sass:foundation', 'javascript:foundation', 'deploy:dist:clean', 'deploy:dist:files', 'deploy:dist:bundles'));
 gulp.task('deploy:plugins', gulp.series('deploy:plugins:sources', 'deploy:plugins:sourcemaps'));
 

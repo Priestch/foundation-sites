@@ -1,0 +1,404 @@
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("./foundation.core"), require("./foundation.util.events"));
+	else if(typeof define === 'function' && define.amd)
+		define(["./foundation.core", "./foundation.util.events"], factory);
+	else if(typeof exports === 'object')
+		exports["__FOUNDATION_EXTERNAL__"] = factory(require("./foundation.core"), require("./foundation.util.events"));
+	else
+		root["__FOUNDATION_EXTERNAL__"] = root["__FOUNDATION_EXTERNAL__"] || {}, root["__FOUNDATION_EXTERNAL__"]["foundation.util.mediaQuery"] = factory(root["__FOUNDATION_EXTERNAL__"]["foundation.core"], root["__FOUNDATION_EXTERNAL__"]["foundation.util.events"]);
+})(globalThis, (__WEBPACK_EXTERNAL_MODULE__foundation_core__, __WEBPACK_EXTERNAL_MODULE__foundation_util_events__) => {
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./js/foundation.util.mediaQuery.js":
+/*!******************************************!*\
+  !*** ./js/foundation.util.mediaQuery.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MediaQuery: () => (/* binding */ MediaQuery)
+/* harmony export */ });
+/* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.util.events */ "./foundation.util.events");
+/* harmony import */ var _foundation_util_events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_foundation_util_events__WEBPACK_IMPORTED_MODULE_0__);
+
+
+// Default set of media queries
+// const defaultQueries = {
+//   'default' : 'only screen',
+//   landscape : 'only screen and (orientation: landscape)',
+//   portrait : 'only screen and (orientation: portrait)',
+//   retina : 'only screen and (-webkit-min-device-pixel-ratio: 2),' +
+//     'only screen and (min--moz-device-pixel-ratio: 2),' +
+//     'only screen and (-o-min-device-pixel-ratio: 2/1),' +
+//     'only screen and (min-device-pixel-ratio: 2),' +
+//     'only screen and (min-resolution: 192dpi),' +
+//     'only screen and (min-resolution: 2dppx)'
+//   };
+
+// S13 (7.0 line A): the module is jQuery-free. The breakpoint probe reads
+// the computed font-family off the meta.foundation-mq element through
+// getComputedStyle (the exact value jQuery's `.css('font-family')` returned)
+// and the breakpoint watcher runs on the native event layer: real resize
+// events reach it directly, and the 'changed.zf.mediaquery' broadcast is a
+// real bubbling window event (native consumers directly, still-jQuery
+// consumers through the real-event pass-through, parameters in the detail).
+var MediaQuery = {
+  queries: [],
+  current: '',
+  /**
+   * Initializes the media query helper, by extracting the breakpoint list from the CSS and activating the breakpoint watcher.
+   * @function
+   * @private
+   */
+  _init() {
+    // make sure the initialization is only done once when calling _init() several times
+    if (this.isInitialized === true) {
+      return this;
+    } else {
+      this.isInitialized = true;
+    }
+    var self = this;
+    var meta = document.querySelector('meta.foundation-mq');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('class', 'foundation-mq');
+      meta.setAttribute('name', 'foundation-mq');
+      meta.setAttribute('content', '');
+      document.head.appendChild(meta);
+    }
+    var extractedStyles = window.getComputedStyle(meta).getPropertyValue('font-family');
+    var namedQueries;
+    namedQueries = parseStyleToObject(extractedStyles);
+    self.queries = []; // reset
+
+    for (var key in namedQueries) {
+      if (namedQueries.hasOwnProperty(key)) {
+        self.queries.push({
+          name: key,
+          value: `only screen and (min-width: ${namedQueries[key]})`
+        });
+      }
+    }
+    this.current = this._getCurrentSize();
+    this._watcher();
+  },
+  /**
+   * Reinitializes the media query helper.
+   * Useful if your CSS breakpoint configuration has just been loaded or has changed since the initialization.
+   * @function
+   * @private
+   */
+  _reInit() {
+    this.isInitialized = false;
+    this._init();
+  },
+  /**
+   * Checks if the screen is at least as wide as a breakpoint.
+   * @function
+   * @param {String} size - Name of the breakpoint to check.
+   * @returns {Boolean} `true` if the breakpoint matches, `false` if it's smaller.
+   */
+  atLeast(size) {
+    var query = this.get(size);
+    if (query) {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  },
+  /**
+   * Checks if the screen is within the given breakpoint.
+   * If smaller than the breakpoint of larger than its upper limit it returns false.
+   * @function
+   * @param {String} size - Name of the breakpoint to check.
+   * @returns {Boolean} `true` if the breakpoint matches, `false` if it's smaller.
+   */
+  only(size) {
+    return size === this._getCurrentSize();
+  },
+  /**
+   * Checks if the screen is within a breakpoint or smaller.
+   * @function
+   * @param {String} size - Name of the breakpoint to check.
+   * @returns {Boolean} `true` if the breakpoint matches, `false` if it's larger.
+   */
+  upTo(size) {
+    const nextSize = this.next(size);
+
+    // If the next breakpoint does not match, the screen is smaller than
+    // the upper limit of this breakpoint.
+    if (nextSize) {
+      return !this.atLeast(nextSize);
+    }
+
+    // If there is no next breakpoint, the "size" breakpoint does not have
+    // an upper limit and the screen will always be within it or smaller.
+    return true;
+  },
+  /**
+   * Checks if the screen matches to a breakpoint.
+   * @function
+   * @param {String} size - Name of the breakpoint to check, either 'small only' or 'small'. Omitting 'only' falls back to using atLeast() method.
+   * @returns {Boolean} `true` if the breakpoint matches, `false` if it does not.
+   */
+  is(size) {
+    const parts = size.trim().split(' ').filter(p => !!p.length);
+    const [bpSize, bpModifier = ''] = parts;
+
+    // Only the breakpont
+    if (bpModifier === 'only') {
+      return this.only(bpSize);
+    }
+    // At least the breakpoint (included)
+    if (!bpModifier || bpModifier === 'up') {
+      return this.atLeast(bpSize);
+    }
+    // Up to the breakpoint (included)
+    if (bpModifier === 'down') {
+      return this.upTo(bpSize);
+    }
+    throw new Error(`
+      Invalid breakpoint passed to MediaQuery.is().
+      Expected a breakpoint name formatted like "<size> <modifier>", got "${size}".
+    `);
+  },
+  /**
+   * Gets the media query of a breakpoint.
+   * @function
+   * @param {String} size - Name of the breakpoint to get.
+   * @returns {String|null} - The media query of the breakpoint, or `null` if the breakpoint doesn't exist.
+   */
+  get(size) {
+    for (var i in this.queries) {
+      if (this.queries.hasOwnProperty(i)) {
+        var query = this.queries[i];
+        if (size === query.name) return query.value;
+      }
+    }
+    return null;
+  },
+  /**
+   * Get the breakpoint following the given breakpoint.
+   * @function
+   * @param {String} size - Name of the breakpoint.
+   * @returns {String|null} - The name of the following breakpoint, or `null` if the passed breakpoint was the last one.
+   */
+  next(size) {
+    const queryIndex = this.queries.findIndex(q => this._getQueryName(q) === size);
+    if (queryIndex === -1) {
+      throw new Error(`
+        Unknown breakpoint "${size}" passed to MediaQuery.next().
+        Ensure it is present in your Sass "$breakpoints" setting.
+      `);
+    }
+    const nextQuery = this.queries[queryIndex + 1];
+    return nextQuery ? nextQuery.name : null;
+  },
+  /**
+   * Returns the name of the breakpoint related to the given value.
+   * @function
+   * @private
+   * @param {String|Object} value - Breakpoint name or query object.
+   * @returns {String} Name of the breakpoint.
+   */
+  _getQueryName(value) {
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object') return value.name;
+    throw new TypeError(`
+      Invalid value passed to MediaQuery._getQueryName().
+      Expected a breakpoint name (String) or a breakpoint query (Object), got "${value}" (${typeof value})
+    `);
+  },
+  /**
+   * Gets the current breakpoint name by testing every breakpoint and returning the last one to match (the biggest one).
+   * @function
+   * @private
+   * @returns {String} Name of the current breakpoint.
+   */
+  _getCurrentSize() {
+    var matched;
+    for (var i = 0; i < this.queries.length; i++) {
+      var query = this.queries[i];
+      if (window.matchMedia(query.value).matches) {
+        matched = query;
+      }
+    }
+    return matched && this._getQueryName(matched);
+  },
+  /**
+   * Activates the breakpoint watcher, which fires an event on the window whenever the breakpoint changes.
+   * @function
+   * @private
+   */
+  _watcher() {
+    _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.on(window, 'resize.zf.mediaquery', () => {
+      var newSize = this._getCurrentSize(),
+        currentSize = this.current;
+      if (newSize !== currentSize) {
+        // Change the current media query
+        this.current = newSize;
+
+        // Broadcast the media query change on the window as a real,
+        // bubbling event: native consumers receive it directly and
+        // still-jQuery consumers keep hearing it through the real-event
+        // pass-through, with the new and former breakpoint names on the
+        // event detail (jQuery hands them out as the handler arguments
+        // 2/3, exactly where the 6.x synthetic trigger put them).
+        _foundation_util_events__WEBPACK_IMPORTED_MODULE_0__.Events.trigger(window, 'changed.zf.mediaquery', [newSize, currentSize]);
+      }
+    });
+  }
+};
+
+// Thank you: https://github.com/sindresorhus/query-string
+function parseStyleToObject(str) {
+  var styleObject = {};
+  if (typeof str !== 'string') {
+    return styleObject;
+  }
+  str = str.trim().slice(1, -1); // browsers re-quote string style values
+
+  if (!str) {
+    return styleObject;
+  }
+  styleObject = str.split('&').reduce(function (ret, param) {
+    var parts = param.replace(/\+/g, ' ').split('=');
+    var key = parts[0];
+    var val = parts[1];
+    key = decodeURIComponent(key);
+
+    // missing `=` should be `null`:
+    // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+    val = typeof val === 'undefined' ? null : decodeURIComponent(val);
+    if (!ret.hasOwnProperty(key)) {
+      ret[key] = val;
+    } else if (Array.isArray(ret[key])) {
+      ret[key].push(val);
+    } else {
+      ret[key] = [ret[key], val];
+    }
+    return ret;
+  }, {});
+  return styleObject;
+}
+
+
+/***/ }),
+
+/***/ "./foundation.core":
+/*!****************************************************************************************************************************************************************!*\
+  !*** external {"root":["__FOUNDATION_EXTERNAL__","foundation.core"],"amd":"./foundation.core","commonjs":"./foundation.core","commonjs2":"./foundation.core"} ***!
+  \****************************************************************************************************************************************************************/
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__foundation_core__;
+
+/***/ }),
+
+/***/ "./foundation.util.events":
+/*!********************************************************************************************************************************************************************************************!*\
+  !*** external {"root":["__FOUNDATION_EXTERNAL__","foundation.util.events"],"amd":"./foundation.util.events","commonjs":"./foundation.util.events","commonjs2":"./foundation.util.events"} ***!
+  \********************************************************************************************************************************************************************************************/
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__foundation_util_events__;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**********************************************************!*\
+  !*** ./js/entries/plugins/foundation.util.mediaQuery.js ***!
+  \**********************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Foundation: () => (/* reexport safe */ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation),
+/* harmony export */   MediaQuery: () => (/* reexport safe */ _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery)
+/* harmony export */ });
+/* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundation.core */ "./foundation.core");
+/* harmony import */ var _foundation_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_foundation_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../foundation.util.mediaQuery */ "./js/foundation.util.mediaQuery.js");
+
+
+_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.MediaQuery = _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_1__.MediaQuery;
+_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.MediaQuery._init();
+
+})();
+
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});
+//# sourceMappingURL=foundation.util.mediaQuery.js.map

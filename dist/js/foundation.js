@@ -1969,7 +1969,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var FOUNDATION_VERSION = '6.9.0';
+var FOUNDATION_VERSION = '7.0.0-beta.1';
 
 // Global Foundation object
 // This is attached to the window, or used as a module for AMD/Browserify

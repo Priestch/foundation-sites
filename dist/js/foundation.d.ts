@@ -1,4 +1,4 @@
-// Type definitions for Foundation Sites v6.10.0
+// Type definitions for Foundation Sites v7.0.0-beta.1
 // Project: https://get.foundation/
 // Github: https://github.com/foundation/foundation-sites
 //
@@ -11,24 +11,24 @@ declare module FoundationSites {
   interface Abide {
     enableValidation(): void;
     disableValidation(): void;
-    requiredCheck(element: JQuery): boolean;
-    findFormError(element: JQuery, failedValidators?: string[]): JQuery;
-    findLabel(element: JQuery): boolean;
-    findRadioLabels(elements: JQuery): boolean;
-    findCheckboxLabels(elements: JQuery): boolean;
-    addErrorClasses(element: JQuery, failedValidators?: string[]): void;
-    addA11yAttributes(element: JQuery): void;
-    addGlobalErrorA11yAttributes(element: JQuery): void;
+    requiredCheck(element: HTMLElement): boolean;
+    findFormError(element: HTMLElement, failedValidators?: string[]): HTMLElement[];
+    findLabel(element: HTMLElement): boolean;
+    findRadioLabels(elements: HTMLElement[]): boolean;
+    findCheckboxLabels(elements: HTMLElement[]): boolean;
+    addErrorClasses(element: HTMLElement, failedValidators?: string[]): void;
+    addA11yAttributes(element: HTMLElement): void;
+    addGlobalErrorA11yAttributes(element: HTMLElement): void;
     removeRadioErrorClasses(groupName: string): void;
     removeCheckboxErrorClasses(groupName: string): void;
-    removeErrorClasses(element: JQuery): void;
-    validateInput(element: JQuery): boolean;
+    removeErrorClasses(element: HTMLElement): void;
+    validateInput(element: HTMLElement): boolean;
     validateForm(): boolean;
     initialized: boolean;
-    validateText(element: JQuery, pattern: string): boolean;
+    validateText(element: HTMLElement, pattern: string): boolean;
     validateRadio(groupName: string): boolean;
     validateCheckbox(groupName: string): boolean;
-    matchValidation(element: JQuery, validators: string, required: boolean): boolean;
+    matchValidation(element: HTMLElement, validators: string, required: boolean): boolean;
     resetForm(): void;
   }
 
@@ -82,9 +82,9 @@ declare module FoundationSites {
 
   // https://get.foundation/sites/docs/accordion.html#javascript-reference
   interface Accordion {
-    toggle(target: JQuery): void;
-    down(target: JQuery, firstTime: boolean): void;
-    up(target: JQuery): void;
+    toggle(target: HTMLElement): void;
+    down(target: HTMLElement, firstTime: boolean): void;
+    up(target: HTMLElement): void;
   }
 
   interface IAccordionOptions {
@@ -102,9 +102,9 @@ declare module FoundationSites {
   interface AccordionMenu {
     hideAll(): void;
     showAll(): void;
-    toggle(target: JQuery): void;
-    down(target: JQuery, firstTime: boolean): void;
-    up(target: JQuery): void;
+    toggle(target: HTMLElement): void;
+    down(target: HTMLElement, firstTime: boolean): void;
+    up(target: HTMLElement): void;
   }
 
   interface IAccordionMenuOptions {
@@ -224,9 +224,9 @@ declare module FoundationSites {
   // https://get.foundation/sites/docs/offcanvas.html#javascript-reference
   interface OffCanvas {
     reveal(isRevealed: boolean): void;
-    open(event: Event, trigger: JQuery): void;
+    open(event: Event, trigger: HTMLElement): void;
     close(cb?: Function): void;
-    toggle(event: Event, trigger: JQuery): void;
+    toggle(event: Event, trigger: HTMLElement): void;
   }
 
   interface IOffCanvasOptions {
@@ -249,7 +249,7 @@ declare module FoundationSites {
   // https://get.foundation/sites/docs/orbit.html#javascript-reference
   interface Orbit {
     geoSync(): void;
-    changeSlide(isLTR: boolean, chosenSlide?: JQuery, idx?: number): void;
+    changeSlide(isLTR: boolean, chosenSlide?: HTMLElement, idx?: number): void;
   }
 
   interface IOrbitOptions {
@@ -399,7 +399,7 @@ declare module FoundationSites {
 
   // https://get.foundation/sites/docs/tabs.html#javascript-reference
   interface Tabs {
-    selectTab(element: JQuery | string): void;
+    selectTab(element: HTMLElement | string): void;
   }
 
   interface ITabsOptions {
@@ -473,10 +473,10 @@ declare module FoundationSites {
   interface Keyboard {
     parseKey(event: any): string;
     handleKey(event: any, component: any, functions: any): void;
-    findFocusable(element: JQuery): Object;
+    findFocusable(element: HTMLElement): Object;
     register(componentName: any, cmds: any): void;
-    trapFocus(element: JQuery): void;
-    releaseFocus(element: JQuery): void;
+    trapFocus(element: HTMLElement): void;
+    releaseFocus(element: HTMLElement): void;
   }
 
   interface MediaQuery {
@@ -518,12 +518,31 @@ declare module FoundationSites {
     init(): void;
   }
 
+  interface Registry {
+    /**
+     * Resolves the plugin instance attached to an element - the 7.0
+     * replacement for the 6.x $(el).foundation('method') dispatch.
+     */
+    getInstance(element: Element): any;
+  }
+
   interface Triggers {
-    // TODO :extension on jQuery
+    init(foundation?: any): void;
+    Initializers: {
+      addOpenListener(): void;
+      addCloseListener(): void;
+      addToggleListener(): void;
+      addCloseableListener(): void;
+      addToggleFocusListener(): void;
+      addGlobalListeners(): void;
+    };
+    Listeners: any;
   }
 
   interface FoundationSitesStatic {
     version: string;
+
+    Registry: Registry;
 
     rtl(): boolean;
     /**
@@ -540,79 +559,79 @@ declare module FoundationSites {
     reflow(elem: Object, plugins?: Array<string>|string): void;
     getFnName(fn: string): string;
     RegExpEscape(str: string): string;
-    transitionend(element: JQuery): any;
-    onLoad(elem: any, handler: any): string;
+    transitionend(element: HTMLElement): string;
+    onLoad(elem: Window | HTMLElement, handler: () => void): void;
 
     util: {
       throttle(func: (...args: any[]) => any, delay: number): (...args: any[]) => any;
     };
 
     Abide: {
-      new(element: JQuery, options?: IAbideOptions): Abide;
+      new(element: HTMLElement, options?: IAbideOptions): Abide;
       defaults: AbideDefaults;
     }
     Accordion: {
-      new(element: JQuery, options?: IAccordionOptions): Accordion;
+      new(element: HTMLElement, options?: IAccordionOptions): Accordion;
     }
     AccordionMenu: {
-      new(element: JQuery, options?: IAccordionMenuOptions): AccordionMenu;
+      new(element: HTMLElement, options?: IAccordionMenuOptions): AccordionMenu;
     }
     Drilldown: {
-      new(element: JQuery, options?: IDrilldownOptions): Drilldown;
+      new(element: HTMLElement, options?: IDrilldownOptions): Drilldown;
     }
     Dropdown: {
-      new(element: JQuery, options?: IDropdownOptions): Dropdown;
+      new(element: HTMLElement, options?: IDropdownOptions): Dropdown;
     }
     DropdownMenu: {
-      new(element: JQuery, options?: IDropdownMenuOptions): DropdownMenu;
+      new(element: HTMLElement, options?: IDropdownMenuOptions): DropdownMenu;
     }
     Equalizer: {
-      new(element: JQuery, options?: IEqualizerOptions): Equalizer;
+      new(element: HTMLElement, options?: IEqualizerOptions): Equalizer;
     }
     Interchange: {
-      new(element: JQuery, options?: IInterchangeOptions): Interchange;
+      new(element: HTMLElement, options?: IInterchangeOptions): Interchange;
     }
     Magellan: {
-      new(element: JQuery, options?: IMagellanOptions): Magellan;
+      new(element: HTMLElement, options?: IMagellanOptions): Magellan;
     }
     OffCanvas: {
-      new(element: JQuery, options?: IOffCanvasOptions): OffCanvas;
+      new(element: HTMLElement, options?: IOffCanvasOptions): OffCanvas;
     }
     Orbit: {
-      new(element: JQuery, options?: IOrbitOptions): Orbit;
+      new(element: HTMLElement, options?: IOrbitOptions): Orbit;
     }
     Positionable: {
-      new(element: JQuery, options?: IPositionableOptions): Positionable;
+      new(element: HTMLElement, options?: IPositionableOptions): Positionable;
     }
     ResponsiveAccordionTabs: {
-      new(element: JQuery, options?: IResponsiveAccordionTabsOptions): ResponsiveAccordionTabs;
+      new(element: HTMLElement, options?: IResponsiveAccordionTabsOptions): ResponsiveAccordionTabs;
     };
     ResponsiveMenu: {
-      new(element: JQuery, options?: IResponsiveMenuOptions): ResponsiveMenu;
+      new(element: HTMLElement, options?: IResponsiveMenuOptions): ResponsiveMenu;
     };
     ResponsiveToggle: {
-      new(element: JQuery, options?: IResponsiveToggleOptions): ResponsiveToggle;
+      new(element: HTMLElement, options?: IResponsiveToggleOptions): ResponsiveToggle;
     };
     Reveal: {
-      new(element: JQuery, options?: IRevealOptions): Reveal;
+      new(element: HTMLElement, options?: IRevealOptions): Reveal;
     };
     Slider: {
-      new(element: JQuery, options?: ISliderOptions): Slider;
+      new(element: HTMLElement, options?: ISliderOptions): Slider;
     }
     SmoothScroll: {
-      new(element: JQuery, options?: ISmoothScrollOptions): SmoothScroll;
+      new(element: HTMLElement, options?: ISmoothScrollOptions): SmoothScroll;
     }
     Sticky: {
-      new(element: JQuery, options?: IStickyOptions): Sticky;
+      new(element: HTMLElement, options?: IStickyOptions): Sticky;
     }
     Tabs: {
-      new(element: JQuery, options?: ITabsOptions): Tabs;
+      new(element: HTMLElement, options?: ITabsOptions): Tabs;
     }
     Toggler: {
-      new(element: JQuery, options?: ITogglerOptions): Toggler;
+      new(element: HTMLElement, options?: ITogglerOptions): Toggler;
     }
     Tooltip: {
-      new(element: JQuery, options?: ITooltipOptions): Tooltip;
+      new(element: HTMLElement, options?: ITooltipOptions): Tooltip;
     }
 
     // utils
@@ -630,8 +649,8 @@ declare module FoundationSites {
 
 }
 
-interface JQuery {
-  foundation(method?: string | Array<any>, ...args: any[]): JQuery;
+interface HTMLElement {
+  foundation(method?: string | Array<any>, ...args: any[]): HTMLElement;
 }
 
 declare var Foundation: FoundationSites.FoundationSitesStatic;
