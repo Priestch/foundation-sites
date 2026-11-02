@@ -3,7 +3,7 @@
 Notable changes to Foundation for Sites are documented here.
 For versions up to and including 6.9.0, see the [GitHub releases page](https://github.com/foundation/foundation-sites/releases).
 
-## [7.0.0]
+## [7.0.0-beta.1]
 
 The seventh major: **jQuery is gone**, the Sass core is a **module system**, and there is **one grid**.
 

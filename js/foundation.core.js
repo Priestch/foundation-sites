@@ -3,7 +3,7 @@ import { Registry } from './foundation.util.registry';
 import { Events } from './foundation.util.events';
 import { MediaQuery } from './foundation.util.mediaQuery';
 
-var FOUNDATION_VERSION = '7.0.0';
+var FOUNDATION_VERSION = '7.0.0-beta.1';
 
 // Global Foundation object
 // This is attached to the window, or used as a module for AMD/Browserify
