@@ -7331,7 +7331,10 @@ class ResponsiveAccordionTabs extends _foundation_core_plugin__WEBPACK_IMPORTED_
     var _this = this,
       fromString = 'accordion';
     var elementId = this.$element.getAttribute('id');
-    var panelsContainer = document.querySelector(`[data-tabs-content=${elementId}]`);
+    // 7.0 fix: quote the attribute value — an unquoted [attr=value] is an
+    // invalid selector when the id starts with a digit (the auto-generated
+    // <random>-plugin ids do), which crashed _handleMarkup outright.
+    var panelsContainer = document.querySelector(`[data-tabs-content="${elementId}"]`);
     if (panelsContainer) fromString = 'tabs';
     if (fromString === toSet) {
       return;
@@ -7397,7 +7400,7 @@ class ResponsiveAccordionTabs extends _foundation_core_plugin__WEBPACK_IMPORTED_
       panelsContainer.parentElement.insertBefore(placeholder, panelsContainer.nextSibling);
       panelsContainer.remove();
     } else if (toSet === 'tabs') {
-      var tabsContent = document.querySelector(`[data-tabs-content=${elementId}]`);
+      var tabsContent = document.querySelector(`[data-tabs-content="${elementId}"]`);
       // A distinct name from the accordion branch's `placeholder`: two
       // function-scoped vars of the same name confused the binding context
       // (block-scoped-var).

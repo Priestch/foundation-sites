@@ -32,6 +32,10 @@ gulp.task('watch', function() {
   gulp.watch(['docs/assets/scss/**/*', 'node_modules/foundation-docs/scss/**/*'], gulp.series('sass:docs', browserReloadSync));
   gulp.watch('js/**/*', gulp.series('javascript:foundation', browserReloadSync));
   gulp.watch(['docs/assets/js/**/*', 'node_modules/foundation-docs/js/**/*'], gulp.series('javascript:docs', browserReloadSync));
+  // Static docs assets (img, partials, ...) only reach _build through 'copy',
+  // which otherwise runs once at startup - a partial edited under watch would
+  // serve stale forever. Mirror the ASSETS_FILES glob.
+  gulp.watch(['docs/assets/**/*', '!docs/assets/{js,scss}', '!docs/assets/{js,scss}/**/*'], gulp.series('copy', browserReloadSync));
 });
 
 // Runs all of the above tasks and then waits for files to change
