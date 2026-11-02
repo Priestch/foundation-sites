@@ -191,7 +191,7 @@ You can use the same five transition effects to create CSS animations as well. T
 
 ## JavaScript Reference
 
-Motion UI includes a tiny JavaScript utility that will work anywhere as long as jQuery is loaded. However, Foundation 6 includes a customized version of this code that is included in `js/foundation.util.motion.js`. If you are using the Foundation version of this utility, and you wish to animate your own elements, trigger it this way:
+Foundation includes a customized version of the Motion UI animation utility in `js/foundation.util.motion.js`. If you are using the Foundation version of this utility, and you wish to animate your own elements, trigger it this way:
 
 ```js
 var elem = $('#elem-to-animate');

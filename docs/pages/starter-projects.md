@@ -105,7 +105,7 @@ Here's an overview of what the ZURB Template can do:
 * **JavaScript Compilation**
 
   JavaScript is transpiled using [Babel](https://babeljs.io) (with the [es2015 plugin](https://babeljs.io/docs/plugins/#es2015)) so you can use [ES2015 features](https://babeljs.io/learn-es2015/).
-  The main Js file is under `src/assets/js/app.js`, and imports Foundation, jQuery and whatInput. You can import there installed packages and custom files, they will be included in the build.
+  The main Js file is under `src/assets/js/app.js`, and imports Foundation and whatInput (Foundation 7 is jQuery-free). You can import there installed packages and custom files, they will be included in the build.
 
   A source map is created that maps back to the original files. By default, the bundled `app.js` is uncompressed. When building for production, the file is run through [UglifyJS](https://github.com/mishoo/UglifyJS) for compression.
 

@@ -11,7 +11,7 @@ See our [JavaScript](javascript.html) and [Installation](installation.html) page
 ## Box
 `js/foundation.util.box.js`
 
-One of the useful libraries is `Foundation.Box`, and it has a couple methods designed to make your life easier. You can pass either jQuery objects or plain JavaScript elements to both.
+One of the useful libraries is `Foundation.Box`, and it has a couple methods designed to make your life easier. Both take plain JavaScript elements (the 7.0 terminal form; collections work too).
 
 ```js
 
@@ -119,7 +119,7 @@ Foundation.Move(durationInMS, $element, function(){
   //animation logic
 });
 ```
-When the animation is complete, your jQuery element will fire `finished.zf.animate`.
+When the animation is complete, the element will fire `finished.zf.animate`.
 
 ## Timer
 `js/foundation.util.timer.js`
@@ -137,7 +137,7 @@ Similar to `setInterval`, except you can pause and resume where you left off.
 ```js
 Foundation.onImagesLoaded($images, callback);
 ```
-This will execute your callback function after all the images in your jQuery collection have loaded.
+This will execute your callback function after all the images in the collection have loaded.
 
 ## Touch
 `js/foundation.util.touch.js`

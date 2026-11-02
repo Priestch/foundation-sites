@@ -1,22 +1,20 @@
 ---
 title: JavaScript
-description: Our JavaScript is easy to set up and only requires jQuery to get going.
+description: Our JavaScript is easy to set up and has no dependencies beyond what-input.
 video: 'Mf5ZZfKTe-I'
 ---
 
-<div class="callout alert">
-  <p><strong>Heads up for 7.0:</strong> Foundation 7.0 will <strong>remove jQuery</strong> and rewrite the plugins in vanilla JavaScript. The public contract is kept: the data attributes (<code>data-toggle</code>, <code>data-open</code>, <code>data-close</code>, &hellip;) and the namespaced events (<code>init.zf.*</code>, <code>opened.zf.*</code>, <code>closed.zf.*</code>, &hellip;) keep working. Note also that jQuery 4 is not supported in the 6.x line.</p>
+<div class="callout">
+  <p><strong>Foundation 7.0:</strong> the plugins are rewritten in <strong>vanilla JavaScript - jQuery is gone</strong>. The public contract is kept: the data attributes (<code>data-toggle</code>, <code>data-open</code>, <code>data-close</code>, &hellip;) and the namespaced events (<code>init.zf.*</code>, <code>opened.zf.*</code>, <code>closed.zf.*</code>, &hellip;) work exactly as before. See the <a href="upgrade-7.html">7.0 upgrade guide</a> for the full migration list.</p>
 </div>
 
 ## Installing
 
 You can get the Foundation JavaScript files from a ZIP download, package manager, or CDN. Check out the [Installation](installation.html) page to learn more.
 
-Once you have the files, add links to jQuery and Foundation as `<script>` tags at the bottom of your page, just before the closing `<body>` tag.
+Once you have the files, add a link to Foundation as a `<script>` tag at the bottom of your page, just before the closing `<body>` tag.
 
 ```html
-<!-- jQuery must be imported before Foundation -->
-<script src="js/jquery.min.js"></script>
 <!-- this will include every plugin and utility required by Foundation -->
 <script src="js/foundation.min.js"></script>
 ```
@@ -28,7 +26,6 @@ You can import in your HTML the complete Foundation library `foundation.min.js` 
 
 ```html
 <!-- Example of selectively including files -->
-<script src="js/jquery.min.js"></script> <!-- Required -->
 <script src="js/foundation.core.min.js"></script>  <!-- Required -->
 <script src="js/foundation.util.mediaQuery.min.js"></script>
 <script src="js/foundation.tabs.min.js"></script>
@@ -211,10 +208,10 @@ an array of plugin classes:
 ```js
 Foundation.reInit(['tooltip', 'accordion', 'reveal']);
 ```
-or an individual element or collection of elements selected with jQuery:
+or an individual element or a collection of elements:
 ```js
-Foundation.reInit($('#some-plugin'));
-Foundation.reInit($('.some-plugin-class'));
+Foundation.reInit(document.getElementById('some-plugin'));
+Foundation.reInit(document.querySelectorAll('.some-plugin-class'));
 ```
 
 If passing strings, it is required to pass proper <strong>camelCased</strong> or <strong>kebab-cased</strong> plugin names. Passing `DropdownMenu` or `dropdown-menu` are equivalent.
@@ -226,7 +223,7 @@ If passing strings, it is required to pass proper <strong>camelCased</strong> or
 Plugins can be created programmatically in JavaScript. Every plugin is a class on the global `Foundation` object, with a constructor that accepts two parameters: an element to attach to, and an object of options.
 
 ```js
-var $accordion = new Foundation.Accordion($('#accordion'), {
+var accordion = new Foundation.Accordion(document.getElementById('accordion'), {
   slideSpeed: 500,
   multiExpand: true
 });
@@ -235,14 +232,16 @@ var $accordion = new Foundation.Accordion($('#accordion'), {
 Most plugins have a public API that allows you to manipulate it through JavaScript. Refer to a plugin's documentation to learn what functions are available. Invoking methods is easy as pie:
 
 ```js
-$('#reveal').foundation('open'); //will open a Reveal modal with id `reveal`.
+Foundation.Registry.getInstance(document.getElementById('reveal')).open(); //will open a Reveal modal with id `reveal`.
 
-$('[data-tabs]').eq(0).foundation('selectTab', $('#example')); //will change the first Tabs on the page to whatever panel you choose.
+Foundation.Registry.getInstance(document.querySelector('[data-tabs]')).selectTab(document.getElementById('example')); //will change the first Tabs on the page to whatever panel you choose.
 
-$('.tooltip').foundation('_destroy'); //will destroy all Tooltips on the page.
-
+//will destroy all Tooltips on the page:
+document.querySelectorAll('.tooltip').forEach(function(el) {
+  Foundation.Registry.getInstance(el)._destroy();
+});
 ```
-You can use any jQuery selector you like, and if the selector encompasses multiple plugins, they will all have the same the chosen method invoked. You pass arguments just like you would any in other JavaScript `function(comma, delimited, so, easy)`. We did make an effort to reduce the number of public methods that require arguments, but check the plugin's page to see if it requires additional information.
+`Foundation.Registry.getInstance(element)` resolves the plugin instance attached to an element - it replaces the 6.x `$(element).foundation('method')` dispatch. You pass arguments just like you would any in other JavaScript `function(comma, delimited, so, easy)`. We did make an effort to reduce the number of public methods that require arguments, but check the plugin's page to see if it requires additional information.
 
 If you are creating your plugins programmatically, you can, of course, invoke methods directly:
 

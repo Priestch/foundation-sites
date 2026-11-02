@@ -312,10 +312,10 @@ Checkbox inputs support the additional attribute `data-min-required` what lets y
 Setup event listener after foundation is initialized (especially for formvalid/forminvalid). Easier to chain via document selector.
 * valid.zf.abide and invalid.zf.abide are field level events, triggered in validateInput function
   *   ev.target is the DOM field element,
-  *   elem is jQuery selector for field element
+  *   elem is the field element (a DOM element)
 * formvalid.zf.abide and forminvalid.zf.abide are form events, triggered in validateForm function
   *   ev.target is the DOM form element,
-  *   frm is jQuery selector for form element
+  *   frm is the form element (a DOM element)
 
 ```javascript
 $(document)
@@ -435,13 +435,13 @@ website: {
 
 ```javascript
 function myCustomValidator(
-  $el,      /* jQuery element to validate */
+  el,       /* the field element to validate (a DOM element) */
   required, /* is the element required according to the `[required]` attribute */
-  parent    /* parent of the jQuery element `$el` */
+  parent    /* the parent element of `el` */
 ) {
   if (!required) return true;
-  var from = $('#'+$el.attr('data-greater-than')).val(),
-      to = $el.val();
+  var from = document.getElementById(el.getAttribute('data-greater-than')).value,
+      to = el.value;
   return (parseInt(to) > parseInt(from));
 };
 
@@ -450,7 +450,7 @@ Foundation.Abide.defaults.patterns['dashes_only'] = /^[0-9-]*$/;
 Foundation.Abide.defaults.validators['greater_than'] = myCustomValidator;
 
 // Initialize Foundation
-$(document).foundation();
+Foundation.init();
 ```
 ```html
 <input id="phone" type="text" pattern="dashes_only" required >
@@ -458,9 +458,9 @@ $(document).foundation();
 <input id="max" type="number" data-validator="greater_than" data-greater-than="min" required>
 ```
 
-## jQuery Conflict
+## A Note on `name="submit"`
 
-When creating a type `submit` button, make sure to _avoid_ using `name="submit"` otherwise your form won't submit. This is due to [jQuery limitations](https://api.jquery.com/submit/) (see Additional Notes).
+When creating a type `submit` button, avoid using `name="submit"` - it shadows the form's native `submit()` method and older helper code may call it.
 
 ## Accessibility
 

@@ -3,7 +3,41 @@
 Notable changes to Foundation for Sites are documented here.
 For versions up to and including 6.9.0, see the [GitHub releases page](https://github.com/foundation/foundation-sites/releases).
 
-## [Unreleased]
+## [7.0.0]
+
+The seventh major: **jQuery is gone**, the Sass core is a **module system**, and there is **one grid**.
+
+### Breaking
+
+- **jQuery removed.** The plugins are vanilla JavaScript. `$(document).foundation()` becomes `Foundation.init(root?)` (element, document or selector; document by default). Instance access replaces the `$(el).foundation('method')` dispatch: `Foundation.Registry.getInstance(el).method()`. The data-attribute API (`data-open` / `data-close` / `data-toggle` / `data-closable` / …) and the `*.zf.*` event names are unchanged.
+- **Event parameters are elements.** Every `*.zf.*` event's extra parameters are now native elements (they were jQuery collections). The element-local `zf.trigger` dispatches are real non-bubbling CustomEvents - jQuery-synthesized events no longer cross into the library, and vice versa.
+- **destroy() only removes what it bound.** Listeners a third party attached to a plugin element now survive `destroy()` (the 6.x scorched-earth worked only because jQuery shared one event table).
+- **One grid: the XY grid.** The float grid and the legacy flex grid are gone - `.row`/`.columns`, `foundation-grid`, `foundation-flex-grid`, the `foundation-float` CSS variant and `foundation-everything`'s `$flex` parameter. Migrate to `grid-container` / `grid-x` / `cell` (in use since 6.4). The flex utility classes are emitted unconditionally now.
+- **Custom validators receive elements.** Abide validator callbacks get the field element, the required flag and the parent **element** (not jQuery objects).
+- **Removed with the IE support matrix:** the IE9 PNG fallback inside `background-triangle()`, the `.show-for-ie` / `.hide-for-ie` classes, and the `.flex-video` alias (rename the class to `.responsive-embed` - same CSS file, same technique).
+- **ES5 output dropped.** The JS dist targets the modern baseline (Chrome/Edge >= 110, Firefox >= 115 ESR, Safari/iOS >= 15.4) - the same `.browserslistrc` now governs both CSS and JS. The minified bundle shrinks ~21%.
+- **Sass: `@use` is the module system.** `foundation.scss` is a `@forward` module; per-component imports resolve their own dependencies. Assigning `$primary-color` (or any palette-derived color) *before* the import now wins over the palette derivation - the 6.x second-guess is gone. `@extend`-generated selectors compile in source order (the import world emitted some reversed). `@import` keeps working through the transition; see the upgrade guide.
+
+### Added
+
+- **Per-component configuration**: `@use "foundation-next" as fs` + `@include fs.foundation-<component>(meta.module-variables("my-settings"))` loads exactly the components you want with only the settings you changed (unknown keys warn at compile time). All 34 components are covered.
+- `Foundation.init(root?)`, `Foundation.Registry` public instance lookup, `Foundation.Triggers` / `Foundation.Motion` / `Foundation.Touch` exposed on the global.
+
+### Changed
+
+- The Triggers delegation arms at `DOMContentLoaded` instead of `window load`, and Magellan tracks navigation injected by later scripts - a stalled third-party iframe no longer freezes `data-open`/`data-close`/`data-toggle` until it gives up.
+- Animations run on a native Motion engine (per-element queues, jQuery-compatible easing); SmoothScroll/Reveal completion callbacks fire once (twice in 6.x).
+- `closeme` broadcasts are real bubbling events.
+- Dev chain: sass-embedded 1.107, the sassy-lists dependency is gone (native list helpers), `if()` migrated to the modern CSS conditional syntax. Sass compiles ~2.7x faster than the 6.x `@import` world.
+
+### Fixed
+
+- `onLoad(window, …)` with iframes on the page no longer resolves the target to the first frame's window (the cross-origin SecurityError family).
+- One click on a `[data-toggle]` control dispatches exactly once (module-copy deduplication - the 8x toggle storm).
+- Sliders without a `[data-slider-fill]` element initialize again (6.x empty-collection semantics).
+- Abide custom validators (`data-validator`) work - `matchValidation` referenced an undefined variable and crashed.
+- Plus the 6.10 maintenance batch: Reveal/Dropdown close-handler cross-removal, ESC in multi-modal setups, Sticky double-callbacks, OffCanvas/AccordionMenu/Equalizer/ResponsiveMenu listener leaks, Drilldown wrapper handling (see the entries below).
+
 
 ### Documentation
 
