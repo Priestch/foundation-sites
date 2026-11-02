@@ -8,7 +8,8 @@
 //
 //   @use "sass:meta";
 //   @use "foundation/themes/classic" as theme;
-//   @include fs.foundation-everything(meta.module-variables("theme"));
+//   @use "foundation/foundation-next" as fs with ($fs-user: meta.module-variables("theme"));
+//   @include fs.foundation-button(); // and the other component mixins
 
 $foundation-palette: (
   "primary": #1779ba,
