@@ -22,7 +22,11 @@ var SEARCH_PAGE_TYPES = {
 
 supercollider
   .config({
-    template: foundationDocs.componentTemplate,
+    // 7.0: local XY-grid copy of the foundation-docs component shell — the
+    // package template still emits float-grid .row/.columns markup, which
+    // 7.0 no longer ships, so the docs/TOC columns collapsed. Panini's
+    // partials override the same way; supercollider takes a file path.
+    template: 'docs/templates/component.html',
     marked: foundationDocs.marked,
     handlebars: foundationDocs.handlebars,
     keepFm: true,

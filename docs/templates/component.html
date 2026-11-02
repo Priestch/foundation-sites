@@ -1,0 +1,49 @@
+<article class="docs-component" id="docs-{{escape title}}">
+
+<!--<a href="#docs-menu" class="small secondary button expanded hide-for-medium mobile-nav-button">Jump to Nav</a>-->
+
+{{#if video-hero}}
+{{> video-hero-header}}
+{{/if}}
+
+{{!-- Start container for docs and table of contents --}}
+{{!-- 7.0: the float grid is gone, so the row/columns pair became an XY grid
+      (cell small-12 keeps the below-large stacking of the former
+      .large-9/.large-3 columns, grid-padding-x restores their gutters). --}}
+<div class="grid-x grid-padding-x">
+
+{{!-- Start container for docs --}}
+<div class="cell small-12 large-9 docs-component-inner {{#if video-hero}}has-video-hero{{/if}}" id="docs">
+<div>
+{{#unless video-hero}}
+{{> header}}
+{{/unless}}
+
+{{ docs }}
+
+{{#if sass}}
+<hr>
+{{> sass-reference}}
+{{/if}}
+
+{{#if js}}
+<hr>
+{{> javascript-reference}}
+{{/if}}
+
+{{#if sass}}
+<!-- <hr> -->
+{{> building-blocks}}
+{{/if}}
+</div>
+</div>
+{{!-- End container for docs --}}
+
+<div class="cell small-12 large-3 show-for-medium">
+{{> table-of-contents}}
+</div>
+
+</div>
+{{!-- End container for docs and table of contents --}}
+
+</article>
