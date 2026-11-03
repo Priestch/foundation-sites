@@ -1,0 +1,29 @@
+// Foundation docs chrome — 7.0 theme-driven re-skin (unit 2 of the
+// foundation-docs localization).
+//
+// These files are ported from the pinned foundation-docs package with the
+// 2016 ZURB brand hardcodes (the #DB0A5B pink / #FF6908 orange /
+// #121212 dark-bar era) replaced by the framework's own theme tokens, so the
+// whole chrome follows whichever theme docs.scss imports. Structural rules
+// (sticky sidebar, off-canvas, responsive behavior) are carried over as-is —
+// the layout is verified on all 65 pages; the skin is what changed.
+//
+// Dropped as dead markup (0 hits across the built site): _building-blocks,
+// .marketing-topbar, the ZURB _footer/_newsletter/_studios-callout/
+// _announcement/_banner/_compatibility blocks, and the toc ad-unit.
+
+@import 'typography';
+@import 'header';
+@import 'topbar';
+@import 'search';
+@import 'navigation';
+@import 'page';
+@import 'anchor';
+@import 'code';
+@import 'reference';
+@import 'toc';
+@import 'label';
+@import 'notices';
+@import 'color-block';
+@import 'index';
+@import 'video';

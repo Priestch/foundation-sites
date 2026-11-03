@@ -1,0 +1,86 @@
+@use "sass:color";
+
+// Table of contents anchored to the right of each page.
+
+.docs-toc {
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  padding-top: 2rem;
+  border-bottom: 1px solid $medium-gray;
+  font-size: 1rem;
+
+  max-height: 100vh;
+  padding-bottom: 100px;
+  overflow-y: auto;
+  &.is-stuck {
+    width: 100%;
+  }
+
+  @include breakpoint(large) {
+    display: block !important;
+    border-bottom: 0;
+  }
+
+  .menu > li > a {
+    line-height: 1.5;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .is-active {
+    background: $primary-color;
+    color: white;
+  }
+
+  .menu .docs-nav-title {
+    margin-top: 1rem;
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.foundation-toc-ad-unit {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  > div {
+    padding: 1rem;
+//    border: 1px solid #cacaca;
+    margin-bottom: 2rem;
+  }
+}
+
+.docs-toc-wrap.fixed {
+  position: fixed;
+}
+
+
+
+.docs-contribute-menu {
+  list-style: none;
+
+  li {
+    padding: 0.3rem 0rem;
+  }
+
+  li a {
+    color: $dark-gray;
+    transition: color 0.35s ease;
+    font-size: 0.85rem;
+  }
+
+  li a:hover {
+    color: $black;
+    transition: color 0.35s ease;
+  }
+}
+
+.docs-toc-divider {
+  border-bottom: 1px dashed $medium-gray;
+
+  &.small {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,0 +1,10 @@
+// Chrome typography follows the theme font ($body-font-family) — the old
+// package locked 'Helvetica Neue' over every chrome heading, which is what
+// kept the semi/tdesign previews from touching the site frame.
+
+a > code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: $primary-color;
+}

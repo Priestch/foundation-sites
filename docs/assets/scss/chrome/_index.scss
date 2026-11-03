@@ -1,0 +1,14 @@
+// Index used on the... index page. (The .docs-big-index / .docs-small-index
+// blocks are gone — neither selector renders on this site.)
+
+.docs-component-inner {
+  padding-left: 0.625rem * 2.5;
+  padding-right: 0.625rem * 2.5;
+  @include breakpoint(large) {
+    padding-left: 0.9375rem*2.9;
+    padding-right: 0.625rem;
+  }
+  &.has-video-hero {
+    padding-top: 2rem;
+  }
+}

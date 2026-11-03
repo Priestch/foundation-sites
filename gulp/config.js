@@ -54,8 +54,9 @@ module.exports = {
     // motion-ui's src mixins stay on the docs compile path: docs.scss
     // `@import 'motion-ui'` + `@include motion-ui-transitions` (the docs
     // motion-ui and orbit pages consume the generated classes).
-    'node_modules/motion-ui/src',
-    'node_modules/foundation-docs/scss'
+    // 7.0 chrome re-skin: the foundation-docs scss loadPath is gone — the
+    // chrome is ported to docs/assets/scss/chrome/.
+    'node_modules/motion-ui/src'
   ],
 
   SASS_LINT_FILES: [

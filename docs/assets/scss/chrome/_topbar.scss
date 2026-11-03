@@ -1,0 +1,46 @@
+// Mobile off-canvas top bar + panel chrome.
+// (.marketing-topbar is gone — its markup never renders; the site topbar is
+// .global-nav, styled in docs.scss. The old near-black #121212 panel made the
+// theme previews look like two different sites; the panel is light now.)
+
+.mobile-ofc {
+  background: $white;
+  border-bottom: 1px solid $medium-gray;
+  font-size: rem-calc(13);
+  font-weight: bold;
+
+  .menu a {
+    height: 45px;
+    line-height: 45px;
+    color: $body-font-color;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    &:hover:not(.button),
+    &:focus {
+      background: $light-gray;
+    }
+
+    &.button {
+      border-radius: 0;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+  }
+
+  .title {
+    color: $dark-gray;
+    padding: 10px;
+    padding-left: 15px;
+    font-size: 0.8em;
+    background: $light-gray;
+  }
+}
+
+.off-canvas {
+  a.close-button {
+    color: $body-font-color;
+  }
+  .close-button:hover, .close-button:focus {
+    color: $body-font-color;
+  }
+}

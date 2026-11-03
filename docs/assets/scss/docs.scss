@@ -45,40 +45,12 @@
 @include foundation-meter-element;
 @include motion-ui-transitions;
 
-$foundation-dark: #074E68 ;
-$true-white: #fff;
-// 7.0: the pinned foundation-docs package still calls three float-grid
-// mixins (in rules whose markup no longer renders). xy equivalents keep
-// the compile alive and stay correct if that markup ever returns.
-@mixin grid-row($behavior: null) {
-  display: flex;
-  flex-flow: row wrap;
-}
-@mixin grid-row-nest { margin: 0; }
-@mixin grid-col($columns) {
-  $-pct: $columns / 12 * 100%;
-  flex: 0 0 $-pct;
-  max-width: $-pct;
-}
-
-@import 'foundation-docs';
-
-// 7.0: the docs markup moved to the xy grid; these three rules re-map the
-// legacy .row/.column selectors the pinned foundation-docs package styles
-// still target (newsletter form, zurb footer bottom, big index cards).
-.zurb-footer-bottom .cell {
-  padding: 0;
-}
-.docs-big-index {
-  .cell a { color: $black; }
-  .cell strong {
-    color: $primary-color;
-    font-size: 1.25rem;
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  .cell a:hover { color: $primary-color; }
-}
+// 7.0 chrome re-skin (unit 2): the site frame is styled locally now —
+// docs/assets/scss/chrome/ is the re-themed port of the foundation-docs
+// scss (dead ZURB-era markup dropped, colors/radius/shadows on tokens).
+// Import order matters: it must splice where the package used to, after
+// the framework and before the docs-local example partials.
+@import 'chrome/chrome';
 
 @import 'content/install';
 @import 'examples/buttons';
@@ -89,7 +61,6 @@ $true-white: #fff;
 @import 'examples/responsive-embed';
 @import 'examples/reveal';
 
-@import 'course-callout';
 @import 'component-list';
 @import 'accordion-content';
 @import 'docs-footer';
@@ -103,61 +74,7 @@ $true-white: #fff;
   src: url('/assets/fonts/zurb-webfont.woff') format('woff');
 }
 
-/* Banner for announcements */
-a#notice {
-  display:block;
-  overflow: hidden;
-  position: relative;
-  padding: 1rem 0;
-  width:100%;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-color: #0078AB;
-  height: 70px;
-
-  .countdown {
-    display:none;
-    color: #ffffff;
-    font-size: 35px;
-    font-weight: 500;
-    margin-left: -50%;
-    font-family: sans-serif;
-    background-color: rgba(0,120,171,0.7);
-    -webkit-box-shadow: 0px 0px 16px 7px rgba(0,120,171,0.7);
-    -moz-box-shadow: 0px 0px 16px 7px rgba(0,120,171,0.7);
-    box-shadow: 0px 0px 16px 7px rgba(0,120,171,0.7);
-  }
-
-  .timer-colon {
-    margin: 0px -2px 0px -4px;
-    padding: 0;
-  }
-
-  .timer-hour, .timer-minute, .timer-second {
-    letter-spacing: 2px;
-  }
-
-  .info {
-    left: 0;
-    right: 0;
-    // top: 15px;
-    z-index: 20;
-    margin-top: -7px;
-    // width: 75%;
-    margin-left: auto;
-    margin-right: auto;
-    // position: absolute;
-    h5 { color: #ffffff; font-size: 18px !important;}
-    text-align: center;
-    @media only screen and (max-width: 675px) { width: 100%; padding: 0 15px 0px 15px; position: relative; }
-  }
-
-  @media (max-width: 800px) {
-    background-position: 51.2% 0;
-    .countdown { display: none; }
-  }
-}
+/* Announcement bar under the topbar */
 a.docs-banner {
   display: block;
   overflow: hidden;
@@ -165,7 +82,7 @@ a.docs-banner {
   position: relative;
   width: 100%;
   height: auto;
-  background: $success-color;
+  background: $primary-color;
   color: $white;
   h5 {
     margin-bottom: 0 !important;
@@ -173,18 +90,16 @@ a.docs-banner {
     font-size: 0.9rem;
   }
 }
-/* COUNTDOWN END */
 
 $transition-slow: all 0.5s ease-in-out;
 $transition: all 0.25s ease-in-out;
 $transition-fast: all 0.15s ease-in-out;
-$topbar-bg: #2c3840;
-$global-nav-bg: $topbar-bg;
-$global-nav-border-color: #3B4951;
-$global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
+$global-nav-border-color: $medium-gray;
+$global-nav-hover-color: $light-gray;
 
 .global-nav {
-  background: $global-nav-bg !important;
+  background: $white;
+  border-bottom: 1px solid $global-nav-border-color;
   font-size: rem-calc(13);
   font-weight: bold;
   height: rem-calc(45);
@@ -196,7 +111,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
     width: auto;
 
     &.menu a {
-      background: $global-nav-bg;
+      background: $white;
 
       &.button {
         background: $primary-color;
@@ -215,7 +130,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
   }
 
   .dropdown.menu .is-active a {
-    color: $white;
+    color: $primary-color;
   }
 
   .dropdown.menu > li.is-dropdown-submenu-parent > a {
@@ -239,7 +154,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
   }
 
   .menu a {
-    color: $light-gray;
+    color: $body-font-color;
     height: 45px;
     line-height: 45px !important;
     padding-bottom: 0 !important;
@@ -277,7 +192,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
   }
 
   .title {
-    background: $global-nav-bg;
+    background: $light-gray;
     color: $dark-gray;
     font-size: 0.8em;
     padding: 10px;
@@ -286,7 +201,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
 
   .is-active {
     a {
-      background: color.adjust($global-nav-bg, $lightness: -20%);
+      background: $global-nav-hover-color;
     }
   }
 
@@ -315,7 +230,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
   justify-content: center;
 
   .zurb-logo {
-    color: $white;
+    color: $body-font-color;
     font-family: "zurb-logo";
     font-size: 38px;
     font-weight: normal;
@@ -333,7 +248,10 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
 
     strong {
       display: inline;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      // The parent <a> renders in the 'zurb-logo' icon webfont — reset the
+      // wordmark text to the theme font (the old package locked Helvetica
+      // here; a bare font-size override isn't enough).
+      font-family: $body-font-family;
       font-size: 17px;
       line-height: 46px;
     }
@@ -346,7 +264,8 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
 
 // --- Mobile Top Bar
 .global-nav-mobile-wrapper {
-  background: $global-nav-bg;
+  background: $white;
+  border-bottom: 1px solid $medium-gray;
   position: relative;
   display: flex;
   vertical-align: middle;
@@ -387,23 +306,6 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
 }
 
 
-.docs-newsletter {
-  padding: 1rem 0;
-}
-
-.footer-signup-form {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.zurb-footer-bottom {
-  background: $topbar-background;
-}
-
-.youtube {
-  background: url("../img/icons/youtube.png") no-repeat center 0;
-}
-
 .docs-nav li.docs-nav-version {
   display: flex;
   align-items: center;
@@ -426,13 +328,13 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
   img {
     max-width: 200px;
     height: 35px;
-    border-right: 1px solid #cacaca;
+    border-right: 1px solid $medium-gray;
   }
 }
 
 .docs-codepen-container {
   width: 100%;
-  border: 1px solid #cacaca;
+  border: 1px solid $medium-gray;
   border-bottom: 0;
   height: rem-calc(36);
   a {
@@ -442,7 +344,7 @@ $global-nav-hover-color: color.adjust($global-nav-bg, $lightness: 10%);
     border: 0;
     a {
       width: auto;
-      border: 1px solid #cacaca;
+      border: 1px solid $medium-gray;
       display: inline-block;
     }
   }
@@ -507,7 +409,7 @@ a[data-open-video] {
     right: 10px;
     top: 0px;
     z-index: 1;
-    color: #aaa;
+    color: $medium-gray;
   }
 }
 
@@ -515,13 +417,6 @@ a[data-open-video] {
   border-left: 3px solid $primary-color;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.17);
 }
-
-.hyperlink {
-  text-decoration: underline;
-  color: $white;
-  transition: color 0.15s ease;
-}
-
 
 a.docs-banner {
   padding: 1.1rem 1rem;

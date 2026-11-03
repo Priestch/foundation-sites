@@ -1,6 +1,6 @@
 .docs-nav {
   padding-top: 1rem;
-  border-right: 1px solid #efefef;
+  border-right: 1px solid $light-gray;
 }
 
 .docs-nav .docs-nav-category {
@@ -8,7 +8,7 @@
 
   .accordion-title {
     border: none;
-    color: #444444;
+    color: $body-font-color;
     background-color: inherit;
     font-weight: 600;
   }
@@ -64,7 +64,7 @@
   }
 
   li a {
-    color: #717171;
+    color: $dark-gray;
     line-height: 1.5;
     transition: color 0.3s ease;
   }
@@ -77,12 +77,12 @@
 
 .docs-nav-version-container {
   margin-left: 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid $light-gray;
   padding-bottom: 0.5rem;
 }
 
 .nav-modal.reveal {
   padding: 0;
   padding-top: 1rem;
-  background-color: #f7f7f7;
+  background-color: $light-gray;
 }

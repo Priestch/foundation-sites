@@ -21,7 +21,7 @@
     .accordion-content {
       // margin-bottom: 1rem;
       border: none;
-      border-bottom: 1px dashed #e6e6e6;
+      border-bottom: 1px dashed $light-gray;
     }
   }
 
@@ -37,7 +37,7 @@
     padding-left: 0;
     background: none;
     border: none;
-    border-bottom: 1px dashed #d6d6d6;
+    border-bottom: 1px dashed $medium-gray;
     transition: all 0.3s ease;
   }
 
@@ -77,12 +77,11 @@
 }
 
 .accordion-content-item {
-  font-family: Helvetica, Arial, sans-serif;
   margin-bottom: 2rem;
 }
 
 .docs-component .accordion-content-item-divider {
-  border-bottom: 1px dashed #e5e5e5;
+  border-bottom: 1px dashed $light-gray;
   margin-bottom: 0;
 }
 
