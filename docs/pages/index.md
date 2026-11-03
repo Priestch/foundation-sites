@@ -1,12 +1,9 @@
 ---
-title: Welcome to Foundation 6
-description: We built Foundation for Sites to be the most advanced responsive front-end framework in the world.
+title: Welcome to Foundation 7
+description: Foundation for Sites 7 — the responsive framework, rebuilt jQuery-free with a theme system and a modern Sass module core.
 tags:
   - index
   - home
-
-video-hero: true
-
 ---
 
 ## Installing Foundation
@@ -25,120 +22,65 @@ With an easy to understand syntax and consistent structure, you'll learn your wa
   <li class="accordion-item welcome-accordion-item" data-accordion-item>
     <a href="#" class="accordion-title">Getting Started</a>
     <div class="accordion-content" data-tab-content>
-      <a href="{{root}}starter-projects.html?video=lFrpnk0Oo_8" target="_blank">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i3.ytimg.com/vi/lFrpnk0Oo_8/maxresdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Starter Projects - CSS Download</h5>
-            <p>This video will take you through downloading and getting started with the Foundation CSS project.</p>
-            <span class="accordion-content-item-cta"><img src="{{root}}assets/img/icons/watch-video-icon.svg" class="" height="" width="" alt=""> Watch Video</span>
-          </div>
+      <a href="{{root}}installation.html">
+        <div class="accordion-content-item">
+          <h5>Installation</h5>
+          <p>Everything you need to get Foundation into your project: the npm package, the Sass module core, CDN links, and the online customizer.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
         </div>
       </a>
-      <a href="{{root}}starter-projects.html?video=3Uj74uJ3GSQ" target="_blank">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i3.ytimg.com/vi/3Uj74uJ3GSQ/maxresdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Starter Projects</h5>
-            <p>This video will take you through downloading and getting started with the Foundation stack.</p>
-            <span class="accordion-content-item-cta"><img src="{{root}}assets/img/icons/watch-video-icon.svg" class="" height="" width="" alt=""> Watch Video</span>
-          </div>
+      <a href="{{root}}starter-projects.html">
+        <div class="accordion-content-item">
+          <h5>Starter Projects</h5>
+          <p>Start from a blank canvas, a basic template, or the fully featured yet simple approach — with the CLI or a plain download.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
         </div>
       </a>
     </div>
   </li>
 
   <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Why Foundation</a>
+    <a href="#" class="accordion-title">Learn the Components</a>
     <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://get.foundation/learn/get-your-team-on-a-solid-foundation.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i.ytimg.com/vi/kLgRITKjcWw/mqdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>The World’s Most Advanced Front-end Framework</h5>
-            <p>Coming from another framework? It’s the perfect time to make the switch and learn Foundation. Download our free e-book that will help you convince your team that Foundation is better, easier to learn, and more flexible than anything else out there.
-            </p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
+      <a href="{{root}}kitchen-sink.html">
+        <div class="accordion-content-item">
+          <h5>Kitchen Sink</h5>
+          <p>Every component on one page — the fastest way to see what Foundation ships and how the pieces look together.</p>
+          <span class="accordion-content-item-cta">Open the Kitchen Sink</span>
         </div>
       </a>
-      <a target="_blank" href="https://get.foundation/learn/build-your-career-on-a-solid-foundation.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i.ytimg.com/vi/dZZk9Kz5j_0/mqdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Build Your Career on a Solid Foundation</h5>
-            <p>Web technologies are rapidly changing, but time and resources are finite. Find out why Learning Foundation places you at the cutting edge of the website development.
-            </p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
+      <a href="{{root}}javascript.html">
+        <div class="accordion-content-item">
+          <h5>JavaScript</h5>
+          <p>7.0 runs without jQuery: Foundation.init() boots the plugins, the Registry looks up instances, and data-attribute APIs work exactly as before.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
+        </div>
+      </a>
+      <a href="{{root}}sass.html">
+        <div class="accordion-content-item">
+          <h5>Sass</h5>
+          <p>The framework core is a modern module system — @use one entry point, configure per component, and pull exactly the CSS you need.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
         </div>
       </a>
     </div>
   </li>
 
   <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Templates and Code Snippets</a>
-    <div class="accordion-content " data-tab-content>
-      <a target="_blank" href="https://get.foundation/templates.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://get.foundation/assets/img/sites-templates/foundation6-templates-07.svg">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Templates</h5>
-            <p>Get eight responsive templates to kick off your projects built with the same techniques we teach in our Introduction to Foundation 6 Course to build your business upon.</p>
-            <span class="accordion-content-item-cta">View Templates</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://get.foundation/building-blocks/how-to.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i3.ytimg.com/vi/SmhGUT_N-jw/maxresdefault.jpg" class="" height="" width="" alt="" style="height: 142px;">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Building Blocks</h5>
-            <p>Building Blocks are coded UI components you can drop into any standard Foundation project. Building Blocks will help you rapidly accelerate your development time.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://get.foundation/building-blocks/kits.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://get.foundation/building-blocks/assets/img/kits/dashboard/dashboard-kit.jpg" style="height: 142px; width: 100%;">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Kits</h5>
-            <p>Foundation Kits are curated bundles of Building Blocks designed for building specific types of websites and apps. Download from 7 powerful Kits to jumpstart your next project.</p>
-            <span class="accordion-content-item-cta">View Kits</span>
-          </div>
-        </div>
-      </a>
-    </div>
-  </li>
-
-  <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Additional Resources</a>
+    <a href="#" class="accordion-title">Make It Yours</a>
     <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://get.foundation/learn/zero-to-website-in-no-time-flat.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i.ytimg.com/vi/KHMXOTbLAGE/mqdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Zero to Website Guide</h5>
-            <p>Learning a framework for the first time can be overwhelming, so we’ve put together “Zero to Website,” a 60-page guide that will walk you through coding a real, live, responsive website from scratch with Foundation.</p>
-            <span class="accordion-content-item-cta">Get The Guide</span>
-          </div>
+      <a href="{{root}}theming.html">
+        <div class="accordion-content-item">
+          <h5>Theming</h5>
+          <p>One settings file re-skins the whole framework. Ship the built-in modern, classic, TDesign and Semi themes or compose your own from their token maps.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
+        </div>
+      </a>
+      <a href="{{root}}global.html">
+        <div class="accordion-content-item">
+          <h5>Global Styles</h5>
+          <p>Colors, typography, spacing, radius and shadows are all settings — the same knobs the themes turn, documented one by one.</p>
+          <span class="accordion-content-item-cta">Read the docs</span>
         </div>
       </a>
     </div>
@@ -148,136 +90,29 @@ With an easy to understand syntax and consistent structure, you'll learn your wa
 
 ---
 
-## Experienced with Foundation for Sites?
+## Coming from Foundation 6?
 
-With an easy to understand syntax and consistent structure, you'll learn your way around Foundation in no time!
+Foundation 7 is a focused modernization, not a rewrite — your markup, class names and data-attribute APIs carry over.
 
 <ul class="accordion welcome-accordion" data-accordion data-allow-all-closed="true">
   <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Latest Foundation Updates</a>
+    <a href="#" class="accordion-title">What Changed</a>
     <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://github.com/foundation/foundation-sites/releases/tag/6.3.1">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="{{root}}assets/img/docs-631.png" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation 6.3.1 Update: Sass mixins and bug fixes</h5>
-            <p>Foundation 6.3.1 contains plenty of bug fixes underlying reworks to old features. Along with bug fixes, Foundation gets some some new Sass mixins and optimizations that make it work in more scenarios and the docs got a lot of love. Enjoy it!</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
+      <a href="{{root}}upgrade-7.html">
+        <div class="accordion-content-item">
+          <h5>Upgrade Guide</h5>
+          <p>The complete 6 → 7 migration reference: jQuery removal and the new plugin API, the Sass module system, grid consolidation, and the full list of removed utilities with their replacements.</p>
+          <span class="accordion-content-item-cta">Read the guide</span>
+        </div>
+      </a>
+      <a target="_blank" href="https://github.com/foundation/foundation-sites/releases">
+        <div class="accordion-content-item">
+          <h5>Release Notes</h5>
+          <p>Every breaking change, addition and fix in the 7.0 changelog — starting from the 7.0.0-beta releases.</p>
+          <span class="accordion-content-item-cta">View releases</span>
         </div>
       </a>
     </div>
   </li>
-  <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Building Blocks</a>
-    <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://get.foundation/building-blocks/how-to.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://i3.ytimg.com/vi/adLpmsU9v2g/maxresdefault.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>How to Use Foundation's Building Blocks</h5>
-            <p>The Foundation team has cut your development time in half again with Foundation Building Blocks. In this tutorial we'll show you how to find the right building block and the way to install it that works best for you.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-    </div>
-  </li>
-  <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Foundation Integrations</a>
-    <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://circlingthesun.github.io/angular-foundation-6/">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-3 accordion-content-item-thumbnail">
-            <img src="https://circlingthesun.github.io/angular-foundation-6/assets/logo.png" class="" height="147" width="147" alt="" style="border: 0;">
-          </div>
-          <div class="cell medium-9">
-            <h5>Angular Foundation 6</h5>
-            <p>The awesome folks at Pinecone created an Angular port for Foundation. Angular.js assists with creating single-page applications, one-page web applications that only require HTML, CSS, and JavaScript on the client side.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://react.foundation/">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-3 accordion-content-item-thumbnail">
-            <img src="https://cdn.worldvectorlogo.com/logos/react.svg" class="" height="" width="" alt="" style="border: 0;">
-          </div>
-          <div class="cell medium-9">
-            <h5>React + Foundation 6</h5>
-            <p>React is a JavaScript library for building user interfaces. Now you can use Foundation for Sites 6 components implemented in React with CSS Modules!</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://jointswp.com/">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-3 accordion-content-item-thumbnail">
-            <img src="https://s.w.org/about/images/logos/wordpress-logo-simplified-rgb.png" class="" height="147" width="147" alt="" style="border: 0;">
-          </div>
-          <div class="cell medium-9">
-            <h5>JointsWP: Foundation 6 meets WordPress</h5>
-            <p>JointsWP is a blank WordPress theme built with Foundation 6, giving you all the power and flexibility you need to build complex, mobile friendly websites without starting from scratch.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://medium.com/@tommaso.marcelli/setting-up-vue-2-and-foundation-6-3f858b4ad20">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-3 accordion-content-item-thumbnail">
-            <img src="{{root}}assets/img/docs-vue.jpeg" class="" height="147" width="147" alt="" style="border: 0;">
-          </div>
-          <div class="cell medium-9">
-            <h5>Setting up Vue 2 and Foundation 6</h5>
-            <p>This is a demo integration of Foundation for Sites 6.3 in a VueJS 2.1 single-page application.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-    </div>
-  </li>
-  <li class="accordion-item welcome-accordion-item" data-accordion-item>
-    <a href="#" class="accordion-title">Foundation Showcase</a>
-    <div class="accordion-content" data-tab-content>
-      <a target="_blank" href="https://get.foundation/foundationturns5">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="{{root}}assets/img/foundation-turns-5.png" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>5 Years of Shaping the Web</h5>
-            <p>This year Foundation turned five years old. It was the first to be responsive, the first to be semantic, the first to be mobile first, the first to be built with Sass, and the first to have accessibility built in. Learn more about the framework and where it's going next.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://get.foundation/showcase/brands.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="{{root}}assets/img/foundation-brands.png" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Brands</h5>
-            <p>Big brands are relying more and more on the world's most advanced, responsive front-end framework. Their sites are now built so that customers can connect with them on any device.</p>
-            <span class="accordion-content-item-cta">Learn More</span>
-          </div>
-        </div>
-      </a>
-      <a target="_blank" href="https://get.foundation/showcase/case-studies.html">
-        <div class="grid-x grid-margin-x accordion-content-item">
-          <div class="cell medium-4 accordion-content-item-thumbnail">
-            <img src="https://get.foundation/assets/img/learn/case-studies/meundies-mockup1.jpg" class="" height="" width="" alt="">
-          </div>
-          <div class="cell medium-8">
-            <h5>Foundation Case Studies</h5>
-            <p>Foundation in the wild. See how people are using Foundation to build responsive, future-friendly sites. We learn what went into their designs, decisions, and how Foundation helped them get to their goals.</p>
-          </div>
-        </div>
-      </a>
-    </div>
-  </li>
+
 </ul>
