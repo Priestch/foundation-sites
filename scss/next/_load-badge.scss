@@ -19,7 +19,8 @@ $user: () !default;
   $badge-palette: map.get($user, "badge-palette"),
   $badge-padding: map.get($user, "badge-padding"),
   $badge-minwidth: map.get($user, "badge-minwidth"),
-  $badge-font-size: map.get($user, "badge-font-size")
+  $badge-font-size: map.get($user, "badge-font-size"),
+  $badge-radius: map.get($user, "badge-radius")
 );
 
 @include badge-module.foundation-badge;

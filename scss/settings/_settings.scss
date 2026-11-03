@@ -290,6 +290,7 @@ $badge-palette: $foundation-palette;
 $badge-padding: 0.3em;
 $badge-minwidth: 2.1em;
 $badge-font-size: 0.6rem;
+$badge-radius: 50%;
 
 // 10. Breadcrumbs
 // ---------------
@@ -358,6 +359,7 @@ $callout-sizes: (
 $callout-font-color: $body-font-color;
 $callout-font-color-alt: $body-background;
 $callout-radius: $global-radius-large;
+$callout-palette: $foundation-palette;
 $callout-link-tint: 30%;
 
 // 14. Card

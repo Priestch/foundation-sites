@@ -211,8 +211,17 @@ class Reveal extends Plugin {
     // this consumer listens on the native side of that seam.
     Events.on(element, 'open.zf.trigger', this.open.bind(this));
     Events.on(element, 'close.zf.trigger', (event, $element) => {
+      // 6.x jQuery read `$(event.target).parents('[data-closable]')[0]`: the
+      // nearest [data-closable] ancestor, self excluded, and `undefined` when
+      // there is none. A valueless [data-close] dispatch passes no second
+      // argument, so `$element` is `undefined` too — the two missing sides
+      // matched and the reveal closed. closest() also reads the element
+      // itself and returns `null` on a miss, so start the scan at the parent
+      // and normalize `null` back to `undefined` to keep the equation intact.
+      const closableAncestor = (event.target.parentElement &&
+        event.target.parentElement.closest('[data-closable]')) || undefined;
       if ((event.target === _this.$element) ||
-          ($(event.target).parents('[data-closable]')[0] === $element)) { // only close reveal when it's explicitly called
+          (closableAncestor === $element)) { // only close reveal when it's explicitly called
         return this.close.apply(this);
       }
     });

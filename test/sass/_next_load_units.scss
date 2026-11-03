@@ -9,8 +9,6 @@
 // point is that nothing errors and every mixin produces output.
 @include fs.foundation-accordion();
 @include fs.foundation-breadcrumbs();
-@include fs.foundation-callout();
-@include fs.foundation-card();
 @include fs.foundation-close-button();
 @include fs.foundation-dropdown();
 @include fs.foundation-flex-classes();
@@ -38,7 +36,7 @@
 
 @include describe('Next load units (full component rollout)') {
 
-  @include it('loads every component unit with library defaults (button and button-group load in the coupled-family test below - a load unit is configurable once per compilation) - with library defaults in one compilation') {
+  @include it('loads every component unit with library defaults (button and button-group load in the coupled-family test below, callout and card in their own tests below - a load unit is configurable once per compilation) - with library defaults in one compilation') {
     @include assert-true(true,
       'All load units compiled with library defaults without errors');
   }
@@ -49,12 +47,42 @@
         @include fs.foundation-badge((
           "badge-background": #ff00ff,
           "badge-padding": 3rem 4rem,
+          "badge-radius": 3px,
         ));
       }
       @include contains($selector: false) {
         .badge {
           background: #ff00ff;
           padding: 3rem 4rem;
+          border-radius: 3px;
+        }
+      }
+    }
+  }
+
+  @include it('ships the 6.x card shadow default: flat unless the user opts in [card]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-card();
+      }
+      @include contains($selector: false) {
+        .card {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  @include it('narrows the callout color classes through the callout-palette setting [callout]') {
+    @include assert {
+      @include output($selector: false) {
+        @include fs.foundation-callout((
+          "callout-palette": (primary: #2199e8),
+        ));
+      }
+      @include contains($selector: false) {
+        .callout.primary {
+          background-color: #{scale-color(#2199e8, $lightness: 85%)};
         }
       }
     }

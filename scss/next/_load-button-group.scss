@@ -11,6 +11,14 @@
 @use "sass:map";
 $user: () !default;
 
+// The eleven $button-* cells configured below are the SAME cells the button
+// load unit configures: button-group styles its children through the shared
+// button-styles mixins, so the two components are one configuration family
+// on purpose — exactly the 6.x behavior, where both read the same $button-*
+// variables. A user key like "button-background" therefore restyles BOTH
+// button and button-group; there is no button-group-only spelling for these
+// cells. Only the $buttongroup-* cells above are button-group's own.
+
 @use '../components/button-group-module' as button-group-module with (
   $buttongroup-margin: map.get($user, "buttongroup-margin"),
   $buttongroup-spacing: map.get($user, "buttongroup-spacing"),

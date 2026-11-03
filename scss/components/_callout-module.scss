@@ -61,9 +61,9 @@ $callout-font-color-alt: $body-background !default;
 /// @type Color
 $callout-radius: $global-radius-large !default;
 
-/// Amount to tint links used within colored panels. Set to `false` to disable this feature.
-/// @type Number | Boolean
-$callout-link-tint: 30% !default;
+/// Coloring classes. A map of classes to output in your CSS, like `.secondary`, `.success`, and so on.
+/// @type Map
+$callout-palette: $foundation-palette !default;
 
 /// Adds basic styles for a callout, including padding and margin.
 @mixin callout-base() {
@@ -111,7 +111,7 @@ $callout-link-tint: 30% !default;
   .callout {
     @include callout;
 
-    @each $name, $color in $foundation-palette {
+    @each $name, $color in $callout-palette {
       &.#{"" + $name} {
         @include callout-style($color);
       }

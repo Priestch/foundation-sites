@@ -21,7 +21,7 @@ $user: () !default;
   $callout-font-color: map.get($user, "callout-font-color"),
   $callout-font-color-alt: map.get($user, "callout-font-color-alt"),
   $callout-radius: map.get($user, "callout-radius"),
-  $callout-link-tint: map.get($user, "callout-link-tint")
+  $callout-palette: map.get($user, "callout-palette")
 );
 
 @include callout-module.foundation-callout;

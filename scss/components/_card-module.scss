@@ -43,9 +43,11 @@ $card-divider-background: $light-gray !default;
 /// @type List
 $card-border: 1px solid $light-gray !default;
 
-/// Default card shadow.
+/// Default card shadow. `none`, matching the 6.x default
+/// (scss/settings/_settings.scss) — set to a shadow cell (e.g.
+/// `$global-shadow-sm`) for an elevated card.
 /// @type List
-$card-shadow: $global-shadow-sm !default;
+$card-shadow: none !default;
 
 /// Default border radius.
 /// @type List

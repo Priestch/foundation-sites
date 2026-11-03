@@ -51,13 +51,17 @@ $badge-minwidth: 2.1em !default;
 /// @type Number
 $badge-font-size: 0.6rem !default;
 
+/// Default border radius for badges. The 6.x default is a circle (`50%`); set to e.g. `$global-radius` for a pill shape.
+/// @type Number
+$badge-radius: 50% !default;
+
 /// Generates the base styles for a badge.
 @mixin badge {
   display: inline-block;
   min-width: $badge-minwidth;
   padding: $badge-padding;
 
-  border-radius: 50%;
+  border-radius: $badge-radius;
 
   font-size: $badge-font-size;
   text-align: center;

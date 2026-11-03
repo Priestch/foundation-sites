@@ -305,6 +305,30 @@ describe('Reveal (native layer contract)', function() {
       html.querySelector('[data-close]').click();
     });
 
+    it('closes when a bubbling close.zf.trigger resolves the reveal through the nearest [data-closable] ancestor (the 6.x parents() equation, native side)', function(done) {
+      html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative7')));
+      plugin = new Foundation.Reveal(html, {});
+      plugin.open();
+
+      FoundationNext.Events.on(html, 'closed.zf.reveal', function() {
+        FoundationNext.Dom.visible(html).should.be.false;
+        done();
+      });
+
+      // The closeMe shape: the broadcast names the [data-closable] wrapper,
+      // the event bubbles from a descendant inside the reveal — the handler
+      // must resolve the wrapper as event.target's nearest closable ancestor
+      // and close. Pins the native port of $(target).parents('[data-closable]')[0].
+      var wrap = document.createElement('div');
+      wrap.setAttribute('data-closable', '');
+      html.appendChild(wrap);
+      var inner = document.createElement('button');
+      inner.setAttribute('type', 'button');
+      wrap.appendChild(inner);
+
+      FoundationNext.Events.trigger(inner, 'close.zf.trigger', [wrap]);
+    });
+
     it('keeps the scrollbar class updated through the native resizeme listener', function() {
       html = document.body.appendChild(fixture(template.replace('revealNative1', 'revealNative4')));
       scratch.push(document.body.appendChild(fixture('<div style="height: 4000px"></div>')));
