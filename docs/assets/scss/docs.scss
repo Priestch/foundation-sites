@@ -176,8 +176,14 @@ $global-nav-hover-color: $chrome-hover;
     }
   }
 
-  .dropdown.menu .is-active a {
-    color: $primary-color;
+  // The framework's DropdownMenu paints an open parent item with
+  // $dropdown-menu-item-color-active (= primary blue) — right for consumer
+  // sites, wrong on the dark chrome where it flashes on every hover
+  // (`is-active` is the plugin's open-state class, not a "current page"
+  // marker; these are all external marketing links). Open/hover keeps the
+  // chrome idiom: white ink on $chrome-hover.
+  .dropdown.menu > li.is-active > a {
+    color: $chrome-ink;
   }
 
   .dropdown.menu > li.is-dropdown-submenu-parent > a {
