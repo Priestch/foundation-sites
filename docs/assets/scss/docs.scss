@@ -5,21 +5,16 @@
 // read Foundation globals, so it needs no import world; the starred alias
 // keeps `motion-ui-transitions` and the example partials' `mui-*` mixins
 // unqualified). The framework itself stays on `@import` for this entry: the
-// foundation-docs package (pinned, import-only) and the docs-local example
-// partials below evaluate against the import world and must splice their CSS
-// at these exact positions, so `@import 'foundation'` remains the load path
-// that feeds them. The former standalone `@import 'settings/settings'` is
-// gone — no pre-import settings overrides are made here and the settings
-// module is forwarded (live-linked) by `scss/foundation.scss` itself.
-
-// The CSS for the Foundation docs is stored in an external codebase:
-// https://github.com/foundation/foundation-docs
+// docs-local chrome (docs/assets/scss/chrome/, unit 2 of the chrome
+// re-skin) and the example partials below evaluate against the import
+// world and must splice their CSS at these exact positions, so
+// `@import 'foundation'` remains the load path that feeds them. The former
+// standalone `@import 'settings/settings'` is gone — no pre-import settings
+// overrides are made here and the settings module is forwarded
+// (live-linked) by `scss/foundation.scss` itself.
 //
-// You can test Sass changes locally by running these commands:
-//   git clone https://github.com/foundation/foundation-docs
-//   yarn link ./foundation-docs
-//
-// Feel free to submit pull requests to foundation-docs like you would Foundation itself!
+// The docs chrome scss is local since unit 2 of the chrome re-skin (it was
+// the pinned foundation-docs package until then — see git history).
 
 @use 'motion-ui' as *;
 
