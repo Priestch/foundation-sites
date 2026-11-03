@@ -48,7 +48,7 @@
   font-size: 1.3rem;
   height: 3.5rem;
   font-weight: 300;
-  border: 1px solid $medium-gray;
+  border: 1px solid $chrome-hairline;
   border-top: none;
   border-bottom: none;
 
@@ -67,13 +67,13 @@
 
   @include breakpoint(small down) {
     border: 0;
-    border-top: 1px solid $medium-gray;
-    border-bottom: 1px solid $medium-gray;
+    border-top: 1px solid $chrome-hairline;
+    border-bottom: 1px solid $chrome-hairline;
 
     &:focus {
       border: 0;
-      border-top: 1px solid $medium-gray;
-      border-bottom: 1px solid $medium-gray;
+      border-top: 1px solid $chrome-hairline;
+      border-bottom: 1px solid $chrome-hairline;
     }
   }
 }
@@ -148,7 +148,7 @@
 
 .secondary-bar {
 //  box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.3);
-  border-bottom: 1px solid $medium-gray;
+  border-bottom: 1px solid $chrome-hairline;
   position: relative;
 
 }

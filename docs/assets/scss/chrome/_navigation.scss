@@ -3,7 +3,7 @@
 .docs-nav {
   overflow: auto;
   height: calc(100vh);
-  background: $light-gray;
+  background: $chrome-panel;
   padding-top: 1rem;
   padding-bottom: 100px;
   overflow-y: scroll;
@@ -57,7 +57,7 @@
   line-height: 1;
   padding-left: 0.9rem;
   margin-bottom: 0.5rem;
-  border-top: 1px solid $light-gray;
+  border-top: 1px solid $chrome-hairline;
   margin-top: 1rem;
   padding-top: 1.5rem;
 }

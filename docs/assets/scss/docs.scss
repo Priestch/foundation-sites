@@ -44,14 +44,25 @@
 // One switch, two identities for the site frame (topbar, mobile off-canvas,
 // footer). Both derive from the ACTIVE theme's ramp, so either way the
 // chrome stays in the theme's language:
-//   false → light surfaces — the TDesign/Semi docs pattern (default)
-//   true  → dark surfaces — the classic Foundation docs identity
-$chrome-dark: false;
+//   true  → dark surfaces — the classic Foundation docs identity (this
+//           site's choice: the docs read as Foundation first, theme
+//           preview second)
+//   false → light surfaces — the TDesign/Semi docs pattern
+$chrome-dark: true;
+
+// Light-scheme derivations mix the theme grays back toward white. The raw
+// tokens are one full ramp step darker than the classic docs surface: semi
+// gray-1 (#e6e8ea) vs the old #f7f7f7 sidebar, gray-2 (#c6c9cd) vs the old
+// #e0e0e0 hairlines — mapping surfaces straight onto them made the whole
+// site read heavy and gray. The mixes land back on the classic lightness
+// while still following each theme's hue.
+$chrome-hairline: color.mix($white, $medium-gray, 50%);  // ≈ #e5e6e7 (semi)
+$chrome-panel:    color.mix($white, $light-gray, 75%);   // ≈ #f3f5f6 (semi)
 
 $chrome-bg:     if($chrome-dark, $black, $white);
 $chrome-ink:    if($chrome-dark, $white, $body-font-color);
 $chrome-muted:  if($chrome-dark, $light-gray, $dark-gray);
-$chrome-border: if($chrome-dark, color.adjust($black, $lightness: 15%), $medium-gray);
+$chrome-border: if($chrome-dark, color.adjust($black, $lightness: 15%), $chrome-hairline);
 $chrome-hover:  if($chrome-dark, color.adjust($black, $lightness: 10%), $light-gray);
 
 // 7.0 chrome re-skin (unit 2): the site frame is styled locally now —
