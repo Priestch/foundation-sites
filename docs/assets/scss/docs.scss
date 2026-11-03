@@ -23,6 +23,17 @@
 
 @use 'motion-ui' as *;
 
+// ── Docs-site theme ─────────────────────────────────────────────────────────
+// The docs site previews the whole framework, so it can preview themes too.
+// A theme module is a plain settings file — importing it BEFORE 'foundation'
+// runs the classic settings-file flow: every cell it assigns wins over the
+// library default (the same contract _settings_override.scss pins).
+//   tdesign | semi | classic   → that theme's look
+//   (line removed)             → modern, the 7.0 default
+// The docs build resolves the scss/ folder directly (package consumers
+// would write 'foundation/themes/tdesign').
+@import 'themes/tdesign';
+
 @import 'foundation';
 
 @include foundation-everything();
