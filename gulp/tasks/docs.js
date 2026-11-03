@@ -1,14 +1,25 @@
 var cacheBust = require('gulp-cache-bust');
-var foundationDocs = require('foundation-docs');
 var gulp = require('gulp');
 var newer = require('gulp-newer');
 var panini = require('panini');
 var supercollider = require('supercollider');
 
+// 7.0 docs-chain localization (the chrome re-skin, unit 1): the markdown
+// renderer, the handlebars instance + helpers and every consumed partial
+// are local now — docs/lib/ is a faithful port of the foundation-docs
+// pipeline (string-template/multiline/require-dir inlined away, the
+// never-fired inky_example branch dropped). The package stays installed
+// only for its chrome scss/js until units 2-3 land.
+var foundationDocs = {
+  handlebars: require('../../docs/lib/handlebars'),
+  marked: require('../../docs/lib/marked'),
+  handlebarsHelpers: 'docs/helpers',
+};
+
 var PANINI_CONFIG = {
   root: 'docs/pages/',
   layouts: 'docs/layout/',
-  partials: ['docs/partials/', 'node_modules/foundation-docs/templates/partials/'],
+  partials: ['docs/partials/'],
   helpers: foundationDocs.handlebarsHelpers,
 }
 

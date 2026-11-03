@@ -1,0 +1,19 @@
+<nav class="docs-toc-wrap" id="docsToc" data-sticky-container>
+  <div class="docs-toc hide" id="docsTOC" data-sticky data-margin-top="6" data-anchor="docs">
+    <ul class="vertical menu" data-docs-toc data-magellan data-offset="130">
+      <li class="docs-nav-title">{{ title }}</li>
+    </ul>
+
+    <hr class="docs-toc-divider small">
+
+    <ul class="docs-contribute-menu">
+      <li><a href="{{ editLink repoName editBranch fileName }}" target="_blank"><i class="fi-pencil"></i>Edit this Page</a></li>
+      <li><a href="{{#if library}}{{ library.github }}/issues{{else}}{{ issueLink repoName title }}{{/if}}" target="_blank"><i class="fi-social-github"></i>Report a Bug</a></li>
+      <li><a href="https://github.com/foundation/foundation-sites/discussions" target="_blank"><i class="fi-comment"></i>Get Help</a></li>
+    </ul>
+    <div class="foundation-toc-ad-unit" id="TOCAdUnit"></div>
+  </div>
+
+</nav>
+
+

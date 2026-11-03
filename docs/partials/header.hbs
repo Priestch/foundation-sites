@@ -1,0 +1,32 @@
+<header>
+  <h1 class="docs-page-title">{{ title }}</h1>
+
+  {{#if js}}
+    <span data-tooltip title="Requires a JavaScript library." class="docs-js label">JavaScript</span>
+  {{/if}}
+  {{#if mui}}
+    <span data-tooltip title="Supports Motion UI transitions." class="docs-mui label">Motion UI</span>
+  {{/if}}
+  {{#if library}}
+    <span data-tooltip title="This is an external library." class="docs-lib label"><a href="{{ library.github }}" target="_blank">Library</a></span>
+  {{/if}}
+  {{#if flexbox}}
+    <span data-tooltip title="Supports flexbox mode." class="docs-flex label"><a href="flexbox.html">Flexbox</a></span>
+  {{/if}}
+  {{#if description}}
+    <p class="docs-description lead">{{description}}</p>
+  {{/if}}
+
+  {{#if video}}<div id="subpage-intro-video" class="subpage-intro-video">
+    <div class="docs-video-inner autostick">
+      <span class="expand-contract" data-expand-contract-video></span>
+      <span class="close-button" data-close-video></span>
+      <div class="responsive-embed widescreen">
+        <div id="main-video" data-video="{{video}}"></div>
+        <a id="docs-mobile-video-link" class="docs-mobile-video" target="_blank" href="https://www.youtube.com/watch?v={{video}}"></a>
+      </div>
+    </div>
+    <div class="video-overlay" data-close-video></div>
+  </div>{{/if}}
+
+</header>

@@ -1,0 +1,159 @@
+<section>
+  {{#heading 2}}JavaScript Reference{{/heading}}
+
+  <section>
+    {{#heading 3 'js-module'}}Initializing{{/heading}}
+
+    <p>
+      The following files must be included in your JavaScript to use this plugin:
+      <ul>
+        <li><code>foundation.core.js</code></li>
+
+        {{#each js.module as |module|}}
+        <li>
+          <code>{{module.meta.filename}}</code>
+
+          {{#if module.requires}}
+          <ul>
+            {{#each module.requires as |submodule|}}
+            <li>With utility library <code>{{formatJsModule submodule}}</code></li>
+            {{/each}}
+          </ul>
+          {{/if}}
+
+        </li>
+        {{/each}}
+      </ul>
+    </p>
+
+  </section>
+
+  {{#each js.class}}
+  <section>
+    {{#heading 3 'js-class'}}Foundation.{{this.name}}{{/heading}}
+
+    {{md this.description}}
+
+    <div class="docs-code"><pre><code>{{writeJsConstructor this.name}}</code></pre></div>
+
+    {{#if this.fires}}
+      <p><strong>Fires these events:</strong>
+      {{#each this.fires}}
+        {{this}}
+      {{/each}}
+      </p>
+    {{/if}}
+
+    {{#if this.params}}
+    <table class="docs-variable-table">
+      <thead>
+        <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+      </thead>
+      {{#each this.params}}
+      <tr>
+        <td><code>{{this.name}}</code></td>
+        <td>{{this.type.names.[0]}}</td>
+        <td>{{this.description}}</td>
+      </tr>
+      {{/each}}
+    </table>
+    {{/if}}
+  </section>
+  {{/each}}
+
+  <hr>
+
+  {{#if (hasContent js.member)}}
+  <section>
+    {{#heading 3 'js-options'}}Plugin Options{{/heading}}
+
+    <p>Use these options to customize an instance of {{title}}. Plugin options can be set as individual data attributes, one combined <code>data-options</code> attribute, or as an object passed to the plugin's constructor. <a href="javascript.html#initializing">Learn more about how JavaScript plugins are initialized.</a></p>
+
+    <table class="docs-variable-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      {{#each js.member}}
+      <tr>
+        <td><code>{{formatJsOptionName this.name}}</code></td>
+        <td><code>{{formatJsOptionTypes this.type}}</code></td>
+        <td><code>{{escapeHTML (formatJsOptionValue this.defaultvalue)}}</code></td>
+        <td>{{this.description}}</td>
+      </tr>
+      {{/each}}
+    </table>
+  </section>
+  {{/if}}
+
+  <hr>
+
+  {{#if (hasContent js.event)}}
+  <section>
+    {{#heading 3 'js-events'}}Events{{/heading}}
+
+    <p>These events will fire from any element with a {{title}} plugin attached.</p>
+
+    <table class="docs-variable-table">
+      <thead>
+        <tr><th>Name</th><th>Description</th></tr>
+      </thead>
+      {{#each js.event}}
+        <tr>
+          <td><code>{{formatJsEventName this.name this.memberof}}</code></td>
+          <td>{{this.description}}</td>
+        </tr>
+      {{/each}}
+    </table>
+  </section>
+  {{/if}}
+
+  <hr>
+
+  {{#if (hasContent js.function)}}
+  <section>
+    {{#heading 3 'js-functions'}}Methods{{/heading}}
+
+    {{#each js.function}}
+    <section>
+      {{#heading 4 this.name}}{{this.name}}{{/heading}}
+
+      <div class="docs-code">
+        <pre><code>{{ writeJsFunction this }}</code></pre>
+      </div>
+
+      {{md this.description}}
+
+      {{#if this.fires}}
+        <p><strong>Fires these events:</strong>
+        {{#each this.fires}}
+          {{this}}
+        {{/each}}
+        </p>
+      {{/if}}
+
+      {{#if this.params}}
+      <table class="docs-variable-table">
+        <thead>
+          <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        {{#each this.params}}
+        <tr>
+          <td><code>{{this.name}}</code></td>
+          <td>{{this.type.names.[0]}}</td>
+          <td>{{this.description}}</td>
+        </tr>
+        {{/each}}
+      </table>
+      {{/if}}
+
+      {{#unless @last}}<hr>{{/unless}}
+    </section>
+    {{/each}}
+  </section>
+  {{/if}}
+</section>
