@@ -2217,7 +2217,13 @@ Foundation.util = {
     };
   }
 };
-window.Foundation = Foundation;
+
+// 7.0: assign the browser global only when one exists — requiring the
+// package under Node (SSR prerender, tests) must not crash; Foundation
+// itself is inert until Foundation.init() runs against a real DOM.
+if (typeof window !== 'undefined') {
+  window.Foundation = Foundation;
+}
 
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
@@ -14412,9 +14418,14 @@ _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.Timer = _foundation_uti
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.Touch = _foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch;
 
 // Touch and Triggers init are side-effect driven, just idempotent setup.
-_foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch.init();
-_foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers.init(_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
-_foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
+// 7.0: they (and MediaQuery's head probe) need a DOM — importing the
+// package under Node for its classes (SSR prerender, tests) must stay
+// inert. In a browser the timing is unchanged: armed at script load.
+if (typeof document !== 'undefined') {
+  _foundation_util_touch__WEBPACK_IMPORTED_MODULE_10__.Touch.init();
+  _foundation_util_triggers__WEBPACK_IMPORTED_MODULE_11__.Triggers.init(_foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation);
+  _foundation_util_mediaQuery__WEBPACK_IMPORTED_MODULE_5__.MediaQuery._init();
+}
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_abide__WEBPACK_IMPORTED_MODULE_12__.Abide, 'Abide');
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_accordion__WEBPACK_IMPORTED_MODULE_13__.Accordion, 'Accordion');
 _foundation_core__WEBPACK_IMPORTED_MODULE_0__.Foundation.plugin(_foundation_accordionMenu__WEBPACK_IMPORTED_MODULE_14__.AccordionMenu, 'AccordionMenu');

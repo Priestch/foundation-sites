@@ -1108,7 +1108,12 @@ Foundation.util = {
   }
 };
 
-window.Foundation = Foundation;
+// 7.0: assign the browser global only when one exists — requiring the
+// package under Node (SSR prerender, tests) must not crash; Foundation
+// itself is inert until Foundation.init() runs against a real DOM.
+if (typeof window !== 'undefined') {
+  window.Foundation = Foundation;
+}
 
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
@@ -13661,9 +13666,14 @@ Foundation.Timer = Timer;
 Foundation.Touch = Touch;
 
 // Touch and Triggers init are side-effect driven, just idempotent setup.
-Touch.init();
-Triggers.init(Foundation);
-MediaQuery._init();
+// 7.0: they (and MediaQuery's head probe) need a DOM — importing the
+// package under Node for its classes (SSR prerender, tests) must stay
+// inert. In a browser the timing is unchanged: armed at script load.
+if (typeof document !== 'undefined') {
+  Touch.init();
+  Triggers.init(Foundation);
+  MediaQuery._init();
+}
 
 Foundation.plugin(Abide, 'Abide');
 Foundation.plugin(Accordion, 'Accordion');

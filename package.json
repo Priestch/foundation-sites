@@ -6,6 +6,23 @@
   "jsnext:main": "dist/js/foundation.esm.js",
   "esnext": "dist/js/foundation.es6.js",
   "typings": "dist/js/foundation.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/js/foundation.d.ts",
+      "import": "./dist/js/foundation.esm.js",
+      "require": "./dist/js/foundation.js",
+      "default": "./dist/js/foundation.js"
+    },
+    "./js/*": "./js/*",
+    "./scss/*": "./scss/*",
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "scss",
+    "js"
+  ],
   "description": "The most advanced responsive front-end framework in the world.",
   "author": "Foundation Yetinauts <contact@get.foundation> (https://get.foundation)",
   "homepage": "https://get.foundation/sites",

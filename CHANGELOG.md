@@ -22,6 +22,8 @@ The seventh major: **jQuery is gone**, the Sass core is a **module system**, and
 
 - **Per-component configuration**: `@use "foundation-next" as fs` + `@include fs.foundation-<component>(meta.module-variables("my-settings"))` loads exactly the components you want with only the settings you changed (unknown keys warn at compile time). All 34 components are covered.
 - `Foundation.init(root?)`, `Foundation.Registry` public instance lookup, `Foundation.Triggers` / `Foundation.Motion` / `Foundation.Touch` exposed on the global.
+- **`exports` map**: the package declares its entry points (`.` plus open `./js/*`, `./scss/*`, `./dist/*` wildcards). Deep imports such as `import { Tooltip } from 'foundation-sites/js/foundation.tooltip'` are now a declared contract - in a bundler, unreferenced plugins tree-shake away; `import()` code-splits them.
+- **SSR-safe imports**: `require('foundation-sites')` / `import 'foundation-sites'` no longer crash in Node - the browser global and the load-time `Touch`/`Triggers`/`MediaQuery` setup are skipped when `window`/`document` don't exist. Import for the classes in your prerender pass; call `Foundation.init()` in the browser.
 
 ### Changed
 

@@ -255,7 +255,12 @@ Foundation.util = {
   }
 };
 
-window.Foundation = Foundation;
+// 7.0: assign the browser global only when one exists — requiring the
+// package under Node (SSR prerender, tests) must not crash; Foundation
+// itself is inert until Foundation.init() runs against a real DOM.
+if (typeof window !== 'undefined') {
+  window.Foundation = Foundation;
+}
 
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
