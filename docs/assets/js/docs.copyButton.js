@@ -1,7 +1,7 @@
-// Adds a copy button to every code example in the docs.
-// 7.0 chrome re-skin (unit 3): jQuery-free port of the foundation-docs
-// module (which already used navigator.clipboard — the clipboard.js
-// library was never actually called).
+// Adds a header row to every code example: language label + copy button.
+// 7.0 modernization pass: the copy control used to be a solid-primary
+// block absolutely positioned over the top-right corner; it now lives in
+// the panel header docs.code.scss styles.
 
 !function() {
 
@@ -11,22 +11,29 @@ document.querySelectorAll('[data-docs-code]').forEach(function(example) {
 
   var text = code.textContent;
 
+  var header = document.createElement('div');
+  header.className = 'docs-code-header';
+
+  var language = document.createElement('span');
+  language.className = 'docs-code-language';
+  language.textContent = (code.className.split(/\s+/)[0] || 'text').toUpperCase();
+
   var button = document.createElement('button');
   button.type = 'button';
   button.className = 'docs-code-copy';
   button.textContent = 'Copy';
 
-  example.insertBefore(button, example.firstChild);
+  header.appendChild(language);
+  header.appendChild(button);
+  example.insertBefore(header, example.firstChild);
 
   button.addEventListener('click', function() {
     navigator.clipboard.writeText(text).then(function() {
-      // Change the text of the copy button when it's clicked on
       button.textContent = 'Copied!';
       window.setTimeout(function() {
         button.textContent = 'Copy';
       }, 3000);
     }, function(err) {
-      // Log errors on copy failure
       console.error('Copy action failed:', err);
     });
   });

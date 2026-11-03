@@ -24,17 +24,20 @@
   }
 
   a {
-    font-size: 0.85rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    font-size: 0.9rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    transition: background 120ms ease;
 
     &:hover {
       background: rgba(#000, 0.05);
+      border-radius: $global-radius-small;
     }
   }
 
   .current a {
     background: rgba(#000, 0.05);
+    border-radius: $global-radius-small;
   }
 
   .label {
@@ -51,7 +54,8 @@
 
 .docs-nav-title {
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
   color: $medium-gray;
   font-weight: bold;
   line-height: 1;

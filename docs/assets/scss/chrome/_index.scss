@@ -2,6 +2,10 @@
 // blocks are gone — neither selector renders on this site.)
 
 .docs-component-inner {
+  // modernization: cap the measure (~50rem / 80ch). Uncapped, the
+  // content column ran 1270px on a 2047px viewport — a readability and
+  // era signal both; Bootstrap/TDesign/Semi all cap theirs.
+  max-width: 50rem;
   padding-left: 0.625rem * 2.5;
   padding-right: 0.625rem * 2.5;
   @include breakpoint(large) {

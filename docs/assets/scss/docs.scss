@@ -86,6 +86,33 @@ $chrome-hover:  if($chrome-dark, color.adjust($black, $lightness: 10%), $light-g
 @import 'docs-footer';
 
 
+// Site text font (modernization pass): Inter self-hosted from
+// @fontsource/inter (latin, 400/500/600). The semi theme's stack declares
+// Inter first — before these faces loaded, every page silently rendered in
+// the system fallback, which read as "default 2016" more than anything
+// else on the site.
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+
 // ZURB logo font
 @font-face {
   font-family: 'zurb-logo';
@@ -120,8 +147,8 @@ $global-nav-hover-color: $chrome-hover;
 .global-nav {
   background: $chrome-bg;
   border-bottom: 1px solid $global-nav-border-color;
-  font-size: rem-calc(13);
-  font-weight: bold;
+  font-size: rem-calc(14);
+  font-weight: 500;
   height: rem-calc(45);
   justify-content: space-between;
   position: relative;
@@ -179,6 +206,7 @@ $global-nav-hover-color: $chrome-hover;
     line-height: 45px !important;
     padding-bottom: 0 !important;
     padding-top: 0 !important;
+    transition: background 150ms ease, color 150ms ease;
 
     &:hover:not(.button, .zurb-logo),
     &:focus {
@@ -186,7 +214,7 @@ $global-nav-hover-color: $chrome-hover;
     }
 
     &.button {
-      border-radius: 0;
+      border-radius: $global-radius-small;
       box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
   }

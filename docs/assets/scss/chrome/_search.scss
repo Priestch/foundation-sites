@@ -79,16 +79,24 @@
 }
 
 .tt-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
   background: $white;
   width: 100%;
-  border: 1px solid $medium-gray;
-  border-radius: $global-radius-small;
-  box-shadow: $global-shadow-sm;
+  border: 1px solid $chrome-hairline;
+  border-radius: $global-radius-large;
+  box-shadow: $global-shadow-md;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .tt-suggestion {
   @include clearfix;
   padding: 0.5rem;
+  transition: background 120ms ease;
 
   &:hover,
   &.tt-cursor {
