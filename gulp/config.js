@@ -22,21 +22,13 @@ module.exports = {
     'node_modules/what-input/dist/what-input.js'
   ],
 
-  // The docs chrome bundle: jQuery-dependent third-party pieces (the
-  // foundation-docs package, clipboard). It loads AFTER docs.js, so the
-  // framework itself boots and runs with NO jQuery on the page - the
-  // strongest line-A end-to-end test - while the legacy chrome keeps
-  // working until the docs chain replacement (M3 evaluation).
-  // corejs-typeahead is dropped entirely: it needs jQuery at load time
-  // ($.isArray in its type helpers); the nav search box dies with it.
+  // The docs chrome bundle (7.0 chrome re-skin, unit 3): 100% local and
+  // jQuery-free. Every former foundation-docs chrome script is ported to
+  // docs/assets/js/ (search/typeahead, copy button, TOC, kitchen sink,
+  // topbar, video, ad slot, interchange map) — the package, jQuery,
+  // corejs-typeahead and clipboard.js all drop out of the bundle. It loads
+  // AFTER docs.js so nothing on the page needs jQuery at all anymore.
   JS_DOCS_CHROME: [
-    'node_modules/jquery/dist/jquery.js',
-    // typeahead needs jQuery at load time - fine inside the chrome bundle,
-    // which carries its own jQuery and loads after the jQuery-free
-    // framework bootstrap
-    'node_modules/corejs-typeahead/dist/typeahead.bundle.js',
-    'node_modules/clipboard/dist/clipboard.js',
-    'node_modules/foundation-docs/js/**/*.js',
     'docs/assets/js/docs.*.js'
   ],
 
