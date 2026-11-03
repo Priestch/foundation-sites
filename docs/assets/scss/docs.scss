@@ -45,6 +45,20 @@
 @include foundation-meter-element;
 @include motion-ui-transitions;
 
+// ── Chrome color scheme ─────────────────────────────────────────────────────
+// One switch, two identities for the site frame (topbar, mobile off-canvas,
+// footer). Both derive from the ACTIVE theme's ramp, so either way the
+// chrome stays in the theme's language:
+//   false → light surfaces — the TDesign/Semi docs pattern (default)
+//   true  → dark surfaces — the classic Foundation docs identity
+$chrome-dark: false;
+
+$chrome-bg:     if($chrome-dark, $black, $white);
+$chrome-ink:    if($chrome-dark, $white, $body-font-color);
+$chrome-muted:  if($chrome-dark, $light-gray, $dark-gray);
+$chrome-border: if($chrome-dark, color.adjust($black, $lightness: 15%), $medium-gray);
+$chrome-hover:  if($chrome-dark, color.adjust($black, $lightness: 10%), $light-gray);
+
 // 7.0 chrome re-skin (unit 2): the site frame is styled locally now —
 // docs/assets/scss/chrome/ is the re-themed port of the foundation-docs
 // scss (dead ZURB-era markup dropped, colors/radius/shadows on tokens).
@@ -94,11 +108,11 @@ a.docs-banner {
 $transition-slow: all 0.5s ease-in-out;
 $transition: all 0.25s ease-in-out;
 $transition-fast: all 0.15s ease-in-out;
-$global-nav-border-color: $medium-gray;
-$global-nav-hover-color: $light-gray;
+$global-nav-border-color: $chrome-border;
+$global-nav-hover-color: $chrome-hover;
 
 .global-nav {
-  background: $white;
+  background: $chrome-bg;
   border-bottom: 1px solid $global-nav-border-color;
   font-size: rem-calc(13);
   font-weight: bold;
@@ -111,7 +125,7 @@ $global-nav-hover-color: $light-gray;
     width: auto;
 
     &.menu a {
-      background: $white;
+      background: $chrome-bg;
 
       &.button {
         background: $primary-color;
@@ -154,7 +168,7 @@ $global-nav-hover-color: $light-gray;
   }
 
   .menu a {
-    color: $body-font-color;
+    color: $chrome-ink;
     height: 45px;
     line-height: 45px !important;
     padding-bottom: 0 !important;
@@ -192,8 +206,8 @@ $global-nav-hover-color: $light-gray;
   }
 
   .title {
-    background: $light-gray;
-    color: $dark-gray;
+    background: $chrome-hover;
+    color: $chrome-muted;
     font-size: 0.8em;
     padding: 10px;
     padding-left: 15px;
@@ -230,7 +244,7 @@ $global-nav-hover-color: $light-gray;
   justify-content: center;
 
   .zurb-logo {
-    color: $body-font-color;
+    color: $chrome-ink;
     font-family: "zurb-logo";
     font-size: 38px;
     font-weight: normal;
@@ -264,8 +278,8 @@ $global-nav-hover-color: $light-gray;
 
 // --- Mobile Top Bar
 .global-nav-mobile-wrapper {
-  background: $white;
-  border-bottom: 1px solid $medium-gray;
+  background: $chrome-bg;
+  border-bottom: 1px solid $chrome-border;
   position: relative;
   display: flex;
   vertical-align: middle;

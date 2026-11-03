@@ -1,15 +1,16 @@
 // The site footer (.footer-nav in partials/footer.html — 65 pages).
-// 7.0 re-skin: light surface, hairline top border, ink text, primary hover —
-// the old version borrowed the dark topbar background ($topbar-background,
-// #121212) and glowed white text out of it. Dead blocks that styled markup
-// this site never renders (.footer-contact, .newsletter-signup, the
-// homepage-section family) are dropped.
+// 7.0 re-skin: surfaces ride the $chrome-dark scheme from docs.scss (light
+// by default, classic dark identity when the switch is on); the old version
+// borrowed the dark topbar background ($topbar-background, #121212). Dead
+// blocks that styled markup this site never renders (.footer-contact,
+// .newsletter-signup, the homepage-section family) are dropped. The social
+// icons are inline currentColor SVGs, so they follow the scheme too.
 
 .footer-nav {
   @include xy-grid;
   align-items: center;
-  background-color: $white;
-  border-top: 1px solid $medium-gray;
+  background-color: $chrome-bg;
+  border-top: 1px solid $chrome-border;
   padding: 2rem;
   width: 100%;
   justify-content: center;
@@ -21,11 +22,11 @@
 
 .footer-nav-left,
 .footer-nav-right {
-  color: $body-font-color;
+  color: $chrome-ink;
   @include xy-cell(shrink);
 
   a {
-    color: $dark-gray;
+    color: $chrome-muted;
 
     &:hover,
     &:focus {
@@ -67,7 +68,7 @@
 }
 
 .footer-copyright {
-  color: $dark-gray;
+  color: $chrome-muted;
   font-size: 1rem;
   padding-top: 1rem;
 }
@@ -123,7 +124,7 @@
   padding: 0.4rem 0;
 
   a {
-    color: $body-font-color;
+    color: $chrome-ink;
     transition: color 0.3s ease;
 
     &:hover,

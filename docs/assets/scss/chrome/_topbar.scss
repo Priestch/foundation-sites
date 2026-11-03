@@ -1,24 +1,25 @@
 // Mobile off-canvas top bar + panel chrome.
 // (.marketing-topbar is gone — its markup never renders; the site topbar is
-// .global-nav, styled in docs.scss. The old near-black #121212 panel made the
-// theme previews look like two different sites; the panel is light now.)
+// .global-nav, styled in docs.scss.) Surfaces ride the $chrome-dark scheme
+// defined in docs.scss: light panels by default, the classic dark identity
+// when the switch is on.
 
 .mobile-ofc {
-  background: $white;
-  border-bottom: 1px solid $medium-gray;
+  background: $chrome-bg;
+  border-bottom: 1px solid $chrome-border;
   font-size: rem-calc(13);
   font-weight: bold;
 
   .menu a {
     height: 45px;
     line-height: 45px;
-    color: $body-font-color;
+    color: $chrome-ink;
     padding-top: 0;
     padding-bottom: 0;
 
     &:hover:not(.button),
     &:focus {
-      background: $light-gray;
+      background: $chrome-hover;
     }
 
     &.button {
@@ -28,19 +29,27 @@
   }
 
   .title {
-    color: $dark-gray;
+    color: $chrome-muted;
     padding: 10px;
     padding-left: 15px;
     font-size: 0.8em;
-    background: $light-gray;
+    background: $chrome-hover;
   }
 }
 
 .off-canvas {
+  // The panels that host the chrome menus (left/top) ride the chrome
+  // scheme; without this the dark menu floats on the framework's default
+  // light-gray panel.
+  &#offCanvasLeft,
+  &#offCanvasTop {
+    background: $chrome-bg;
+  }
+
   a.close-button {
-    color: $body-font-color;
+    color: $chrome-ink;
   }
   .close-button:hover, .close-button:focus {
-    color: $body-font-color;
+    color: $chrome-ink;
   }
 }
