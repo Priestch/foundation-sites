@@ -1,0 +1,2 @@
+patchedDependencies:
+  jsdoc@3.6.11: patches/jsdoc@3.6.11.patch
