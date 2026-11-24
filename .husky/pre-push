@@ -3,4 +3,4 @@
 
 # node "$(dirname -- "$0")/husky-push-test.js --color
 
-yarn test
+npm run test
